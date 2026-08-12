@@ -1483,12 +1483,13 @@
     // Accepts built-in array form ["A","B","c"] and custom object form
     // {a, b, type, imgA?, imgB?} — returns a normalized pair or null.
     function normalizePair(entry) {
+      const imgs = (typeof UNDERCOVER_IMAGES !== 'undefined') ? UNDERCOVER_IMAGES : {};
       if (Array.isArray(entry)) {
         if (!entry[0] || !entry[1]) return null;
-        return { a: String(entry[0]), b: String(entry[1]), type: entry[2] === 's' ? 's' : 'c', imgA: null, imgB: null };
+        return { a: String(entry[0]), b: String(entry[1]), type: entry[2] === 's' ? 's' : 'c', imgA: imgs[String(entry[0]).toLowerCase()] || null, imgB: imgs[String(entry[1]).toLowerCase()] || null };
       }
       if (entry && entry.a && entry.b) {
-        return { a: String(entry.a), b: String(entry.b), type: entry.type === 's' ? 's' : 'c', imgA: entry.imgA || null, imgB: entry.imgB || null };
+        return { a: String(entry.a), b: String(entry.b), type: entry.type === 's' ? 's' : 'c', imgA: entry.imgA || imgs[String(entry.a).toLowerCase()] || null, imgB: entry.imgB || imgs[String(entry.b).toLowerCase()] || null };
       }
       return null;
     }
@@ -1807,24 +1808,23 @@
       const phaseNames = { clues: '💬 Description time', voting: '🗳️ Voting time', reveal: '🔎 Result', mrwhite: '⚪ Mr. White guesses…', over: '🏁 Game over' };
       document.getElementById('ucPhaseBadge').textContent = phaseNames[uc.phase] || '';
 
-      // Private word card
+      // Private word card — roles stay SECRET: civilians and the undercover
+      // see the exact same card (label, border, hint), only Mr. White is told
+      // he's wordless (that's how the game is meant to be played).
       const wordEl = document.getElementById('ucMyWord');
       const roleLabel = document.getElementById('ucRoleLabel');
       const roleHint = document.getElementById('ucRoleHint');
       const wordCard = document.getElementById('ucWordCard');
-      wordCard.className = 'uc-word-card' + (myRole === 'undercover' ? ' undercover' : (myRole === 'mrwhite' ? ' mrwhite' : ''));
-      if (myRole === 'undercover') {
-        roleLabel.textContent = '🕵️ You are the UNDERCOVER';
-        wordEl.textContent = uc.uwWord || '---';
-        roleHint.textContent = "Your word is slightly different from the civilians'. Blend in and survive!";
-      } else if (myRole === 'mrwhite') {
+      wordCard.className = 'uc-word-card' + (myRole === 'mrwhite' ? ' mrwhite' : '');
+      if (myRole === 'mrwhite') {
         roleLabel.textContent = '⚪ You are MR. WHITE';
         wordEl.textContent = '— no word —';
         roleHint.textContent = 'You have NO word! Listen to the clues and improvise.';
       } else {
-        roleLabel.textContent = '👥 You are a CIVILIAN';
-        wordEl.textContent = uc.word || '---';
-        roleHint.textContent = 'Describe your word without saying it — and find the impostor!';
+        roleLabel.textContent = '🎴 Your secret word';
+        // your word is uwWord if you're the undercover — but you are NOT told that!
+        wordEl.textContent = (myRole === 'undercover') ? (uc.uwWord || '---') : (uc.word || '---');
+        roleHint.textContent = 'Describe your word without saying it! One player might have a slightly different word… is it you? 👀';
       }
       const imgEl = document.getElementById('ucMyWordImg');
       const myImg = myRole === 'undercover' ? (uc.uwWordImg || null) : (myRole === 'mrwhite' ? null : (uc.wordImg || null));
