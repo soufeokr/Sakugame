@@ -74,6 +74,8 @@
         // If sitting on the host screen when logging in, load the synced AniList account
         const hostScreen = document.getElementById('hostRoomScreen');
         if (hostScreen && hostScreen.classList.contains('active')) autoSyncHostAccount();
+        // If inside a room when logging in, drop the synced account into the pool
+        if (roomCode) syncMyAccountIntoRoom();
       } else {
         currentAccount = null;
         const btn = document.getElementById('usernameBtn');
@@ -289,6 +291,7 @@
         anilistAutoSyncDone = false; // allow auto-load next time you host
         document.getElementById('anilistSyncInput').value = info.name;
         showNotification('AniList account synced: ' + info.name);
+        if (roomCode) syncMyAccountIntoRoom(); // if currently in a room, add it right away
       } catch (e) { showNotification('Error checking AniList: ' + e.message); }
       btn.disabled = false;
     }
@@ -319,6 +322,36 @@
         });
         hostAccounts.push({ username: name, characters: mappedChars, count: mappedChars.length });
         renderHostAccounts();
+      } catch (e) { showNotification('Could not load synced AniList: ' + e.message); }
+    }
+
+    // Auto-add the logged-in player's synced AniList account to the current room.
+    // Runs on room join, on login while inside a room, and right after syncing.
+    async function syncMyAccountIntoRoom() {
+      if (!currentAccount || !currentAccount.anilist || !roomCode) return;
+      const name = currentAccount.anilist;
+      const lower = name.toLowerCase();
+      const existing = Object.keys(currentRoom ? (currentRoom.accounts || {}) : {});
+      if (existing.some(k => k.toLowerCase() === lower)) return; // already in the room
+      try {
+        showNotification('Loading your synced AniList account (' + name + ')...');
+        const userData = await fetchAniListFavorites(name);
+        const favs = userData.characters;
+        if (favs.length < 6) { showNotification(name + ' has only ' + favs.length + ' favorites. Need at least 6.'); return; }
+        const mappedChars = favs.map(char => {
+          const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
+          return {
+            id: char.id,
+            name: char.name ? char.name.full : 'Unknown',
+            image: char.image ? char.image.large : '',
+            series: media.title ? media.title.romaji : 'Unknown',
+            gender: (char.gender || 'Unknown').toLowerCase(),
+            mediaType: (media.type || 'ANIME').toLowerCase()
+          };
+        });
+        await database.ref('rooms/' + roomCode + '/accounts/' + name).set({ username: name, characters: mappedChars, count: mappedChars.length });
+        touchActivity();
+        showNotification('Your AniList account (' + name + ') was added to the room.');
       } catch (e) { showNotification('Could not load synced AniList: ' + e.message); }
     }
 
@@ -455,46 +488,19 @@
     function renderHostAccounts() {
       const list = document.getElementById('hostAccountsList');
       list.innerHTML = '';
-      hostAccounts.forEach((acc, idx) => {
+      if (hostAccounts.length === 0) {
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--muted); font-size: 0.85rem; padding: 6px 0;';
+        p.textContent = 'No synced account — sync your AniList in the 👤 profile menu, or just play with the 🎴 Generic pool.';
+        list.appendChild(p);
+      }
+      hostAccounts.forEach((acc) => {
         const item = document.createElement('div'); item.className = 'account-item';
-        item.innerHTML = `<div><span class="name">${escapeHtml(String(acc.username || ''))}</span><span class="count">(${parseInt(acc.count) || 0} favorites)</span></div><button class="small danger" onclick="removeHostAccount(${idx})">Remove</button>`;
+        item.innerHTML = `<div><span class="name">${escapeHtml(String(acc.username || ''))}</span><span class="count">(${parseInt(acc.count) || 0} favorites)</span></div><span class="count" style="color: var(--success); font-weight: 700;">✓ synced</span>`;
         list.appendChild(item);
       });
       updateHostDist();
     }
-
-    async function addHostAccount() {
-      const input = document.getElementById('hostAccountInput');
-      const username = input.value.trim();
-      if (!username) { showNotification('Enter an AniList username'); return; }
-      if (hostAccounts.find(a => a.username === username)) { showNotification('Account already added'); return; }
-      input.disabled = true;
-      try {
-        const userData = await fetchAniListFavorites(username);
-        const favs = userData.characters;
-        if (favs.length < 6) {
-          showNotification(username + ' only has ' + favs.length + ' favorites. Need at least 6.');
-          input.disabled = false; return;
-        }
-        const mappedChars = favs.map(char => {
-          const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
-          return {
-            id: char.id,
-            name: char.name ? char.name.full : 'Unknown',
-            image: char.image ? char.image.large : '',
-            series: media.title ? media.title.romaji : 'Unknown',
-            gender: (char.gender || 'Unknown').toLowerCase(),
-            mediaType: (media.type || 'ANIME').toLowerCase()
-          };
-        });
-        hostAccounts.push({ username, characters: mappedChars, count: mappedChars.length });
-        input.value = '';
-        renderHostAccounts();
-      } catch (error) { showNotification('Error loading account: ' + error.message); }
-      input.disabled = false;
-    }
-
-    function removeHostAccount(idx) { hostAccounts.splice(idx, 1); renderHostAccounts(); }
 
     function updateHostCharCount() {
       const value = document.getElementById('hostCharCountSlider').value;
@@ -517,7 +523,7 @@
     }
 
     async function createGameRoom() {
-      if (hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Add an AniList account below, or switch the character pool to 🎴 Generic!'); return; }
+      if (hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('⭐ Favorites needs a synced AniList account (👤 profile menu) — or switch the pool to 🎴 Generic!'); return; }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
       const distribution = parseInt(document.getElementById('hostDistSlider').value);
@@ -553,6 +559,7 @@
         await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false });
         touchActivity();
         setupRoomListener(); setupChatListener(); setupPlayerCleanup();
+        syncMyAccountIntoRoom(); // guest's synced AniList account joins the pool automatically
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
         document.getElementById('lobbyGameName').textContent = 'Anime Guess Who?';
@@ -575,6 +582,7 @@
           document.getElementById('lobbySettingsIcon').style.display = isHost ? 'block' : 'none';
         }
         updateLobby();
+        if (document.getElementById('settingsModal').classList.contains('show')) renderModalAccounts(); // live-update synced accounts in settings
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
         if (currentRoom.state === 'selection' && !document.getElementById('selectionScreen').classList.contains('active')) { showCharacterSelection(); }
@@ -840,51 +848,25 @@
 
     function renderModalAccounts() {
       const list = document.getElementById('modalAccountsList'); list.innerHTML = '';
-      Object.entries(currentRoom ? (currentRoom.accounts || {}) : {}).forEach(([username, data]) => {
+      const entries = Object.entries(currentRoom ? (currentRoom.accounts || {}) : {});
+      if (entries.length === 0) {
+        const p = document.createElement('p');
+        p.style.cssText = 'color: var(--muted); font-size: 0.85rem; padding: 6px 0;';
+        p.textContent = 'No synced accounts yet — players sync their AniList account in the 👤 profile menu and it appears here automatically.';
+        list.appendChild(p);
+      }
+      entries.forEach(([username, data]) => {
         const item = document.createElement('div'); item.className = 'account-item';
         const info = document.createElement('div');
         const nameSpan = document.createElement('span'); nameSpan.className = 'name'; nameSpan.textContent = String(username || '');
         const countSpan = document.createElement('span'); countSpan.className = 'count'; countSpan.textContent = '(' + (parseInt(data.count) || 0) + ' favorites)';
         info.appendChild(nameSpan); info.appendChild(countSpan);
-        const removeBtn = document.createElement('button'); removeBtn.className = 'small danger'; removeBtn.textContent = 'Remove';
-        removeBtn.addEventListener('click', () => removeModalAccount(username));
-        item.appendChild(info); item.appendChild(removeBtn);
+        const synced = document.createElement('span');
+        synced.className = 'count'; synced.style.color = 'var(--success)'; synced.style.fontWeight = '700'; synced.textContent = '✓ synced';
+        item.appendChild(info); item.appendChild(synced);
         list.appendChild(item);
       });
       updateModalDist();
-    }
-
-    async function addModalAccount() {
-      const input = document.getElementById('modalAccountInput'); const username = input.value.trim();
-      if (!username) { showNotification('Enter an AniList username'); return; }
-      if (currentRoom && currentRoom.accounts && currentRoom.accounts[username]) { showNotification('Account already added'); return; }
-      input.disabled = true;
-      try {
-        const userData = await fetchAniListFavorites(username); const favs = userData.characters;
-        if (favs.length < 6) { showNotification(username + ' only has ' + favs.length + ' favorites. Need at least 6.'); input.disabled = false; return; }
-        const mappedChars = favs.map(char => {
-          const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
-          return {
-            id: char.id,
-            name: char.name ? char.name.full : 'Unknown',
-            image: char.image ? char.image.large : '',
-            series: media.title ? media.title.romaji : 'Unknown',
-            gender: (char.gender || 'Unknown').toLowerCase(),
-            mediaType: (media.type || 'ANIME').toLowerCase()
-          };
-        });
-        await database.ref('rooms/' + roomCode + '/accounts/' + username).set({ username, characters: mappedChars, count: mappedChars.length });
-        touchActivity();
-        input.value = ''; renderModalAccounts();
-      } catch (error) { showNotification('Error loading account: ' + error.message); }
-      input.disabled = false;
-    }
-
-    async function removeModalAccount(username) {
-      showInteraction('Remove Account?', 'Remove ' + username + '?', [
-        { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
-        { label: 'Remove', onclick: async () => { closeInteraction(); await database.ref('rooms/' + roomCode + '/accounts/' + username).remove(); touchActivity(); renderModalAccounts(); }, class: 'danger' }
-      ]);
     }
 
     function updateModalCharCount() {
