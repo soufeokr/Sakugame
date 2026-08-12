@@ -326,8 +326,6 @@
       </div>
       <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
       <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();">🔑 Log in / Create account</button>
-      <h4 class="profile-section-title">🎵 Music Volume</h4>
-      <input type="range" class="music-volume-slider" min="0" max="100" value="50">
     </div>
   </div>
 
@@ -360,9 +358,6 @@
           <div class="stat-box"><strong id="profileWins">0</strong>🏆 Wins</div>
           <div class="stat-box"><strong id="profileLosses">0</strong>💀 Losses</div>
         </div>
-
-        <h4 class="profile-section-title">🎵 Music Volume</h4>
-        <input type="range" class="music-volume-slider" min="0" max="100" value="50">
 
         <h4 class="profile-section-title">🎬 AniList Account</h4>
         <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 8px;">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</p>
@@ -408,8 +403,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
-  <script src="music.js"></script>
+  
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a031919e00e1e8',t:'MTc4NjU0NTE5MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
