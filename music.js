@@ -20,7 +20,7 @@ const MUSIC_PLAYLIST = [
   'Chainsaw Man - Ending 9.mp3',
    'More Than a Married Couple, But Not Lovers - Ending.mp3',
    'Spy x Family - Ending 1.mp3',
-   'Vinland Saga - Opening 3.mp3'
+   'Vinland Saga - Opening 3.mp3',
 ];
 
 // Optional settings:
