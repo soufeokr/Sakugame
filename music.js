@@ -6,8 +6,10 @@
 
    HOW TO ADD / CHANGE MUSIC:
    1. Drop your .mp3 files into the  music/  folder.
-   2. Edit the MUSIC_PLAYLIST list below — one line per file,
-      with the EXACT file name (case matters!).
+   2. List their names below — EITHER is fine:
+         'music/My Song.mp3'   (path with the folder)
+         'My Song.mp3'         (just the file name — the player
+                                automatically looks in music/)
    3. Save, push to GitHub, done.
 
    The track name shown in the bottom-left corner = the file
@@ -15,16 +17,16 @@
    ============================================================ */
 
 const MUSIC_PLAYLIST = [
-  'Anohana - Opening.mp3',   // ← replace with your real file names
+  'Anohana - Opening.mp3',
   'Bunny Girl Senpai - Ending 1.mp3',
   'Chainsaw Man - Ending 9.mp3',
-   'More Than a Married Couple, But Not Lovers - Ending.mp3',
-   'Spy x Family - Ending 1.mp3',
-   'Vinland Saga - Opening 3.mp3',
+  'More Than a Married Couple, But Not Lovers - Ending.mp3',
+  'Spy x Family - Ending 1.mp3',
+  'Vinland Saga - Opening 3.mp3',
 ];
 
 // Optional settings:
-const MUSIC_SHUFFLE = true;        // false = plays your list in order (loops), true = random order
+const MUSIC_SHUFFLE = true;         // false = plays your list in order (loops), true = random order
 const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (after that, the player's choice is remembered)
 
 /* ============================================================
@@ -32,6 +34,12 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
    ============================================================ */
 (function () {
   if (!Array.isArray(MUSIC_PLAYLIST) || MUSIC_PLAYLIST.length === 0) return;
+
+  // Entries without a folder are assumed to live in music/
+  const TRACKS = MUSIC_PLAYLIST
+    .filter(p => typeof p === 'string' && p.trim() !== '')
+    .map(p => (p.indexOf('/') === -1 ? 'music/' + p.trim() : p));
+  if (TRACKS.length === 0) return;
 
   const VOLUME_KEY = 'sakugame_music_volume';
   const audio = new Audio();
@@ -45,10 +53,10 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
   audio.volume = volume;
 
   // ----- play order (sequential with loop, or shuffled) -----
-  let order = MUSIC_PLAYLIST.map((_, i) => i);
+  let order = TRACKS.map((_, i) => i);
   let cursor = 0;
   function shuffled() {
-    const arr = MUSIC_PLAYLIST.map((_, i) => i);
+    const arr = TRACKS.map((_, i) => i);
     for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
     return arr;
   }
@@ -70,7 +78,7 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
     return file;
   }
 
-  function currentSrc() { return MUSIC_PLAYLIST[order[cursor]]; }
+  function currentSrc() { return TRACKS[order[cursor]]; }
 
   function loadCurrent() {
     audio.src = currentSrc();
@@ -85,14 +93,14 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
   let consecutiveErrors = 0;
   function nextTrack() {
     cursor++;
-    if (cursor >= order.length) { order = MUSIC_SHUFFLE ? shuffled() : MUSIC_PLAYLIST.map((_, i) => i); cursor = 0; }
+    if (cursor >= order.length) { order = MUSIC_SHUFFLE ? shuffled() : TRACKS.map((_, i) => i); cursor = 0; }
     loadCurrent();
   }
   audio.addEventListener('ended', () => { consecutiveErrors = 0; nextTrack(); });
   audio.addEventListener('error', () => {
     console.warn('[music] Cannot play file:', currentSrc(), '— check the file exists and the name matches MUSIC_PLAYLIST.');
     consecutiveErrors++;
-    if (consecutiveErrors <= MUSIC_PLAYLIST.length) nextTrack(); // skip missing file; give up if ALL are missing
+    if (consecutiveErrors <= TRACKS.length) nextTrack(); // skip missing file; give up if ALL are missing
   });
 
   // ----- start on first user interaction (browsers block autoplay) -----
@@ -130,8 +138,9 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
   };
 
   // ----- boot -----
+  if (MUSIC_SHUFFLE) order = shuffled();
+  cursor = 0;
   loadCurrent(); // preload first track (no sound until first click/keypress)
-  if (MUSIC_SHUFFLE) { order = shuffled(); cursor = 0; loadCurrent(); }
   ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, tryStart));
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncSliders); else syncSliders();
 })();
