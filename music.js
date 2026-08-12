@@ -18,6 +18,9 @@ const MUSIC_PLAYLIST = [
   'Anohana - Opening.mp3',   // ← replace with your real file names
   'Bunny Girl Senpai - Ending 1.mp3',
   'Chainsaw Man - Ending 9.mp3',
+   'More Than a Married Couple, But Not Lovers - Ending.mp3',
+   'Spy x Family - Ending 1.mp3',
+   'Vinland Saga - Opening 3.mp3'
 ];
 
 // Optional settings:
