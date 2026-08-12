@@ -582,7 +582,6 @@
           document.getElementById('lobbySettingsIcon').style.display = isHost ? 'block' : 'none';
         }
         updateLobby();
-        if (document.getElementById('settingsModal').classList.contains('show')) renderModalAccounts(); // live-update synced accounts in settings
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
         if (currentRoom.state === 'selection' && !document.getElementById('selectionScreen').classList.contains('active')) { showCharacterSelection(); }
@@ -803,7 +802,6 @@
         document.getElementById('modalPublic').classList.add('selected');
         document.getElementById('modalPrivate').classList.remove('selected');
       }
-      renderModalAccounts();
       syncSourceUI();
       document.getElementById('settingsModal').classList.add('show');
     }
@@ -844,29 +842,6 @@
       await database.ref('rooms/' + roomCode + '/visibility').set(type);
       touchActivity();
       document.getElementById('lobbyRoomType').textContent = type === 'private' ? '🔒 Private' : '🌐 Public';
-    }
-
-    function renderModalAccounts() {
-      const list = document.getElementById('modalAccountsList'); list.innerHTML = '';
-      const entries = Object.entries(currentRoom ? (currentRoom.accounts || {}) : {});
-      if (entries.length === 0) {
-        const p = document.createElement('p');
-        p.style.cssText = 'color: var(--muted); font-size: 0.85rem; padding: 6px 0;';
-        p.textContent = 'No synced accounts yet — players sync their AniList account in the 👤 profile menu and it appears here automatically.';
-        list.appendChild(p);
-      }
-      entries.forEach(([username, data]) => {
-        const item = document.createElement('div'); item.className = 'account-item';
-        const info = document.createElement('div');
-        const nameSpan = document.createElement('span'); nameSpan.className = 'name'; nameSpan.textContent = String(username || '');
-        const countSpan = document.createElement('span'); countSpan.className = 'count'; countSpan.textContent = '(' + (parseInt(data.count) || 0) + ' favorites)';
-        info.appendChild(nameSpan); info.appendChild(countSpan);
-        const synced = document.createElement('span');
-        synced.className = 'count'; synced.style.color = 'var(--success)'; synced.style.fontWeight = '700'; synced.textContent = '✓ synced';
-        item.appendChild(info); item.appendChild(synced);
-        list.appendChild(item);
-      });
-      updateModalDist();
     }
 
     function updateModalCharCount() {
