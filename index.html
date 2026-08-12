@@ -137,6 +137,14 @@
   .player-admin-btn.kick-btn { background: var(--danger); }
   .player-admin-btn.crown-btn { background: var(--warning); }
   button.warning { background: var(--warning); }
+  .stat-box { background: #0f0f1a; border-radius: 10px; padding: 14px 26px; text-align: center; font-weight: 700; min-width: 110px; }
+  .stat-box strong { display: block; font-size: 1.7rem; color: var(--accent); }
+  #authError { color: var(--danger); min-height: 20px; font-size: 0.9rem; margin-bottom: 10px; font-weight: 700; }
+  .profile-section-title { color: var(--accent); font-size: 0.95rem; font-weight: 900; letter-spacing: 0.5px; margin: 18px 0 8px; text-align: left; }
+  .profile-row { display: flex; gap: 8px; align-items: center; }
+  .profile-row input { flex: 1; min-width: 0; padding: 10px; border: 2px solid #2a2a4a; border-radius: 8px; background: #1a1a2e; color: white; font-family: inherit; }
+  .profile-row input:focus { outline: none; border-color: var(--accent); }
+  .profile-row button { flex-shrink: 0; padding: 10px 16px; }
   .settings-icon { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--muted); transition: all 0.2s; z-index: 10; }
   .settings-icon:hover { color: var(--accent); transform: rotate(30deg); }
   .chat-section { flex: 1; display: flex; flex-direction: column; min-height: 0; height: 100%; }
@@ -328,7 +336,7 @@
   <p id="restartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;">Waiting for players to restart...</p>
 </div>
 
-  <button class="username-change-btn" id="usernameBtn" onclick="changeUsername()">👤 Change Username</button>
+  <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()">👤 Change Username</button>
   <div class="site-header">
     <div class="site-logo" onclick="goHome()">🎮 SAKUGAME</div>
     <p class="site-tagline">Online Anime Gaming Platform</p>
@@ -605,6 +613,64 @@
         <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20">
       </div>
       <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
+      <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();">🔑 Log in / Create account</button>
+    </div>
+  </div>
+
+  <div class="modal" id="authModal">
+    <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
+      <div class="modal-close" onclick="closeAuthModal()">×</div>
+      <!-- Login / register form -->
+      <div id="authFormView">
+        <h2>🔑 Account</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">Log in or create an account — username only, no email needed</p>
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="authUsernameInput" placeholder="3-20 letters, numbers, _" maxlength="20" autocomplete="username">
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="authPasswordInput" placeholder="At least 6 characters" maxlength="50" autocomplete="current-password">
+        </div>
+        <p id="authError"></p>
+        <button class="full success" id="authLoginBtn" onclick="loginAccount()">Log In</button>
+        <button class="full secondary" id="authRegisterBtn" style="margin-top: 10px;" onclick="registerAccount()">Create Account</button>
+      </div>
+      <!-- Logged-in profile menu -->
+      <div id="authProfileView" style="display: none;">
+        <h2 style="margin-bottom: 2px;">👤 <span id="profileName">Account</span></h2>
+        <p style="color: var(--muted); font-size: 0.85rem;">Logged in — this name is used in your games</p>
+
+        <h4 class="profile-section-title">📊 Stats</h4>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <div class="stat-box"><strong id="profileWins">0</strong>🏆 Wins</div>
+          <div class="stat-box"><strong id="profileLosses">0</strong>💀 Losses</div>
+        </div>
+
+        <h4 class="profile-section-title">🎬 AniList Account</h4>
+        <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 8px;">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</p>
+        <div class="profile-row">
+          <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
+          <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
+        </div>
+
+        <h4 class="profile-section-title">✏️ Change Username</h4>
+        <div class="profile-row">
+          <input type="text" id="profileUsernameInput" placeholder="New username (3-20 chars)" maxlength="20">
+          <button class="secondary" id="profileUsernameBtn" onclick="changeAccountUsername()">Save</button>
+        </div>
+
+        <h4 class="profile-section-title">🔒 Change Password</h4>
+        <div class="input-group" style="margin-bottom: 8px;">
+          <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
+        </div>
+        <div class="profile-row">
+          <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
+          <button class="secondary" id="profilePasswordBtn" onclick="changeAccountPassword()">Update</button>
+        </div>
+
+        <button class="full danger" style="margin-top: 22px;" onclick="logoutAccount()">Log Out</button>
+      </div>
     </div>
   </div>
 
@@ -624,6 +690,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAbXV8BIBF5jdfGxIUja2tIEkRh72s2gaU",
@@ -671,6 +738,290 @@
       win.classList.add('show');
     }
     function closeInteraction() { document.getElementById('interactionWindow').classList.remove('show'); }
+
+    // ===== PLAYER ACCOUNTS (Firebase Auth, username-only) =====
+    // Internally each username maps to a synthetic email: username@sakugame.app
+    // Players never see or use an email address.
+    const AUTH_EMAIL_SUFFIX = '@sakugame.app';
+    let currentAccount = null;   // { uid, username, wins, losses } when logged in
+    let gameResultCounted = false; // ensures stats are counted once per game
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        const ref = database.ref('users/' + user.uid);
+        const snap = await ref.once('value');
+        let profile = snap.val();
+        if (!profile || !profile.username) {
+          // Fallback: profile write failed during registration — rebuild a minimal one
+          const lower = (user.email || 'player').split('@')[0];
+          profile = { username: lower, usernameLower: lower, wins: 0, losses: 0, createdAt: Date.now() };
+          await ref.set(profile);
+        }
+        currentAccount = { uid: user.uid, username: profile.username, wins: profile.wins || 0, losses: profile.losses || 0, anilist: profile.anilist || null };
+        playerName = currentAccount.username;
+        const btn = document.getElementById('usernameBtn');
+        if (btn) btn.textContent = '👤 ' + playerName;
+        // If already inside a room, update the displayed name there too
+        if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
+          database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName);
+        }
+        // If sitting on the host screen when logging in, load the synced AniList account
+        const hostScreen = document.getElementById('hostRoomScreen');
+        if (hostScreen && hostScreen.classList.contains('active')) autoSyncHostAccount();
+      } else {
+        currentAccount = null;
+        const btn = document.getElementById('usernameBtn');
+        if (btn) btn.textContent = '👤 ' + playerName;
+      }
+    });
+
+    function onUserButton() {
+      if (firebase.auth().currentUser) openAuthModal(); else changeUsername();
+    }
+
+    async function openAuthModal() {
+      const user = firebase.auth().currentUser;
+      document.getElementById('authFormView').style.display = user ? 'none' : 'block';
+      document.getElementById('authProfileView').style.display = user ? 'block' : 'none';
+      if (user) {
+        const snap = await database.ref('users/' + user.uid).once('value');
+        const p = snap.val() || {};
+        document.getElementById('profileName').textContent = p.username || 'Account';
+        document.getElementById('profileWins').textContent = p.wins || 0;
+        document.getElementById('profileLosses').textContent = p.losses || 0;
+        document.getElementById('anilistSyncInput').value = p.anilist || '';
+        document.getElementById('profileUsernameInput').value = '';
+        document.getElementById('currentPasswordInput').value = '';
+        document.getElementById('newPasswordInput').value = '';
+        if (currentAccount) currentAccount.anilist = p.anilist || null;
+      } else {
+        showAuthError('');
+      }
+      document.getElementById('authModal').classList.add('show');
+    }
+
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); showAuthError(''); }
+    function showAuthError(msg) { const el = document.getElementById('authError'); if (el) el.textContent = msg || ''; }
+    function authBusy(busy) { ['authLoginBtn', 'authRegisterBtn'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = busy; }); }
+
+    function validateAuthForm(username, password) {
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return 'Username: 3-20 characters, letters, numbers and _ only.';
+      if (!password || password.length < 6) return 'Password must be at least 6 characters.';
+      return null;
+    }
+
+    function friendlyAuthError(e) {
+      const code = (e && e.code) || '';
+      if (code === 'auth/email-already-in-use') return 'This username is already taken.';
+      if (code === 'auth/weak-password') return 'Password is too weak (min 6 characters).';
+      if (code === 'auth/wrong-password' || code === 'auth/user-not-found' || code === 'auth/invalid-credential' || code === 'auth/invalid-login-credentials') return 'Wrong username or password.';
+      if (code === 'auth/too-many-requests') return 'Too many attempts. Please wait and retry.';
+      if (code === 'auth/network-request-failed') return 'Network error. Check your connection.';
+      if (code === 'auth/operation-not-allowed') return 'Accounts not enabled yet: enable "Email/Password" in Firebase console (Authentication → Sign-in method).';
+      return 'Error: ' + ((e && e.message) || 'unknown');
+    }
+
+    async function registerAccount() {
+      const usernameRaw = document.getElementById('authUsernameInput').value.trim();
+      const password = document.getElementById('authPasswordInput').value;
+      const err = validateAuthForm(usernameRaw, password);
+      if (err) { showAuthError(err); return; }
+      const lower = usernameRaw.toLowerCase();
+      authBusy(true);
+      try {
+        // Cheap availability pre-check (the transaction below enforces it for real)
+        const taken = await database.ref('usernames/' + lower).once('value');
+        if (taken.exists()) { showAuthError('This username is already taken.'); authBusy(false); return; }
+        const cred = await firebase.auth().createUserWithEmailAndPassword(lower + AUTH_EMAIL_SUFFIX, password);
+        // Claim the username — transaction makes it race-safe.
+        // The entry records the uid plus the ORIGINAL login name (authLower),
+        // so later renames don't change how the player logs in.
+        const claim = await database.ref('usernames/' + lower).transaction(cur => (cur === null ? { uid: cred.user.uid, authLower: lower } : undefined));
+        if (!claim.committed) {
+          try { await cred.user.delete(); } catch (e) {}
+          showAuthError('This username is already taken.');
+          authBusy(false); return;
+        }
+        await database.ref('users/' + cred.user.uid).set({ username: usernameRaw, usernameLower: lower, wins: 0, losses: 0, createdAt: Date.now() });
+        currentAccount = { uid: cred.user.uid, username: usernameRaw, wins: 0, losses: 0 };
+        playerName = usernameRaw;
+        document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
+        closeAuthModal();
+        showNotification('Account created! Welcome, ' + usernameRaw + '!');
+      } catch (e) { showAuthError(friendlyAuthError(e)); }
+      authBusy(false);
+    }
+
+    async function loginAccount() {
+      const usernameRaw = document.getElementById('authUsernameInput').value.trim();
+      const password = document.getElementById('authPasswordInput').value;
+      const err = validateAuthForm(usernameRaw, password);
+      if (err) { showAuthError(err); return; }
+      authBusy(true);
+      try {
+        const lower = usernameRaw.toLowerCase();
+        // The registry tells us which original login name (auth email) this display name maps to
+        const entrySnap = await database.ref('usernames/' + lower).once('value');
+        const entry = entrySnap.val();
+        if (!entry) { showAuthError('Wrong username or password.'); authBusy(false); return; }
+        // New format: { uid, authLower } — legacy format: plain uid string (key == login name)
+        const authLower = (typeof entry === 'object' && entry && entry.authLower) ? entry.authLower : lower;
+        await firebase.auth().signInWithEmailAndPassword(authLower + AUTH_EMAIL_SUFFIX, password);
+        closeAuthModal();
+        showNotification('Logged in as ' + (currentAccount ? currentAccount.username : usernameRaw) + '!');
+      } catch (e) { showAuthError(friendlyAuthError(e)); }
+      authBusy(false);
+    }
+
+    async function logoutAccount() {
+      try { await firebase.auth().signOut(); } catch (e) {}
+      anilistAutoSyncDone = false;
+      closeAuthModal();
+      showNotification('Logged out.');
+    }
+
+    // ===== PROFILE MENU ACTIONS =====
+
+    // Change display username. The LOGIN stays attached to the original name
+    // internally (auth email never changes → no verification-email problem):
+    // the /usernames registry maps display name → original login name.
+    async function changeAccountUsername() {
+      const user = firebase.auth().currentUser;
+      if (!user || !currentAccount) return;
+      const btn = document.getElementById('profileUsernameBtn');
+      const newName = document.getElementById('profileUsernameInput').value.trim();
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(newName)) { showNotification('Username: 3-20 characters, letters, numbers and _ only.'); return; }
+      const lower = newName.toLowerCase();
+      const authLower = (user.email || '').split('@')[0]; // original login name, never changes
+      const oldLower = currentAccount.username.toLowerCase();
+      btn.disabled = true;
+      try {
+        if (lower !== oldLower) {
+          const takenSnap = await database.ref('usernames/' + lower).once('value');
+          const tv = takenSnap.val();
+          const takenByOther = tv && !((typeof tv === 'object' && tv.uid === user.uid) || tv === user.uid);
+          if (takenByOther) { showNotification('This username is already taken.'); btn.disabled = false; return; }
+          const claim = await database.ref('usernames/' + lower).transaction(cur => (cur === null ? { uid: user.uid, authLower: authLower } : undefined));
+          if (!claim.committed) { showNotification('This username is already taken.'); btn.disabled = false; return; }
+          await database.ref('users/' + user.uid).update({ username: newName, usernameLower: lower });
+          try { await database.ref('usernames/' + oldLower).remove(); } catch (e) {} // release old name
+        } else {
+          await database.ref('users/' + user.uid).update({ username: newName }); // case-only change
+        }
+        currentAccount.username = newName;
+        playerName = newName;
+        document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
+        document.getElementById('profileName').textContent = newName;
+        document.getElementById('profileUsernameInput').value = '';
+        if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
+          database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName);
+        }
+        showNotification('Username changed to: ' + newName);
+      } catch (e) { showNotification('Error: ' + e.message); }
+      btn.disabled = false;
+    }
+
+    // Change password — Firebase requires a recent login, so re-authenticate first
+    async function changeAccountPassword() {
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+      const btn = document.getElementById('profilePasswordBtn');
+      const current = document.getElementById('currentPasswordInput').value;
+      const next = document.getElementById('newPasswordInput').value;
+      if (!current) { showNotification('Enter your current password.'); return; }
+      if (!next || next.length < 6) { showNotification('New password must be at least 6 characters.'); return; }
+      btn.disabled = true;
+      try {
+        const cred = firebase.auth.EmailAuthProvider.credential(user.email, current);
+        await user.reauthenticateWithCredential(cred);
+        await user.updatePassword(next);
+        document.getElementById('currentPasswordInput').value = '';
+        document.getElementById('newPasswordInput').value = '';
+        showNotification('Password updated!');
+      } catch (e) {
+        const code = (e && e.code) || '';
+        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') showNotification('Current password is incorrect.');
+        else showNotification(friendlyAuthError(e));
+      }
+      btn.disabled = false;
+    }
+
+    // Lightweight AniList check (user exists + enough favorites) without full download
+    async function checkAniListUser(username) {
+      const query = 'query ($username: String) { User(name: $username) { name favourites { characters(page: 1, perPage: 1) { pageInfo { total } } } } }';
+      const response = await fetch(ANILIST_API, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ query, variables: { username } })
+      });
+      const data = await response.json();
+      if (data.errors) throw new Error(data.errors[0].message);
+      if (!data.data || !data.data.User) return null;
+      return { name: data.data.User.name, total: (data.data.User.favourites.characters.pageInfo.total || 0) };
+    }
+
+    async function saveAnilistSync() {
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+      const btn = document.getElementById('anilistSaveBtn');
+      const raw = document.getElementById('anilistSyncInput').value.trim();
+      btn.disabled = true;
+      try {
+        if (!raw) {
+          // Empty field = remove the sync
+          if (currentAccount && currentAccount.anilist) {
+            await database.ref('users/' + user.uid + '/anilist').remove();
+            currentAccount.anilist = null; anilistAutoSyncDone = false;
+            showNotification('AniList sync removed.');
+          } else { showNotification('Enter your AniList username.'); }
+          btn.disabled = false; return;
+        }
+        const info = await checkAniListUser(raw);
+        if (!info) { showNotification('AniList user not found: ' + raw); btn.disabled = false; return; }
+        if (info.total < 6) { showNotification(info.name + ' has only ' + info.total + ' favorites. Need at least 6.'); btn.disabled = false; return; }
+        await database.ref('users/' + user.uid + '/anilist').set(info.name);
+        if (currentAccount) currentAccount.anilist = info.name;
+        anilistAutoSyncDone = false; // allow auto-load next time you host
+        document.getElementById('anilistSyncInput').value = info.name;
+        showNotification('AniList account synced: ' + info.name);
+      } catch (e) { showNotification('Error checking AniList: ' + e.message); }
+      btn.disabled = false;
+    }
+
+    // Auto-load the synced AniList account when the host screen opens
+    let anilistAutoSyncDone = false;
+    async function autoSyncHostAccount() {
+      if (anilistAutoSyncDone) return;
+      if (!currentAccount || !currentAccount.anilist) return;
+      const name = currentAccount.anilist;
+      if (hostAccounts.find(a => a.username.toLowerCase() === name.toLowerCase())) { anilistAutoSyncDone = true; return; }
+      anilistAutoSyncDone = true;
+      try {
+        showNotification('Loading synced AniList account (' + name + ')...');
+        const userData = await fetchAniListFavorites(name);
+        const favs = userData.characters;
+        if (favs.length < 6) { showNotification(name + ' has only ' + favs.length + ' favorites. Need at least 6.'); return; }
+        const mappedChars = favs.map(char => {
+          const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
+          return {
+            id: char.id,
+            name: char.name ? char.name.full : 'Unknown',
+            image: char.image ? char.image.large : '',
+            series: media.title ? media.title.romaji : 'Unknown',
+            gender: (char.gender || 'Unknown').toLowerCase(),
+            mediaType: (media.type || 'ANIME').toLowerCase()
+          };
+        });
+        hostAccounts.push({ username: name, characters: mappedChars, count: mappedChars.length });
+        renderHostAccounts();
+      } catch (e) { showNotification('Could not load synced AniList: ' + e.message); }
+    }
+
+    // Count the player's own result once per finished game (logged-in players only).
+    function recordGameResult(won) {
+      const user = firebase.auth().currentUser;
+      if (!user) return; // guests: no stats
+      database.ref('users/' + user.uid + '/' + (won ? 'wins' : 'losses')).transaction(v => (v || 0) + 1);
+    }
 
     const ANILIST_API = 'https://graphql.anilist.co';
 
@@ -759,7 +1110,7 @@
     }
     function showPlayMenu() { showScreen('playMenuScreen'); }
     function showGamesMenu() { showScreen('gamesMenuScreen'); }
-    function showHostRoom() { showScreen('hostRoomScreen'); renderHostAccounts(); }
+    function showHostRoom() { showScreen('hostRoomScreen'); renderHostAccounts(); autoSyncHostAccount(); }
     function showJoinRoom() { showScreen('joinRoomScreen'); }
 
     function generateRoomCode() { return Math.random().toString(36).substr(2, 4).toUpperCase(); }
@@ -790,7 +1141,7 @@
       list.innerHTML = '';
       hostAccounts.forEach((acc, idx) => {
         const item = document.createElement('div'); item.className = 'account-item';
-        item.innerHTML = `<div><span class="name">${acc.username}</span><span class="count">(${acc.count} favorites)</span></div><button class="small danger" onclick="removeHostAccount(${idx})">Remove</button>`;
+        item.innerHTML = `<div><span class="name">${escapeHtml(String(acc.username || ''))}</span><span class="count">(${parseInt(acc.count) || 0} favorites)</span></div><button class="small danger" onclick="removeHostAccount(${idx})">Remove</button>`;
         list.appendChild(item);
       });
       updateHostDist();
@@ -908,6 +1259,7 @@
           document.getElementById('lobbySettingsIcon').style.display = isHost ? 'block' : 'none';
         }
         updateLobby();
+        if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
         if (currentRoom.state === 'selection' && !document.getElementById('selectionScreen').classList.contains('active')) { showCharacterSelection(); }
         if (currentRoom.state === 'playing' && !document.getElementById('gameScreen').classList.contains('active')) { startGame(); }
@@ -939,7 +1291,7 @@
         const card = document.createElement('div'); card.className = 'player-card';
         if (player.ready) card.classList.add('ready');
         if (player.isHost) card.classList.add('host');
-        card.innerHTML = `<div class="player-info"><div class="name">${player.isHost ? '<span class="host-badge">👑 HOST</span>' : ''}${player.name}</div><div class="status">${player.id === playerId ? '(You)' : ''}</div></div>${player.ready ? '<div class="ready-badge">✓ Ready</div>' : ''}`;
+        card.innerHTML = `<div class="player-info"><div class="name">${player.isHost ? '<span class="host-badge">👑 HOST</span>' : ''}${escapeHtml(String(player.name || ''))}</div><div class="status">${player.id === playerId ? '(You)' : ''}</div></div>${player.ready ? '<div class="ready-badge">✓ Ready</div>' : ''}`;
         const rightWrap = document.createElement('div');
         rightWrap.className = 'player-card-right';
         if (card.lastElementChild && card.lastElementChild.classList.contains('ready-badge')) rightWrap.appendChild(card.lastElementChild);
@@ -1070,7 +1422,7 @@
       if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
       const msgDiv = document.createElement('div');
       msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
-      msgDiv.innerHTML = `<div class="sender">${msg.senderName}</div><div class="text">${escapeHtml(msg.text)}</div>`;
+      msgDiv.innerHTML = `<div class="sender">${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
       container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
     }
     function displayGameChatMessage(msg) {
@@ -1078,11 +1430,32 @@
       if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
       const msgDiv = document.createElement('div');
       msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
-      msgDiv.innerHTML = `<div class="sender">${msg.senderName}</div><div class="text">${escapeHtml(msg.text)}</div>`;
+      msgDiv.innerHTML = `<div class="sender">${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
       container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
     }
 
+    // ===== STALE ROOM JANITOR =====
+    // Runs once per page load: removes rooms abandoned by everyone.
+    // Live rooms idle > 1h are already closed by the in-room watcher; this is
+    // the backstop for rooms where nobody is connected (crashed/closed tabs).
+    async function cleanupStaleRooms() {
+      try {
+        const snap = await database.ref('rooms').once('value');
+        const rooms = snap.val() || {};
+        const now = Date.now();
+        const STALE_MS = 2 * 60 * 60 * 1000; // 2 hours (conservative backstop)
+        Object.entries(rooms).forEach(([code, room]) => {
+          const players = (room && room.players) || {};
+          const last = (room && (room.lastActivity || room.createdAt)) || 0;
+          if (Object.keys(players).length === 0 || !last || now - last > STALE_MS) {
+            database.ref('rooms/' + code).remove();
+          }
+        });
+      } catch (e) { console.error('Room cleanup failed:', e); }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      cleanupStaleRooms();
       document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
       const chatInput = document.getElementById('chatInput');
       if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
@@ -1125,7 +1498,13 @@
       const list = document.getElementById('modalAccountsList'); list.innerHTML = '';
       Object.entries(currentRoom ? (currentRoom.accounts || {}) : {}).forEach(([username, data]) => {
         const item = document.createElement('div'); item.className = 'account-item';
-        item.innerHTML = `<div><span class="name">${username}</span><span class="count">(${data.count || 0} favorites)</span></div><button class="small danger" onclick="removeModalAccount('${username}')">Remove</button>`;
+        const info = document.createElement('div');
+        const nameSpan = document.createElement('span'); nameSpan.className = 'name'; nameSpan.textContent = String(username || '');
+        const countSpan = document.createElement('span'); countSpan.className = 'count'; countSpan.textContent = '(' + (parseInt(data.count) || 0) + ' favorites)';
+        info.appendChild(nameSpan); info.appendChild(countSpan);
+        const removeBtn = document.createElement('button'); removeBtn.className = 'small danger'; removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => removeModalAccount(username));
+        item.appendChild(info); item.appendChild(removeBtn);
         list.appendChild(item);
       });
       updateModalDist();
@@ -1401,7 +1780,7 @@
       list.innerHTML = '';
       [...history].reverse().forEach(item => {
         const div = document.createElement('div'); div.className = 'history-item';
-        div.innerHTML = `<div class="question">Q: ${escapeHtml(item.question)}</div><div class="answer ${item.answer ? item.answer.toLowerCase() : ''}">${item.answer || ''}</div><div class="asker">Asked by: ${item.askedBy || ''}</div>`;
+        div.innerHTML = `<div class="question">Q: ${escapeHtml(String(item.question || ''))}</div><div class="answer ${item.answer ? String(item.answer).toLowerCase() : ''}">${escapeHtml(String(item.answer || ''))}</div><div class="asker">Asked by: ${escapeHtml(String(item.askedBy || ''))}</div>`;
         list.appendChild(div);
       });
       list.scrollTop = 0;
@@ -1455,6 +1834,8 @@
       if (!currentRoom) return;
       if (currentRoom.state === 'playing') { renderBoard(); updateTurnIndicator(); updateQuestionBox(); updateHistory(); }
       if (currentRoom.state === 'finished') {
+        // Count the result once per finished game (logged-in players only)
+        if (!gameResultCounted && currentRoom.winner) { gameResultCounted = true; recordGameResult(currentRoom.winner === playerId); }
         // Ensure characters loaded for winning screen
         if (!characters || characters.length === 0) {
           characters = currentRoom.characters || [];
@@ -1638,5 +2019,5 @@
       if (roomCode && playerId) { database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); }
     });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a29948ab0952e218',t:'MTc4NjQ3MjczNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a29a3288cf269822',t:'MTc4NjQ4MjMxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a29fa0b55a196dcc',t:'MTc4NjUzOTI1Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
