@@ -1504,7 +1504,9 @@
       } catch (e) { console.error('Could not load custom pairs:', e); }
       const seen = new Set();
       const all = [];
-      builtIn.concat(custom).forEach(p => {
+      // Custom pairs first: if one of your pairs has the same two words as a
+      // built-in, YOUR version wins (lets you upgrade a built-in via the manager)
+      custom.concat(builtIn).forEach(p => {
         const key = [p.a.toLowerCase(), p.b.toLowerCase()].sort().join('|');
         if (!seen.has(key)) { seen.add(key); all.push(p); }
       });

@@ -154,3 +154,38 @@ const UNDERCOVER_PAIRS = [
   ["Frieren", "Delicious in Dungeon", "s"],
   ["Dr. Stone", "Cells at Work", "s"],
 ];
+
+// ============================================================
+// YOUR CUSTOM PAIRS (your list, added 2026-08-12)
+// Official AniList names + pictures attached automatically.
+// imgA/imgB = picture shown in-game (null = no picture available).
+// Edit freely: change names, remove lines, add new ones.
+// ============================================================
+UNDERCOVER_PAIRS.push(
+  { a: "Zuko", b: "Shouto Todoroki", type: "c", imgA: null, imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b89220-KNBwaVFAR8FD.png" }, // Zuko (Avatar — not on AniList, no img)
+  { a: "Yoshikage Kira", b: "Light Yagami", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b12055-eCEkIVV4qoCu.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b80-26EhwSsSqQ50.png" }, // Yoshikage Kira / Light Yagami
+  { a: "Benimaru Shinmon", b: "Genryuusai Yamamoto", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b130848-AuuIm6GR8ody.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b5726-mO7kc8Abka9J.jpg" }, // Benimaru / Yamamoto
+  { a: "Kurapika", b: "Sasuke Uchiha", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b28-ivA7UGnfE40a.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b13-SISLEw1oAD7a.png" }, // Kurapika / Sasuke
+  { a: "Yuuji Itadori", b: "Sukuna", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b127212-FVm2tD0erQ5B.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b133701-rCQuDpHr3UZL.png" }, // Yuji / Sukuna
+  { a: "Beam", b: "Kisame Hoshigaki", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b157232-5GuWeqoFN9Kq.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/2672-oxbHx8n3N7WY.jpg" }, // Beam / Kisame
+  { a: "Shanks", b: "Gildarts Clive", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b727-wUJx7M1z5xON.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b29502-znlVXVdXEQqg.png" }, // Shanks / Gildarts
+  { a: "Kakashi Hatake", b: "Satoru Gojou", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b85-mkVBh2yjxjmx.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b127691-9zqh1xpIubn7.png" }, // Kakashi / Gojo
+  { a: "Subaru Natsuki", b: "Rintarou Okabe", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b88573-F8yMTK9GhnTA.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b35252-DY9TW6pusqeh.png" }, // Subaru / Okabe
+  { a: "Puck", b: "Happy", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b90187-xJXlD84KXl3t.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b5188-1jTaic3aJ7Ds.jpg" }, // Puck (Re:Zero) / Happy
+  { a: "Miyako Shikimori", b: "Akane Kurokawa", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b155702-S8irhsg4QTPf.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b203384-YuSppFDMw2wn.png" }, // Shikimori / Akane
+  { a: "Iori Kitahara", b: "Kiyoshi Fujino", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b123182-tuQ2yf5IEx02.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b46557-fJ8Va6GtynPM.jpg" }, // Kitahara / Kiyoshi Fujino
+  { a: "Ryou Yamada", b: "Mio Akiyama", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b264529-BvEusZnJLD2Y.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b19566-XKsMgf370b4m.png" }, // Ryo Yamada / Mio Akiyama
+  { a: "Mai Sakurajima", b: "Marin Kitagawa", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b127222-Jh5hhP7vZ7s1.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b133676-kV2czE3C8Qls.png" }, // Mai / Marin
+  { a: "Obito Uchiha", b: "Dabi", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b3149-j6cl8A9yup51.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b126378-RFSljq5koy5U.png" }, // Obito / Dabi
+  { a: "Beerus", b: "Champa", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b76348-pGWrznfxgPIV.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/127220-yWeW7rlEJP4V.jpg" }, // Beerus / Champa
+  { a: "Fern", b: "Coco", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b183965-uGFohBjlFoTp.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b129840-B2CVE0TIcKpT.png" }, // Fern / Coco
+  { a: "Erza Scarlet", b: "Eris Boreas Greyrat", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b5189-GR1xdok9SFsN.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b88349-5dsNUah3oBj8.png" }, // Erza / Eris
+  { a: "Kiyotaka Ayanokouji", b: "Yuuichi Katagiri", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b123212-ewZgUQr9vvEM.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b122064-p5x9pgsdjj4W.jpg" }, // Ayanokoji / Yuichi
+  { a: "Vanessa Enoteca", b: "Kana Arima", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b124436-dES6CtprlZNy.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b188783-77orwP7vNuNg.png" }, // Vanessa / Kana
+  { a: "Itachi Uchiha", b: "Madara Uchiha", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b14-9Kb1E5oel1ke.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b53901-HnRKSoHMG5Vg.png" }, // Itachi / Madara
+  { a: "Muzan Kibutsuji", b: "Imu", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b129132-4nIZakUZ1o8W.jpg", imgB: null }, // Muzan / Imu (no img on AniList)
+  { a: "Guy Might", b: "Touji Fushiguro", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b307-xieUEdhdTVwQ.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b162722-btzdghBizxKS.jpg" }, // Gai Maito / Toji
+  { a: "Cell", b: "Meruem", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/3908.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b23277-EYmIxzL64Mji.png" }, // Cell / Meruem
+  { a: "Arataka Reigen", b: "Kamina", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b89334-OPj1hCzvrt7X.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b2075-sWb5Xz76JWdX.png" }, // Reigen / Kamina
+  { a: "Vegeto", b: "Gogeta", type: "c", imgA: null, imgB: null }, // Vegeto / Gogeta (no img on AniList)
+);
