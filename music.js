@@ -15,13 +15,13 @@
    ============================================================ */
 
 const MUSIC_PLAYLIST = [
-  'music/track-01.mp3',   // ← replace with your real file names
-  'music/track-02.mp3',
-  'music/track-03.mp3',
+  'Anohana - Opening.mp3',   // ← replace with your real file names
+  'Bunny Girl Senpai - Ending 1.mp3',
+  'Chainsaw Man - Ending 9.mp3',
 ];
 
 // Optional settings:
-const MUSIC_SHUFFLE = false;        // false = plays your list in order (loops), true = random order
+const MUSIC_SHUFFLE = true;        // false = plays your list in order (loops), true = random order
 const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (after that, the player's choice is remembered)
 
 /* ============================================================
