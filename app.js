@@ -387,6 +387,7 @@
     let guessMode = false;
     let guessingCharacter = null;
     let roomVisibility = 'private';
+    let hostSource = 'generic'; // character pool for the next room: 'generic' | 'favorites' | 'mix'
     let codeBlurred = false;
     let myCharacterHidden = false;
 
@@ -432,6 +433,15 @@
       codeBlurred = !codeBlurred;
       const codeEl = document.getElementById('displayRoomCode');
       if (codeBlurred) codeEl.classList.add('blurred'); else codeEl.classList.remove('blurred');
+    }
+
+    function selectHostSource(type) {
+      hostSource = type;
+      const map = { favorites: 'hostSrcFavorites', generic: 'hostSrcGeneric', mix: 'hostSrcMix' };
+      Object.values(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('selected', id === map[type]);
+      });
     }
 
     function selectVisibility(type) {
@@ -507,7 +517,7 @@
     }
 
     async function createGameRoom() {
-      if (hostAccounts.length === 0) { showNotification('Add at least one AniList account!'); return; }
+      if (hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Add an AniList account below, or switch the character pool to 🎴 Generic!'); return; }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
       const distribution = parseInt(document.getElementById('hostDistSlider').value);
@@ -516,7 +526,7 @@
           host: playerId, game: 'guesswho', visibility: roomVisibility,
           players: { [playerId]: { id: playerId, ready: false, name: playerName, isHost: true } },
           accounts: hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {}),
-          settings: { characterCount: charCount, distribution: distribution },
+          settings: { characterCount: charCount, distribution: distribution, source: hostSource },
           state: 'lobby', chat: {}, createdAt: Date.now(), lastActivity: Date.now()
         });
         setupRoomListener(); setupChatListener(); setupPlayerCleanup();
@@ -786,10 +796,38 @@
         document.getElementById('modalPrivate').classList.remove('selected');
       }
       renderModalAccounts();
+      syncSourceUI();
       document.getElementById('settingsModal').classList.add('show');
     }
 
     function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
+
+    // Character pool source: 'generic' | 'favorites' | 'mix' (stored in room settings)
+    function currentSource() {
+      const settings = currentRoom ? currentRoom.settings : null;
+      if (settings && settings.source) return settings.source;
+      const accountCount = currentRoom ? Object.keys(currentRoom.accounts || {}).length : 0;
+      return accountCount > 0 ? 'favorites' : 'generic'; // default for older rooms
+    }
+
+    function syncSourceUI() {
+      const src = currentSource();
+      const map = { favorites: 'modalSrcFavorites', generic: 'modalSrcGeneric', mix: 'modalSrcMix' };
+      Object.values(map).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('selected', id === map[src]);
+      });
+    }
+
+    async function changeSource(type) {
+      if (!isHost || !currentRoom) return;
+      if (type !== 'generic' && Object.keys(currentRoom.accounts || {}).length === 0) {
+        showNotification('No AniList account in this room — it will use the generic pool.');
+      }
+      await database.ref('rooms/' + roomCode + '/settings/source').set(type);
+      touchActivity();
+      syncSourceUI();
+    }
 
     async function changeVisibility(type) {
       document.querySelectorAll('#modalPrivate, #modalPublic').forEach(opt => opt.classList.remove('selected'));
@@ -885,24 +923,50 @@
 
     async function generateCharacterPool(extraUpdates = {}) {
       const accountData = currentRoom ? Object.values(currentRoom.accounts || {}) : [];
-      if (accountData.length === 0) { showNotification('No accounts configured'); return; }
       const settings = currentRoom ? currentRoom.settings : { characterCount: 24, distribution: 12 };
       const totalChars = settings.characterCount || 24;
+      const source = (settings && settings.source) || (accountData.length > 0 ? 'favorites' : 'generic');
+      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+
       let allChars = [];
       accountData.forEach(acc => allChars.push(...(acc.characters || [])));
-      let selectedChars = [];
+
       const seenIds = new Set();
-      if (accountData.length === 1) {
-        const uniqueChars = allChars.filter(c => { if (seenIds.has(c.id)) return false; seenIds.add(c.id); return true; });
-        selectedChars = shuffleArray(uniqueChars).slice(0, totalChars);
+      const pickUnique = (list, n) => {
+        const pool = shuffleArray(list.filter(c => c && c.id != null && !seenIds.has(c.id)));
+        const chosen = pool.slice(0, n);
+        chosen.forEach(c => seenIds.add(c.id));
+        return chosen;
+      };
+
+      let selectedChars = [];
+      if (source === 'favorites' && accountData.length > 0) {
+        if (accountData.length === 1) {
+          selectedChars = pickUnique(allChars, totalChars);
+        } else {
+          const count1 = settings.distribution || Math.floor(totalChars / 2);
+          const count2 = totalChars - count1;
+          const chars1 = pickUnique(shuffleArray((accountData[0].characters || []).slice()), count1);
+          const chars2 = pickUnique(shuffleArray((accountData[1].characters || []).slice()), count2);
+          selectedChars = shuffleArray([...chars1, ...chars2]);
+        }
+      } else if (source === 'mix' && accountData.length > 0) {
+        // Half generic, half favorites (deduped by AniList id); if one side
+        // runs short, the other fills in so the board stays full.
+        const fromGeneric = pickUnique(generic.slice(), Math.ceil(totalChars / 2));
+        const fromFavs = pickUnique(allChars, totalChars - fromGeneric.length);
+        selectedChars = shuffleArray([...fromGeneric, ...fromFavs]);
+        if (selectedChars.length < totalChars) {
+          selectedChars = shuffleArray([...selectedChars, ...pickUnique(generic.slice(), totalChars - selectedChars.length)]);
+        }
       } else {
-        const count1 = settings.distribution || Math.floor(totalChars / 2);
-        const count2 = totalChars - count1;
-        const chars1 = shuffleArray(accountData[0].characters || []).slice(0, count1);
-        const chars2 = shuffleArray(accountData[1].characters || []).slice(0, count2);
-        const combined = [...chars1, ...chars2];
-        selectedChars = shuffleArray(combined.filter(c => { if (seenIds.has(c.id)) return false; seenIds.add(c.id); return true; }));
+        // 'generic', or any source with no AniList accounts configured
+        if (source !== 'generic') showNotification('No AniList accounts in this room — using the generic pool.');
+        selectedChars = pickUnique(generic.slice(), totalChars);
       }
+
+      if (!selectedChars || selectedChars.length < 6) { showNotification('Not enough characters available to start.'); return; }
+
       await database.ref('rooms/' + roomCode).update({
         state: 'selection',
         characters: selectedChars,

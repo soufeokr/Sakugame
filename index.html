@@ -127,6 +127,14 @@
           </div>
         </div>
         <div class="input-group">
+          <label>Character Pool</label>
+          <div class="radio-group">
+            <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div>🎴 Generic</div><small style="color: var(--muted);">250 famous characters — no AniList needed</small></label>
+            <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div>⭐ Favorites</div><small style="color: var(--muted);">AniList accounts below</small></label>
+            <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div>🎲 Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
+          </div>
+        </div>
+        <div class="input-group">
           <label>AniList Accounts</label>
           <div id="hostAccountsList"></div>
           <div class="add-account-form">
@@ -292,6 +300,14 @@
           </div>
         </div>
         <div class="input-group">
+          <label>Character Pool</label>
+          <div class="radio-group">
+            <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div>🎴 Generic</div></label>
+            <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div>⭐ Favorites</div></label>
+            <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div>🎲 Mix</div></label>
+          </div>
+        </div>
+        <div class="input-group">
           <label>AniList Accounts</label>
           <div id="modalAccountsList"></div>
           <div class="add-account-form">
@@ -326,6 +342,8 @@
       </div>
       <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
       <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();">🔑 Log in / Create account</button>
+      <h4 class="profile-section-title">🎵 Music Volume</h4>
+      <input type="range" class="music-volume-slider" min="0" max="100" value="50">
     </div>
   </div>
 
@@ -358,6 +376,9 @@
           <div class="stat-box"><strong id="profileWins">0</strong>🏆 Wins</div>
           <div class="stat-box"><strong id="profileLosses">0</strong>💀 Losses</div>
         </div>
+
+        <h4 class="profile-section-title">🎵 Music Volume</h4>
+        <input type="range" class="music-volume-slider" min="0" max="100" value="50">
 
         <h4 class="profile-section-title">🎬 AniList Account</h4>
         <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 8px;">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</p>
@@ -403,7 +424,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  
+
+  <script src="characters.js"></script>
+  <script src="music.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
