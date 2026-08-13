@@ -445,7 +445,11 @@
     .question-form { flex-direction: column; gap: 8px; margin-bottom: 6px; }
     .board-section { padding: 12px; }
     .board-section h3 { font-size: 0.95rem; margin-bottom: 10px; }
-    .board { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .board { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; margin-bottom: 10px; }
+    .card { border-width: 2px; border-radius: 9px; }
+    .card-info { padding: 4px 3px; }
+    .card-name { font-size: 0.66rem; }
+    .card.eliminated::after { font-size: 2rem; }
     .game-controls { flex-direction: column; gap: 8px; }
     .game-controls button { width: 100%; }
     .game-chat { height: 300px; }

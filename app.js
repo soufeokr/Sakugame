@@ -744,7 +744,11 @@
         if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
         if (isUcRoom) {
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
-            if (!document.getElementById('undercoverScreen').classList.contains('active')) showScreen('undercoverScreen');
+            // Players who chose "Return to Lobby" mid-game are NOT dragged back
+            // into the game screen — they spectate from the lobby until "Play Again".
+            const meIn = (currentRoom.players || {})[playerId] || {};
+            const spectating = !!(currentRoom.uc && meIn.outInGame && meIn.outInGame === currentRoom.uc.gameId);
+            if (!spectating && !document.getElementById('undercoverScreen').classList.contains('active')) showScreen('undercoverScreen');
             updateUndercover();
             if (isHost && currentRoom.state === 'playing') hostUndercoverWatchdog();
           }
@@ -1713,12 +1717,17 @@
     // {a, b, type, imgA?, imgB?} — returns a normalized pair or null.
     function normalizePair(entry) {
       const imgs = (typeof UNDERCOVER_IMAGES !== 'undefined') ? UNDERCOVER_IMAGES : {};
+      // Type-aware image lookup: "naruto|s" = the ANIME cover when the pair is
+      // about series, plain "naruto" = the character (they can share a name!)
+      const imgFor = (word, type) => (imgs[String(word).toLowerCase() + '|' + type] || imgs[String(word).toLowerCase()] || null);
       if (Array.isArray(entry)) {
         if (!entry[0] || !entry[1]) return null;
-        return { a: String(entry[0]), b: String(entry[1]), type: entry[2] === 's' ? 's' : 'c', imgA: imgs[String(entry[0]).toLowerCase()] || null, imgB: imgs[String(entry[1]).toLowerCase()] || null };
+        const t = entry[2] === 's' ? 's' : 'c';
+        return { a: String(entry[0]), b: String(entry[1]), type: t, imgA: imgFor(entry[0], t), imgB: imgFor(entry[1], t) };
       }
       if (entry && entry.a && entry.b) {
-        return { a: String(entry.a), b: String(entry.b), type: entry.type === 's' ? 's' : 'c', imgA: entry.imgA || imgs[String(entry.a).toLowerCase()] || null, imgB: entry.imgB || imgs[String(entry.b).toLowerCase()] || null };
+        const t = entry.type === 's' ? 's' : 'c';
+        return { a: String(entry.a), b: String(entry.b), type: t, imgA: entry.imgA || imgFor(entry.a, t), imgB: entry.imgB || imgFor(entry.b, t) };
       }
       return null;
     }
@@ -2000,9 +2009,9 @@
       if (currentRoom.state !== 'playing' || ['clues', 'voting', 'reveal'].indexOf(uc.phase) === -1) {
         showNotification('Words can only be changed during description/vote phases.'); return;
       }
-      showInteraction('🎲 Deal new words?', 'Everyone keeps the SAME role — only the word pair changes and the round restarts.', [
+      showInteraction('🎲 Shuffle words & roles?', 'Deals NEW words AND new roles (a new Undercover is picked among the still-playing players). The round restarts.', [
         { label: 'Cancel', onclick: () => {}, class: 'secondary' },
-        { label: '🎲 New words', class: 'warning', onclick: () => doUcWordReroll() }
+        { label: '🎲 Shuffle it!', class: 'warning', onclick: () => doUcWordReroll() }
       ]);
     }
 
@@ -2029,6 +2038,18 @@
         'uc/lastEvent': { kind: 'reroll' }
       };
       updates['uc/clueLog/r' + (uc.round || 1)] = null; // fresh history slice for the restarted round
+      // Roles are shuffled too: a NEW Undercover (and Mr. White if enabled)
+      // is picked among the players still alive; eliminated players stay out.
+      const playersNow = currentRoom.players || {};
+      const oldRoles = uc.roles || {};
+      const hadMw = Object.keys(oldRoles).some(pid => oldRoles[pid] === 'mrwhite');
+      const aliveNow = shuffleArray(ucAlivePids());
+      const newRoles = {};
+      Object.keys(playersNow).forEach(pid => { newRoles[pid] = oldRoles[pid] || 'civilian'; });
+      aliveNow.forEach(pid => { newRoles[pid] = 'civilian'; });
+      if (aliveNow.length >= 1) newRoles[aliveNow[0]] = 'undercover';
+      if (hadMw && aliveNow.length >= 3) newRoles[aliveNow[1]] = 'mrwhite';
+      updates['uc/roles'] = newRoles;
       try { await database.ref('rooms/' + roomCode).update(updates); } catch (e) { showNotification('Error: ' + e.message); }
       touchActivity();
     }
@@ -2043,10 +2064,26 @@
       }
     }
 
+    // Return to the lobby WITHOUT ending the game: the player is marked out for
+    // THIS game and waits in the lobby. The others keep playing. A fresh "Play
+    // Again" automatically brings them back into the action.
     async function returnToLobbyFromUndercover() {
-      showInteraction('Return to Lobby?', 'This will end the current game for everyone.', [
-        { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
-        { label: 'Return', onclick: () => { closeInteraction(); returnToLobby(); }, class: 'danger' }
+      const uc = (currentRoom && currentRoom.uc) || null;
+      const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && uc;
+      if (!inGame) { showScreen('lobbyScreen'); return; }
+      showInteraction('Return to Lobby?', 'The game continues for the others — you wait in the lobby until it ends.', [
+        { label: 'Stay in the game', onclick: () => { closeInteraction(); }, class: 'secondary' },
+        { label: 'To Lobby', onclick: async () => {
+          closeInteraction();
+          try {
+            const updates = {};
+            updates['rooms/' + roomCode + '/players/' + playerId + '/outInGame'] = uc.gameId || 1;
+            if (currentRoom.state === 'playing') updates['rooms/' + roomCode + '/uc/out/' + playerId] = true;
+            updates['rooms/' + roomCode + '/players/' + playerId + '/ready'] = false;
+            await database.ref().update(updates);
+          } catch (e) {}
+          showScreen('lobbyScreen');
+        }, class: 'danger' }
       ]);
     }
 
@@ -2086,7 +2123,7 @@
       if (ev.kind === 'limit') return '⏱️ Round limit reached — the impostor survived!';
       if (ev.kind === 'leave') return '🚪 Too many players left — the game cannot continue.';
       if (ev.kind === 'mwleave') return '⚪ Mr. White left the game — he is out! The game goes on!';
-      if (ev.kind === 'reroll') return '🎲 The host dealt a NEW pair of words — same roles, new clues!';
+      if (ev.kind === 'reroll') return '🎲 The host shuffled everything — NEW words AND NEW roles! Round restarts!';
       return '';
     }
 
@@ -2323,11 +2360,13 @@
       if (restarts[playerId]) screen.classList.remove('show');
       else screen.classList.add('show');
 
-      // Restart status & auto-launch (host side)
+      // Restart status & auto-launch (host side) — players spectating from the
+      // lobby are NOT required to click "Play Again"
       const statusEl = document.getElementById('ucRestartStatus');
       const btn = document.getElementById('ucRestartBtn');
-      const total = pids.length;
-      const clicked = pids.filter(pid => restarts[pid]).length;
+      const eligible = pids.filter(pid => !(players[pid] && players[pid].outInGame && players[pid].outInGame === uc.gameId));
+      const total = eligible.length;
+      const clicked = eligible.filter(pid => restarts[pid]).length;
       if (total > 0 && clicked >= total) {
         if (isHost) {
           if (statusEl) statusEl.textContent = 'Everyone is ready! Dealing new words…';
