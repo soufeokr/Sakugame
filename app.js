@@ -589,7 +589,7 @@
       document.getElementById('interactionWindow').classList.remove('show');
     }
     async function goHome() {
-      if (roomCode && roomRef) { await leaveRoom(true); }
+      if (roomCode) { await leaveRoom(true); } // leaveRoom also resets roomCode and shows the home screen
       showScreen('homepageScreen');
     }
     function showPlayMenu() { showScreen('playMenuScreen'); }
@@ -817,6 +817,12 @@
           actions.appendChild(crownBtn);
           actions.appendChild(kickBtn);
           rightWrap.appendChild(actions);
+          // Phones have no hover → tapping the card reveals the 👑/✕ buttons
+          card.addEventListener('click', () => {
+            const was = card.classList.contains('show-actions');
+            document.querySelectorAll('.player-card.show-actions').forEach(c => c.classList.remove('show-actions'));
+            if (!was) card.classList.add('show-actions');
+          });
         }
         card.appendChild(rightWrap);
         playersList.appendChild(card);
@@ -846,8 +852,12 @@
       ]);
       return;
     }
-      if (roomRef) { await database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); roomRef.off(); }
-      if (!silent) goHome();
+      if (roomRef) {
+        try { await database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); } catch (e) {}
+        roomRef.off(); roomRef = null;
+      }
+      roomCode = null; isHost = false; currentRoom = null;
+      showScreen('homepageScreen'); // leaving a room always brings you back home
     }
 
     // ===== ROOM ACTIVITY TRACKING (auto-close idle rooms) =====

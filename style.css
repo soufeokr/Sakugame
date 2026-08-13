@@ -387,6 +387,19 @@
   #bottomBar .username-change-btn { position: static; z-index: auto; margin-left: auto; box-shadow: none; padding: 8px 18px; font-size: 0.85rem; }
   #bottomBar .username-change-btn:hover { transform: none; }
 
+  /* Host admin buttons (👑 / ✕): hidden by default — they appear when the host
+     hovers the player card (PC) or taps it (phone, adds .show-actions) */
+  .player-card { position: relative; }
+  .player-admin-actions { display: none; }
+  .player-card:hover .player-admin-actions,
+  .player-card.show-actions .player-admin-actions { display: flex; }
+
+  /* No jumpy card hovers on touchscreens */
+  @media (hover: none) {
+    .card:hover:not(.eliminated):not(.guessing) { transform: none; }
+    .card.guessing:hover { transform: none; }
+  }
+
   /* ================================================================
      📱 PHONE OPTIMIZATION (screens up to 600px)
      Everything stacks vertically, nothing on screen is hidden,
@@ -408,17 +421,34 @@
     input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; }
     input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; }
 
-    /* ----- Guess Who board ----- */
-    .game-header { gap: 8px; }
-    .player-section h3 { font-size: 0.78rem; margin-bottom: 2px; }
-    .player-section .name { font-size: 0.95rem; }
+    /* ----- Guess Who: one clean column, action first ----- */
+    .game-left { order: 0; flex-direction: row; gap: 10px; }      /* mini secret card + history row */
+    .game-center { order: 1; gap: 10px; }                          /* header → question → board */
+    .game-right { order: 2; }                                      /* chat at the bottom */
+    .my-character { order: -1; padding: 10px; flex: 1; min-width: 118px; }
+    .my-character h3 { font-size: 0.85rem; margin-bottom: 6px; }
+    .my-character-card img { width: 72px; height: 96px; }
+    .my-character-card .info { padding: 6px; }
+    .my-character-card .name { font-size: 0.85rem; }
+    .history-section { padding: 10px; max-height: none; flex: 1.5; min-width: 150px; }
+    .history-section h3 { font-size: 0.85rem; margin-bottom: 6px; }
+    .history-list { max-height: 96px; font-size: 0.78rem; }
+    .game-header { padding: 10px 12px; gap: 8px; }
+    .player-section { min-width: 0; }
+    .player-section h3 { font-size: 0.72rem; margin-bottom: 2px; }
+    .player-section .name { font-size: 0.85rem; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .avatar-inline { width: 26px; height: 26px; }
-    .question-box { padding: 14px; }
-    .board { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
-    .my-character-card img { width: 96px; height: 128px; }
-    .history-list { max-height: 120px; font-size: 0.85rem; }
-    .game-chat { height: 320px; }
+    .turn-indicator { padding: 8px 12px; font-size: 0.78rem; }
+    .question-box { padding: 12px; }
+    .question-form { flex-direction: column; gap: 8px; margin-bottom: 6px; }
+    .board-section { padding: 12px; }
+    .board-section h3 { font-size: 0.95rem; margin-bottom: 10px; }
+    .board { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .game-controls { flex-direction: column; gap: 8px; }
+    .game-controls button { width: 100%; }
+    .game-chat { height: 300px; }
     .chat-messages { padding: 12px; }
+    .chat-input-area { padding: 10px; }
 
     /* ----- Undercover screen ----- */
     .uc-main { padding: 14px; }
