@@ -270,7 +270,13 @@
 
   @media (max-width: 1400px) {
     .game-container { grid-template-columns: 1fr; }
-    .game-left, .game-right { display: none; }
+    /* Side panels no longer disappear on small screens — they stack:
+       secret card + history side by side, board next, chat at the bottom */
+    .game-left { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+    .game-left > * { flex: 1; min-width: 220px; }
+    .history-list { max-height: 200px; }
+    .game-chat { height: 420px; }
+    .my-character-card img { width: 140px; height: 187px; }
   }
   @media (max-width: 1100px) {
     .lobby-container { grid-template-columns: 1fr; }
@@ -377,6 +383,67 @@
   .uc-reveal-who { display: flex; align-items: center; gap: 8px; }
 
   /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
-  #bottomBar { position: fixed; left: 0; right: 0; bottom: 0; min-height: 48px; background: #0b0b15; border-top: 2px solid #2a2a4a; box-shadow: 0 -4px 18px rgba(0,0,0,0.45); display: flex; align-items: center; gap: 10px; padding: 5px 14px; z-index: 45; }
+  #bottomBar { position: fixed; left: 0; right: 0; bottom: 0; min-height: 48px; background: #0b0b15; border-top: 2px solid #2a2a4a; box-shadow: 0 -4px 18px rgba(0,0,0,0.45); display: flex; align-items: center; gap: 10px; padding: 5px 14px; padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px)); z-index: 45; }
   #bottomBar .username-change-btn { position: static; z-index: auto; margin-left: auto; box-shadow: none; padding: 8px 18px; font-size: 0.85rem; }
   #bottomBar .username-change-btn:hover { transform: none; }
+
+  /* ================================================================
+     📱 PHONE OPTIMIZATION (screens up to 600px)
+     Everything stacks vertically, nothing on screen is hidden,
+     tap targets get finger-friendly, text stays readable.
+     ================================================================ */
+  @media (max-width: 600px) {
+    body { padding: 10px 10px 62px; }
+    .site-header { margin-bottom: 20px; }
+    .site-tagline { font-size: 0.95rem; }
+
+    /* Font ≥16px in inputs = no more unwanted auto-zoom on iPhone */
+    input[type="text"], input[type="password"], input[type="number"], textarea, select { font-size: 16px !important; }
+
+    /* Bigger tap targets (fingers, not mouse pointers) */
+    button { min-height: 44px; }
+    .player-admin-actions .player-admin-btn { min-width: 38px; min-height: 38px; }
+    .uc-vote-btn { min-height: 40px; }
+    input[type="range"] { height: 26px; }
+    input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; }
+    input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; }
+
+    /* ----- Guess Who board ----- */
+    .game-header { gap: 8px; }
+    .player-section h3 { font-size: 0.78rem; margin-bottom: 2px; }
+    .player-section .name { font-size: 0.95rem; }
+    .avatar-inline { width: 26px; height: 26px; }
+    .question-box { padding: 14px; }
+    .board { grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+    .my-character-card img { width: 96px; height: 128px; }
+    .history-list { max-height: 120px; font-size: 0.85rem; }
+    .game-chat { height: 320px; }
+    .chat-messages { padding: 12px; }
+
+    /* ----- Undercover screen ----- */
+    .uc-main { padding: 14px; }
+    .uc-badge { font-size: 0.82rem; padding: 6px 12px; }
+    .uc-players { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+    .uc-word-card { padding: 12px; }
+    .uc-word-img { width: 68px; height: 94px; }
+    .uc-side { max-height: 420px; min-height: 300px; }
+    .ava-tile { width: 40px; height: 40px; margin-bottom: 4px; }
+    .uc-tile-name { font-size: 0.82rem; }
+
+    /* ----- modals, pop-ups, avatar picker ----- */
+    .modal { padding: 10px; }
+    .modal-content { padding: 24px 16px; border-radius: 16px; }
+    .avatar-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .interaction-buttons button { flex: 1; }
+    .winning-screen { padding: 20px 14px; max-height: 92vh; overflow-y: auto; width: 94%; }
+    .winner-card .char-img { width: 120px; height: 160px; }
+
+    /* ----- lobby ----- */
+    .player-card { padding: 10px; }
+    .ava-lobby { width: 36px; height: 36px; }
+
+    /* ----- bottom bar ----- */
+    #bottomBar { min-height: 44px; padding: 4px 10px; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); gap: 8px; }
+    #bottomBar .username-change-btn { padding: 7px 14px; font-size: 0.78rem; min-height: 36px; }
+    #musicNowPlaying { max-width: 46vw; font-size: 0.74rem !important; padding: 4px 10px; }
+  }
