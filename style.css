@@ -381,6 +381,8 @@
   .avatar-pick:hover { border-color: var(--accent); transform: scale(1.05); }
   .avatar-pick img { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; display: block; }
   .uc-reveal-who { display: flex; align-items: center; gap: 8px; }
+  .uc-log-round { text-align: center; color: var(--muted); font-size: 0.72rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin: 10px 0 4px; }
+  #ucNewWordsBtn { padding: 7px 14px; border-radius: 25px; font-size: 0.82rem; min-height: 0; }
 
   /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
   #bottomBar { position: fixed; left: 0; right: 0; bottom: 0; min-height: 48px; background: #0b0b15; border-top: 2px solid #2a2a4a; box-shadow: 0 -4px 18px rgba(0,0,0,0.45); display: flex; align-items: center; gap: 10px; padding: 5px 14px; padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px)); z-index: 45; }

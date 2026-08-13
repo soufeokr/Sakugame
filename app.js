@@ -669,7 +669,7 @@
 
     async function createGameRoom() {
       const game = document.getElementById('gameSelect').value || 'guesswho';
-      const isUc = game === 'undercover';
+        const isUc = game === 'undercover';
       if (!isUc && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('⭐ Favorites needs a synced AniList account (👤 profile menu) — or switch the pool to 🎴 Generic!'); return; }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
@@ -688,7 +688,7 @@
           roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
         }
         await database.ref('rooms/' + roomCode).set(roomData);
-        setupRoomListener(); setupChatListener(); setupPlayerCleanup();
+        setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
         document.getElementById('lobbySettingsIcon').style.display = 'block';
@@ -713,7 +713,7 @@
         roomCode = code; isHost = false;
         await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '' });
         touchActivity();
-        setupRoomListener(); setupChatListener(); setupPlayerCleanup();
+        setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
         syncMyAccountIntoRoom(); // guest's synced AniList account joins the pool automatically
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
@@ -738,6 +738,7 @@
         }
         updateLobby();
         ensureHostPresent();
+        purgeDisconnectedPlayers();
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         const isUcRoom = currentRoom.game === 'undercover';
         if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
@@ -788,11 +789,43 @@
       });
     }
 
+    // ===== DISCONNECT TRACKING =====
+    // Phones drop their connection all the time (screen lock, app switch…).
+    // Instead of instantly deleting the player (which used to BREAK the game
+    // for everyone), Firebase marks the entry with a timestamp (dcAt).
+    // Games skip marked players; the host purges entries after 45 seconds.
+    const dcTrackingRef = () => (roomCode && playerId) ? database.ref('rooms/' + roomCode + '/players/' + playerId + '/dcAt') : null;
+    function markDisconnectTracking() {
+      const ref = dcTrackingRef();
+      if (!ref) return;
+      ref.remove(); // clear any stale marker on (re)join
+      ref.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+    }
+    function cancelDisconnectTracking() {
+      const ref = dcTrackingRef();
+      if (ref) { try { ref.onDisconnect().cancel(); } catch (e) {} }
+    }
+
+    // HOST-ONLY: delete player entries offline for more than 45s
+    const DC_GRACE_MS = 45000;
+    function purgeDisconnectedPlayers() {
+      if (!isHost || !currentRoom || !currentRoom.players) return;
+      const now = Date.now();
+      Object.keys(currentRoom.players).forEach(pid => {
+        const p = currentRoom.players[pid] || {};
+        if (pid !== playerId && p.dcAt && (now - Number(p.dcAt)) > DC_GRACE_MS) {
+          database.ref('rooms/' + roomCode + '/players/' + pid).remove().catch(() => {});
+        }
+      });
+    }
+
     function updateLobby() {
       if (!currentRoom) return;
       const playersList = document.getElementById('playersList');
       playersList.innerHTML = '';
-      Object.values(currentRoom.players || {}).forEach(player => {
+      // real players only (skip transient disconnect-marker leftovers)
+      const lobbyPlayers = Object.values(currentRoom.players || {}).filter(pl => pl && pl.name);
+      lobbyPlayers.forEach(player => {
         const card = document.createElement('div'); card.className = 'player-card';
         if (player.ready) card.classList.add('ready');
         if (player.isHost) card.classList.add('host');
@@ -817,18 +850,20 @@
           actions.appendChild(crownBtn);
           actions.appendChild(kickBtn);
           rightWrap.appendChild(actions);
-          // Phones have no hover → tapping the card reveals the 👑/✕ buttons
-          card.addEventListener('click', () => {
-            const was = card.classList.contains('show-actions');
-            document.querySelectorAll('.player-card.show-actions').forEach(c => c.classList.remove('show-actions'));
-            if (!was) card.classList.add('show-actions');
-          });
+          // Phones have no hover → tapping the card reveals the 👑/✕ buttons (touch devices only)
+          if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+            card.addEventListener('click', () => {
+              const was = card.classList.contains('show-actions');
+              document.querySelectorAll('.player-card.show-actions').forEach(c => c.classList.remove('show-actions'));
+              if (!was) card.classList.add('show-actions');
+            });
+          }
         }
         card.appendChild(rightWrap);
         playersList.appendChild(card);
       });
-      const playerCount = Object.keys(currentRoom.players || {}).length;
-      const allReady = Object.values(currentRoom.players || {}).every(p => p.ready);
+      const playerCount = lobbyPlayers.length;
+      const allReady = lobbyPlayers.every(p => p.ready);
       const countEl = document.getElementById('lobbyPlayerCount');
       if (countEl) countEl.textContent = playerCount + '/' + (currentRoom.maxPlayers || 2);
       const gameNameEl = document.getElementById('lobbyGameName');
@@ -853,6 +888,7 @@
       return;
     }
       if (roomRef) {
+        cancelDisconnectTracking();
         try { await database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); } catch (e) {}
         roomRef.off(); roomRef = null;
       }
@@ -891,6 +927,7 @@
       const code = roomCode;
       showNotification('❌ You have been kicked from the room.', 5000);
       try {
+        cancelDisconnectTracking();
         await database.ref('rooms/' + code + '/kicks/' + playerId).remove();
         await database.ref('rooms/' + code + '/players/' + playerId).remove();
       } catch (e) {}
@@ -1232,9 +1269,15 @@
       document.querySelectorAll('.selectable-card').forEach(c => { c.style.pointerEvents = 'none'; c.style.opacity = '0.5'; });
     }
 
-    function updateSelectionStatus(selections) {
+    async function updateSelectionStatus(selections) {
       if (!selections || !currentRoom) return;
       const players = Object.keys(currentRoom.players || {});
+      // Opponent vanished during selection → it can't continue alone, back to the lobby
+      if (players.length < 2 && isHost && currentRoom.state === 'selection') {
+        showNotification('🚪 Your opponent left during selection — back to the lobby.');
+        await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null });
+        return;
+      }
       const allSelected = players.every(pid => selections[pid]);
       if (allSelected && isHost) { startGameFromSelection(selections); }
     }
@@ -1414,7 +1457,17 @@
 
     function updateGame() {
       if (!currentRoom || currentRoom.game === 'undercover') return;
-      if (currentRoom.state === 'playing') { renderBoard(); updateTurnIndicator(); updateQuestionBox(); updateHistory(); }
+      if (currentRoom.state === 'playing') {
+        // Opponent left or lost connection → the game ends with your win by default
+        const others = Object.keys(currentRoom.players || {}).filter(p => p !== playerId);
+        const oppGone = others.length === 0 || !!(currentRoom.players[others[0]] && currentRoom.players[others[0]].dcAt);
+        if (oppGone) {
+          database.ref('rooms/' + roomCode).update({ state: 'finished', winner: playerId });
+          showNotification('🚪 Your opponent left the game — you win by default! 🏆');
+          return;
+        }
+        renderBoard(); updateTurnIndicator(); updateQuestionBox(); updateHistory();
+      }
       if (currentRoom.state === 'finished') {
         // Count the result once per finished game (logged-in players only)
         if (!gameResultCounted && currentRoom.winner) { gameResultCounted = true; recordGameResult(currentRoom.winner === playerId); }
@@ -1540,6 +1593,11 @@
       // Guard: the room listener can fire multiple times while state is still
       // 'finished' with all restarts set — only launch once.
       if (newGameLaunching) return;
+      if (Object.keys((currentRoom && currentRoom.players) || {}).length < 2) {
+        showNotification('🚪 Not enough players left — back to the lobby.');
+        await returnToLobby();
+        return;
+      }
       newGameLaunching = true;
       try {
         document.getElementById('winningScreen').classList.remove('show');
@@ -1598,7 +1656,25 @@
       const r = room || currentRoom;
       const players = r ? (r.players || {}) : {};
       const out = (r && r.uc && r.uc.out) || {};
-      return Object.keys(players).filter(pid => !out[pid]);
+      // players with a disconnect marker (dcAt) are skipped — the game goes on without them
+      return Object.keys(players).filter(pid => !out[pid] && !(players[pid] && players[pid].dcAt));
+    }
+
+    // Is the game still PLAYABLE after players left? Only stop when it truly can't go on:
+    //  - no impostor left (they all left)    → civilians win
+    //  - no civilian left (nobody to vote)   → remaining impostor wins
+    // Anything else (even 1 civilian vs 1 impostor) CONTINUES.
+    function ucLeaveEndCheck() {
+      const uc = (currentRoom && currentRoom.uc) || {};
+      const roles = uc.roles || {};
+      let civ = 0, uw = 0, mw = 0;
+      ucAlivePids().forEach(pid => {
+        const r = roles[pid] || 'civilian';
+        if (r === 'civilian') civ++; else if (r === 'undercover') uw++; else mw++;
+      });
+      if (uw === 0 && mw === 0) return 'civilian';
+      if (civ === 0) return uw > 0 ? 'undercover' : 'mrwhite';
+      return null;
     }
 
     // Turn-by-turn clue order: the speaking order is fixed when words are dealt
@@ -1704,7 +1780,7 @@
           uwWordImg: (flip ? pair.imgA : pair.imgB) || null,
           roles: roles,
           out: null, clues: null, votes: null,
-          order: order, turnIdx: 0,
+          order: order, turnIdx: 0, clueLog: null,
           lastEvent: null, mwGuess: null,
           winner: null, winnerPids: null
         }
@@ -1722,10 +1798,17 @@
       if (alive.length === 0) return;
       ucWatchBusy = true;
       try {
-        // Emergency end check (e.g. the Undercover / Mr. White left the room)
+        // Leaves/disconnects: END the game only if it truly cannot continue…
         if (uc.phase !== 'mrwhite' && uc.phase !== 'reveal') {
-          const winNow = ucWinnerCheck();
-          if (winNow) { await finishUndercover(winNow, { kind: 'leave' }); return; }
+          const endNow = ucLeaveEndCheck();
+          if (endNow) { await finishUndercover(endNow, { kind: 'leave' }); return; }
+          // …Mr. White gone but the Undercover still hides? He is quietly out — game goes on!
+          const mwGone = Object.keys(uc.roles || {}).find(pid => uc.roles[pid] === 'mrwhite' && !(currentRoom.players || {})[pid]);
+          if (mwGone && !(uc.out || {})[mwGone]) {
+            const upd = {}; upd['uc/out/' + mwGone] = true; upd['uc/lastEvent'] = { kind: 'mwleave' };
+            await database.ref('rooms/' + roomCode).update(upd);
+            touchActivity(); return; // next watchdog pulse evaluates the new situation
+          }
         }
         if (uc.phase === 'clues') {
           const clues = uc.clues || {};
@@ -1883,6 +1966,8 @@
       }
       input.disabled = true;
       await database.ref('rooms/' + roomCode + '/uc/clues/' + playerId).set(text);
+      // …also archived in the round history so everyone can re-read older clues
+      try { await database.ref('rooms/' + roomCode + '/uc/clueLog/r' + (uc.round || 1) + '/' + playerId).set(text); } catch (e) {}
       touchActivity();
     }
 
@@ -1905,6 +1990,46 @@
       if (!text) { showNotification('Type your guess first!'); return; }
       input.disabled = true;
       await database.ref('rooms/' + roomCode + '/uc/mwGuess').set({ by: playerId, text: text });
+      touchActivity();
+    }
+
+    // ===== HOST: deal a NEW pair of words mid-game (same roles, round restarts) =====
+    function hostRerollUndercoverWords() {
+      if (!isHost || !currentRoom || currentRoom.game !== 'undercover' || !currentRoom.uc) return;
+      const uc = currentRoom.uc;
+      if (currentRoom.state !== 'playing' || ['clues', 'voting', 'reveal'].indexOf(uc.phase) === -1) {
+        showNotification('Words can only be changed during description/vote phases.'); return;
+      }
+      showInteraction('🎲 Deal new words?', 'Everyone keeps the SAME role — only the word pair changes and the round restarts.', [
+        { label: 'Cancel', onclick: () => {}, class: 'secondary' },
+        { label: '🎲 New words', class: 'warning', onclick: () => doUcWordReroll() }
+      ]);
+    }
+
+    async function doUcWordReroll() {
+      const uc = (currentRoom && currentRoom.uc) || {};
+      const pairs = await getAllUndercoverPairs();
+      if (!pairs.length) { showNotification('No word pairs available!'); return; }
+      let pair = pairs[Math.floor(Math.random() * pairs.length)];
+      // avoid re-dealing the exact same pair when possible
+      for (let i = 0; i < 6 && pair && (pair.a === uc.word || pair.b === uc.word || pair.a === uc.uwWord || pair.b === uc.uwWord); i++) {
+        pair = pairs[Math.floor(Math.random() * pairs.length)];
+      }
+      const flip = Math.random() < 0.5;
+      const updates = {
+        'uc/word': flip ? pair.b : pair.a,
+        'uc/uwWord': flip ? pair.a : pair.b,
+        'uc/wordType': pair.type === 's' ? 'anime series' : 'anime characters',
+        'uc/wordImg': (flip ? pair.imgB : pair.imgA) || null,
+        'uc/uwWordImg': (flip ? pair.imgA : pair.imgB) || null,
+        'uc/phase': 'clues',
+        'uc/clues': null,
+        'uc/votes': null,
+        'uc/turnIdx': 0,
+        'uc/lastEvent': { kind: 'reroll' }
+      };
+      updates['uc/clueLog/r' + (uc.round || 1)] = null; // fresh history slice for the restarted round
+      try { await database.ref('rooms/' + roomCode).update(updates); } catch (e) { showNotification('Error: ' + e.message); }
       touchActivity();
     }
 
@@ -1959,7 +2084,9 @@
           : '⚪ ' + ev.name + ' guessed "' + ev.guess + '" — WRONG!';
       }
       if (ev.kind === 'limit') return '⏱️ Round limit reached — the impostor survived!';
-      if (ev.kind === 'leave') return '🚪 A key player left — the game cannot continue.';
+      if (ev.kind === 'leave') return '🚪 Too many players left — the game cannot continue.';
+      if (ev.kind === 'mwleave') return '⚪ Mr. White left the game — he is out! The game goes on!';
+      if (ev.kind === 'reroll') return '🎲 The host dealt a NEW pair of words — same roles, new clues!';
       return '';
     }
 
@@ -1977,6 +2104,9 @@
       document.getElementById('ucRoundBadge').textContent = 'Round ' + (uc.round || 1);
       const phaseNames = { clues: '💬 Description time', voting: '🗳️ Voting time', reveal: '🔎 Result', mrwhite: '⚪ Mr. White guesses…', over: '🏁 Game over' };
       document.getElementById('ucPhaseBadge').textContent = phaseNames[uc.phase] || '';
+      // Host-only "🎲 New words" button (not during Mr. White's guess or after the game)
+      const rb = document.getElementById('ucNewWordsBtn');
+      if (rb) rb.style.display = (isHost && currentRoom.state === 'playing' && ['clues', 'voting', 'reveal'].indexOf(uc.phase) !== -1) ? 'inline-block' : 'none';
 
       // Private word card — roles stay SECRET: civilians and the undercover
       // see the exact same card (label, border, hint), only Mr. White is told
@@ -2022,6 +2152,7 @@
         tile.className = 'uc-player-tile' + (out[pid] ? ' dead' : '') + (pid === playerId ? ' me' : '');
         let status = '';
         if (out[pid]) status = '💀 out';
+        else if (players[pid] && players[pid].dcAt) status = '🔌 away…';
         else if (uc.phase === 'clues') {
           status = clues[pid] ? '✅ said theirs'
             : (speaker === pid ? '🗣️ their turn!'
@@ -2040,19 +2171,33 @@
         grid.appendChild(tile);
       });
 
-      // Clues of the round
+      // Word history — every clue of every round, grouped and readable again
       const clueList = document.getElementById('ucClueList');
-      const clueEntries = pids.filter(pid => clues[pid]);
-      if (clueEntries.length === 0) {
-        clueList.innerHTML = '<p style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 10px;">No clues yet this round.</p>';
-      } else {
-        clueList.innerHTML = '';
-        clueEntries.forEach(pid => {
-          const div = document.createElement('div');
-          div.className = 'uc-clue';
-          div.innerHTML = '<strong>' + escapeHtml(String(players[pid] ? players[pid].name : '?')) + ':</strong>' + escapeHtml(String(clues[pid]));
-          clueList.appendChild(div);
+      if (uc.clueLog) {
+        const roundKeys = Object.keys(uc.clueLog).sort((a, b) => (parseInt(String(a).slice(1), 10) || 0) - (parseInt(String(b).slice(1), 10) || 0));
+        let html = '';
+        roundKeys.forEach(rk => {
+          const entries = uc.clueLog[rk] || {};
+          html += '<div class="uc-log-round">— Round ' + escapeHtml(String(rk).slice(1)) + ' —</div>';
+          Object.keys(entries).forEach(pid => {
+            html += '<div class="uc-clue"><strong>' + escapeHtml(String(players[pid] ? players[pid].name : '?')) + ':</strong>' + escapeHtml(String(entries[pid])) + '</div>';
+          });
         });
+        clueList.innerHTML = html || '<p style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 10px;">No clues yet this round.</p>';
+      } else {
+        // Fallback for rooms started before the history existed (current round only)
+        const clueEntries = pids.filter(pid => clues[pid]);
+        if (clueEntries.length === 0) {
+          clueList.innerHTML = '<p style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 10px;">No clues yet this round.</p>';
+        } else {
+          clueList.innerHTML = '';
+          clueEntries.forEach(pid => {
+            const div = document.createElement('div');
+            div.className = 'uc-clue';
+            div.innerHTML = '<strong>' + escapeHtml(String(players[pid] ? players[pid].name : '?')) + ':</strong>' + escapeHtml(String(clues[pid]));
+            clueList.appendChild(div);
+          });
+        }
       }
       clueList.scrollTop = clueList.scrollHeight;
 
@@ -2379,5 +2524,9 @@
     }, 60 * 1000);
 
     window.addEventListener('beforeunload', () => {
-      if (roomCode && playerId) { database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); }
+      if (roomCode && playerId) {
+        // Cancel the disconnect marker first (avoids a ghost entry), then leave cleanly
+        try { database.ref('rooms/' + roomCode + '/players/' + playerId + '/dcAt').onDisconnect().cancel(); } catch (e) {}
+        database.ref('rooms/' + roomCode + '/players/' + playerId).remove();
+      }
     });
