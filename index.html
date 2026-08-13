@@ -26,7 +26,7 @@
     <h2 id="winTitle">🎉 Winner!</h2>
     <img id="winCharImg" class="char-img" src="" alt="Winner Character">
     <h3 id="winCharName" style="color: var(--accent); font-size: 1.3rem; margin-bottom: 4px;">---</h3>
-    <p id="winPlayerName" style="color: var(--text); font-size: 1rem; font-weight: 700;">Player</p>
+    <p class="name-with-ava center"><img id="winPlayerAvatar" class="avatar-inline" alt=""> <span id="winPlayerName" style="color: var(--text); font-size: 1rem; font-weight: 700;">Player</span></p>
   </div>
   <h3 style="color: var(--text); margin-bottom: 15px;">Secrets Revealed</h3>
   <div class="secrets-revealed" id="revealedCharacters">
@@ -270,9 +270,9 @@
       </div>
       <div class="game-center">
         <div class="game-header">
-          <div class="player-section"><h3>You</h3><div class="name" id="yourName">Player 1</div></div>
+          <div class="player-section"><h3>You</h3><div class="name-with-ava"><img id="yourAvatar" class="avatar-inline" alt=""><div class="name" id="yourName">Player 1</div></div></div>
           <div class="turn-indicator" id="turnIndicator">Your Turn</div>
-          <div class="player-section" style="text-align: right;"><h3>Opponent</h3><div class="name" id="opponentName">Player 2</div></div>
+          <div class="player-section" style="text-align: right;"><h3>Opponent</h3><div class="name-with-ava right"><div class="name" id="opponentName">Player 2</div><img id="opponentAvatar" class="avatar-inline" alt=""></div></div>
         </div>
         <div class="question-box">
           <div id="questionFormArea">
@@ -445,8 +445,12 @@
       </div>
       <!-- Logged-in profile menu -->
       <div id="authProfileView" style="display: none;">
-        <h2 style="margin-bottom: 2px;">👤 <span id="profileName">Account</span></h2>
-        <p style="color: var(--muted); font-size: 0.85rem;">Logged in — this name is used in your games</p>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4px 0 10px;">
+          <span id="profileAvatar"></span>
+          <button class="secondary" style="width: auto; padding: 6px 18px;" onclick="openAvatarModal()">🖼️ Change picture</button>
+        </div>
+        <h2 style="margin-bottom: 2px;"><span id="profileName">Account</span></h2>
+        <p style="color: var(--muted); font-size: 0.85rem;">Logged in — this name & picture are used in your games</p>
 
         <h4 class="profile-section-title">📊 Stats</h4>
         <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;">🎭 Anime Guess Who?</p>
@@ -538,6 +542,23 @@
   </div>
 
 
+  <!-- Avatar picker: preset anime avatars or your own uploaded picture -->
+  <div class="modal" id="avatarModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeAvatarModal()">×</div>
+      <h2>🖼️ Profile Picture</h2>
+      <p style="color: var(--muted); font-size: 0.85rem;">Pick an anime avatar:</p>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <p style="color: var(--muted); font-size: 0.85rem;">…or use your own picture (your browser shrinks it to a tiny 96×96 image — nothing heavy is uploaded).</p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="secondary" style="width: auto;" onclick="document.getElementById('avatarFileInput').click()">📁 Upload my own</button>
+        <button class="danger" style="width: auto;" onclick="saveAvatar(null)">🗑️ Remove picture</button>
+      </div>
+      <p id="avatarError" style="color: var(--danger); font-size: 0.82rem; min-height: 1em; margin: 8px 0 0;"></p>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="onAvatarFileSelected(event)">
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -546,5 +567,5 @@
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a2f524cf71e19c',t:'MTc4NjU3NDE3Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a7ec9a3b69a0b7',t:'MTc4NjYyNjI1MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

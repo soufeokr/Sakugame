@@ -49,8 +49,131 @@
     // Internally each username maps to a synthetic email: username@sakugame.app
     // Players never see or use an email address.
     const AUTH_EMAIL_SUFFIX = '@sakugame.app';
-    let currentAccount = null;   // { uid, username, wins, losses } when logged in
+    let currentAccount = null;   // { uid, username, wins, losses, avatar } when logged in
     let gameResultCounted = false; // ensures stats are counted once per game
+
+    // ===== PROFILE PICTURES (avatars) =====
+    // Logged-in players pick one of the 12 built-in anime avatars below
+    // (images hosted on the AniList CDN, exactly like the game cards),
+    // OR upload their own picture: the browser shrinks it to a tiny 96×96
+    // JPEG which is stored as text on their Firebase profile (no paid
+    // Firebase Storage needed). Avatars follow players into rooms via
+    // rooms/{code}/players/{pid}/avatar so everyone sees them.
+    const AVATAR_PRESETS = [
+      { n: 'Levi — Attack on Titan',        img: 'https://s4.anilist.co/file/anilistcdn/character/large/b45627-CR68RyZmddGG.png' },
+      { n: 'Naruto Uzumaki — Naruto',       img: 'https://s4.anilist.co/file/anilistcdn/character/large/b17-phjcWCkRuIhu.png' },
+      { n: 'Luffy Monkey D. — One Piece',   img: 'https://s4.anilist.co/file/anilistcdn/character/large/b40-MNypXsxSRb1R.png' },
+      { n: 'Gokuu Son — Dragon Ball',       img: 'https://s4.anilist.co/file/anilistcdn/character/large/246-wsRRr6z1kii8.png' },
+      { n: 'Eren Yeager — Attack on Titan', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b40882-dsj7IP943WFF.jpg' },
+      { n: 'Rem — Re:Zero',                 img: 'https://s4.anilist.co/file/anilistcdn/character/large/b88575-Ayu8UPDA8NS6.png' },
+      { n: 'Nezuko Kamado — Demon Slayer',  img: 'https://s4.anilist.co/file/anilistcdn/character/large/b127518-NRlq1CQ1v1ro.png' },
+      { n: 'Zoro Roronoa — One Piece',      img: 'https://s4.anilist.co/file/anilistcdn/character/large/b62-S7oAeA9WInjV.png' },
+      { n: 'Satoru Gojou — Jujutsu Kaisen', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b127691-9zqh1xpIubn7.png' },
+      { n: 'Itachi Uchiha — Naruto',        img: 'https://s4.anilist.co/file/anilistcdn/character/large/b14-9Kb1E5oel1ke.png' },
+      { n: 'Shouto Todoroki — MHA',         img: 'https://s4.anilist.co/file/anilistcdn/character/large/b89220-KNBwaVFAR8FD.png' },
+      { n: 'Zero Two — Darling in the FranXX', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b124381-pkTKi6HHNuVR.png' },
+    ];
+
+    function myAvatar() { return (currentAccount && currentAccount.avatar) ? currentAccount.avatar : null; }
+
+    // A little round bubble: the picture if set, a 👤 circle if not.
+    function avatarCircle(url, cls) {
+      cls = cls || 'ava-lobby';
+      if (url) return '<span class="ava ' + cls + '"><img src="' + escapeHtml(String(url)) + '" alt="" loading="lazy" onerror="var s=this.parentNode; s.classList.add(\'ava-empty\'); s.textContent=\'👤\';"></span>';
+      return '<span class="ava ' + cls + ' ava-empty">👤</span>';
+    }
+
+    // The top-bar account button shows a mini avatar when the player has one.
+    function updateUserButton() {
+      const btn = document.getElementById('usernameBtn');
+      if (!btn) return;
+      const av = myAvatar();
+      btn.innerHTML = (av ? '<span class="ava ava-btn"><img src="' + escapeHtml(String(av)) + '" alt="" onerror="var s=this.parentNode; s.classList.add(\'ava-empty\'); s.textContent=\'👤\';"></span> ' : '👤 ') + escapeHtml(String(playerName));
+    }
+
+    // Show/hide a standalone circular <img> (game screens).
+    function setAvatarImg(id, url) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (url) { el.src = String(url); el.style.display = 'inline-block'; }
+      else { el.removeAttribute('src'); el.style.display = 'none'; }
+    }
+
+    // ----- avatar picker modal -----
+    function openAvatarModal() {
+      if (!firebase.auth().currentUser) { showNotification('Log in to set a profile picture.'); return; }
+      const grid = document.getElementById('avatarGrid');
+      grid.innerHTML = '';
+      AVATAR_PRESETS.forEach(p => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'avatar-pick';
+        b.title = p.n;
+        b.innerHTML = '<img src="' + escapeHtml(p.img) + '" alt="' + escapeHtml(p.n) + '" loading="lazy">';
+        b.addEventListener('click', () => saveAvatar(p.img));
+        grid.appendChild(b);
+      });
+      const err = document.getElementById('avatarError');
+      if (err) err.textContent = '';
+      document.getElementById('avatarModal').classList.add('show');
+    }
+    function closeAvatarModal() { document.getElementById('avatarModal').classList.remove('show'); }
+
+    function renderProfileAvatar() {
+      const wrap = document.getElementById('profileAvatar');
+      if (wrap) wrap.innerHTML = avatarCircle(myAvatar(), 'ava-profile');
+    }
+
+    async function saveAvatar(url) {
+      const user = firebase.auth().currentUser;
+      if (!user) { showNotification('Log in to set a profile picture.'); return; }
+      try {
+        await database.ref('users/' + user.uid + '/avatar').set(url || null); // null = remove picture
+        if (currentAccount) currentAccount.avatar = url || null;
+        // Keep the room copy in sync so other players see the new picture immediately
+        if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
+          try { await database.ref('rooms/' + roomCode + '/players/' + playerId + '/avatar').set(url || ''); } catch (e) {}
+        }
+        renderProfileAvatar();
+        updateUserButton();
+        closeAvatarModal();
+        showNotification(url ? 'Profile picture updated! 🖼️' : 'Profile picture removed.');
+      } catch (e) {
+        const err = document.getElementById('avatarError');
+        if (err) err.textContent = 'Could not save the picture: ' + ((e && e.message) || 'unknown error');
+      }
+    }
+
+    // Upload own picture → shrink to 96×96 JPEG → save as text (data URL)
+    function onAvatarFileSelected(ev) {
+      const file = ev.target && ev.target.files ? ev.target.files[0] : null;
+      ev.target.value = ''; // allow picking the same file again later
+      const err = document.getElementById('avatarError');
+      if (err) err.textContent = '';
+      if (!file) return;
+      if (!/^image\//.test(file.type)) { if (err) err.textContent = 'Please choose an image file (PNG, JPG…).'; return; }
+      if (file.size > 8 * 1024 * 1024) { if (err) err.textContent = 'That image is too big (max 8 MB).'; return; }
+      const reader = new FileReader();
+      reader.onerror = () => { if (err) err.textContent = 'Could not read that file.'; };
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => { if (err) err.textContent = 'Could not load that image.'; };
+        img.onload = () => {
+          const S = 96;
+          const canvas = document.createElement('canvas');
+          canvas.width = S; canvas.height = S;
+          const ctx = canvas.getContext('2d');
+          const m = Math.min(img.width, img.height || img.width);
+          ctx.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, S, S);
+          let dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          if (dataUrl.length > 15000) dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          saveAvatar(dataUrl);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
 
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
@@ -63,13 +186,12 @@
           profile = { username: lower, usernameLower: lower, wins: 0, losses: 0, uWins: 0, uLosses: 0, createdAt: Date.now() };
           await ref.set(profile);
         }
-        currentAccount = { uid: user.uid, username: profile.username, wins: profile.wins || 0, losses: profile.losses || 0, uWins: profile.uWins || 0, uLosses: profile.uLosses || 0, anilist: profile.anilist || null };
+        currentAccount = { uid: user.uid, username: profile.username, wins: profile.wins || 0, losses: profile.losses || 0, uWins: profile.uWins || 0, uLosses: profile.uLosses || 0, anilist: profile.anilist || null, avatar: profile.avatar || null };
         playerName = currentAccount.username;
-        const btn = document.getElementById('usernameBtn');
-        if (btn) btn.textContent = '👤 ' + playerName;
-        // If already inside a room, update the displayed name there too
+        updateUserButton();
+        // If already inside a room, update the displayed name + picture there too
         if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
-          database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName);
+          database.ref('rooms/' + roomCode + '/players/' + playerId).update({ name: playerName, avatar: myAvatar() || '' });
         }
         // If sitting on the host screen when logging in, load the synced AniList account
         const hostScreen = document.getElementById('hostRoomScreen');
@@ -78,8 +200,7 @@
         if (roomCode) syncMyAccountIntoRoom();
       } else {
         currentAccount = null;
-        const btn = document.getElementById('usernameBtn');
-        if (btn) btn.textContent = '👤 ' + playerName;
+        updateUserButton();
       }
     });
 
@@ -95,6 +216,8 @@
         const snap = await database.ref('users/' + user.uid).once('value');
         const p = snap.val() || {};
         document.getElementById('profileName').textContent = p.username || 'Account';
+        if (currentAccount) currentAccount.avatar = p.avatar || null;
+        renderProfileAvatar();
         document.getElementById('profileWins').textContent = p.wins || 0;
         document.getElementById('profileLosses').textContent = p.losses || 0;
         const uwEl = document.getElementById('profileUWins');
@@ -155,9 +278,9 @@
           authBusy(false); return;
         }
         await database.ref('users/' + cred.user.uid).set({ username: usernameRaw, usernameLower: lower, wins: 0, losses: 0, uWins: 0, uLosses: 0, createdAt: Date.now() });
-        currentAccount = { uid: cred.user.uid, username: usernameRaw, wins: 0, losses: 0, uWins: 0, uLosses: 0 };
+        currentAccount = { uid: cred.user.uid, username: usernameRaw, wins: 0, losses: 0, uWins: 0, uLosses: 0, avatar: null };
         playerName = usernameRaw;
-        document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
+        updateUserButton();
         closeAuthModal();
         showNotification('Account created! Welcome, ' + usernameRaw + '!');
       } catch (e) { showAuthError(friendlyAuthError(e)); }
@@ -222,7 +345,7 @@
         }
         currentAccount.username = newName;
         playerName = newName;
-        document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
+        updateUserButton();
         document.getElementById('profileName').textContent = newName;
         document.getElementById('profileUsernameInput').value = '';
         if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
@@ -453,7 +576,7 @@
       const newName = document.getElementById('newUsernameInput').value.trim();
       if (!newName || newName.length < 2) { showNotification('Please enter a valid username (at least 2 characters)'); return; }
       playerName = newName;
-      document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
+      updateUserButton();
       if (roomCode && currentRoom) { await database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName); }
       closeUsernameModal(); showNotification('Username changed to: ' + playerName);
     }
@@ -554,7 +677,7 @@
       try {
         const roomData = {
           host: playerId, game: game, visibility: roomVisibility,
-          players: { [playerId]: { id: playerId, ready: false, name: playerName, isHost: true } },
+          players: { [playerId]: { id: playerId, ready: false, name: playerName, isHost: true, avatar: myAvatar() || '' } },
           state: 'lobby', chat: {}, createdAt: Date.now(), lastActivity: Date.now()
         };
         if (isUc) {
@@ -588,7 +711,7 @@
         const maxPlayers = room.maxPlayers || 2;
         if (playerCount >= maxPlayers) { showNotification('Room is full (' + playerCount + '/' + maxPlayers + ' players)'); return; }
         roomCode = code; isHost = false;
-        await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false });
+        await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '' });
         touchActivity();
         setupRoomListener(); setupChatListener(); setupPlayerCleanup();
         syncMyAccountIntoRoom(); // guest's synced AniList account joins the pool automatically
@@ -673,7 +796,7 @@
         const card = document.createElement('div'); card.className = 'player-card';
         if (player.ready) card.classList.add('ready');
         if (player.isHost) card.classList.add('host');
-        card.innerHTML = `<div class="player-info"><div class="name">${player.isHost ? '<span class="host-badge">👑 HOST</span>' : ''}${escapeHtml(String(player.name || ''))}</div><div class="status">${player.id === playerId ? '(You)' : ''}</div></div>${player.ready ? '<div class="ready-badge">✓ Ready</div>' : ''}`;
+        card.innerHTML = `<div class="player-head">${avatarCircle(player.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${player.isHost ? '<span class="host-badge">👑 HOST</span>' : ''}${escapeHtml(String(player.name || ''))}</div><div class="status">${player.id === playerId ? '(You)' : ''}</div></div></div>${player.ready ? '<div class="ready-badge">✓ Ready</div>' : ''}`;
         const rightWrap = document.createElement('div');
         rightWrap.className = 'player-card-right';
         if (card.lastElementChild && card.lastElementChild.classList.contains('ready-badge')) rightWrap.appendChild(card.lastElementChild);
@@ -811,8 +934,9 @@
       const container = document.getElementById('chatMessages');
       if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
       const msgDiv = document.createElement('div');
+      const sender = (currentRoom && currentRoom.players) ? currentRoom.players[msg.senderId] : null;
       msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
-      msgDiv.innerHTML = `<div class="sender">${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
+      msgDiv.innerHTML = `<div class="sender">${avatarCircle(sender ? sender.avatar : null, 'ava-chat')}${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
       container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
     }
     // Renders into both in-game chat containers (Guess Who screen + Undercover screen)
@@ -822,8 +946,9 @@
         if (!container) return;
         if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
         const msgDiv = document.createElement('div');
+        const sender = (currentRoom && currentRoom.players) ? currentRoom.players[msg.senderId] : null;
         msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
-        msgDiv.innerHTML = `<div class="sender">${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
+        msgDiv.innerHTML = `<div class="sender">${avatarCircle(sender ? sender.avatar : null, 'ava-chat')}${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
         container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
       });
     }
@@ -850,7 +975,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       cleanupStaleRooms();
-      document.getElementById('usernameBtn').textContent = '👤 ' + playerName;
+      updateUserButton();
       const chatInput = document.getElementById('chatInput');
       if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
       const gameChatInput = document.getElementById('gameChatInput');
@@ -1136,6 +1261,8 @@
       const opponentId = players.find(id => id !== playerId);
       document.getElementById('yourName').textContent = currentRoom.players[playerId].name || 'You';
       document.getElementById('opponentName').textContent = (opponentId && currentRoom.players[opponentId]) ? currentRoom.players[opponentId].name : 'Opponent';
+      setAvatarImg('yourAvatar', currentRoom.players[playerId] ? currentRoom.players[playerId].avatar : null);
+      setAvatarImg('opponentAvatar', (opponentId && currentRoom.players[opponentId]) ? currentRoom.players[opponentId].avatar : null);
       document.getElementById('myCharacterImg').src = mySecret.image || '';
       document.getElementById('myCharacterName').textContent = mySecret.name || '---';
       showScreen('gameScreen');
@@ -1345,6 +1472,8 @@
         charName.textContent = (winnerSecret && winnerSecret.name) ? winnerSecret.name : '---';
         playerNameEl.textContent = (currentRoom && currentRoom.players[winnerId]) ? currentRoom.players[winnerId].name : 'Opponent';
       }
+      const shownPid = isWinner ? playerId : winnerId;
+      setAvatarImg('winPlayerAvatar', (currentRoom && currentRoom.players && currentRoom.players[shownPid]) ? currentRoom.players[shownPid].avatar : null);
 
       // Only show winning screen over game (not over homepage/menu)
       const activeScreen = document.querySelector('.screen.active');
@@ -1853,7 +1982,7 @@
         if (out[pid]) status = '💀 out';
         else if (uc.phase === 'clues') status = clues[pid] ? '✅ clue in' : '⏳ thinking…';
         else if (uc.phase === 'voting') status = votes[pid] ? '✅ voted' : '⏳ voting…';
-        tile.innerHTML = '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div><div class="uc-tile-status">' + status + '</div>';
+        tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div><div class="uc-tile-status">' + status + '</div>';
         if (currentRoom.state === 'playing' && uc.phase === 'voting' && !iAmOut && !iVoted && !out[pid] && pid !== playerId) {
           tile.classList.add('votable');
           const btn = document.createElement('button');
@@ -1986,7 +2115,7 @@
         const p = players[pid] || {};
         const row = document.createElement('div');
         row.className = 'uc-reveal-row';
-        row.innerHTML = '<span>' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</span><span class="uc-reveal-role" style="color: ' + (roleColor[roles[pid]] || 'var(--text)') + ';">' + (roleLabel[roles[pid]] || '👥 Civilian') + '</span>';
+        row.innerHTML = '<span class="uc-reveal-who">' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</span></span><span class="uc-reveal-role" style="color: ' + (roleColor[roles[pid]] || 'var(--text)') + ';">' + (roleLabel[roles[pid]] || '👥 Civilian') + '</span>';
         list.appendChild(row);
       });
 

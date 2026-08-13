@@ -354,3 +354,24 @@
   .pair-row .type-badge { font-size: 0.72rem; color: var(--muted); flex-shrink: 0; }
   .pair-row button { padding: 5px 10px; font-size: 0.78rem; background: var(--danger); flex-shrink: 0; }
   .uc-word-img.blurred { filter: blur(10px); }
+
+  /* ===== Profile pictures (avatars) ===== */
+  .ava { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; background: #14142e; border: 2px solid #2a2a4a; flex-shrink: 0; vertical-align: middle; font-size: 1rem; }
+  .ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ava.ava-empty { color: #8a8aa8; }
+  .ava-btn { width: 22px; height: 22px; border-width: 1px; margin: 0 2px 2px 0; }
+  .ava-lobby { width: 42px; height: 42px; }
+  .ava-profile { width: 74px; height: 74px; border-width: 3px; border-color: var(--accent); font-size: 1.8rem; }
+  .ava-chat { width: 20px; height: 20px; border-width: 1px; font-size: 0.7rem; }
+  .ava-tile { width: 46px; height: 46px; display: flex; margin: 0 auto 6px; font-size: 1.3rem; }
+  .player-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .chat-message .sender { display: flex; align-items: center; gap: 6px; }
+  .name-with-ava { display: flex; align-items: center; gap: 8px; }
+  .name-with-ava.right { justify-content: flex-end; }
+  .name-with-ava.center { justify-content: center; margin: 6px 0; }
+  .avatar-inline { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); background: #14142e; display: none; }
+  .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0 14px; }
+  .avatar-pick { background: #0f0f1a; border: 2px solid #2a2a4a; border-radius: 14px; padding: 5px; cursor: pointer; transition: border-color 0.15s, transform 0.15s; width: auto; }
+  .avatar-pick:hover { border-color: var(--accent); transform: scale(1.05); }
+  .avatar-pick img { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; display: block; }
+  .uc-reveal-who { display: flex; align-items: center; gap: 8px; }
