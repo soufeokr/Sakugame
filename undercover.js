@@ -172,7 +172,7 @@ UNDERCOVER_PAIRS.push(
   { a: "Kakashi Hatake", b: "Satoru Gojou", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b85-mkVBh2yjxjmx.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b127691-9zqh1xpIubn7.png" }, // Kakashi / Gojo
   { a: "Subaru Natsuki", b: "Rintarou Okabe", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b88573-F8yMTK9GhnTA.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b35252-DY9TW6pusqeh.png" }, // Subaru / Okabe
   { a: "Puck", b: "Happy", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b90187-xJXlD84KXl3t.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b5188-1jTaic3aJ7Ds.jpg" }, // Puck (Re:Zero) / Happy
-  { a: "Miyako Shikimori", b: "Akane Kurokawa", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b155702-S8irhsg4QTPf.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b203384-YuSppFDMw2wn.png" }, // Shikimori / Akane
+  { a: "Miyako Shikimori", b: "Akari Watanabe", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b155702-S8irhsg4QTPf.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b191672-MozVAnqyv9oZ.png" }, // Shikimori / Akari Watanabe (Fuufu Ijou)
   { a: "Iori Kitahara", b: "Kiyoshi Fujino", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b123182-tuQ2yf5IEx02.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b46557-fJ8Va6GtynPM.jpg" }, // Kitahara / Kiyoshi Fujino
   { a: "Ryou Yamada", b: "Mio Akiyama", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b264529-BvEusZnJLD2Y.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b19566-XKsMgf370b4m.png" }, // Ryo Yamada / Mio Akiyama
   { a: "Mai Sakurajima", b: "Marin Kitagawa", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b127222-Jh5hhP7vZ7s1.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b133676-kV2czE3C8Qls.png" }, // Mai / Marin
@@ -181,7 +181,7 @@ UNDERCOVER_PAIRS.push(
   { a: "Fern", b: "Coco", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b183965-uGFohBjlFoTp.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b129840-B2CVE0TIcKpT.png" }, // Fern / Coco
   { a: "Erza Scarlet", b: "Eris Boreas Greyrat", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b5189-GR1xdok9SFsN.jpg", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b88349-5dsNUah3oBj8.png" }, // Erza / Eris
   { a: "Kiyotaka Ayanokouji", b: "Yuuichi Katagiri", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b123212-ewZgUQr9vvEM.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b122064-p5x9pgsdjj4W.jpg" }, // Ayanokoji / Yuichi
-  { a: "Vanessa Enoteca", b: "Kana Arima", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b124436-dES6CtprlZNy.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b188783-77orwP7vNuNg.png" }, // Vanessa / Kana
+  { a: "Vanessa Enoteca", b: "Cana Alberona", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b124436-dES6CtprlZNy.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b8296-QdKicnM0gSGN.jpg" }, // Vanessa (Black Clover) / Cana (Fairy Tail)
   { a: "Itachi Uchiha", b: "Madara Uchiha", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b14-9Kb1E5oel1ke.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b53901-HnRKSoHMG5Vg.png" }, // Itachi / Madara
   { a: "Muzan Kibutsuji", b: "Imu", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b129132-4nIZakUZ1o8W.jpg", imgB: null }, // Muzan / Imu (no img on AniList)
   { a: "Guy Might", b: "Touji Fushiguro", type: "c", imgA: "https://s4.anilist.co/file/anilistcdn/character/large/b307-xieUEdhdTVwQ.png", imgB: "https://s4.anilist.co/file/anilistcdn/character/large/b162722-btzdghBizxKS.jpg" }, // Gai Maito / Toji
@@ -202,7 +202,7 @@ const UNDERCOVER_IMAGES = {
   "ace": "https://s4.anilist.co/file/anilistcdn/character/large/b2072-Lc6jEdsueJUK.jpg",
   "ainz": "https://s4.anilist.co/file/anilistcdn/character/large/b89103-ZsnA0r77GHsR.png",
   "aizen": "https://s4.anilist.co/file/anilistcdn/character/large/b1086-qR9218BjZTC0.png",
-  "akane kurokawa": "https://s4.anilist.co/file/anilistcdn/character/large/b203384-YuSppFDMw2wn.png",
+  "akari watanabe": "https://s4.anilist.co/file/anilistcdn/character/large/b191672-MozVAnqyv9oZ.png",
   "aki": "https://s4.anilist.co/file/anilistcdn/character/large/b137081-TSrUR3mUJL6r.png",
   "akira": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx47-4CR68arv452h.jpg",
   "all might": "https://s4.anilist.co/file/anilistcdn/character/large/b89224-K6KEuQAuYKzq.jpg",
@@ -330,7 +330,7 @@ const UNDERCOVER_IMAGES = {
   "kakashi": "https://s4.anilist.co/file/anilistcdn/character/large/b85-mkVBh2yjxjmx.png",
   "kakashi hatake": "https://s4.anilist.co/file/anilistcdn/character/large/b85-mkVBh2yjxjmx.png",
   "kamina": "https://s4.anilist.co/file/anilistcdn/character/large/b2075-sWb5Xz76JWdX.png",
-  "kana arima": "https://s4.anilist.co/file/anilistcdn/character/large/b188783-77orwP7vNuNg.png",
+  "cana alberona": "https://s4.anilist.co/file/anilistcdn/character/large/b8296-QdKicnM0gSGN.jpg",
   "kanao": "https://s4.anilist.co/file/anilistcdn/character/large/b139038-OcOoDUyLEsRn.png",
   "katsura": "https://s4.anilist.co/file/anilistcdn/character/large/b1533-tSqUrj2DOK5p.png",
   "kill la kill": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b18679-lbkq7iYESoFW.png",
