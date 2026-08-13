@@ -474,7 +474,7 @@ const UNDERCOVER_IMAGES = {
   "yuji": "https://s4.anilist.co/file/anilistcdn/character/large/b127212-FVm2tD0erQ5B.png",
   "yujiro": "https://s4.anilist.co/file/anilistcdn/character/large/b10499-yqTyqgrkbZfO.jpg",
   "yukino": "https://s4.anilist.co/file/anilistcdn/character/large/b67067-gqhgjlni0Bcf.png",
-  "yuno": "https://s4.anilist.co/file/anilistcdn/character/large/b4963-7ZMcCtXW5hkY.png",
+  "yuno": "https://s4.anilist.co/file/anilistcdn/character/large/b123284-w6kIFYnTclMd.png",
   "yuuichi katagiri": "https://s4.anilist.co/file/anilistcdn/character/large/b122064-p5x9pgsdjj4W.jpg",
   "yuuji itadori": "https://s4.anilist.co/file/anilistcdn/character/large/b127212-FVm2tD0erQ5B.png",
   "zenitsu": "https://s4.anilist.co/file/anilistcdn/character/large/b129131-FZrQ7lSlxmEr.png",
