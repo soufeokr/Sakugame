@@ -113,16 +113,18 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
       return arr;
     }
 
-    // ----- now-playing label (bottom-left corner) -----
+    // ----- now-playing label (inside the bottom bar) -----
     const styleTag = document.createElement('style');
     styleTag.textContent =
-      '#musicNowPlaying{position:fixed;bottom:20px;left:20px;z-index:50;background:var(--accent2,#0f3460);color:#fff;' +
-      'padding:10px 18px;border-radius:25px;font:700 .85rem Nunito,sans-serif;box-shadow:0 4px 15px rgba(0,0,0,.3);' +
-      'display:none;align-items:center;gap:8px;max-width:45vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}';
+      '#musicNowPlaying{display:none;align-items:center;gap:8px;background:var(--accent2,#0f3460);color:#fff;' +
+      'padding:5px 14px;border-radius:25px;font:700 .82rem Nunito,sans-serif;max-width:52vw;overflow:hidden;' +
+      'text-overflow:ellipsis;white-space:nowrap;flex-shrink:0;}';
     document.head.appendChild(styleTag);
     const label = document.createElement('div');
     label.id = 'musicNowPlaying';
-    document.body.appendChild(label);
+    // It lives in the site's bottom bar (added before the profile button); body fallback otherwise
+    const bar = document.getElementById('bottomBar');
+    if (bar) bar.insertBefore(label, bar.firstChild); else document.body.appendChild(label);
 
     function trackNameOf(src) {
       let file = src.split('/').pop().replace(/\.mp3$/i, '');

@@ -16,7 +16,7 @@
     background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
     color: var(--text);
     min-height: 100vh;
-    padding: 16px;
+    padding: 16px 16px 68px; /* extra room at the bottom so nothing hides behind the bottom bar */
     overflow-x: hidden;
   }
   .site-header { text-align: center; margin-bottom: 40px; }
@@ -375,3 +375,8 @@
   .avatar-pick:hover { border-color: var(--accent); transform: scale(1.05); }
   .avatar-pick img { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; display: block; }
   .uc-reveal-who { display: flex; align-items: center; gap: 8px; }
+
+  /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
+  #bottomBar { position: fixed; left: 0; right: 0; bottom: 0; min-height: 48px; background: #0b0b15; border-top: 2px solid #2a2a4a; box-shadow: 0 -4px 18px rgba(0,0,0,0.45); display: flex; align-items: center; gap: 10px; padding: 5px 14px; z-index: 45; }
+  #bottomBar .username-change-btn { position: static; z-index: auto; margin-left: auto; box-shadow: none; padding: 8px 18px; font-size: 0.85rem; }
+  #bottomBar .username-change-btn:hover { transform: none; }

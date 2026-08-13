@@ -1591,6 +1591,20 @@
       return Object.keys(players).filter(pid => !out[pid]);
     }
 
+    // Turn-by-turn clue order: the speaking order is fixed when words are dealt
+    // (uc.order) and every round the alive players speak in that order.
+    // Classic rule enforced: 🃏 Mr. White NEVER speaks first.
+    function ucCurrentSpeaker(uc, alive) {
+      const base = Array.isArray(uc.order) ? uc.order : Object.values(uc.order || {});
+      const order = base.filter(p => alive.indexOf(p) !== -1);
+      alive.forEach(p => { if (order.indexOf(p) === -1) order.push(p); }); // safety net
+      if (order.length === 0) return null;
+      const mw = Object.keys(uc.roles || {}).find(p => uc.roles[p] === 'mrwhite');
+      if (order.length > 1 && mw && order[0] === mw) order.push(order.shift());
+      const idx = Math.min(uc.turnIdx || 0, order.length - 1);
+      return order[idx] || null;
+    }
+
     // Winner check over the current player list:
     //  - civilians win once all impostors (Undercover AND Mr. White) are out
     //  - down to 2 alive: Undercover wins if still alive, otherwise Mr. White
@@ -1658,6 +1672,10 @@
       shuffled.forEach(pid => { roles[pid] = 'civilian'; });
       roles[shuffled[0]] = 'undercover';
       if (useMw) roles[shuffled[1]] = 'mrwhite';
+      // Turn-by-turn speaking order (fixed for the whole game);
+      // Mr. White must NEVER speak first → he is bumped off the first slot.
+      const order = shuffled.slice();
+      if (useMw && order[0] === shuffled[1]) order.push(order.shift());
       const gameId = (currentRoom.uc && currentRoom.uc.gameId) ? currentRoom.uc.gameId + 1 : 1;
       ucActionKey = '';
       await database.ref('rooms/' + roomCode).update({
@@ -1676,6 +1694,7 @@
           uwWordImg: (flip ? pair.imgA : pair.imgB) || null,
           roles: roles,
           out: null, clues: null, votes: null,
+          order: order, turnIdx: 0,
           lastEvent: null, mwGuess: null,
           winner: null, winnerPids: null
         }
@@ -1701,8 +1720,15 @@
         if (uc.phase === 'clues') {
           const clues = uc.clues || {};
           if (alive.every(pid => clues[pid])) {
-            await database.ref('rooms/' + roomCode).update({ 'uc/phase': 'voting', 'uc/votes': null });
+            await database.ref('rooms/' + roomCode).update({ 'uc/phase': 'voting', 'uc/votes': null, 'uc/turnIdx': 0 });
             touchActivity();
+          } else {
+            // Turn-by-turn: once the current speaker has said their word, pass the mic
+            const speaker = ucCurrentSpeaker(uc, alive);
+            if (speaker && clues[speaker]) {
+              await database.ref('rooms/' + roomCode + '/uc/turnIdx').set((uc.turnIdx || 0) + 1);
+              touchActivity();
+            }
           }
         } else if (uc.phase === 'voting') {
           const votes = uc.votes || {};
@@ -1817,7 +1843,7 @@
         if (currentRoom.uc.gameId !== gid || (currentRoom.uc.round || 1) !== rd || currentRoom.uc.phase !== 'reveal') return;
         if (rd >= UC_MAX_ROUNDS) { await finishUndercover('undercover', { kind: 'limit' }); return; }
         await database.ref('rooms/' + code).update({
-          'uc/round': rd + 1, 'uc/phase': 'clues', 'uc/clues': null, 'uc/votes': null, 'uc/lastEvent': null, 'uc/mwGuess': null
+          'uc/round': rd + 1, 'uc/phase': 'clues', 'uc/clues': null, 'uc/votes': null, 'uc/lastEvent': null, 'uc/mwGuess': null, 'uc/turnIdx': 0
         });
         touchActivity();
       }, 4500);
@@ -1829,6 +1855,11 @@
       const uc = currentRoom.uc;
       if (uc.phase !== 'clues' || (uc.out || {})[playerId]) return;
       if (uc.clues && uc.clues[playerId]) return;
+      // Turn-by-turn rule: you can only describe your word on your turn
+      if (uc.order) {
+        const sp = ucCurrentSpeaker(uc, ucAlivePids());
+        if (sp && sp !== playerId) { showNotification('⏳ Not your turn yet — wait for the others!'); return; }
+      }
       const input = document.getElementById('ucClueInput');
       if (!input) return;
       const text = input.value.trim();
@@ -1974,13 +2005,18 @@
       const clues = uc.clues || {};
       const votes = uc.votes || {};
       const iVoted = !!votes[playerId];
+      const speaker = (currentRoom.state === 'playing' && uc.phase === 'clues' && uc.order) ? ucCurrentSpeaker(uc, ucAlivePids()) : null;
       pids.forEach(pid => {
         const p = players[pid] || {};
         const tile = document.createElement('div');
         tile.className = 'uc-player-tile' + (out[pid] ? ' dead' : '') + (pid === playerId ? ' me' : '');
         let status = '';
         if (out[pid]) status = '💀 out';
-        else if (uc.phase === 'clues') status = clues[pid] ? '✅ clue in' : '⏳ thinking…';
+        else if (uc.phase === 'clues') {
+          status = clues[pid] ? '✅ said theirs'
+            : (speaker === pid ? '🗣️ their turn!'
+            : '⏳ waiting their turn');
+        }
         else if (uc.phase === 'voting') status = votes[pid] ? '✅ voted' : '⏳ voting…';
         tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div><div class="uc-tile-status">' + status + '</div>';
         if (currentRoom.state === 'playing' && uc.phase === 'voting' && !iAmOut && !iVoted && !out[pid] && pid !== playerId) {
@@ -2038,11 +2074,12 @@
       const clues = uc.clues || {};
       const votes = uc.votes || {};
       const alive = ucAlivePids();
-      const key = [uc.gameId, uc.round, uc.phase, !!clues[playerId], !!votes[playerId], iAmOut, myRole, currentRoom.state].join('|');
+      const speaker = (currentRoom.state === 'playing' && uc.phase === 'clues' && uc.order) ? ucCurrentSpeaker(uc, alive) : null;
+      const key = [uc.gameId, uc.round, uc.phase, !!clues[playerId], !!votes[playerId], iAmOut, myRole, currentRoom.state, speaker].join('|');
       if (key !== ucActionKey) {
         ucActionKey = key;
         area.innerHTML = '';
-        if (currentRoom.state === 'playing' && uc.phase === 'clues' && !iAmOut && !clues[playerId]) {
+        if (currentRoom.state === 'playing' && uc.phase === 'clues' && !iAmOut && !clues[playerId] && (!speaker || speaker === playerId)) {
           area.innerHTML = '<div class="uc-action-form"><input type="text" id="ucClueInput" maxlength="80" placeholder="Describe your word in one short clue… (don\'t say it!)"><button class="success" onclick="submitUndercoverClue()">Send Clue</button></div>';
           const inp = document.getElementById('ucClueInput');
           inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitUndercoverClue(); });
@@ -2065,9 +2102,12 @@
         if (currentRoom.state !== 'playing' || uc.phase === 'over') wait.textContent = '';
         else if (iAmOut) wait.textContent = '💀 You are out — watch how it ends!';
         else if (uc.phase === 'clues') {
-          wait.textContent = clues[playerId]
-            ? '✅ Your clue is in! Waiting for the others (' + alive.filter(p => clues[p]).length + '/' + alive.length + ')…'
-            : '';
+          if (clues[playerId]) {
+            wait.textContent = '✅ Your clue is in! Waiting for the others (' + alive.filter(p => clues[p]).length + '/' + alive.length + ')…';
+          } else if (speaker && speaker !== playerId) {
+            const spName = (currentRoom.players && currentRoom.players[speaker]) ? currentRoom.players[speaker].name : 'A player';
+            wait.textContent = '🗣️ ' + spName + ' is describing their word… your turn comes after (' + alive.filter(p => clues[p]).length + '/' + alive.length + ' done)';
+          } else wait.textContent = '';
         }
         else if (uc.phase === 'voting') {
           wait.textContent = votes[playerId]
