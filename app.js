@@ -587,11 +587,11 @@
       document.getElementById('winningScreen').classList.remove('show');
       document.getElementById('ucEndScreen').classList.remove('show');
       document.getElementById('interactionWindow').classList.remove('show');
-      // The floating 💬 chat button only exists during games
+      // The floating 💬 chat button exists in the lobby and during games
       const chatBtn = document.getElementById('chatToggleBtn');
-      const inGame = (screenId === 'gameScreen' || screenId === 'undercoverScreen');
-      if (chatBtn) chatBtn.style.display = inGame ? 'flex' : 'none';
-      if (!inGame) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
+      const chatVisible = (screenId === 'lobbyScreen' || screenId === 'gameScreen' || screenId === 'undercoverScreen');
+      if (chatBtn) chatBtn.style.display = chatVisible ? 'flex' : 'none';
+      if (!chatVisible) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
     }
     async function goHome() {
       if (roomCode) { await leaveRoom(true); } // leaveRoom also resets roomCode and shows the home screen
@@ -787,7 +787,7 @@
     }
 
     function setupChatListener() {
-      database.ref('rooms/' + roomCode + '/chat').on('child_added', (snapshot) => { displayChatMessage(snapshot.val()); });
+      // One single chat for the whole room (lobby + games): the 💬 floating window
       database.ref('rooms/' + roomCode + '/gameChat').on('child_added', (snapshot) => { displayGameChatMessage(snapshot.val()); });
     }
 
@@ -968,13 +968,6 @@
       showNotification('Host permissions transferred.');
     }
 
-    async function sendMessage() {
-      const input = document.getElementById('chatInput'); const message = input.value.trim();
-      if (!message) return;
-      await database.ref('rooms/' + roomCode + '/chat').push({ senderId: playerId, senderName: currentRoom ? currentRoom.players[playerId].name : playerName, text: message, timestamp: Date.now() });
-      touchActivity();
-      input.value = '';
-    }
     async function pushGameChat(input) {
       const message = input.value.trim();
       if (!message) return;
@@ -983,19 +976,7 @@
       touchActivity();
       input.value = '';
     }
-    async function sendGameMessage() { const input = document.getElementById('gameChatInput'); if (input) await pushGameChat(input); }
-    async function sendUcMessage() { const input = document.getElementById('ucChatInput'); if (input) await pushGameChat(input); }
-
-    function displayChatMessage(msg) {
-      const container = document.getElementById('chatMessages');
-      if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
-      const msgDiv = document.createElement('div');
-      const sender = (currentRoom && currentRoom.players) ? currentRoom.players[msg.senderId] : null;
-      msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
-      msgDiv.innerHTML = `<div class="sender">${avatarCircle(sender ? sender.avatar : null, 'ava-chat')}${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
-      container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
-    }
-    // In-game chat renders into the floating chat window (opened with the 💬 button)
+    // Room chat renders into the floating chat window (opened with the 💬 button)
     let chatOverlayOpen = false;
     let chatUnread = 0;
     function displayGameChatMessage(msg) {
@@ -1058,12 +1039,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       cleanupStaleRooms();
       updateUserButton();
-      const chatInput = document.getElementById('chatInput');
-      if (chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-      const gameChatInput = document.getElementById('gameChatInput');
-      if (gameChatInput) gameChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendGameMessage(); });
-      const ucChatInput = document.getElementById('ucChatInput');
-      if (ucChatInput) ucChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendUcMessage(); });
       // Enter on the floating chat window's input
       const chatOverlayInput = document.getElementById('chatOverlayInput');
       if (chatOverlayInput) chatOverlayInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendOverlayChatMessage(); });
@@ -1461,7 +1436,7 @@
     function startGuessing() {
       if (!currentRoom || currentRoom.currentTurn !== playerId) { showNotification("It's not your turn! You can only guess on your turn."); return; }
       guessMode = true;
-      document.getElementById('guessBtn').textContent = 'Cancel Guess';
+      document.getElementById('guessBtn').innerHTML = '❌ <span class="btn-label">Cancel Guess</span>';
       document.getElementById('guessBtn').onclick = cancelGuessingMode;
       showNotification('Click on a character to make your guess!');
       renderBoard();
@@ -1469,7 +1444,7 @@
 
     function cancelGuessingMode() {
       guessMode = false;
-      document.getElementById('guessBtn').textContent = '🎯 Make a Guess';
+      document.getElementById('guessBtn').innerHTML = '🎯 <span class="btn-label">Make a Guess</span>';
       document.getElementById('guessBtn').onclick = startGuessing;
       renderBoard();
     }

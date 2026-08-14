@@ -224,18 +224,6 @@
         <button class="full success" id="startGameBtn" onclick="hostStartGame()" style="display: none;">🎮 START GAME</button>
         <button class="full danger" onclick="leaveRoom()">Leave Room</button>
       </div>
-      <div class="lobby-right">
-        <div class="chat-section">
-          <div class="chat-header"><h3>💬 Chat</h3></div>
-          <div class="chat-messages" id="chatMessages"><div style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px;">No messages yet. Say hi! 👋</div></div>
-          <div class="chat-input-area">
-            <div class="chat-input-form">
-              <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200">
-              <button class="secondary" onclick="sendMessage()">Send</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -300,9 +288,9 @@
           <h3>All Characters <span id="remainingCount">(0 remaining)</span></h3>
           <div class="board" id="gameBoard"></div>
           <div class="game-controls">
-            <button class="secondary" onclick="toggleMyCharacter()">👁️ Show/Hide My Character</button>
-            <button class="warning" id="guessBtn" onclick="startGuessing()">🎯 Make a Guess</button>
-            <button class="danger" onclick="returnToLobbyFromGame()">← Return to Lobby</button>
+            <button class="secondary" onclick="toggleMyCharacter()" title="Show/Hide My Character">👁️ <span class="btn-label">Show/Hide My Character</span></button>
+            <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess">🎯 <span class="btn-label">Make a Guess</span></button>
+            <button class="danger" onclick="returnToLobbyFromGame()" title="Return to Lobby">🚪 <span class="btn-label">Return to Lobby</span></button>
           </div>
         </div>
       </div>
@@ -331,8 +319,8 @@
         </div>
         <div class="uc-action" id="ucActionArea"></div>
         <div class="uc-controls">
-          <button class="secondary" onclick="toggleUcWord()">👁️ Hide/Show My Word</button>
-          <button class="danger" onclick="returnToLobbyFromUndercover()">← Return to Lobby</button>
+          <button class="secondary" onclick="toggleUcWord()" title="Hide/Show My Word">👁️ <span class="btn-label">Hide/Show My Word</span></button>
+          <button class="danger" onclick="returnToLobbyFromUndercover()" title="Return to Lobby">🚪 <span class="btn-label">Return to Lobby</span></button>
         </div>
       </div>
     </div>
@@ -565,5 +553,5 @@
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b01504ba5ee23f',t:'MTc4NjcxMTc5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b0466fc8f1e210',t:'MTc4NjcxMzgxNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
