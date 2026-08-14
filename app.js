@@ -578,11 +578,12 @@
     const RACE_DEFAULT_QUESTIONS = 8; // max questions each hunter may ask (race)
     let hostRaceLives = RACE_DEFAULT_LIVES;         // race option on the create-room screen
     let hostRaceQuestions = RACE_DEFAULT_QUESTIONS; // race option on the create-room screen
-    let brCrossTarget = null;      // opponent pid I'm currently marking with ❌
+    let brMarkTargets = new Set(); // opponent pids I mark with ❌ — SEVERAL colors at once!
     let brGuessMode = false;       // click-a-card-to-guess mode (battle)
     let rcGuessMode = false;       // same for race
     let brMarks = {};              // { opponentPid: {charId:true} } — local notes, like myEliminated in 2P
     let rcMarks = {};              // { charId: true } — my own marks in race
+    let lastBrGameId = null, lastRcGameId = null; // reset local marks on a new deal
     let brWatchBusy = false, rcWatchBusy = false;   // host watchdog guards
     const QUEUE_MAX = 8;           // max people waiting in a room's queue
     let imQueued = false;          // I'm in this room's queue (not seated)
@@ -880,6 +881,7 @@
           imQueued = false;
         }
         maybePromoteQueue(); // host moves queued people into free seats; lobbyless queue-head self-promotes
+        maybeAbortEmptyGame(); // host resets the room when EVERYBODY abandoned the running game
         updateLobby();
         ensureHostPresent();
         purgeDisconnectedPlayers();
@@ -1164,6 +1166,32 @@
       } finally { queuePromoting = false; }
     }
 
+    // ===== 🚪 AUTO-ABORT AN EMPTY GAME =====
+    // If EVERY seated player backed out of the current game ("To Lobby" mid-game),
+    // nobody is left to play it — the room goes back to a real lobby state.
+    // Without this, the game kept "running" forever with everyone watching from
+    // the lobby: rules couldn't be changed and new joiners always landed in the
+    // ⏳ queue (state was never 'lobby' any more).
+    function maybeAbortEmptyGame() {
+      if (!isHost || !currentRoom || !roomCode) return;
+      const st = currentRoom.state;
+      if (st !== 'playing' && st !== 'finished') return;
+      const g = currentRoom.game;
+      let gd = null;
+      if (g === 'undercover') gd = currentRoom.uc;
+      else if (g === 'battle') gd = currentRoom.br;
+      else if (g === 'race') gd = currentRoom.rc;
+      if (!gd || !gd.gameId) return; // 2P Guess Who ends via its own buttons
+      const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
+      if (seated.length === 0) return;
+      const everyoneOut = seated.every(p => p.outInGame === gd.gameId);
+      if (everyoneOut) {
+        abortingEmptyGame = true; // watchdogs pause while the reset lands
+        resetRoomToLobbyAfterGame().finally(() => { abortingEmptyGame = false; });
+      }
+    }
+    let abortingEmptyGame = false;
+
     // Queue members get a plain onDisconnect-remove (they hold no seat, nothing to protect)
     function markQueueDisconnect() {
       const ref = database.ref('rooms/' + roomCode + '/queue/' + playerId);
@@ -1378,9 +1406,13 @@
     // in br.secrets / rc.targetPid+rc.secretId. ❌ marks are LOCAL notes only
     // (brMarks per opponent color / rcMarks for race) — like myEliminated.
     const BR_COLORS = ['#ff5252', '#40c4ff', '#69f0ae', '#ffd740', '#e040fb', '#ff9e40', '#18ffff', '#ff6e9f'];
+    // 👥 In-game participants: seated players who did NOT back out of THIS game
+    // (a player who pressed "To Lobby" mid-game spectates from the lobby —
+    // the game skips them in rotations and doesn't wait for their answers).
+    const brGamePids = (room) => { const r = room || currentRoom; const br = (r && r.br) || {}; return (br.order || []).filter(pid => (r.players || {})[pid] && ((r.players[pid] || {}).outInGame || null) !== br.gameId); };
+    const rcHuntersInGame = (room) => { const r = room || currentRoom; const rc = (r && r.rc) || {}; return (rc.hunters || []).filter(pid => (r.players || {})[pid] && ((r.players[pid] || {}).outInGame || null) !== rc.gameId); };
     function brOpponents() {
-      const order = ((currentRoom && currentRoom.br && currentRoom.br.order) || []);
-      return order.filter(pid => pid !== playerId && (currentRoom.players || {})[pid]);
+      return brGamePids().filter(pid => pid !== playerId);
     }
     function brColorOf(pid) {
       const order = ((currentRoom && currentRoom.br && currentRoom.br.order) || []);
@@ -1391,7 +1423,8 @@
     // ❤️ race: hunter with lives left (0 = out, skipped in the rotation)
     const rcLivesOf = (room, pid) => { const r = room || currentRoom; const v = ((r.rc || {}).livesLeft || {})[pid]; return (v == null) ? (((r.settings || {}).raceLives) || RACE_DEFAULT_LIVES) : v; };
     const rcQuestionsOf = (room, pid) => { const r = room || currentRoom; const v = ((r.rc || {}).questionsLeft || {})[pid]; return (v == null) ? (((r.settings || {}).raceQuestions) || RACE_DEFAULT_QUESTIONS) : v; };
-    const rcActiveHunters = (room) => rcHunters(room).filter(pid => rcLivesOf(room, pid) > 0);
+    // Active hunters = in the game (not spectating) AND ❤️ lives left
+    const rcActiveHunters = (room) => rcHuntersInGame(room).filter(pid => rcLivesOf(room, pid) > 0);
     const rcColorOf = (pid) => { const h = (currentRoom && currentRoom.rc && currentRoom.rc.hunters) || []; const idx = h.indexOf(pid); return BR_COLORS[(idx >= 0 ? idx : 0) % BR_COLORS.length]; };
 
     // 📜 Append-only game history. Each entry gets its own Firebase push key,
@@ -1491,7 +1524,7 @@
     function selectTabNoop() {}
 
     // ---------- TURN HELPERS (battle & race) ----------
-    const brTurnPid = (room) => { const r = room || currentRoom; const o = ((r.br && r.br.order) || []).filter(pid => (r.players || {})[pid]); return o.length ? o[(r.br.turnIdx || 0) % o.length] : null; };
+    const brTurnPid = (room) => { const r = room || currentRoom; const o = brGamePids(r); return o.length ? o[(((r.br || {}).turnIdx) || 0) % o.length] : null; };
     // Race turns rotate through hunters who still have ❤️ lives (0 lives = out)
     const rcTurnPid = (room) => { const r = room || currentRoom; const h = rcActiveHunters(r); return h.length ? h[(((r.rc || {}).turnIdx) || 0) % h.length] : null; };
     function battleAsk() {
@@ -1529,18 +1562,20 @@
     function battleAllAnswersIn() {
       const br = (currentRoom && currentRoom.br) || {};
       if (!br.question) return false;
-      const need = (br.order || []).filter(pid => pid !== br.question.by && (currentRoom.players || {})[pid] && !(currentRoom.players[pid] || {}).dcAt);
+      const need = brGamePids().filter(pid => pid !== br.question.by && !(currentRoom.players[pid] || {}).dcAt);
       return need.every(pid => (br.answers || {})[pid]);
     }
     // HOST watchdog: advance on a vanished asker/answers, resolve guesses, end checks
     function battleWatchdog() {
       const br = (currentRoom && currentRoom.br) || {};
-      if (br.phase === 'over' || brWatchBusy) return;
+      if (br.phase === 'over' || brWatchBusy || abortingEmptyGame) return;
       const players = currentRoom.players || {};
-      const alive = pid => players[pid] && !players[pid].dcAt;
-      const seated = Object.keys(players);
-      // Game is pointless under 2 seated players → end it
-      if (seated.length < 2) {
+      const alive = pid => players[pid] && !players[pid].dcAt && (players[pid].outInGame || null) !== br.gameId;
+      // Game is pointless with under 2 people still playing → end it
+      // (0 players = everyone backed out: the auto-abort handles the lobby reset)
+      const parts = brGamePids().filter(pid => alive(pid));
+      if (parts.length === 0) return;
+      if (parts.length < 2) {
         database.ref('rooms/' + roomCode).update({ 'br/phase': 'over', state: 'finished' });
         return;
       }
@@ -1550,7 +1585,7 @@
         brWatchBusy = true;
         try {
           const correct = gs.charId === (br.secrets || {})[gs.target];
-          const unfoundAlive = (br.order || []).filter(pid => alive(pid) && !(br.found || {})[pid] && pid !== gs.target).length;
+          const unfoundAlive = brGamePids().filter(pid => alive(pid) && !(br.found || {})[pid] && pid !== gs.target).length;
           const pts = correct ? (unfoundAlive + 1) * 100 : 0;
           const name = (players[gs.by] || {}).name || '?';
           const tName = (players[gs.target] || {}).name || '?';
@@ -1559,13 +1594,13 @@
           upd['br/log/' + gameLogPushKey('br')] = correct
             ? { k: 'find', txt: '🎯 ' + name + ' found ' + tName + '\'s secret: ' + charName + '! (+' + pts + ' pts)' }
             : { k: 'miss', txt: '❌ ' + name + ' wrongly guessed ' + charName + ' for ' + tName + '…' };
-          const o = (br.order || []).filter(pid => players[pid]);
+          const o = brGamePids();
           upd['br/turnIdx'] = ((br.turnIdx || 0) + 1) % Math.max(o.length, 1);
           if (correct) {
             upd['br/found/' + gs.target] = { by: gs.by, pts };
             upd['br/points/' + gs.by] = ((br.points || {})[gs.by] || 0) + pts;
-            // End? Only 0 or 1 unfound secret left among seated players
-            const stillUnfound = o.filter(pid => pid !== gs.target && !(br.found || {})[pid]);
+            // End? Only 0 or 1 unfound secret left among players still in the game
+            const stillUnfound = o.filter(pid => alive(pid) && pid !== gs.target && !(br.found || {})[pid]);
             if (stillUnfound.length <= 1) { upd['br/phase'] = 'over'; upd.state = 'finished'; }
           }
           database.ref('rooms/' + roomCode).update(upd);
@@ -1575,24 +1610,46 @@
       // Current asker vanished → skip their turn (works in both phases)
       const turnPid = brTurnPid();
       if (turnPid && !alive(turnPid) && seatsConnectedCount() >= 2) {
-        const o = (br.order || []).filter(pid => players[pid]);
+        const o = brGamePids();
         database.ref('rooms/' + roomCode + '/br').update({ question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % Math.max(o.length, 1) });
       }
     }
     function seatsConnectedCount() { return Object.keys((currentRoom && currentRoom.players) || {}).filter(pid => !(currentRoom.players[pid] || {}).dcAt).length; }
 
+    // 🎨 Selected color chips (multi-select), in turn order, still seated
+    function brSelectedMarks() {
+      const players = (currentRoom && currentRoom.players) || {};
+      return brOpponents().filter(pid => brMarkTargets.has(pid) && players[pid]);
+    }
+    // Selected opponents whose secret isn't found yet = valid 🎯 guess targets
+    function brGuessCandidates() {
+      const br = (currentRoom && currentRoom.br) || {};
+      return brSelectedMarks().filter(pid => !(br.found || {})[pid]);
+    }
+
     async function battleGuess(charId) {
-      const br = currentRoom.br;
-      const targetName = (currentRoom.players[brCrossTarget] || {}).name || 'them';
+      const candidates = brGuessCandidates();
+      if (!candidates.length) { showNotification('All selected players are already found — select other colors! 🎨'); return; }
+      const players = currentRoom.players || {};
+      const nameOf = pid => escapeHtml(String((players[pid] || {}).name || '?'));
       const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
-      showInteraction('🎯 Make a guess?', 'You think <b>' + escapeHtml(targetName) + '</b>\'s secret is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
+      const doGuess = async (target) => {
+        closeInteraction();
+        brGuessMode = false;
+        await database.ref('rooms/' + roomCode + '/br/guess').set({ by: playerId, target: target, charId });
+        touchActivity();
+      };
+      if (candidates.length === 1) {
+        showInteraction('🎯 Make a guess?', 'You think <b>' + nameOf(candidates[0]) + '</b>\'s secret is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
+          { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
+          { label: '🎯 Guess!', onclick: () => { doGuess(candidates[0]); }, class: 'warning' }
+        ]);
+        return;
+      }
+      // Several colors selected → ask WHOSE secret it is
+      showInteraction('🎯 Make a guess?', 'You think <b>' + escapeHtml(charName) + '</b> is the secret of…<br><select id="brGuessTargetSel" style="margin:12px 0 4px; width:100%; padding:12px; border-radius:10px; background:#0f0f1a; color:var(--text); border:2px solid var(--accent2); font-family:inherit; font-weight:800; font-size:1rem;">' + candidates.map(pid => '<option value="' + pid + '">' + nameOf(pid) + '</option>').join('') + '</select><br><small>This uses your turn — right or wrong.</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
-        { label: '🎯 Guess!', onclick: async () => {
-          closeInteraction();
-          brGuessMode = false;
-          await database.ref('rooms/' + roomCode + '/br/guess').set({ by: playerId, target: brCrossTarget, charId });
-          touchActivity();
-        }, class: 'warning' }
+        { label: '🎯 Guess!', onclick: () => { const sel = document.getElementById('brGuessTargetSel'); doGuess((sel && sel.value && candidates.indexOf(sel.value) !== -1) ? sel.value : candidates[0]); }, class: 'warning' }
       ]);
     }
     function battleToggleGuess() {
@@ -1601,18 +1658,22 @@
       if (brTurnPid() !== playerId) { showNotification("You can guess on your turn only!"); return; }
       if (brGuessMode) { brGuessMode = false; }
       else {
-        if (brCrossTarget === playerId || !brCrossTarget || !(currentRoom.players || {})[brCrossTarget]) brCrossTarget = brOpponents()[0] || null;
-        if (!brCrossTarget) { showNotification('No opponent to guess!'); return; }
+        if (brMarkTargets.size === 0) { const first = brOpponents()[0]; if (!first) { showNotification('No opponent to guess!'); return; } brMarkTargets.add(first); }
+        if (!brGuessCandidates().length) { showNotification('All selected players are already found — select another color! 🎨'); return; }
         brGuessMode = true;
-        showNotification('🎯 Guess mode: click the card you think is <b>' + escapeHtml((currentRoom.players[brCrossTarget] || {}).name || '') + '</b>\'s secret!');
+        const names = brGuessCandidates().map(pid => escapeHtml(String((currentRoom.players[pid] || {}).name || '?'))).join(', ');
+        showNotification('🎯 Guess mode: click the card you think is the secret of: <b>' + names + '</b>');
       }
       renderBattleBoard();
     }
     function battleClearMarks() { brMarks = {}; renderBattleBoard(); }
     function brToggleMark(charId) {
-      if (!brCrossTarget || brCrossTarget === playerId) return;
-      if (!brMarks[brCrossTarget]) brMarks[brCrossTarget] = {};
-      if (brMarks[brCrossTarget][charId]) delete brMarks[brCrossTarget][charId]; else brMarks[brCrossTarget][charId] = true;
+      const sel = brSelectedMarks();
+      if (!sel.length) { showNotification('🎨 Tap at least one color chip first!'); return; }
+      sel.forEach(pid => {
+        if (!brMarks[pid]) brMarks[pid] = {};
+        if (brMarks[pid][charId]) delete brMarks[pid][charId]; else brMarks[pid][charId] = true;
+      });
       renderBattleBoard();
     }
 
@@ -1625,18 +1686,26 @@
       const phaseNames = { ask: '💬 Question time', answers: '✋ Answering…', over: '🏁 Game over' };
       document.getElementById('brTurnBadge').textContent = br.phase === 'over' ? '🏁 Finished' : ('🎤 ' + turnName + (turnPid === playerId ? ' (You)' : ''));
       document.getElementById('brPhaseBadge').textContent = phaseNames[br.phase] || '';
-      // Opponent chips (colored) — click to pick whom your ❌ marks belong to
-      if (!brCrossTarget || brCrossTarget === playerId || !players[brCrossTarget]) brCrossTarget = brOpponents()[0] || null;
+      // New deal? Local notes (❌ marks + selection) start fresh
+      if (br.gameId && br.gameId !== lastBrGameId) { lastBrGameId = br.gameId; brMarks = {}; brGuessMode = false; brMarkTargets = new Set(); }
+      // Opponent chips (colored) — MULTI-select: ❌ marks land on ALL selected colors at once
+      const opps = brOpponents();
+      brMarkTargets = new Set([...brMarkTargets].filter(pid => opps.indexOf(pid) !== -1)); // drop leavers
+      if (brMarkTargets.size === 0 && opps[0]) brMarkTargets.add(opps[0]); // sensible default
       const chips = document.getElementById('brChips');
       chips.innerHTML = '';
-      brOpponents().forEach(pid => {
+      opps.forEach(pid => {
         const p = players[pid];
         const col = brColorOf(pid);
         const chip = document.createElement('button');
-        chip.className = 'br-chip' + (brCrossTarget === pid ? ' sel' : '');
+        chip.className = 'br-chip' + (brMarkTargets.has(pid) ? ' sel' : '');
         chip.style.setProperty('--c', col);
         chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="chip-name">${escapeHtml(String(p.name || '?'))}</span><span class="chip-pts">${(br.points || {})[pid] || 0} pts</span>${(br.found || {})[pid] ? '<span class="chip-state">🔍 found</span>' : ''}${(p.dcAt ? '<span class="chip-state">🔌</span>' : '')}${turnPid === pid && br.phase !== 'over' ? '<span class="chip-state">🎤</span>' : ''}`;
-        chip.addEventListener('click', () => { brCrossTarget = pid; showNotification('❌ Your marks now track: ' + (p.name || '?')); updateBattle(); });
+        chip.addEventListener('click', () => {
+          if (brMarkTargets.has(pid)) brMarkTargets.delete(pid); else brMarkTargets.add(pid);
+          if (brGuessMode && !brGuessCandidates().length) { brGuessMode = false; showNotification('🎯 Guess mode off — no selected player left to find.'); }
+          updateBattle();
+        });
         chips.appendChild(chip);
       });
       // My secret + my points
@@ -1672,10 +1741,8 @@
         info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
         card.appendChild(info);
         card.addEventListener('click', () => {
-          if (brGuessMode) {
-            if ((br.found || {})[brCrossTarget]) { showNotification('That player is already found — pick another chip color!'); return; }
-            battleGuess(char.id);
-          } else brToggleMark(char.id);
+          if (brGuessMode) battleGuess(char.id);
+          else brToggleMark(char.id);
         });
         board.appendChild(card);
       });
@@ -1698,7 +1765,7 @@
       const q = br.question;
       const answers = br.answers || {};
       const myAnswer = answers[playerId];
-      const answerers = (br.order || []).filter(pid => pid !== q.by && players[pid]);
+      const answerers = brGamePids().filter(pid => pid !== q.by);
       const answerChips = answerers.map(pid => {
         const a = answers[pid];
         return `<span class="qa-ans" style="--c:${brColorOf(pid)}">${avatarCircle(players[pid].avatar, 'ava-chat')}${escapeHtml(String(players[pid].name || '?'))} ${a ? (a === 'YES' ? '✅' : '🚫') : '⏳'}</span>`;
@@ -1771,11 +1838,11 @@
     }
     function raceWatchdog() {
       const rc = (currentRoom && currentRoom.rc) || {};
-      if (rc.phase === 'over' || rcWatchBusy) return;
+      if (rc.phase === 'over' || rcWatchBusy || abortingEmptyGame) return;
       const players = currentRoom.players || {};
       const alive = pid => players[pid] && !players[pid].dcAt;
-      // Target gone → game over (nobody left to answer)
-      if (!players[rc.targetPid]) {
+      // Target gone (left the room OR backed out to the lobby) → game over
+      if (!players[rc.targetPid] || (players[rc.targetPid].outInGame || null) === rc.gameId) {
         database.ref('rooms/' + roomCode).update({ 'rc/phase': 'over', 'rc/winner': null, 'rc/endReason': 'target-left', state: 'finished' });
         return;
       }
@@ -1850,6 +1917,8 @@
       const players = currentRoom.players || {};
       const isTarget = rc.targetPid === playerId;
       const targetName = (players[rc.targetPid] || {}).name || '?';
+      // New deal? Local notes (❌ marks) start fresh
+      if (rc.gameId && rc.gameId !== lastRcGameId) { lastRcGameId = rc.gameId; rcMarks = {}; rcGuessMode = false; }
       const turnPid = rcTurnPid();
       const turnName = (players[turnPid] || {}).name || '—';
       document.getElementById('rcTurnBadge').textContent = rc.phase === 'over' ? '🏁 Finished' : ('🎤 ' + turnName + (turnPid === playerId ? ' (You)' : ''));
@@ -1881,13 +1950,15 @@
         const p = players[pid] || {};
         const lives = rcLivesOf(currentRoom, pid);
         const qs = rcQuestionsOf(currentRoom, pid);
+        const spectating = (p.outInGame || null) === rc.gameId;
         const maxLives = Math.max(lives, ((currentRoom.settings || {}).raceLives) || RACE_DEFAULT_LIVES);
-        const out = lives <= 0;
+        const out = lives <= 0 || spectating;
         const chip = document.createElement('div');
-        chip.className = 'rc-hunter' + (out ? ' out' : '') + (turnPid === pid && rc.phase !== 'over' ? ' turn' : '');
+        chip.className = 'rc-hunter' + (out ? ' out' : '') + (turnPid === pid && !out && rc.phase !== 'over' ? ' turn' : '');
         chip.style.setProperty('--c', rcColorOf(pid));
         const hearts = '❤️'.repeat(lives) + '🖤'.repeat(Math.max(0, maxLives - lives));
-        chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="rc-hunter-res" title="Lives (wrong guesses allowed)">${out ? '💀' : hearts}</span><span class="rc-hunter-res" title="Questions left">❓${qs}</span>${turnPid === pid && rc.phase !== 'over' ? '<span class="rc-hunter-turn">🎤</span>' : ''}`;
+        const livesTxt = spectating ? '🚪' : (lives <= 0 ? '💀' : hearts);
+        chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="rc-hunter-res" title="Lives (wrong guesses allowed)">${livesTxt}</span><span class="rc-hunter-res" title="Questions left">❓${qs}</span>${turnPid === pid && !out && rc.phase !== 'over' ? '<span class="rc-hunter-turn">🎤</span>' : ''}`;
         bar.appendChild(chip);
       });
     }
@@ -3017,7 +3088,7 @@
 
     // HOST-ONLY: advances the game when everyone has acted.
     async function hostUndercoverWatchdog() {
-      if (ucWatchBusy) return;
+      if (ucWatchBusy || abortingEmptyGame) return;
       const uc = (currentRoom && currentRoom.uc) || null;
       if (!uc || currentRoom.state !== 'playing') return;
       const alive = ucAlivePids();
