@@ -461,10 +461,14 @@
     .card-name { font-size: 0.66rem; }
     .card.eliminated::after { font-size: 2rem; }
 
-    /* ----- Small round floating buttons (same style as the 💬 chat button) ----- */
-    .game-controls, .uc-controls { position: fixed; left: 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; gap: 8px; margin-top: 0; }
-    .game-controls button, .uc-controls button { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.5); flex-shrink: 0; }
+    /* ----- Small round floating buttons (same style as the 💬 chat button),
+           spread evenly across the whole screen width ----- */
+    .game-controls, .uc-controls { position: fixed; left: 0; right: 0; padding: 0 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; gap: 8px; margin-top: 0; pointer-events: none; }
+    .game-controls button, .uc-controls button { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.5); flex-shrink: 0; pointer-events: auto; }
     .game-controls .btn-label, .uc-controls .btn-label { display: none; }
+    /* 💬 button slides up so it never covers the spread-out game buttons */
+    #chatToggleBtn { bottom: calc(116px + env(safe-area-inset-bottom, 0px)); }
+    .chat-overlay { bottom: calc(180px + env(safe-area-inset-bottom, 0px)); }
     .game-chat { height: 300px; }
     .chat-messages { padding: 12px; }
     .chat-input-area { padding: 10px; }
