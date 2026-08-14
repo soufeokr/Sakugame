@@ -587,6 +587,11 @@
       document.getElementById('winningScreen').classList.remove('show');
       document.getElementById('ucEndScreen').classList.remove('show');
       document.getElementById('interactionWindow').classList.remove('show');
+      // The floating 💬 chat button only exists during games
+      const chatBtn = document.getElementById('chatToggleBtn');
+      const inGame = (screenId === 'gameScreen' || screenId === 'undercoverScreen');
+      if (chatBtn) chatBtn.style.display = inGame ? 'flex' : 'none';
+      if (!inGame) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
     }
     async function goHome() {
       if (roomCode) { await leaveRoom(true); } // leaveRoom also resets roomCode and shows the home screen
@@ -990,18 +995,44 @@
       msgDiv.innerHTML = `<div class="sender">${avatarCircle(sender ? sender.avatar : null, 'ava-chat')}${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
       container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
     }
-    // Renders into both in-game chat containers (Guess Who screen + Undercover screen)
+    // In-game chat renders into the floating chat window (opened with the 💬 button)
+    let chatOverlayOpen = false;
+    let chatUnread = 0;
     function displayGameChatMessage(msg) {
-      ['gameChatMessages', 'ucChatMessages'].forEach(id => {
-        const container = document.getElementById(id);
-        if (!container) return;
-        if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
-        const msgDiv = document.createElement('div');
-        const sender = (currentRoom && currentRoom.players) ? currentRoom.players[msg.senderId] : null;
-        msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
-        msgDiv.innerHTML = `<div class="sender">${avatarCircle(sender ? sender.avatar : null, 'ava-chat')}${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
-        container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
-      });
+      const container = document.getElementById('chatOverlayMessages');
+      if (!container) return;
+      if (container.children.length === 1 && container.children[0].style.textAlign === 'center') container.innerHTML = '';
+      const msgDiv = document.createElement('div');
+      const sender = (currentRoom && currentRoom.players) ? currentRoom.players[msg.senderId] : null;
+      msgDiv.className = 'chat-message' + (msg.senderId === playerId ? ' own' : '');
+      msgDiv.innerHTML = `<div class="sender">${avatarCircle(sender ? sender.avatar : null, 'ava-chat')}${escapeHtml(String(msg.senderName || 'Player'))}</div><div class="text">${escapeHtml(String(msg.text || ''))}</div>`;
+      container.appendChild(msgDiv); container.scrollTop = container.scrollHeight;
+      // 🔴 unread counter on the 💬 button when the window is closed
+      if (msg.senderId !== playerId && !chatOverlayOpen) { chatUnread++; updateChatBadge(); }
+    }
+
+    function updateChatBadge() {
+      const b = document.getElementById('chatUnreadBadge');
+      if (!b) return;
+      b.textContent = chatUnread > 0 ? String(chatUnread) : '';
+      b.style.display = chatUnread > 0 ? 'flex' : 'none';
+    }
+    function toggleChatOverlay() {
+      chatOverlayOpen = !chatOverlayOpen;
+      const ov = document.getElementById('chatOverlay');
+      if (ov) ov.classList.toggle('show', chatOverlayOpen);
+      if (chatOverlayOpen) {
+        chatUnread = 0; updateChatBadge();
+        const c = document.getElementById('chatOverlayMessages');
+        if (c) c.scrollTop = c.scrollHeight;
+        const inp = document.getElementById('chatOverlayInput');
+        if (inp) inp.focus();
+      }
+    }
+    function closeChatOverlay() { if (chatOverlayOpen) toggleChatOverlay(); }
+    async function sendOverlayChatMessage() {
+      const input = document.getElementById('chatOverlayInput');
+      if (input) await pushGameChat(input);
     }
 
     // ===== STALE ROOM JANITOR =====
@@ -1033,6 +1064,12 @@
       if (gameChatInput) gameChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendGameMessage(); });
       const ucChatInput = document.getElementById('ucChatInput');
       if (ucChatInput) ucChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendUcMessage(); });
+      // Enter on the floating chat window's input
+      const chatOverlayInput = document.getElementById('chatOverlayInput');
+      if (chatOverlayInput) chatOverlayInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendOverlayChatMessage(); });
+      // Enter on the Join Room code field = join directly (PC & phone keyboards)
+      const joinRoomInput = document.getElementById('joinRoomInput');
+      if (joinRoomInput) joinRoomInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') joinGameRoom(); });
       const pairInputA = document.getElementById('pairInputA');
       if (pairInputA) pairInputA.addEventListener('keypress', (e) => { if (e.key === 'Enter') pairAniListSearch('a'); });
       const pairInputB = document.getElementById('pairInputB');

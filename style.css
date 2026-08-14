@@ -176,7 +176,7 @@
   .selectable-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
   .selectable-card .info { padding: 10px; text-align: center; background: #0f0f1a; }
   .selectable-card .char-name { font-weight: 800; font-size: 0.9rem; color: var(--text); line-height: 1.2; }
-  .game-container { display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px; max-width: 1600px; margin: 0 auto; }
+  .game-container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; max-width: 1600px; margin: 0 auto; }
   .game-left { display: flex; flex-direction: column; gap: 16px; }
   .game-center { display: flex; flex-direction: column; gap: 16px; }
   .game-right { display: flex; flex-direction: column; }
@@ -293,7 +293,7 @@
   }
 
   /* ===== UNDERCOVER MODE ===== */
-  .uc-container { display: grid; grid-template-columns: 1fr 380px; gap: 20px; max-width: 1400px; margin: 0 auto; }
+  .uc-container { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
   .uc-main { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
   .uc-side { background: var(--card); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); display: flex; flex-direction: column; max-height: calc(100vh - 200px); overflow: hidden; }
   .uc-header { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
@@ -383,6 +383,18 @@
   .uc-reveal-who { display: flex; align-items: center; gap: 8px; }
   .uc-log-round { text-align: center; color: var(--muted); font-size: 0.72rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin: 10px 0 4px; }
   #ucNewWordsBtn { padding: 7px 14px; border-radius: 25px; font-size: 0.82rem; min-height: 0; }
+
+  /* ===== Floating 💬 chat button + big chat window (phones: almost full screen, PC: side panel) ===== */
+  #chatToggleBtn { position: fixed; right: 14px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; width: 54px; height: 54px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.4rem; display: none; align-items: center; justify-content: center; background: var(--accent); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+  #chatUnreadBadge { position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; border-radius: 12px; background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #0b0b15; }
+  .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
+  .chat-overlay.show { display: flex; }
+  .chat-overlay-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 2px solid #0f0f1a; flex-shrink: 0; }
+  .chat-overlay-head h3 { color: var(--accent); font-size: 1rem; }
+  .chat-overlay-close { background: var(--danger); width: 38px; height: 38px; min-height: 0; border-radius: 50%; font-size: 1rem; padding: 0; flex-shrink: 0; }
+  @media (min-width: 901px) {
+    .chat-overlay { left: auto; right: 16px; top: auto; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); width: 400px; height: 62vh; }
+  }
 
   /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
   #bottomBar { position: fixed; left: 0; right: 0; bottom: 0; min-height: 48px; background: #0b0b15; border-top: 2px solid #2a2a4a; box-shadow: 0 -4px 18px rgba(0,0,0,0.45); display: flex; align-items: center; gap: 10px; padding: 5px 14px; padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px)); z-index: 45; }
@@ -482,4 +494,15 @@
     #bottomBar { min-height: 44px; padding: 4px 10px; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); gap: 8px; }
     #bottomBar .username-change-btn { padding: 7px 14px; font-size: 0.78rem; min-height: 36px; }
     #musicNowPlaying { max-width: 46vw; font-size: 0.74rem !important; padding: 4px 10px; }
+
+    /* ----- character selection screen: smaller cards too ----- */
+    .selection-header h2 { font-size: 1.4rem; }
+    .selection-header p { font-size: 0.9rem; }
+    .selection-status { padding: 10px; font-size: 0.9rem; margin-bottom: 14px; }
+    .selection-controls { gap: 8px; margin-bottom: 12px; }
+    .character-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; }
+    .selectable-card { border-width: 2px; border-radius: 10px; }
+    .selectable-card .info { padding: 5px 4px; }
+    .selectable-card .char-name { font-size: 0.66rem; }
+    .selectable-card.selected::before { width: 26px; height: 26px; font-size: 1rem; top: 6px; right: 6px; }
   }

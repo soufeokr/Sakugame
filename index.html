@@ -306,18 +306,6 @@
           </div>
         </div>
       </div>
-      <div class="game-right">
-        <div class="game-chat chat-section">
-          <div class="chat-header"><h3>💬 Game Chat</h3></div>
-          <div class="chat-messages" id="gameChatMessages"><div style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px;">Chat with your opponent</div></div>
-          <div class="chat-input-area">
-            <div class="chat-input-form">
-              <input type="text" id="gameChatInput" placeholder="Type a message..." maxlength="200">
-              <button class="secondary" onclick="sendGameMessage()">Send</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -345,18 +333,6 @@
         <div class="uc-controls">
           <button class="secondary" onclick="toggleUcWord()">👁️ Hide/Show My Word</button>
           <button class="danger" onclick="returnToLobbyFromUndercover()">← Return to Lobby</button>
-        </div>
-      </div>
-      <div class="uc-side">
-        <div class="chat-section">
-          <div class="chat-header"><h3>💬 Game Chat</h3></div>
-          <div class="chat-messages" id="ucChatMessages"><div style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px;">Discuss here… who sounds suspicious? 🤔</div></div>
-          <div class="chat-input-area">
-            <div class="chat-input-form">
-              <input type="text" id="ucChatInput" placeholder="Type a message..." maxlength="200">
-              <button class="secondary" onclick="sendUcMessage()">Send</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -547,6 +523,23 @@
   </div>
 
 
+  <!-- 💬 Floating chat button + chat window (visible during games). New messages
+       from other players show a red unread counter on the button. -->
+  <button id="chatToggleBtn" style="display: none;" onclick="toggleChatOverlay()" title="Chat">💬<span id="chatUnreadBadge"></span></button>
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-overlay-head">
+      <h3>💬 Game Chat</h3>
+      <button class="chat-overlay-close" onclick="toggleChatOverlay()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatOverlayMessages"><div style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px;">Chat with the other players!</div></div>
+    <div class="chat-input-area">
+      <div class="chat-input-form">
+        <input type="text" id="chatOverlayInput" placeholder="Type a message..." maxlength="200">
+        <button class="secondary" onclick="sendOverlayChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Avatar picker: preset anime avatars or your own uploaded picture -->
   <div class="modal" id="avatarModal">
     <div class="modal-content">
@@ -572,5 +565,5 @@
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2a9e2f99fdee189',t:'MTc4NjY0NjgyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b01504ba5ee23f',t:'MTc4NjcxMTc5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
