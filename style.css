@@ -451,8 +451,10 @@
   .br-chip .chip-pts { color: var(--warning); font-size: 0.72rem; font-weight: 900; }
   .br-chip .chip-state { font-size: 0.75rem; }
   .br-chip.sel { box-shadow: 0 0 14px var(--c); background: #16163a; }
-  .br-mark { width: 14px; height: 14px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 900; color: #fff; background: var(--c, #888); box-shadow: 0 1px 4px rgba(0,0,0,0.6); }
-  .br-marks { position: absolute; top: 4px; left: 4px; right: 4px; display: flex; flex-wrap: wrap; gap: 2px; z-index: 3; }
+  /* ❌ marks: big, bright, glowing — impossible to miss on a card */
+  .br-mark { width: 26px; height: 26px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: #fff; background: var(--c, #888); text-shadow: 0 0 6px #fff; box-shadow: 0 0 10px var(--c, #888), 0 0 22px var(--c, #888), 0 2px 6px rgba(0,0,0,0.65); animation: brMarkPulse 1.6s ease-in-out infinite; }
+  @keyframes brMarkPulse { 0%, 100% { box-shadow: 0 0 8px var(--c, #888), 0 2px 6px rgba(0,0,0,0.6); } 50% { box-shadow: 0 0 14px var(--c, #888), 0 0 28px var(--c, #888), 0 2px 8px rgba(0,0,0,0.6); } }
+  .br-marks { position: absolute; top: 4px; left: 4px; right: 4px; display: flex; flex-wrap: wrap; gap: 4px; z-index: 3; }
   .card.br-found::after { content: '🔍'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(15, 15, 26, 0.55); z-index: 2; }
   .board.guessing { outline: 3px dashed var(--warning); outline-offset: 3px; border-radius: 12px; }
   .board.guessing .card { animation: none; box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.25); }
@@ -471,6 +473,19 @@
   .me-row.me { border-color: var(--accent); }
   .me-rank { min-width: 34px; font-size: 1.05rem; }
   .me-pts { margin-left: auto; color: var(--warning); font-size: 0.8rem; white-space: nowrap; }
+
+  /* ❤️❓ Race hunters bar: each hunter's lives & questions, color-coded */
+  .rc-hunters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin-bottom: 8px; flex-wrap: wrap; justify-content: center; }
+  .rc-hunter { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--c, #2a2a4a); background: #0f0f1a; color: var(--text); border-radius: 22px; padding: 4px 12px 4px 4px; flex-shrink: 0; }
+  .rc-hunter .rc-hunter-name { font-size: 0.82rem; font-weight: 800; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rc-hunter .rc-hunter-res { font-size: 0.78rem; letter-spacing: -1px; white-space: nowrap; }
+  .rc-hunter .rc-hunter-turn { font-size: 0.8rem; }
+  .rc-hunter.turn { box-shadow: 0 0 14px var(--c); background: #16163a; }
+  .rc-hunter.out { opacity: 0.45; filter: grayscale(0.9); }
+
+  /* Lobby code row: 🔗 Share + 👁️ Blur side by side */
+  .lobby-code-actions { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .lobby-code-actions .blur-code-btn { margin: 0; }
 
   /* ================================================================
      📱 PHONE OPTIMIZATION (screens up to 600px)
@@ -523,18 +538,22 @@
 
     /* ----- Small round floating buttons (same style as the 💬 chat button),
            spread evenly across the whole screen width ----- */
-    .game-controls, .uc-controls { position: fixed; left: 0; right: 0; padding: 0 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; gap: 8px; margin-top: 0; pointer-events: none; }
+    /* The right padding makes room for the 💬 chat button, so it sits IN the
+       same full-width button row as the game buttons. */
+    .game-controls, .uc-controls { position: fixed; left: 0; right: 0; padding: 0 68px 0 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; gap: 8px; margin-top: 0; pointer-events: none; }
     .game-controls button, .uc-controls button { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.5); flex-shrink: 0; pointer-events: auto; }
     .game-controls .btn-label, .uc-controls .btn-label { display: none; }
-    /* 💬 button slides up so it never covers the spread-out game buttons */
-    #chatToggleBtn { bottom: calc(116px + env(safe-area-inset-bottom, 0px)); }
-    .chat-overlay { bottom: calc(180px + env(safe-area-inset-bottom, 0px)); }
+    /* 💬 joins the button row: same line, same size, pinned to the right edge */
+    #chatToggleBtn { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); right: 12px; width: 48px; height: 48px; font-size: 1.25rem; }
+    .chat-overlay { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
+    .br-mark { width: 22px; height: 22px; border-radius: 6px; font-size: 0.95rem; }
     /* ----- multiplayer games + public rooms on phones ----- */
     .public-rooms-list { max-height: 300px; }
     .br-mysecret img { width: 46px; height: 62px; }
     .br-mysecret { padding: 8px 10px; gap: 10px; }
     .br-mysecret-name { font-size: 0.85rem; }
     .br-chip .chip-name { max-width: 64px; }
+    .rc-hunter .rc-hunter-name { max-width: 64px; }
     .br-log { max-height: 130px; }
     .qa-ans { font-size: 0.72rem; padding: 3px 8px; }
     .me-row { font-size: 0.82rem; padding: 8px 10px; }

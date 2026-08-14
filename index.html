@@ -229,7 +229,16 @@
           <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
           <input type="range" id="hostMultiMaxSlider" min="3" max="8" value="6" oninput="updateMultiMaxPlayers()">
         </div>
+        <div class="slider-container race-only-settings" style="display: none;">
+          <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(wrong guesses allowed)</small></span><strong id="hostRaceLivesValue">3</strong></div>
+          <input type="range" id="hostRaceLivesSlider" min="1" max="5" value="3" oninput="updateRaceLivesSlider()">
+        </div>
+        <div class="slider-container race-only-settings" style="display: none;">
+          <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="hostRaceQuestionsValue">8</strong></div>
+          <input type="range" id="hostRaceQuestionsSlider" min="3" max="15" value="8" oninput="updateRaceQuestionsSlider()">
+        </div>
         <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
+        <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">💀 If <b>all hunters</b> run out of lives, the 🎯 TARGET wins! Running out of ❓ questions means you can only guess… or pass.</p>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
       <button class="full back-btn" onclick="showPlayMenu()">← Back</button>
@@ -261,8 +270,11 @@
       <div class="lobby-left" style="position: relative;">
         <div class="settings-icon" id="lobbySettingsIcon" onclick="openRoomSettings()" style="display: none;">⚙️</div>
         <h2 style="text-align: center; color: var(--accent); margin-bottom: 10px;">Game Lobby</h2>
-        <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code with your friend</p>
-        <button class="blur-code-btn secondary" onclick="toggleBlur()">👁️ Blur Code</button>
+        <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code — or the 🔗 link — with your friends</p>
+        <div class="lobby-code-actions">
+          <button class="blur-code-btn secondary" onclick="shareRoom()">🔗 Share Room</button>
+          <button class="blur-code-btn secondary" onclick="toggleBlur()">👁️ Blur Code</button>
+        </div>
         <div class="room-code" id="displayRoomCode">----</div>
         <div class="queue-banner" id="queueBanner" style="display: none;"></div>
         <div class="players-list" id="playersList"></div>
@@ -421,6 +433,7 @@
           <div class="uc-badge" id="rcTurnBadge">—</div>
           <div class="uc-badge" id="rcPhaseBadge">💬 Question time</div>
         </div>
+        <div class="rc-hunters" id="rcHuntersBar"></div>
         <div class="br-mysecret" id="rcBanner"></div>
         <div class="question-box" id="rcQuestionArea"></div>
         <div class="board-section">
@@ -441,6 +454,18 @@
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
       <h2>⚙️ Room Settings</h2>
+      <div class="settings-section">
+        <h3>🎮 Game Mode</h3>
+        <div class="input-group">
+          <label>Switch the game <small style="color: var(--muted);">(everyone stays in the room)</small></label>
+          <select id="modalGameSelect" onchange="modalGameChanged()">
+            <option value="guesswho">🎭 Anime Guess Who? (2 players)</option>
+            <option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option>
+            <option value="race">⚡ Guess Who — Race (3-8 players)</option>
+            <option value="undercover">🕵️ Undercover (3-8 players)</option>
+          </select>
+        </div>
+      </div>
       <div class="settings-section">
         <h3>🏠 Room Settings</h3>
         <div class="input-group">
@@ -483,6 +508,18 @@
             <label class="radio-option" id="modalUcMwOn" onclick="changeUcMrWhite(true)"><div>⚪ Enabled</div></label>
           </div>
         </div>
+      </div>
+      <div class="settings-section" id="modalRaceSettings" style="display: none;">
+        <h3>⚙️ Game Settings - Race</h3>
+        <div class="slider-container">
+          <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(all hunters out = 🎯 target wins)</small></span><strong id="modalRaceLivesValue">3</strong></div>
+          <input type="range" id="modalRaceLivesSlider" min="1" max="5" value="3" oninput="updateModalRaceLives()">
+        </div>
+        <div class="slider-container">
+          <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="modalRaceQuestionsValue">8</strong></div>
+          <input type="range" id="modalRaceQuestionsSlider" min="3" max="15" value="8" oninput="updateModalRaceQuestions()">
+        </div>
+        <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Applies from the next game.</p>
       </div>
       <button class="full success" onclick="closeSettings()">Save & Close</button>
     </div>
@@ -664,5 +701,5 @@
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b1b4f80953c8e1',t:'MTc4NjcyODgzMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b2cbe10c2bd881',t:'MTc4Njc0MDI1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

@@ -574,6 +574,10 @@
     //   & answers questions); the hunters race to find it first.
     const GAME_LABELS = { guesswho: '🎭 Anime Guess Who?', undercover: '🕵️ Undercover', battle: '🎭👥 Guess Who — Battle Royale', race: '⚡ Guess Who — Race' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
+    const RACE_DEFAULT_LIVES = 3;     // hunter wrong guesses before they're out (race)
+    const RACE_DEFAULT_QUESTIONS = 8; // max questions each hunter may ask (race)
+    let hostRaceLives = RACE_DEFAULT_LIVES;         // race option on the create-room screen
+    let hostRaceQuestions = RACE_DEFAULT_QUESTIONS; // race option on the create-room screen
     let brCrossTarget = null;      // opponent pid I'm currently marking with ❌
     let brGuessMode = false;       // click-a-card-to-guess mode (battle)
     let rcGuessMode = false;       // same for race
@@ -638,6 +642,45 @@
       if (codeBlurred) codeEl.classList.add('blurred'); else codeEl.classList.remove('blurred');
     }
 
+    // ===== 🔗 SHARE ROOM (one-tap join link) =====
+    function roomShareLink() {
+      return location.origin + location.pathname + '?room=' + roomCode;
+    }
+    async function shareRoom() {
+      if (!roomCode) return;
+      const url = roomShareLink();
+      const game = GAME_LABELS[(currentRoom || {}).game] || 'a game';
+      const text = '🎮 Come play ' + game + ' with me on Sakugame — room ' + roomCode + '!';
+      // Phones: native share sheet. Computers: straight to the clipboard.
+      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent || '');
+      if (navigator.share && isMobile) {
+        try { await navigator.share({ title: 'Sakugame room ' + roomCode, text: text, url: url }); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; /* cancelled */ }
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        showNotification('🔗 Room link copied! Send it to your friends — one tap and they join the room.', 4000);
+      } catch (e) {
+        showInteraction('🔗 Room link', 'Copy this link and send it to your friends:<br><br><code style="user-select: all; word-break: break-all; color: var(--accent);">' + url + '</code>', [
+          { label: 'OK', onclick: () => { closeInteraction(); }, class: 'primary' }
+        ]);
+      }
+    }
+    // A share link opened the app (?room=CODE): jump straight into the room.
+    function shareLinkCode() {
+      try {
+        const c = (new URLSearchParams(location.search).get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+        return c.length === 4 ? c : null;
+      } catch (e) { return null; }
+    }
+    async function tryShareLinkJoin() {
+      const code = shareLinkCode();
+      if (!code || roomCode) return;
+      try { history.replaceState(null, '', location.pathname); } catch (e) {} // clean the URL
+      showNotification('🔗 Opening shared room ' + code + '…', 3000);
+      await joinRoomByCode(code);
+    }
+
     function selectHostSource(type) {
       hostSource = type;
       const map = { favorites: 'hostSrcFavorites', generic: 'hostSrcGeneric', mix: 'hostSrcMix' };
@@ -684,6 +727,8 @@
       document.getElementById('hostGwSettings').style.display = isUc ? 'none' : 'block';
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
+      // ❤️/❓ sliders are Race-only
+      document.querySelectorAll('.race-only-settings').forEach(el => { el.style.display = hostGame === 'race' ? 'block' : 'none'; });
       if (isMulti) {
         document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : 'Race';
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
@@ -698,6 +743,14 @@
     function updateMultiMaxPlayers() {
       multiMaxPlayers = parseInt(document.getElementById('hostMultiMaxSlider').value);
       document.getElementById('hostMultiMaxValue').textContent = multiMaxPlayers;
+    }
+    function updateRaceLivesSlider() {
+      hostRaceLives = parseInt(document.getElementById('hostRaceLivesSlider').value);
+      document.getElementById('hostRaceLivesValue').textContent = hostRaceLives;
+    }
+    function updateRaceQuestionsSlider() {
+      hostRaceQuestions = parseInt(document.getElementById('hostRaceQuestionsSlider').value);
+      document.getElementById('hostRaceQuestionsValue').textContent = hostRaceQuestions;
     }
     function selectUcMrWhite(on) {
       ucMrWhite = !!on;
@@ -726,6 +779,7 @@
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
+          if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
         }
         await database.ref('rooms/' + roomCode).set(roomData);
         setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
@@ -809,6 +863,12 @@
         const meSeated = !!(currentRoom.players && currentRoom.players[playerId]);
         const meWaiting = !!(currentRoom.queue && currentRoom.queue[playerId]);
         if (meWaiting && !meSeated) {
+          if (!imQueued) {
+            // I just got queued (joined a full room, or the host switched to a
+            // game with fewer seats) → disconnect tracking moves to the queue entry
+            cancelDisconnectTracking();
+            markQueueDisconnect();
+          }
           imQueued = true;
         } else if (meSeated && imQueued) {
           imQueued = false;
@@ -1328,6 +1388,22 @@
       return BR_COLORS[(idx >= 0 ? idx : 0) % BR_COLORS.length];
     }
     const rcHunters = (room) => { const r = room || currentRoom; return ((r && r.rc && r.rc.hunters) || []).filter(pid => (r.players || {})[pid]); };
+    // ❤️ race: hunter with lives left (0 = out, skipped in the rotation)
+    const rcLivesOf = (room, pid) => { const r = room || currentRoom; const v = ((r.rc || {}).livesLeft || {})[pid]; return (v == null) ? (((r.settings || {}).raceLives) || RACE_DEFAULT_LIVES) : v; };
+    const rcQuestionsOf = (room, pid) => { const r = room || currentRoom; const v = ((r.rc || {}).questionsLeft || {})[pid]; return (v == null) ? (((r.settings || {}).raceQuestions) || RACE_DEFAULT_QUESTIONS) : v; };
+    const rcActiveHunters = (room) => rcHunters(room).filter(pid => rcLivesOf(room, pid) > 0);
+    const rcColorOf = (pid) => { const h = (currentRoom && currentRoom.rc && currentRoom.rc.hunters) || []; const idx = h.indexOf(pid); return BR_COLORS[(idx >= 0 ? idx : 0) % BR_COLORS.length]; };
+
+    // 📜 Append-only game history. Each entry gets its own Firebase push key,
+    // so simultaneous writes from different players can NEVER overwrite the
+    // history (the old whole-array rewrite used to clobber entries — that's
+    // why the battle history looked broken).
+    function gameLogPushKey(base) { return database.ref('rooms/' + roomCode + '/' + base + '/log').push().key; }
+    function gameLogList(gameData) {
+      const raw = (gameData && gameData.log) || {};
+      const arr = Array.isArray(raw) ? raw.slice() : Object.values(raw); // arrays = old rooms, push-objects = new
+      return arr.filter(e => e && e.txt);
+    }
 
     // ---------- DEAL ----------
     async function multiDeal(game) {
@@ -1335,9 +1411,14 @@
       if (game === 'race') {
         const pids = Object.keys(currentRoom.players || {});
         const targetPid = pids[Math.floor(Math.random() * pids.length)];
-        await generateCharacterPool({ restarts: null, rc: { gameId: Date.now(), targetPid, hunters: shuffleArray(pids.filter(p => p !== targetPid)), turnIdx: 0, secretId: null, question: null, answer: null, guess: null, log: [], phase: 'selection' } });
+        const hunters = shuffleArray(pids.filter(p => p !== targetPid));
+        // ❤️ lives & ❓ question budget per hunter, from the room settings
+        const s = currentRoom.settings || {};
+        const livesLeft = {}, questionsLeft = {};
+        hunters.forEach(h => { livesLeft[h] = s.raceLives || RACE_DEFAULT_LIVES; questionsLeft[h] = s.raceQuestions || RACE_DEFAULT_QUESTIONS; });
+        await generateCharacterPool({ restarts: null, rc: { gameId: Date.now(), targetPid, hunters, livesLeft, questionsLeft, turnIdx: 0, secretId: null, question: null, answer: null, guess: null, phase: 'selection' } });
       } else {
-        await generateCharacterPool({ restarts: null, br: { gameId: Date.now(), order: [], turnIdx: 0, secrets: {}, points: {}, found: {}, question: null, answers: {}, guess: null, log: [], phase: 'selection' } });
+        await generateCharacterPool({ restarts: null, br: { gameId: Date.now(), order: [], turnIdx: 0, secrets: {}, points: {}, found: {}, question: null, answers: {}, guess: null, phase: 'selection' } });
       }
     }
 
@@ -1411,12 +1492,15 @@
 
     // ---------- TURN HELPERS (battle & race) ----------
     const brTurnPid = (room) => { const r = room || currentRoom; const o = ((r.br && r.br.order) || []).filter(pid => (r.players || {})[pid]); return o.length ? o[(r.br.turnIdx || 0) % o.length] : null; };
-    const rcTurnPid = (room) => { const r = room || currentRoom; const h = ((r.rc && r.rc.hunters) || []).filter(pid => (r.players || {})[pid]); return h.length ? h[(r.rc.turnIdx || 0) % h.length] : null; };
+    // Race turns rotate through hunters who still have ❤️ lives (0 lives = out)
+    const rcTurnPid = (room) => { const r = room || currentRoom; const h = rcActiveHunters(r); return h.length ? h[(((r.rc || {}).turnIdx) || 0) % h.length] : null; };
     function battleAsk() {
       const inp = document.getElementById('brQuestionInput'); if (!inp) return;
       const text = inp.value.trim(); if (!text) return;
       if (brTurnPid() !== playerId) { showNotification("It's not your turn to ask!"); return; }
-      database.ref('rooms/' + roomCode + '/br').update({ question: { by: playerId, text: text.slice(0, 200) }, answers: {}, phase: 'answers' });
+      const upd = { question: { by: playerId, text: text.slice(0, 200) }, answers: {}, phase: 'answers' };
+      upd['log/' + gameLogPushKey('br')] = { k: 'q', txt: '❓ ' + playerName + ': "' + text.slice(0, 200) + '"' };
+      database.ref('rooms/' + roomCode + '/br').update(upd);
       inp.value = ''; touchActivity();
     }
     function battleAnswer(v) {
@@ -1429,7 +1513,17 @@
       if (br.phase !== 'answers') return;
       const o = (br.order || []).filter(pid => (currentRoom.players || {})[pid]);
       if (!o.length) return;
-      database.ref('rooms/' + roomCode + '/br').update({ question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % o.length });
+      const upd = { question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % o.length };
+      // 📜 keep the answers in the history before wiping them
+      if (br.question) {
+        const players = currentRoom.players || {};
+        const answers = br.answers || {};
+        const summary = o.filter(pid => pid !== br.question.by)
+          .map(pid => ((players[pid] || {}).name || '?') + ' ' + (answers[pid] === 'YES' ? '✅' : answers[pid] === 'NO' ? '🚫' : '⏳'))
+          .join(' · ');
+        upd['log/' + gameLogPushKey('br')] = { k: 'ans', txt: '✋ "' + br.question.text + '" → ' + summary };
+      }
+      database.ref('rooms/' + roomCode + '/br').update(upd);
       touchActivity();
     }
     function battleAllAnswersIn() {
@@ -1458,14 +1552,13 @@
           const correct = gs.charId === (br.secrets || {})[gs.target];
           const unfoundAlive = (br.order || []).filter(pid => alive(pid) && !(br.found || {})[pid] && pid !== gs.target).length;
           const pts = correct ? (unfoundAlive + 1) * 100 : 0;
-          const log = (br.log || []).slice(-39);
           const name = (players[gs.by] || {}).name || '?';
           const tName = (players[gs.target] || {}).name || '?';
           const charName = ((currentRoom.characters || []).find(c => c.id === gs.charId) || {}).name || '?';
-          log.push(correct
+          const upd = { 'br/guess': null, 'br/phase': 'ask', 'br/question': null, 'br/answers': {} };
+          upd['br/log/' + gameLogPushKey('br')] = correct
             ? { k: 'find', txt: '🎯 ' + name + ' found ' + tName + '\'s secret: ' + charName + '! (+' + pts + ' pts)' }
-            : { k: 'miss', txt: '❌ ' + name + ' wrongly guessed ' + charName + ' for ' + tName + '…' });
-          const upd = { 'br/guess': null, 'br/log': log, 'br/phase': 'ask', 'br/question': null, 'br/answers': {} };
+            : { k: 'miss', txt: '❌ ' + name + ' wrongly guessed ' + charName + ' for ' + tName + '…' };
           const o = (br.order || []).filter(pid => players[pid]);
           upd['br/turnIdx'] = ((br.turnIdx || 0) + 1) % Math.max(o.length, 1);
           if (correct) {
@@ -1623,10 +1716,10 @@
     }
     function renderBattleLog() {
       const logEl = document.getElementById('brLog'); if (!logEl || !currentRoom) return;
-      const log = ((currentRoom.br || {}).log) || [];
+      const log = gameLogList(currentRoom.br);
       if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>'; return; }
       logEl.innerHTML = '';
-      [...log].reverse().forEach(e => {
+      log.slice(-60).reverse().forEach(e => {
         const d = document.createElement('div');
         d.className = 'br-log-' + (e.k === 'find' ? 'find' : e.k === 'miss' ? 'miss' : e.k === 'q' ? 'q' : 'info');
         d.textContent = e.txt;
@@ -1639,7 +1732,12 @@
       const inp = document.getElementById('rcQuestionInput'); if (!inp) return;
       const text = inp.value.trim(); if (!text) return;
       if (rcTurnPid() !== playerId) { showNotification("It's not your turn to ask!"); return; }
-      database.ref('rooms/' + roomCode + '/rc').update({ question: { by: playerId, text: text.slice(0, 200) }, answer: null, phase: 'answers' });
+      const left = rcQuestionsOf(currentRoom, playerId);
+      if (left <= 0) { showNotification('❓ You have used all your questions — you can only guess 🎯 or pass!'); return; }
+      const upd = { question: { by: playerId, text: text.slice(0, 200) }, answer: null, phase: 'answers' };
+      upd['questionsLeft/' + playerId] = left - 1;
+      upd['log/' + gameLogPushKey('rc')] = { k: 'q', txt: '❓ ' + playerName + ': "' + text.slice(0, 200) + '" (' + (left - 1) + ' questions left)' };
+      database.ref('rooms/' + roomCode + '/rc').update(upd);
       inp.value = ''; touchActivity();
     }
     function raceAnswer(v) {
@@ -1650,9 +1748,25 @@
     function raceNextTurn() {
       const rc = (currentRoom && currentRoom.rc) || {};
       if (rc.phase !== 'answers' || !rc.answer) return;
-      const h = rcHunters();
+      const h = rcActiveHunters();
       if (!h.length) return;
-      database.ref('rooms/' + roomCode + '/rc').update({ question: null, answer: null, phase: 'ask', turnIdx: ((rc.turnIdx || 0) + 1) % h.length });
+      const upd = { question: null, answer: null, phase: 'ask', turnIdx: ((rc.turnIdx || 0) + 1) % h.length };
+      // 📜 keep the question + answer in the history before wiping them
+      if (rc.question) upd['log/' + gameLogPushKey('rc')] = { k: 'ans', txt: '✋ Target answered ' + (rc.answer === 'YES' ? '✅ YES' : '🚫 NO') + ' to "' + rc.question.text + '"' };
+      database.ref('rooms/' + roomCode + '/rc').update(upd);
+      touchActivity();
+    }
+    // A hunter with no questions left may simply pass their turn
+    function racePassTurn() {
+      const rc = (currentRoom && currentRoom.rc) || {};
+      if (rc.phase !== 'ask' || rc.question) return;
+      if (rcTurnPid() !== playerId) return;
+      if (rcQuestionsOf(currentRoom, playerId) > 0) return; // can still ask — no passing
+      const h = rcActiveHunters();
+      if (!h.length) return;
+      const upd = { phase: 'ask', turnIdx: ((rc.turnIdx || 0) + 1) % h.length };
+      upd['log/' + gameLogPushKey('rc')] = { k: 'info', txt: '⏭️ ' + playerName + ' passed (out of questions)' };
+      database.ref('rooms/' + roomCode + '/rc').update(upd);
       touchActivity();
     }
     function raceWatchdog() {
@@ -1670,33 +1784,47 @@
         database.ref('rooms/' + roomCode).update({ 'rc/phase': 'over', 'rc/winner': null, 'rc/endReason': 'hunters-left', state: 'finished' });
         return;
       }
+      // 💀 ALL hunters out of lives → the TARGET wins!
+      if (rcActiveHunters().length === 0) {
+        const upd = { 'rc/phase': 'over', 'rc/winner': rc.targetPid, 'rc/endReason': 'hunters-out', state: 'finished' };
+        upd['rc/log/' + gameLogPushKey('rc')] = { k: 'info', txt: '💀 All hunters are out of lives — the TARGET wins!' };
+        database.ref('rooms/' + roomCode).update(upd);
+        return;
+      }
       // Pending hunter guess → resolve
       if (rc.guess) {
         rcWatchBusy = true;
         try {
           const correct = rc.guess.charId === rc.secretId;
-          const log = (rc.log || []).slice(-39);
           const name = (players[rc.guess.by] || {}).name || '?';
           const charName = ((currentRoom.characters || []).find(c => c.id === rc.guess.charId) || {}).name || '?';
-          log.push(correct
-            ? { k: 'find', txt: '🏆 ' + name + ' FOUND the mystery character: ' + charName + '!' }
-            : { k: 'miss', txt: '❌ ' + name + ' tried ' + charName + ' — wrong!' });
-          const upd = { 'rc/guess': null, 'rc/log': log, 'rc/phase': 'ask', 'rc/question': null, 'rc/answer': null };
-          if (correct) { upd['rc/phase'] = 'over'; upd['rc/winner'] = rc.guess.by; upd.state = 'finished'; }
-          else upd['rc/turnIdx'] = ((rc.turnIdx || 0) + 1) % Math.max(rcHunters().length, 1);
+          const upd = { 'rc/guess': null, 'rc/phase': 'ask', 'rc/question': null, 'rc/answer': null };
+          if (correct) {
+            upd['rc/phase'] = 'over'; upd['rc/winner'] = rc.guess.by; upd.state = 'finished';
+            upd['rc/log/' + gameLogPushKey('rc')] = { k: 'find', txt: '🏆 ' + name + ' FOUND the mystery character: ' + charName + '!' };
+          } else {
+            const left = Math.max(0, rcLivesOf(currentRoom, rc.guess.by) - 1);
+            upd['rc/livesLeft/' + rc.guess.by] = left;
+            upd['rc/turnIdx'] = ((rc.turnIdx || 0) + 1) % Math.max(rcActiveHunters().length, 1);
+            upd['rc/log/' + gameLogPushKey('rc')] = left > 0
+              ? { k: 'miss', txt: '❌ ' + name + ' tried ' + charName + ' — wrong! 💔 ' + left + ' lives left' }
+              : { k: 'miss', txt: '💀 ' + name + ' tried ' + charName + ' — wrong… and is OUT of lives!' };
+          }
           database.ref('rooms/' + roomCode).update(upd);
         } finally { rcWatchBusy = false; }
         return;
       }
       const turnPid = rcTurnPid();
       if (turnPid && !alive(turnPid)) {
-        const h = rcHunters();
+        const h = rcActiveHunters();
         database.ref('rooms/' + roomCode + '/rc').update({ question: null, answer: null, phase: 'ask', turnIdx: ((rc.turnIdx || 0) + 1) % Math.max(h.length, 1) });
       }
     }
     async function raceGuess(charId) {
+      if (rcLivesOf(currentRoom, playerId) <= 0) { showNotification('💀 You have no lives left!'); return; }
       const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
-      showInteraction('🎯 Make a guess?', 'You think the mystery character is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
+      const livesTxt = '💔 You have <b>' + rcLivesOf(currentRoom, playerId) + '</b> lives — a wrong guess costs one!';
+      showInteraction('🎯 Make a guess?', 'You think the mystery character is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.<br>' + livesTxt + '</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: '🎯 Guess!', onclick: async () => {
           closeInteraction();
@@ -1710,6 +1838,7 @@
       const rc = (currentRoom && currentRoom.rc) || {};
       if (rc.phase === 'over') return;
       if (rc.targetPid === playerId) { showNotification('You are the TARGET — the hunters do the guessing!'); return; }
+      if (rcLivesOf(currentRoom, playerId) <= 0) { showNotification('💀 You are out of lives — watch the others hunt!'); return; }
       if (rcTurnPid() !== playerId) { showNotification('You can guess on your turn only!'); return; }
       rcGuessMode = !rcGuessMode;
       if (rcGuessMode) showNotification('🎯 Guess mode: click the card you think is the mystery character!');
@@ -1736,8 +1865,31 @@
         banner.onclick = null;
         banner.innerHTML = `<div class="br-mysecret-info"><div class="br-mysecret-label">⚡ RACE — mystery character</div><div class="br-mysecret-name">Hunt <b style="color:var(--warning)">${escapeHtml(targetName)}</b>'s secret before the others!</div></div>`;
       }
-      renderRaceBoard(); renderRaceQA(); renderRaceLog();
+      renderRaceBoard(); renderRaceQA(); renderRaceLog(); renderRcHuntersBar();
       if (rc.phase === 'over') renderMultiEnd('race'); else document.getElementById('multiEndScreen').classList.remove('show');
+    }
+    // ❤️❓ Custom bar: every hunter's lives & remaining questions
+    function renderRcHuntersBar() {
+      const bar = document.getElementById('rcHuntersBar'); if (!bar || !currentRoom) return;
+      const rc = currentRoom.rc || {};
+      const players = currentRoom.players || {};
+      const hunters = rcHunters();
+      if (!hunters.length) { bar.innerHTML = ''; return; }
+      const turnPid = rcTurnPid();
+      bar.innerHTML = '';
+      hunters.forEach(pid => {
+        const p = players[pid] || {};
+        const lives = rcLivesOf(currentRoom, pid);
+        const qs = rcQuestionsOf(currentRoom, pid);
+        const maxLives = Math.max(lives, ((currentRoom.settings || {}).raceLives) || RACE_DEFAULT_LIVES);
+        const out = lives <= 0;
+        const chip = document.createElement('div');
+        chip.className = 'rc-hunter' + (out ? ' out' : '') + (turnPid === pid && rc.phase !== 'over' ? ' turn' : '');
+        chip.style.setProperty('--c', rcColorOf(pid));
+        const hearts = '❤️'.repeat(lives) + '🖤'.repeat(Math.max(0, maxLives - lives));
+        chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="rc-hunter-res" title="Lives (wrong guesses allowed)">${out ? '💀' : hearts}</span><span class="rc-hunter-res" title="Questions left">❓${qs}</span>${turnPid === pid && rc.phase !== 'over' ? '<span class="rc-hunter-turn">🎤</span>' : ''}`;
+        bar.appendChild(chip);
+      });
     }
     function renderRaceBoard() {
       const board = document.getElementById('rcBoard'); if (!board || !currentRoom) return;
@@ -1764,8 +1916,14 @@
       const turnPid = rcTurnPid();
       const turnName = (players[turnPid] || {}).name || '?';
       if (!rc.question) {
+        const myLives = isTarget ? 1 : rcLivesOf(currentRoom, playerId);
+        const myQs = isTarget ? 0 : rcQuestionsOf(currentRoom, playerId);
         if (isTarget) area.innerHTML = `<div class="question-display"><div class="text">🎯 You are the TARGET — wait for <b>${escapeHtml(turnName)}</b>'s question…</div></div>`;
-        else if (turnPid === playerId) area.innerHTML = `<div class="question-form"><input type="text" id="rcQuestionInput" placeholder="Ask the target a yes/no question…" maxlength="200"><button class="success" onclick="raceAsk()">Ask</button></div><div class="uc-hint-line">…or guess the mystery character with 🎯 below the board.</div>`;
+        else if (myLives <= 0) area.innerHTML = `<div class="question-display"><div class="label">💀 Out of lives</div><div class="text">You guessed wrong too many times — watch the others hunt!</div></div>`;
+        else if (turnPid === playerId) {
+          if (myQs > 0) area.innerHTML = `<div class="question-form"><input type="text" id="rcQuestionInput" placeholder="Ask the target a yes/no question…" maxlength="200"><button class="success" onclick="raceAsk()">Ask</button></div><div class="uc-hint-line">❓ ${myQs} questions left · ❤️ ${myLives} lives · …or guess with 🎯 below the board.</div>`;
+          else area.innerHTML = `<div class="question-display"><div class="label">❓ No questions left!</div><div class="text">You can't ask anymore — <b>guess 🎯</b> the mystery character… or pass:</div><button class="secondary full" onclick="racePassTurn()" style="margin-top:8px">⏭️ Pass my turn</button></div>`;
+        }
         else area.innerHTML = `<div class="question-display"><div class="label">Waiting…</div><div class="text">🎤 <b>${escapeHtml(turnName)}</b> is thinking of a question…</div></div>`;
         const inp = document.getElementById('rcQuestionInput');
         if (inp) inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') raceAsk(); });
@@ -1784,10 +1942,10 @@
     }
     function renderRaceLog() {
       const logEl = document.getElementById('rcLog'); if (!logEl || !currentRoom) return;
-      const log = ((currentRoom.rc || {}).log) || [];
+      const log = gameLogList(currentRoom.rc);
       if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>'; return; }
       logEl.innerHTML = '';
-      [...log].reverse().forEach(e => {
+      log.slice(-60).reverse().forEach(e => {
         const d = document.createElement('div');
         d.className = 'br-log-' + (e.k === 'find' ? 'find' : e.k === 'miss' ? 'miss' : e.k === 'q' ? 'q' : 'info');
         d.textContent = e.txt;
@@ -1844,7 +2002,11 @@
         const rc = currentRoom.rc || {};
         const winner = rc.winner;
         const secretChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
-        if (winner) {
+        const targetWon = rc.endReason === 'hunters-out' || (winner && winner === rc.targetPid);
+        if (targetWon) {
+          title.textContent = winner === playerId ? '🏆 You WIN, target!' : '🏁 Race over — TARGET wins!';
+          sub.textContent = '💀 All the hunters ran out of lives — the secret stays safe with 🎯 ' + ((players[rc.targetPid] || {}).name || '?') + '!';
+        } else if (winner) {
           title.textContent = winner === playerId ? '🏆 You found it first!' : '🏁 Race over!';
           sub.textContent = '🏆 ' + ((players[winner] || {}).name || '?') + ' found ' + (secretChar ? secretChar.name : 'the character') + ' first!';
         } else {
@@ -1861,7 +2023,8 @@
           const p = players[pid] || {};
           const row = document.createElement('div');
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
-          row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${pid === rc.targetPid ? '🎯 target' : (pid === winner ? '🏆 winner' : '🔍 hunter')}</span>`;
+          const label = pid === rc.targetPid ? (pid === winner ? '🏆 winning target' : '🎯 target') : (pid === winner ? '🏆 winner' : (rcLivesOf(currentRoom, pid) <= 0 ? '💀 hunter (out)' : '🔍 hunter'));
+          row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${label}</span>`;
           list.appendChild(row);
         });
       }
@@ -1901,10 +2064,37 @@
         await multiDeal(currentRoom.game);
       } finally { multiLaunching = false; }
     }
+    // Shared "the game is OVER → the whole room goes back to the lobby" reset.
+    // WITHOUT this the room state stays 'finished' forever once players leave the
+    // end screen, and QUEUED players could never take a seat (promotions only
+    // happen in the lobby) — the queue looked permanently locked.
+    async function resetRoomToLobbyAfterGame() {
+      if (!roomCode || !currentRoom) return;
+      const updates = {
+        state: 'lobby', characters: null, selections: null, restarts: null, winner: null,
+        secrets: null, currentTurn: null, eliminations: null, currentQuestion: null,
+        questionHistory: null, uc: null, br: null, rc: null
+      };
+      Object.keys(currentRoom.players || {}).forEach(pid => {
+        updates['players/' + pid + '/ready'] = false;
+        updates['players/' + pid + '/outInGame'] = null;
+      });
+      await database.ref('rooms/' + roomCode).update(updates);
+      touchActivity();
+    }
     async function returnToLobbyFromMulti() {
       const gd = currentRoom && currentRoom.game === 'battle' ? (currentRoom.br || {}) : (currentRoom && currentRoom.rc || {});
       const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && gd.gameId;
       if (!inGame) { showScreen('lobbyScreen'); return; }
+      // Game over? Then this button brings EVERYONE back to a real lobby
+      // (state: 'lobby') so the ⏳ queue can fill free seats again.
+      if (currentRoom.state === 'finished' || gd.phase === 'over') {
+        showInteraction('Return to Lobby?', 'The game is over — <b>everyone</b> goes back to the lobby' + (Object.keys((currentRoom && currentRoom.queue) || {}).length ? ' and waiting players from the ⏳ queue take free seats.' : '.'), [
+          { label: 'Stay here', onclick: () => { closeInteraction(); }, class: 'secondary' },
+          { label: 'To Lobby', onclick: async () => { closeInteraction(); try { await resetRoomToLobbyAfterGame(); } catch (e) {} document.getElementById('multiEndScreen').classList.remove('show'); showScreen('lobbyScreen'); }, class: 'danger' }
+        ]);
+        return;
+      }
       showInteraction('Return to Lobby?', 'The game continues for the others — you wait in the lobby until it ends.', [
         { label: 'Stay in the game', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: 'To Lobby', onclick: async () => {
@@ -1943,6 +2133,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       cleanupStaleRooms();
       updateUserButton();
+      tryShareLinkJoin(); // opened via a 🔗 shared room link? jump straight in
       // Enter on the floating chat window's input
       const chatOverlayInput = document.getElementById('chatOverlayInput');
       if (chatOverlayInput) chatOverlayInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendOverlayChatMessage(); });
@@ -1962,9 +2153,24 @@
     function openRoomSettings() {
       if (!isHost || !currentRoom) return;
       const isUc = currentRoom.game === 'undercover';
+      const isRace = currentRoom.game === 'race';
+      const gsel = document.getElementById('modalGameSelect');
+      if (gsel) gsel.value = currentRoom.game || 'guesswho';
       document.getElementById('modalPoolGroup').style.display = isUc ? 'none' : 'block';
       document.getElementById('modalGwSettings').style.display = isUc ? 'none' : 'block';
       document.getElementById('modalUwSettings').style.display = isUc ? 'block' : 'none';
+      const raceBox = document.getElementById('modalRaceSettings');
+      if (raceBox) {
+        raceBox.style.display = isRace ? 'block' : 'none';
+        if (isRace) {
+          const s = currentRoom.settings || {};
+          const L = s.raceLives || RACE_DEFAULT_LIVES, Q = s.raceQuestions || RACE_DEFAULT_QUESTIONS;
+          document.getElementById('modalRaceLivesSlider').value = L;
+          document.getElementById('modalRaceLivesValue').textContent = L;
+          document.getElementById('modalRaceQuestionsSlider').value = Q;
+          document.getElementById('modalRaceQuestionsValue').textContent = Q;
+        }
+      }
       if (isUc) {
         const maxP = currentRoom.maxPlayers || 5;
         document.getElementById('modalUcMaxSlider').value = maxP;
@@ -2069,6 +2275,68 @@
       if (!isHost || !currentRoom || currentRoom.game !== 'undercover') return;
       await database.ref('rooms/' + roomCode + '/settings/mrWhite').set(mwOn);
       touchActivity();
+    }
+
+    // Race room settings (lobby modal): hunter lives & question budget
+    async function updateModalRaceLives() {
+      const v = parseInt(document.getElementById('modalRaceLivesSlider').value);
+      document.getElementById('modalRaceLivesValue').textContent = v;
+      if (isHost && currentRoom && currentRoom.game === 'race') { await database.ref('rooms/' + roomCode + '/settings/raceLives').set(v); touchActivity(); }
+    }
+    async function updateModalRaceQuestions() {
+      const v = parseInt(document.getElementById('modalRaceQuestionsSlider').value);
+      document.getElementById('modalRaceQuestionsValue').textContent = v;
+      if (isHost && currentRoom && currentRoom.game === 'race') { await database.ref('rooms/' + roomCode + '/settings/raceQuestions').set(v); touchActivity(); }
+    }
+
+    // ===== 🎮 CHANGE THE GAME FROM THE LOBBY (host) =====
+    function modalGameChanged() {
+      const sel = document.getElementById('modalGameSelect');
+      if (!sel || !isHost || !currentRoom) return;
+      const cur = currentRoom.game || 'guesswho';
+      if (currentRoom.state && currentRoom.state !== 'lobby') { sel.value = cur; showNotification('⏳ Finish the current game first — you can switch games from the lobby.'); return; }
+      const newGame = sel.value;
+      if (newGame === cur) return;
+      sel.value = cur; // revert until confirmed
+      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race';
+      const seats = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
+      const seatedCount = Object.keys(currentRoom.players || {}).length;
+      const overflow = Math.max(0, seatedCount - seats);
+      showInteraction('🎮 Change the game?', 'Switch this room to <b>' + (GAME_LABELS[newGame] || newGame) + '</b>?<br><small>Everyone stays in the room — ready states reset.' + (overflow ? '<br>⚠️ Only ' + seats + ' seats: <b>' + overflow + '</b> player(s) will move to the ⏳ queue.' : '') + '</small>', [
+        { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
+        { label: '🎮 Switch', onclick: async () => { closeInteraction(); await switchRoomGame(newGame); }, class: 'warning' }
+      ]);
+    }
+    async function switchRoomGame(newGame) {
+      if (!isHost || !currentRoom || !roomCode) return;
+      const oldGame = currentRoom.game || 'guesswho';
+      if (newGame === oldGame) return;
+      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race';
+      const newMax = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
+      const s = currentRoom.settings || {};
+      const updates = { game: newGame, maxPlayers: newMax, restarts: null };
+      // Per-game settings defaults (Undercover rooms have no pool settings…)
+      updates['settings/characterCount'] = s.characterCount || 24;
+      updates['settings/distribution'] = s.distribution || 12;
+      if (!s.source) updates['settings/source'] = Object.keys(currentRoom.accounts || {}).length ? 'favorites' : 'generic';
+      if (newGame === 'undercover' && s.mrWhite == null) updates['settings/mrWhite'] = false;
+      if (newGame === 'race') {
+        updates['settings/raceLives'] = s.raceLives || RACE_DEFAULT_LIVES;
+        updates['settings/raceQuestions'] = s.raceQuestions || RACE_DEFAULT_QUESTIONS;
+      }
+      // Fewer seats in the new mode → extra players wait in the ⏳ queue
+      const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
+      const ordered = seated.filter(p => p.isHost).concat(seated.filter(p => !p.isHost)); // host keeps a seat
+      const demote = ordered.slice(newMax);
+      const now = Date.now();
+      demote.forEach((p, i) => {
+        updates['players/' + p.id] = null;
+        updates['queue/' + p.id] = { id: p.id, name: p.name || 'Player', avatar: p.avatar || '', joinedAt: now + i };
+      });
+      seated.forEach(p => { if (!demote.some(d => d.id === p.id)) updates['players/' + p.id + '/ready'] = false; });
+      await database.ref('rooms/' + roomCode).update(updates);
+      touchActivity();
+      showNotification('🎮 Game switched to ' + (GAME_LABELS[newGame] || newGame) + (demote.length ? ' — ' + demote.map(p => p.name || '?').join(', ') + ' moved to the queue' : '') + '!');
     }
 
     async function hostStartGame() {
@@ -3020,6 +3288,15 @@
       const uc = (currentRoom && currentRoom.uc) || null;
       const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && uc;
       if (!inGame) { showScreen('lobbyScreen'); return; }
+      // Game over → EVERYONE goes back to a real 'lobby' state (see the
+      // comment on resetRoomToLobbyAfterGame — the queue depends on it).
+      if (currentRoom.state === 'finished') {
+        showInteraction('Return to Lobby?', 'The game is over — <b>everyone</b> goes back to the lobby' + (Object.keys((currentRoom && currentRoom.queue) || {}).length ? ' and waiting players from the ⏳ queue take free seats.' : '.'), [
+          { label: 'Stay here', onclick: () => { closeInteraction(); }, class: 'secondary' },
+          { label: 'To Lobby', onclick: async () => { closeInteraction(); try { await resetRoomToLobbyAfterGame(); } catch (e) {} document.getElementById('ucEndScreen').classList.remove('show'); showScreen('lobbyScreen'); }, class: 'danger' }
+        ]);
+        return;
+      }
       showInteraction('Return to Lobby?', 'The game continues for the others — you wait in the lobby until it ends.', [
         { label: 'Stay in the game', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: 'To Lobby', onclick: async () => {
