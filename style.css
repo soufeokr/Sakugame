@@ -413,6 +413,66 @@
   }
 
   /* ================================================================
+     🌐 PUBLIC ROOM BROWSER (join screen) + ⏳ QUEUE (lobby)
+     ================================================================ */
+  .public-rooms { margin-top: 22px; }
+  .public-rooms-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .public-rooms-head h3 { color: var(--accent); font-size: 1.05rem; }
+  .pub-refresh { padding: 7px 12px; min-height: 0; border-radius: 10px; font-size: 1rem; }
+  .public-rooms-list { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 2px; }
+  .pub-empty { text-align: center; color: var(--muted); padding: 18px 10px; font-size: 0.9rem; }
+  .public-room-card { background: #0f0f1a; border: 2px solid #2a2a4a; border-radius: 14px; padding: 12px 14px; }
+  .pub-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pub-title { font-weight: 900; font-size: 0.95rem; }
+  .pub-status { font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: #1a1a2e; border: 1px solid #2a2a4a; white-space: nowrap; }
+  .pub-players { font-size: 0.8rem; color: var(--muted); margin-top: 5px; }
+  .pub-players b { color: var(--text); }
+  .pub-names { font-size: 0.76rem; }
+  .pub-rules { font-size: 0.76rem; color: var(--muted); margin-top: 5px; }
+  .pub-rules b { color: var(--accent); }
+  .pub-join { width: 100%; margin-top: 10px; font-size: 0.88rem; }
+  .queue-banner { background: rgba(2, 169, 255, 0.10); border: 2px solid var(--accent2); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.45; }
+  .queue-card { opacity: 0.85; border-style: dashed !important; }
+  .queue-pos { font-weight: 900; color: var(--accent); min-width: 32px; text-align: center; }
+
+  /* ================================================================
+     🎭👥 BATTLE ROYALE & ⚡ RACE (multiplayer Guess Who)
+     ================================================================ */
+  .br-mysecret { display: flex; align-items: center; gap: 12px; background: #0f0f1a; border: 2px solid var(--accent2); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; cursor: pointer; user-select: none; }
+  .br-mysecret img { width: 54px; height: 72px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .br-mysecret-label { font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+  .br-mysecret-name { font-weight: 900; font-size: 0.95rem; margin-top: 2px; }
+  .br-my-points { margin-left: auto; font-weight: 900; color: var(--warning); font-size: 1.1rem; white-space: nowrap; }
+  .br-mysecret.br-hide img { filter: blur(12px) brightness(0.5); }
+  .br-mysecret.br-hide .br-mysecret-name { filter: blur(6px); }
+  .br-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin-bottom: 6px; }
+  .br-chip { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--c, #2a2a4a); background: #0f0f1a; color: var(--text); border-radius: 22px; padding: 4px 12px 4px 4px; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+  .br-chip .chip-name { font-size: 0.82rem; font-weight: 800; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .br-chip .chip-pts { color: var(--warning); font-size: 0.72rem; font-weight: 900; }
+  .br-chip .chip-state { font-size: 0.75rem; }
+  .br-chip.sel { box-shadow: 0 0 14px var(--c); background: #16163a; }
+  .br-mark { width: 14px; height: 14px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 900; color: #fff; background: var(--c, #888); box-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+  .br-marks { position: absolute; top: 4px; left: 4px; right: 4px; display: flex; flex-wrap: wrap; gap: 2px; z-index: 3; }
+  .card.br-found::after { content: '🔍'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(15, 15, 26, 0.55); z-index: 2; }
+  .board.guessing { outline: 3px dashed var(--warning); outline-offset: 3px; border-radius: 12px; }
+  .board.guessing .card { animation: none; box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.25); }
+  .uc-hint-line { color: var(--muted); font-size: 0.8rem; margin-top: 8px; text-align: center; }
+  .qa-answers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; justify-content: center; }
+  .qa-ans { display: inline-flex; align-items: center; gap: 6px; background: #1a1a2e; border: 2px solid var(--c, #2a2a4a); padding: 4px 10px; border-radius: 16px; font-size: 0.78rem; font-weight: 800; }
+  .br-log-wrap { background: #0f0f1a; border-radius: 14px; padding: 12px 14px; margin-top: 14px; }
+  .br-log-wrap h3 { color: var(--accent); font-size: 0.9rem; margin-bottom: 8px; }
+  .br-log { max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; }
+  .br-log-q { background: #1a1a2e; border-radius: 8px; padding: 6px 9px; }
+  .br-log-find { color: var(--success); font-weight: 800; }
+  .br-log-miss { color: var(--danger); font-weight: 700; }
+  .br-log-info { color: var(--muted); font-style: italic; }
+  .me-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; width: 100%; }
+  .me-row { display: flex; align-items: center; gap: 10px; background: #0f0f1a; padding: 9px 14px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; border: 2px solid #2a2a4a; }
+  .me-row.me { border-color: var(--accent); }
+  .me-rank { min-width: 34px; font-size: 1.05rem; }
+  .me-pts { margin-left: auto; color: var(--warning); font-size: 0.8rem; white-space: nowrap; }
+
+  /* ================================================================
      📱 PHONE OPTIMIZATION (screens up to 600px)
      Everything stacks vertically, nothing on screen is hidden,
      tap targets get finger-friendly, text stays readable.
@@ -469,6 +529,15 @@
     /* 💬 button slides up so it never covers the spread-out game buttons */
     #chatToggleBtn { bottom: calc(116px + env(safe-area-inset-bottom, 0px)); }
     .chat-overlay { bottom: calc(180px + env(safe-area-inset-bottom, 0px)); }
+    /* ----- multiplayer games + public rooms on phones ----- */
+    .public-rooms-list { max-height: 300px; }
+    .br-mysecret img { width: 46px; height: 62px; }
+    .br-mysecret { padding: 8px 10px; gap: 10px; }
+    .br-mysecret-name { font-size: 0.85rem; }
+    .br-chip .chip-name { max-width: 64px; }
+    .br-log { max-height: 130px; }
+    .qa-ans { font-size: 0.72rem; padding: 3px 8px; }
+    .me-row { font-size: 0.82rem; padding: 8px 10px; }
     .game-chat { height: 300px; }
     .chat-messages { padding: 12px; }
     .chat-input-area { padding: 10px; }

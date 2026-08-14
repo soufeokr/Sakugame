@@ -567,6 +567,24 @@
     let ucActionKey = '';          // avoids rebuilding the clue input while typing
     let ucWordHidden = false;      // hide/show my secret word
 
+    // ===== MULTIPLAYER GUESS WHO (Battle Royale & Race) + QUEUE state =====
+    // game === 'battle': everyone has a secret, questions are public, each
+    //   opponent gets a ❌ color, finds give points, ranking at the end.
+    // game === 'race': one player is the TARGET (picks the mystery character
+    //   & answers questions); the hunters race to find it first.
+    const GAME_LABELS = { guesswho: '🎭 Anime Guess Who?', undercover: '🕵️ Undercover', battle: '🎭👥 Guess Who — Battle Royale', race: '⚡ Guess Who — Race' };
+    let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
+    let brCrossTarget = null;      // opponent pid I'm currently marking with ❌
+    let brGuessMode = false;       // click-a-card-to-guess mode (battle)
+    let rcGuessMode = false;       // same for race
+    let brMarks = {};              // { opponentPid: {charId:true} } — local notes, like myEliminated in 2P
+    let rcMarks = {};              // { charId: true } — my own marks in race
+    let brWatchBusy = false, rcWatchBusy = false;   // host watchdog guards
+    const QUEUE_MAX = 8;           // max people waiting in a room's queue
+    let imQueued = false;          // I'm in this room's queue (not seated)
+    let queuePromoting = false;    // host-side promote guard
+    let publicRoomsRef = null;     // live 🌐 list listener (join screen only)
+
     function changeUsername() {
       document.getElementById('newUsernameInput').value = playerName;
       document.getElementById('usernameModal').classList.add('show');
@@ -586,12 +604,15 @@
       document.getElementById(screenId).classList.add('active');
       document.getElementById('winningScreen').classList.remove('show');
       document.getElementById('ucEndScreen').classList.remove('show');
+      document.getElementById('multiEndScreen').classList.remove('show');
       document.getElementById('interactionWindow').classList.remove('show');
       // The floating 💬 chat button exists in the lobby and during games
       const chatBtn = document.getElementById('chatToggleBtn');
-      const chatVisible = (screenId === 'lobbyScreen' || screenId === 'gameScreen' || screenId === 'undercoverScreen');
+      const chatVisible = (screenId === 'lobbyScreen' || screenId === 'gameScreen' || screenId === 'undercoverScreen' || screenId === 'battleScreen' || screenId === 'raceScreen');
       if (chatBtn) chatBtn.style.display = chatVisible ? 'flex' : 'none';
       if (!chatVisible) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
+      // The 🌐 public room list only streams while the join screen is open
+      if (screenId === 'joinRoomScreen') startPublicRoomsWatch(); else stopPublicRoomsWatch();
     }
     async function goHome() {
       if (roomCode) { await leaveRoom(true); } // leaveRoom also resets roomCode and shows the home screen
@@ -658,13 +679,25 @@
     function onGameSelectChange() {
       hostGame = document.getElementById('gameSelect').value || 'guesswho';
       const isUc = hostGame === 'undercover';
+      const isMulti = hostGame === 'battle' || hostGame === 'race';
       document.getElementById('hostPoolGroup').style.display = isUc ? 'none' : 'block';
       document.getElementById('hostGwSettings').style.display = isUc ? 'none' : 'block';
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
+      document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
+      if (isMulti) {
+        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : 'Race';
+        document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
+          ? '🎭👥 Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Mark cards with each opponent\'s ❌ color, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
+          : '⚡ One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. The hunters take turns asking — the first to guess the mystery character wins!';
+      }
     }
     function updateUcMaxPlayers() {
       ucMaxPlayers = parseInt(document.getElementById('hostUcMaxSlider').value);
       document.getElementById('hostUcMaxValue').textContent = ucMaxPlayers;
+    }
+    function updateMultiMaxPlayers() {
+      multiMaxPlayers = parseInt(document.getElementById('hostMultiMaxSlider').value);
+      document.getElementById('hostMultiMaxValue').textContent = multiMaxPlayers;
     }
     function selectUcMrWhite(on) {
       ucMrWhite = !!on;
@@ -675,6 +708,7 @@
     async function createGameRoom() {
       const game = document.getElementById('gameSelect').value || 'guesswho';
         const isUc = game === 'undercover';
+        const isMulti = game === 'battle' || game === 'race';
       if (!isUc && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('⭐ Favorites needs a synced AniList account (👤 profile menu) — or switch the pool to 🎴 Generic!'); return; }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
@@ -691,13 +725,14 @@
         } else {
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
+          if (isMulti) roomData.maxPlayers = multiMaxPlayers;
         }
         await database.ref('rooms/' + roomCode).set(roomData);
         setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
         document.getElementById('lobbySettingsIcon').style.display = 'block';
-        document.getElementById('lobbyGameName').textContent = isUc ? '🕵️ Undercover' : 'Anime Guess Who?';
+        document.getElementById('lobbyGameName').textContent = GAME_LABELS[game] || 'Anime Guess Who?';
         document.getElementById('lobbyRoomType').textContent = roomVisibility === 'private' ? '🔒 Private' : '🌐 Public';
         updateLobby();
       } catch (error) { showNotification('Error creating room: ' + error.message); console.error('Firebase error:', error); }
@@ -707,25 +742,53 @@
       const input = document.getElementById('joinRoomInput');
       const code = input.value.trim().toUpperCase();
       if (code.length !== 4) { showNotification('Please enter a 4-digit room code'); return; }
+      await joinRoomByCode(code);
+    }
+
+    // One shared join path for the code input AND the 🌐 public room cards.
+    // Free seat + lobby → you sit down directly. Game in progress (or full)
+    // → you wait in the room's QUEUE and auto-join when a seat opens.
+    async function joinRoomByCode(code) {
       try {
         const roomSnapshot = await database.ref('rooms/' + code).once('value');
         if (!roomSnapshot.exists()) { showNotification('Room not found. Check the code and try again.'); return; }
         const room = roomSnapshot.val();
-        if (room.state && room.state !== 'lobby') { showNotification('That game has already started — wait for them to return to the lobby.'); return; }
+        roomCode = code; isHost = false;
         const playerCount = Object.keys(room.players || {}).length;
         const maxPlayers = room.maxPlayers || 2;
-        if (playerCount >= maxPlayers) { showNotification('Room is full (' + playerCount + '/' + maxPlayers + ' players)'); return; }
-        roomCode = code; isHost = false;
-        await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '' });
-        touchActivity();
-        setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
-        syncMyAccountIntoRoom(); // guest's synced AniList account joins the pool automatically
-        showScreen('lobbyScreen');
-        document.getElementById('displayRoomCode').textContent = roomCode;
-        document.getElementById('lobbyGameName').textContent = room.game === 'undercover' ? '🕵️ Undercover' : 'Anime Guess Who?';
-        document.getElementById('lobbyRoomType').textContent = room.visibility === 'private' ? '🔒 Private' : '🌐 Public';
-        updateLobby();
+        // Rejoining a room I'm already part of? Just re-enter.
+        const alreadySeated = !!(room.players && room.players[playerId]);
+        const alreadyQueued = !!(room.queue && room.queue[playerId]);
+        if (alreadySeated || alreadyQueued) {
+          setupRoomListener(); setupChatListener(); setupPlayerCleanup();
+          if (alreadySeated) markDisconnectTracking(); else markQueueDisconnect();
+          afterJoinUI(room);
+          return;
+        }
+        if (room.state === 'lobby' && playerCount < maxPlayers) {
+          await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '' });
+          touchActivity();
+          setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
+          syncMyAccountIntoRoom(); // guest's synced AniList account joins the pool automatically
+          afterJoinUI(room);
+        } else {
+          // ⏳ QUEUE: no free seat right now — wait for the next game
+          const queueCount = Object.keys(room.queue || {}).length;
+          if (queueCount >= QUEUE_MAX) { showNotification('⏳ That room\'s queue is full (' + QUEUE_MAX + ' waiting) — try another room!'); roomCode = null; return; }
+          await database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now() });
+          touchActivity();
+          setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markQueueDisconnect();
+          afterJoinUI(room);
+          showNotification('⏳ ' + (room.state === 'lobby' ? 'Room full' : 'Game in progress') + ' — you are #' + (queueCount + 1) + ' in the queue. You\'ll jump in automatically!', 5000);
+        }
       } catch (error) { showNotification('Error joining room: ' + error.message); console.error('Firebase error:', error); }
+    }
+    function afterJoinUI(room) {
+      showScreen('lobbyScreen');
+      document.getElementById('displayRoomCode').textContent = roomCode;
+      document.getElementById('lobbyGameName').textContent = GAME_LABELS[room.game] || 'Anime Guess Who?';
+      document.getElementById('lobbyRoomType').textContent = room.visibility === 'private' ? '🔒 Private' : '🌐 Public';
+      updateLobby();
     }
 
     function setupRoomListener() {
@@ -741,21 +804,57 @@
           if (isHost && !wasHost) showNotification('👑 You are now the room host!');
           document.getElementById('lobbySettingsIcon').style.display = isHost ? 'block' : 'none';
         }
+        // ⏳ QUEUE membership: waiting (queue/{pid}) vs seated (players/{pid}).
+        // Seated/queue transitions flip local state + notifications exactly once.
+        const meSeated = !!(currentRoom.players && currentRoom.players[playerId]);
+        const meWaiting = !!(currentRoom.queue && currentRoom.queue[playerId]);
+        if (meWaiting && !meSeated) {
+          imQueued = true;
+        } else if (meSeated && imQueued) {
+          imQueued = false;
+          cancelQueueDisconnect();
+          markDisconnectTracking();      // switch disconnect tracking to the seat
+          syncMyAccountIntoRoom();       // a promoted player's AniList pool joins the room
+          showNotification('🎉 A seat opened — you\'re in! Ready up!', 4000);
+        } else if (!meSeated && !meWaiting) {
+          imQueued = false;
+        }
+        maybePromoteQueue(); // host moves queued people into free seats; lobbyless queue-head self-promotes
         updateLobby();
         ensureHostPresent();
         purgeDisconnectedPlayers();
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         const isUcRoom = currentRoom.game === 'undercover';
-        if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
+        if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
+        // Queued visitors never leave the lobby — no game screen routing for them
+        if (!meSeated) return;
         if (isUcRoom) {
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             // Players who chose "Return to Lobby" mid-game are NOT dragged back
             // into the game screen — they spectate from the lobby until "Play Again".
             const meIn = (currentRoom.players || {})[playerId] || {};
             const spectating = !!(currentRoom.uc && meIn.outInGame && meIn.outInGame === currentRoom.uc.gameId);
-            if (!spectating && !document.getElementById('undercoverScreen').classList.contains('active')) showScreen('undercoverScreen');
-            updateUndercover();
+            const hasRole = !!(currentRoom.uc && currentRoom.uc.roles && currentRoom.uc.roles[playerId]);
+            if (!spectating && hasRole && !document.getElementById('undercoverScreen').classList.contains('active')) showScreen('undercoverScreen');
+            if (hasRole) updateUndercover();
             if (isHost && currentRoom.state === 'playing') hostUndercoverWatchdog();
+          }
+        } else if (currentRoom.game === 'battle' || currentRoom.game === 'race') {
+          const isBattle = currentRoom.game === 'battle';
+          const screenId = isBattle ? 'battleScreen' : 'raceScreen';
+          const gdata = isBattle ? (currentRoom.br || {}) : (currentRoom.rc || {});
+          if (currentRoom.state === 'selection') {
+            if (!document.getElementById('selectionScreen').classList.contains('active')) showMultiSelection();
+            multiSelectionTick();
+          }
+          if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
+            const meP = (currentRoom.players || {})[playerId] || {};
+            const participates = gdata.gameId && meP.outInGame !== gdata.gameId &&
+              (isBattle ? !!(gdata.secrets && gdata.secrets[playerId])
+                        : (gdata.targetPid === playerId || (gdata.hunters || []).indexOf(playerId) !== -1));
+            if (participates && !document.getElementById(screenId).classList.contains('active')) showScreen(screenId);
+            if (participates) { if (isBattle) updateBattle(); else updateRace(); }
+            if (isHost && currentRoom.state === 'playing') { if (isBattle) battleWatchdog(); else raceWatchdog(); }
           }
         } else {
           if (currentRoom.state === 'selection' && !document.getElementById('selectionScreen').classList.contains('active')) { showCharacterSelection(); }
@@ -794,7 +893,10 @@
     function setupPlayerCleanup() {
       database.ref('rooms/' + roomCode + '/players').on('value', (snapshot) => {
         const players = snapshot.val();
-        if (!players || Object.keys(players).length === 0) { database.ref('rooms/' + roomCode).remove(); }
+        // Don't kill the room while QUEUE members are still in it — the queue's
+        // #1 promotes themself to host instead (see maybePromoteQueue).
+        const queueCount = (currentRoom && currentRoom.queue) ? Object.keys(currentRoom.queue).length : 0;
+        if ((!players || Object.keys(players).length === 0) && queueCount === 0) { database.ref('rooms/' + roomCode).remove(); }
       });
     }
 
@@ -873,12 +975,142 @@
       });
       const playerCount = lobbyPlayers.length;
       const allReady = lobbyPlayers.every(p => p.ready);
+      // ⏳ Queue: who's waiting for a seat (FIFO by join time)
+      const queueList = Object.values(currentRoom.queue || {}).filter(q => q && q.name)
+        .sort((a, b) => ((a.joinedAt || 0) - (b.joinedAt || 0)) || String(a.id).localeCompare(String(b.id)));
       const countEl = document.getElementById('lobbyPlayerCount');
-      if (countEl) countEl.textContent = playerCount + '/' + (currentRoom.maxPlayers || 2);
+      if (countEl) countEl.textContent = playerCount + '/' + (currentRoom.maxPlayers || 2) + (queueList.length ? '  ·  ⏳ +' + queueList.length : '');
       const gameNameEl = document.getElementById('lobbyGameName');
-      if (gameNameEl) gameNameEl.textContent = currentRoom.game === 'undercover' ? '🕵️ Undercover' : 'Anime Guess Who?';
-      const canStart = currentRoom.game === 'undercover' ? (allReady && playerCount >= 3) : (allReady && playerCount === 2);
-      document.getElementById('startGameBtn').style.display = (isHost && canStart) ? 'block' : 'none';
+      if (gameNameEl) gameNameEl.textContent = GAME_LABELS[currentRoom.game] || 'Anime Guess Who?';
+      const isMultiGame = currentRoom.game === 'undercover' || currentRoom.game === 'battle' || currentRoom.game === 'race';
+      const canStart = isMultiGame ? (allReady && playerCount >= 3) : (allReady && playerCount === 2);
+      document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
+      // My own "you're waiting" banner + hide Ready while queued
+      const qBanner = document.getElementById('queueBanner');
+      const readyBtn = document.getElementById('readyBtn');
+      const myQ = queueList.findIndex(q => q.id === playerId);
+      if (imQueued && myQ !== -1) {
+        qBanner.style.display = 'block';
+        const why = currentRoom.state === 'lobby' ? 'the room is full — waiting for a free seat' : 'a game is in progress';
+        qBanner.innerHTML = '⏳ <b>You are #' + (myQ + 1) + ' in the queue</b> — ' + why + '. You\'ll jump in automatically for the next game!';
+        if (readyBtn) readyBtn.style.display = 'none';
+      } else {
+        qBanner.style.display = 'none';
+        if (readyBtn) readyBtn.style.display = 'block';
+      }
+      // Queue section (visible to everyone, host can kick from the queue)
+      const qSection = document.getElementById('queueSection');
+      const qList = document.getElementById('queueList');
+      if (queueList.length === 0) { qSection.style.display = 'none'; }
+      else {
+        qSection.style.display = 'block';
+        qList.innerHTML = '';
+        queueList.forEach((qp, i) => {
+          const card = document.createElement('div');
+          card.className = 'player-card queue-card';
+          const head = document.createElement('div');
+          head.className = 'player-head';
+          head.innerHTML = `<span class="queue-pos">#${i + 1}</span>${avatarCircle(qp.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${escapeHtml(String(qp.name || ''))}</div><div class="status">${qp.id === playerId ? '(You) — ' : ''}⏳ waiting for a seat</div></div>`;
+          card.appendChild(head);
+          if (isHost && qp.id !== playerId) {
+            const actions = document.createElement('div');
+            actions.className = 'player-admin-actions';
+            const kickBtn = document.createElement('button');
+            kickBtn.className = 'player-admin-btn kick-btn';
+            kickBtn.title = 'Remove ' + (qp.name || 'them') + ' from the queue';
+            kickBtn.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fff" stroke-width="3.2" stroke-linecap="round" fill="none"/></svg>';
+            kickBtn.addEventListener('click', (e) => { e.stopPropagation(); kickQueued(qp.id); });
+            actions.appendChild(kickBtn);
+            const rightWrap = document.createElement('div');
+            rightWrap.className = 'player-card-right';
+            rightWrap.appendChild(actions);
+            card.appendChild(rightWrap);
+            if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+              card.addEventListener('click', () => {
+                const was = card.classList.contains('show-actions');
+                document.querySelectorAll('.player-card.show-actions').forEach(c => c.classList.remove('show-actions'));
+                if (!was) card.classList.add('show-actions');
+              });
+            }
+          }
+          qList.appendChild(card);
+        });
+      }
+    }
+
+    // Remove someone from the queue (host only)
+    function kickQueued(pid) {
+      if (!isHost) return;
+      showInteraction('Remove from the queue?', 'This player will have to join again.', [
+        { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
+        { label: '✕ Remove', onclick: async () => {
+          closeInteraction();
+          await database.ref('rooms/' + roomCode + '/kicks/' + pid).set(Date.now());
+          await database.ref('rooms/' + roomCode + '/queue/' + pid).remove();
+          touchActivity();
+          showNotification('Removed from the queue.');
+        }, class: 'danger' }
+      ]);
+    }
+
+    // ===== ⏳ QUEUE PROMOTION =====
+    // Runs on every room snapshot. Normal case: the HOST fills free seats
+    // from the queue, oldest first. Special case: ALL seated players left —
+    // then the queue's #1 promotes THEMSELF as host so the room survives.
+    async function maybePromoteQueue(force = false) {
+      if (!currentRoom || !roomCode || queuePromoting) return;
+      const queue = currentRoom.queue || {};
+      const qPids = Object.keys(queue);
+      if (qPids.length === 0) return;
+      const maxP = currentRoom.maxPlayers || 2;
+      const seatedCount = Object.keys(currentRoom.players || {}).length;
+      const inLobby = !currentRoom.state || currentRoom.state === 'lobby';
+      const sorted = Object.values(queue).filter(q => q && q.id)
+        .sort((a, b) => ((a.joinedAt || 0) - (b.joinedAt || 0)) || String(a.id).localeCompare(String(b.id)));
+      // Everyone seated vanished → queue #1 takes the room over (and clears the dead game)
+      if (seatedCount === 0) {
+        if (sorted[0].id !== playerId) return; // only queue #1 acts
+        queuePromoting = true;
+        try {
+          const me = sorted[0];
+          const updates = {
+            state: 'lobby', characters: null, selections: null, secrets: null, currentTurn: null,
+            eliminations: null, winner: null, currentQuestion: null, questionHistory: null,
+            restarts: null, uc: null, br: null, rc: null,
+            host: playerId
+          };
+          updates['players/' + playerId] = { id: playerId, ready: false, name: me.name || playerName, isHost: true, avatar: me.avatar || '' };
+          updates['queue/' + playerId] = null;
+          await database.ref('rooms/' + roomCode).update(updates);
+          showNotification('👑 Everyone left — you were promoted from the queue and are now the host!', 4000);
+        } finally { queuePromoting = false; }
+        return;
+      }
+      if (!isHost || (!inLobby && !force)) return;
+      const slots = maxP - seatedCount;
+      if (slots <= 0) return;
+      const promote = sorted.slice(0, slots);
+      if (promote.length === 0) return;
+      queuePromoting = true;
+      try {
+        const updates = {};
+        promote.forEach(qp => {
+          updates['players/' + qp.id] = { id: qp.id, ready: false, name: qp.name, isHost: false, avatar: qp.avatar || '' };
+          updates['queue/' + qp.id] = null;
+        });
+        await database.ref('rooms/' + roomCode).update(updates);
+        touchActivity();
+        showNotification('🎉 ' + promote.map(p => p.name).join(', ') + ' joined from the queue!');
+      } finally { queuePromoting = false; }
+    }
+
+    // Queue members get a plain onDisconnect-remove (they hold no seat, nothing to protect)
+    function markQueueDisconnect() {
+      const ref = database.ref('rooms/' + roomCode + '/queue/' + playerId);
+      ref.onDisconnect().remove();
+    }
+    function cancelQueueDisconnect() {
+      try { database.ref('rooms/' + roomCode + '/queue/' + playerId).onDisconnect().cancel(); } catch (e) {}
     }
 
     async function toggleReady() {
@@ -898,10 +1130,12 @@
     }
       if (roomRef) {
         cancelDisconnectTracking();
+        cancelQueueDisconnect();
         try { await database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); } catch (e) {}
+        try { await database.ref('rooms/' + roomCode + '/queue/' + playerId).remove(); } catch (e) {}
         roomRef.off(); roomRef = null;
       }
-      roomCode = null; isHost = false; currentRoom = null;
+      roomCode = null; isHost = false; currentRoom = null; imQueued = false;
       showScreen('homepageScreen'); // leaving a room always brings you back home
     }
 
@@ -937,8 +1171,10 @@
       showNotification('❌ You have been kicked from the room.', 5000);
       try {
         cancelDisconnectTracking();
+        cancelQueueDisconnect();
         await database.ref('rooms/' + code + '/kicks/' + playerId).remove();
         await database.ref('rooms/' + code + '/players/' + playerId).remove();
+        await database.ref('rooms/' + code + '/queue/' + playerId).remove();
       } catch (e) {}
       if (kickRef) { kickRef.off(); kickRef = null; }
       if (roomRef) { roomRef.off(); roomRef = null; }
@@ -1016,7 +1252,675 @@
       if (input) await pushGameChat(input);
     }
 
-    // ===== STALE ROOM JANITOR =====
+    // ============================================================
+    // ===== 🌐 PUBLIC ROOM BROWSER (join room screen) ============
+    // ============================================================
+    function startPublicRoomsWatch() {
+      if (publicRoomsRef) return;
+      publicRoomsRef = database.ref('rooms').orderByChild('visibility').equalTo('public').limitToLast(40);
+      publicRoomsRef.on('value', (snap) => { renderPublicRooms(snap.val() || {}); });
+    }
+    function stopPublicRoomsWatch() {
+      if (publicRoomsRef) { publicRoomsRef.off(); publicRoomsRef = null; }
+    }
+    function refreshPublicRooms() {
+      if (!publicRoomsRef) { startPublicRoomsWatch(); return; }
+      publicRoomsRef.once('value').then(snap => { renderPublicRooms(snap.val() || {}); showNotification('🔄 Room list refreshed'); });
+    }
+    function renderPublicRooms(rooms) {
+      const list = document.getElementById('publicRoomsList');
+      if (!list) return;
+      const STATUS = { lobby: '🟢 In the lobby', selection: '🎯 Picking characters', playing: '🎮 Game in progress', finished: '🏁 Game ending' };
+      const SRC = { generic: '🎴 Generic pool', favorites: '⭐ AniList favorites', mix: '🎲 Mixed pool' };
+      const entries = Object.entries(rooms)
+        .filter(([, r]) => r && r.players && Object.keys(r.players).length > 0)
+        .map(([code, r]) => {
+          const playerCount = Object.keys(r.players).length;
+          const maxP = r.maxPlayers || 2;
+          const queueCount = Object.keys(r.queue || {}).length;
+          return { code, r, playerCount, maxP, queueCount, joinable: (r.state === 'lobby' && playerCount < maxP) };
+        })
+        .filter(e => e.playerCount < e.maxP || e.queueCount < QUEUE_MAX) // hide rooms with a full queue
+        .sort((a, b) => (b.joinable - a.joinable) || ((b.r.lastActivity || 0) - (a.r.lastActivity || 0)));
+      if (entries.length === 0) {
+        list.innerHTML = '<p class="pub-empty">No public rooms open right now… create one and set it to 🌐 Public!</p>';
+        return;
+      }
+      list.innerHTML = '';
+      entries.forEach(({ code, r, playerCount, maxP, queueCount, joinable }) => {
+        const players = Object.values(r.players || {});
+        const hostP = players.find(p => p.isHost) || players[0];
+        const names = players.slice(0, 4).map(p => (p.isHost ? '👑 ' : '') + (p.name || '?')).join(', ') + (players.length > 4 ? ' +' + (players.length - 4) : '');
+        let rules = '';
+        if (r.game === 'undercover') rules = '👥 max ' + maxP + ' · ⚪ Mr. White ' + ((r.settings && r.settings.mrWhite) ? 'ON' : 'OFF');
+        else if (r.game === 'battle') rules = '🎭 ' + ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
+        else if (r.game === 'race') rules = '⚡ ' + ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
+        else rules = '🎭 ' + ((r.settings && r.settings.characterCount) || 24) + ' characters · ' + SRC[(r.settings && r.settings.source) || 'generic'];
+        const card = document.createElement('div');
+        card.className = 'public-room-card';
+        const btnLabel = joinable ? '✅ Join' : '⏳ Join queue' + (queueCount ? ' (' + queueCount + ')' : '');
+        const btnCls = joinable ? 'success' : 'warning';
+        card.innerHTML =
+          `<div class="pub-top"><span class="pub-title">${GAME_LABELS[r.game] || '🎮 Game'}</span><span class="pub-status">${STATUS[r.state] || '🟢 In the lobby'}</span></div>
+           <div class="pub-players">👑 Host: <b>${escapeHtml(String((hostP && hostP.name) || '?'))}</b> · 🎮 <b>${playerCount}/${maxP}</b>${queueCount ? ' · ⏳ ' + queueCount + ' waiting' : ''}</div>
+           <div class="pub-players pub-names">${escapeHtml(names)}</div>
+           <div class="pub-rules">${rules} · Code <b>${code}</b></div>
+           <button class="${btnCls} pub-join">${btnLabel}</button>`;
+        card.querySelector('.pub-join').addEventListener('click', () => joinRoomByCode(code));
+        list.appendChild(card);
+      });
+    }
+
+    // ============================================================
+    // ===== 🎭👥 MULTIPLAYER GUESS WHO — BATTLE ROYALE & RACE ====
+    // ============================================================
+    // Shared board pool: rooms/{code}/characters (same as 2P). Secrets live
+    // in br.secrets / rc.targetPid+rc.secretId. ❌ marks are LOCAL notes only
+    // (brMarks per opponent color / rcMarks for race) — like myEliminated.
+    const BR_COLORS = ['#ff5252', '#40c4ff', '#69f0ae', '#ffd740', '#e040fb', '#ff9e40', '#18ffff', '#ff6e9f'];
+    function brOpponents() {
+      const order = ((currentRoom && currentRoom.br && currentRoom.br.order) || []);
+      return order.filter(pid => pid !== playerId && (currentRoom.players || {})[pid]);
+    }
+    function brColorOf(pid) {
+      const order = ((currentRoom && currentRoom.br && currentRoom.br.order) || []);
+      const idx = order.indexOf(pid);
+      return BR_COLORS[(idx >= 0 ? idx : 0) % BR_COLORS.length];
+    }
+    const rcHunters = (room) => { const r = room || currentRoom; return ((r && r.rc && r.rc.hunters) || []).filter(pid => (r.players || {})[pid]); };
+
+    // ---------- DEAL ----------
+    async function multiDeal(game) {
+      if (!isHost || !currentRoom) return;
+      if (game === 'race') {
+        const pids = Object.keys(currentRoom.players || {});
+        const targetPid = pids[Math.floor(Math.random() * pids.length)];
+        await generateCharacterPool({ restarts: null, rc: { gameId: Date.now(), targetPid, hunters: shuffleArray(pids.filter(p => p !== targetPid)), turnIdx: 0, secretId: null, question: null, answer: null, guess: null, log: [], phase: 'selection' } });
+      } else {
+        await generateCharacterPool({ restarts: null, br: { gameId: Date.now(), order: [], turnIdx: 0, secrets: {}, points: {}, found: {}, question: null, answers: {}, guess: null, log: [], phase: 'selection' } });
+      }
+    }
+
+    // ---------- SELECTION (shared screen, driven from the main listener) ----------
+    function showMultiSelection() {
+      if (!currentRoom || !currentRoom.characters) return;
+      characters = currentRoom.characters; selectedCharacter = null;
+      showScreen('selectionScreen');
+      renderCharacterGrid();
+      const isRace = currentRoom.game === 'race';
+      const targetPid = isRace ? ((currentRoom.rc || {}).targetPid || null) : null;
+      const iPick = !isRace || targetPid === playerId;
+      const tName = targetPid && currentRoom.players[targetPid] ? currentRoom.players[targetPid].name : '';
+      document.querySelector('.selection-header h2').textContent = isRace
+        ? (iPick ? '🎯 You are the TARGET — pick the mystery character!' : '🎯 Waiting for the TARGET…')
+        : '🎯 Choose Your Secret Character';
+      document.querySelector('.selection-header p').textContent = isRace
+        ? (iPick ? 'The other players will hunt it — pick well!' : '🔒 ' + tName + ' is secretly picking the mystery character')
+        : 'Everyone picks one — you\'ll all try to guess each other\'s!';
+      document.getElementById('confirmSelectionBtn').disabled = true;
+      document.getElementById('confirmSelectionBtn').style.display = iPick ? 'inline-block' : 'none';
+      document.querySelector('.selection-controls').style.display = iPick ? 'flex' : 'none';
+      if (!iPick) document.getElementById('selectionStatus').textContent = '🔒 ' + tName + ' is picking… the game starts as soon as the choice is made.';
+      else if (isRace) document.getElementById('selectionStatus').textContent = 'Pick a character for the others to find';
+      else multiSelectionStatusText();
+      multiSelectionTick();
+    }
+    function multiSelectionStatusText() {
+      const sels = (currentRoom && currentRoom.selections) || {};
+      const seated = Object.keys((currentRoom && currentRoom.players) || {});
+      const need = currentRoom.game === 'race' ? [((currentRoom.rc || {}).targetPid || '')] : seated;
+      const done = need.filter(pid => sels[pid]).length;
+      const el = document.getElementById('selectionStatus');
+      if (!el) return;
+      if (currentRoom.game === 'race') { /* target-only flow: status set in showMultiSelection */ }
+      else if (done >= need.length) el.textContent = '✅ Everyone picked — dealing!';
+      else el.textContent = '⏳ ' + done + '/' + need.length + ' players picked…' + (sels[playerId] ? ' (you picked ✔)' : '');
+    }
+    // Called on every snapshot while state === 'selection' (main listener)
+    function multiSelectionTick() {
+      if (!currentRoom || currentRoom.state !== 'selection') return;
+      multiSelectionStatusText();
+      const sels = currentRoom.selections || {};
+      const seated = Object.keys(currentRoom.players || {});
+      // Too few players mid-selection → host cancels back to the lobby
+      if (isHost && seated.length < 3) {
+        database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, br: null, rc: null });
+        return;
+      }
+      if (currentRoom.game === 'battle') {
+        const allPicked = seated.every(pid => sels[pid]);
+        if (isHost && allPicked) {
+          const order = shuffleArray(seated);
+          const points = {}; order.forEach(pid => { points[pid] = 0; });
+          database.ref('rooms/' + roomCode).update({
+            state: 'playing', selections: null,
+            'br/secrets': sels, 'br/order': order, 'br/points': points, 'br/phase': 'ask', 'br/turnIdx': 0
+          });
+        }
+      } else { // race
+        const rc = currentRoom.rc || {};
+        if (isHost && rc.targetPid && sels[rc.targetPid]) {
+          database.ref('rooms/' + roomCode).update({
+            state: 'playing', selections: null,
+            'rc/secretId': sels[rc.targetPid], 'rc/phase': 'ask', 'rc/turnIdx': 0
+          });
+        }
+      }
+    }
+    function selectTabNoop() {}
+
+    // ---------- TURN HELPERS (battle & race) ----------
+    const brTurnPid = (room) => { const r = room || currentRoom; const o = ((r.br && r.br.order) || []).filter(pid => (r.players || {})[pid]); return o.length ? o[(r.br.turnIdx || 0) % o.length] : null; };
+    const rcTurnPid = (room) => { const r = room || currentRoom; const h = ((r.rc && r.rc.hunters) || []).filter(pid => (r.players || {})[pid]); return h.length ? h[(r.rc.turnIdx || 0) % h.length] : null; };
+    function battleAsk() {
+      const inp = document.getElementById('brQuestionInput'); if (!inp) return;
+      const text = inp.value.trim(); if (!text) return;
+      if (brTurnPid() !== playerId) { showNotification("It's not your turn to ask!"); return; }
+      database.ref('rooms/' + roomCode + '/br').update({ question: { by: playerId, text: text.slice(0, 200) }, answers: {}, phase: 'answers' });
+      inp.value = ''; touchActivity();
+    }
+    function battleAnswer(v) {
+      const br = (currentRoom && currentRoom.br) || {};
+      if (!br.question || br.question.by === playerId) return;
+      database.ref('rooms/' + roomCode + '/br/answers/' + playerId).set(v); touchActivity();
+    }
+    function battleNextTurn() {
+      const br = (currentRoom && currentRoom.br) || {};
+      if (br.phase !== 'answers') return;
+      const o = (br.order || []).filter(pid => (currentRoom.players || {})[pid]);
+      if (!o.length) return;
+      database.ref('rooms/' + roomCode + '/br').update({ question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % o.length });
+      touchActivity();
+    }
+    function battleAllAnswersIn() {
+      const br = (currentRoom && currentRoom.br) || {};
+      if (!br.question) return false;
+      const need = (br.order || []).filter(pid => pid !== br.question.by && (currentRoom.players || {})[pid] && !(currentRoom.players[pid] || {}).dcAt);
+      return need.every(pid => (br.answers || {})[pid]);
+    }
+    // HOST watchdog: advance on a vanished asker/answers, resolve guesses, end checks
+    function battleWatchdog() {
+      const br = (currentRoom && currentRoom.br) || {};
+      if (br.phase === 'over' || brWatchBusy) return;
+      const players = currentRoom.players || {};
+      const alive = pid => players[pid] && !players[pid].dcAt;
+      const seated = Object.keys(players);
+      // Game is pointless under 2 seated players → end it
+      if (seated.length < 2) {
+        database.ref('rooms/' + roomCode).update({ 'br/phase': 'over', state: 'finished' });
+        return;
+      }
+      // A guess is pending → resolve it
+      if (br.guess) {
+        const gs = br.guess;
+        brWatchBusy = true;
+        try {
+          const correct = gs.charId === (br.secrets || {})[gs.target];
+          const unfoundAlive = (br.order || []).filter(pid => alive(pid) && !(br.found || {})[pid] && pid !== gs.target).length;
+          const pts = correct ? (unfoundAlive + 1) * 100 : 0;
+          const log = (br.log || []).slice(-39);
+          const name = (players[gs.by] || {}).name || '?';
+          const tName = (players[gs.target] || {}).name || '?';
+          const charName = ((currentRoom.characters || []).find(c => c.id === gs.charId) || {}).name || '?';
+          log.push(correct
+            ? { k: 'find', txt: '🎯 ' + name + ' found ' + tName + '\'s secret: ' + charName + '! (+' + pts + ' pts)' }
+            : { k: 'miss', txt: '❌ ' + name + ' wrongly guessed ' + charName + ' for ' + tName + '…' });
+          const upd = { 'br/guess': null, 'br/log': log, 'br/phase': 'ask', 'br/question': null, 'br/answers': {} };
+          const o = (br.order || []).filter(pid => players[pid]);
+          upd['br/turnIdx'] = ((br.turnIdx || 0) + 1) % Math.max(o.length, 1);
+          if (correct) {
+            upd['br/found/' + gs.target] = { by: gs.by, pts };
+            upd['br/points/' + gs.by] = ((br.points || {})[gs.by] || 0) + pts;
+            // End? Only 0 or 1 unfound secret left among seated players
+            const stillUnfound = o.filter(pid => pid !== gs.target && !(br.found || {})[pid]);
+            if (stillUnfound.length <= 1) { upd['br/phase'] = 'over'; upd.state = 'finished'; }
+          }
+          database.ref('rooms/' + roomCode).update(upd);
+        } finally { brWatchBusy = false; }
+        return;
+      }
+      // Current asker vanished → skip their turn (works in both phases)
+      const turnPid = brTurnPid();
+      if (turnPid && !alive(turnPid) && seatsConnectedCount() >= 2) {
+        const o = (br.order || []).filter(pid => players[pid]);
+        database.ref('rooms/' + roomCode + '/br').update({ question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % Math.max(o.length, 1) });
+      }
+    }
+    function seatsConnectedCount() { return Object.keys((currentRoom && currentRoom.players) || {}).filter(pid => !(currentRoom.players[pid] || {}).dcAt).length; }
+
+    async function battleGuess(charId) {
+      const br = currentRoom.br;
+      const targetName = (currentRoom.players[brCrossTarget] || {}).name || 'them';
+      const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
+      showInteraction('🎯 Make a guess?', 'You think <b>' + escapeHtml(targetName) + '</b>\'s secret is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
+        { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
+        { label: '🎯 Guess!', onclick: async () => {
+          closeInteraction();
+          brGuessMode = false;
+          await database.ref('rooms/' + roomCode + '/br/guess').set({ by: playerId, target: brCrossTarget, charId });
+          touchActivity();
+        }, class: 'warning' }
+      ]);
+    }
+    function battleToggleGuess() {
+      const br = (currentRoom && currentRoom.br) || {};
+      if (br.phase === 'over') return;
+      if (brTurnPid() !== playerId) { showNotification("You can guess on your turn only!"); return; }
+      if (brGuessMode) { brGuessMode = false; }
+      else {
+        if (brCrossTarget === playerId || !brCrossTarget || !(currentRoom.players || {})[brCrossTarget]) brCrossTarget = brOpponents()[0] || null;
+        if (!brCrossTarget) { showNotification('No opponent to guess!'); return; }
+        brGuessMode = true;
+        showNotification('🎯 Guess mode: click the card you think is <b>' + escapeHtml((currentRoom.players[brCrossTarget] || {}).name || '') + '</b>\'s secret!');
+      }
+      renderBattleBoard();
+    }
+    function battleClearMarks() { brMarks = {}; renderBattleBoard(); }
+    function brToggleMark(charId) {
+      if (!brCrossTarget || brCrossTarget === playerId) return;
+      if (!brMarks[brCrossTarget]) brMarks[brCrossTarget] = {};
+      if (brMarks[brCrossTarget][charId]) delete brMarks[brCrossTarget][charId]; else brMarks[brCrossTarget][charId] = true;
+      renderBattleBoard();
+    }
+
+    // ---------- BATTLE ROYALE RENDER ----------
+    function updateBattle() {
+      const br = currentRoom.br || {};
+      const players = currentRoom.players || {};
+      const turnPid = brTurnPid();
+      const turnName = (players[turnPid] || {}).name || '—';
+      const phaseNames = { ask: '💬 Question time', answers: '✋ Answering…', over: '🏁 Game over' };
+      document.getElementById('brTurnBadge').textContent = br.phase === 'over' ? '🏁 Finished' : ('🎤 ' + turnName + (turnPid === playerId ? ' (You)' : ''));
+      document.getElementById('brPhaseBadge').textContent = phaseNames[br.phase] || '';
+      // Opponent chips (colored) — click to pick whom your ❌ marks belong to
+      if (!brCrossTarget || brCrossTarget === playerId || !players[brCrossTarget]) brCrossTarget = brOpponents()[0] || null;
+      const chips = document.getElementById('brChips');
+      chips.innerHTML = '';
+      brOpponents().forEach(pid => {
+        const p = players[pid];
+        const col = brColorOf(pid);
+        const chip = document.createElement('button');
+        chip.className = 'br-chip' + (brCrossTarget === pid ? ' sel' : '');
+        chip.style.setProperty('--c', col);
+        chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="chip-name">${escapeHtml(String(p.name || '?'))}</span><span class="chip-pts">${(br.points || {})[pid] || 0} pts</span>${(br.found || {})[pid] ? '<span class="chip-state">🔍 found</span>' : ''}${(p.dcAt ? '<span class="chip-state">🔌</span>' : '')}${turnPid === pid && br.phase !== 'over' ? '<span class="chip-state">🎤</span>' : ''}`;
+        chip.addEventListener('click', () => { brCrossTarget = pid; showNotification('❌ Your marks now track: ' + (p.name || '?')); updateBattle(); });
+        chips.appendChild(chip);
+      });
+      // My secret + my points
+      const myChar = (currentRoom.characters || []).find(c => c.id === (br.secrets || {})[playerId]);
+      const iAmFound = !!(br.found || {})[playerId];
+      document.getElementById('brMySecretImg').src = myChar ? myChar.image : '';
+      document.getElementById('brMySecretName').textContent = (myChar ? myChar.name : '—') + (iAmFound ? ' · 🔍 FOUND!' : '');
+      document.getElementById('brMyPoints').textContent = ((br.points || {})[playerId] || 0) + ' pts';
+      renderBattleBoard(); renderBattleQA(); renderBattleLog();
+      if (br.phase === 'over') renderMultiEnd('battle'); else document.getElementById('multiEndScreen').classList.remove('show');
+    }
+    function renderBattleBoard() {
+      const board = document.getElementById('brBoard'); if (!board || !currentRoom) return;
+      const br = currentRoom.br || {};
+      board.className = 'board' + (brGuessMode ? ' guessing' : '');
+      board.innerHTML = '';
+      const foundSet = {}; // charIds that are someone's revealed secret
+      const secrets = br.secrets || {};
+      Object.keys(br.found || {}).forEach(pid => { if (secrets[pid] != null) foundSet[secrets[pid]] = pid; });
+      (currentRoom.characters || []).forEach(char => {
+        const card = document.createElement('div'); card.className = 'card';
+        if (foundSet[char.id] != null) { card.classList.add('br-found'); card.style.setProperty('--c', brColorOf(foundSet[char.id])); }
+        const marks = document.createElement('div'); marks.className = 'br-marks';
+        brOpponents().forEach(pid => {
+          if (brMarks[pid] && brMarks[pid][char.id]) {
+            const m = document.createElement('span'); m.className = 'br-mark'; m.style.setProperty('--c', brColorOf(pid)); m.textContent = '✕';
+            marks.appendChild(m);
+          }
+        });
+        card.appendChild(marks);
+        const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
+        const info = document.createElement('div'); info.className = 'card-info';
+        info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
+        card.appendChild(info);
+        card.addEventListener('click', () => {
+          if (brGuessMode) {
+            if ((br.found || {})[brCrossTarget]) { showNotification('That player is already found — pick another chip color!'); return; }
+            battleGuess(char.id);
+          } else brToggleMark(char.id);
+        });
+        board.appendChild(card);
+      });
+    }
+    function renderBattleQA() {
+      const area = document.getElementById('brQuestionArea'); if (!area || !currentRoom) return;
+      const br = currentRoom.br || {};
+      const players = currentRoom.players || {};
+      if (br.phase === 'over') { area.innerHTML = '<div class="question-display"><div class="text">🏁 Game over — check the results!</div></div>'; return; }
+      const turnPid = brTurnPid();
+      const turnName = (players[turnPid] || {}).name || '?';
+      if (!br.question) {
+        area.innerHTML = turnPid === playerId
+          ? `<div class="question-form"><input type="text" id="brQuestionInput" placeholder="Ask a yes/no question to EVERYONE…" maxlength="200"><button class="success" onclick="battleAsk()">Ask</button></div><div class="uc-hint-line">…or guess a secret with the 🎯 button below the board.</div>`
+          : `<div class="question-display"><div class="label">Waiting…</div><div class="text">🎤 <b>${escapeHtml(turnName)}</b> is thinking of a question…</div></div>`;
+        const inp = document.getElementById('brQuestionInput');
+        if (inp) inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') battleAsk(); });
+        return;
+      }
+      const q = br.question;
+      const answers = br.answers || {};
+      const myAnswer = answers[playerId];
+      const answerers = (br.order || []).filter(pid => pid !== q.by && players[pid]);
+      const answerChips = answerers.map(pid => {
+        const a = answers[pid];
+        return `<span class="qa-ans" style="--c:${brColorOf(pid)}">${avatarCircle(players[pid].avatar, 'ava-chat')}${escapeHtml(String(players[pid].name || '?'))} ${a ? (a === 'YES' ? '✅' : '🚫') : '⏳'}</span>`;
+      }).join('');
+      const allIn = battleAllAnswersIn();
+      let bottom = '';
+      if (q.by === playerId) {
+        bottom = allIn ? `<button class="success full" onclick="battleNextTurn()">➜ Next turn</button>` : `<div class="uc-hint-line">Waiting for everyone's answers…</div>`;
+      } else if (!myAnswer) {
+        bottom = `<div class="answer-buttons"><button class="success" onclick="battleAnswer('YES')">✓ YES</button><button class="danger" onclick="battleAnswer('NO')">✕ NO</button></div>`;
+      } else {
+        bottom = `<div class="uc-hint-line">You answered <b>${myAnswer}</b> — waiting ${allIn ? '' : 'for the others… '}(or guess with 🎯 on your turn)</div>`;
+      }
+      area.innerHTML = `<div class="question-display"><div class="label">${q.by === playerId ? 'Your question' : '🎤 ' + escapeHtml((players[q.by] || {}).name || '?') + ' asks EVERYONE'}</div><div class="text">${escapeHtml(String(q.text || ''))}</div><div class="qa-answers">${answerChips}</div>${bottom}</div>`;
+    }
+    function renderBattleLog() {
+      const logEl = document.getElementById('brLog'); if (!logEl || !currentRoom) return;
+      const log = ((currentRoom.br || {}).log) || [];
+      if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>'; return; }
+      logEl.innerHTML = '';
+      [...log].reverse().forEach(e => {
+        const d = document.createElement('div');
+        d.className = 'br-log-' + (e.k === 'find' ? 'find' : e.k === 'miss' ? 'miss' : e.k === 'q' ? 'q' : 'info');
+        d.textContent = e.txt;
+        logEl.appendChild(d);
+      });
+    }
+
+    // ---------- RACE ----------
+    function raceAsk() {
+      const inp = document.getElementById('rcQuestionInput'); if (!inp) return;
+      const text = inp.value.trim(); if (!text) return;
+      if (rcTurnPid() !== playerId) { showNotification("It's not your turn to ask!"); return; }
+      database.ref('rooms/' + roomCode + '/rc').update({ question: { by: playerId, text: text.slice(0, 200) }, answer: null, phase: 'answers' });
+      inp.value = ''; touchActivity();
+    }
+    function raceAnswer(v) {
+      const rc = (currentRoom && currentRoom.rc) || {};
+      if (rc.targetPid !== playerId) return;
+      database.ref('rooms/' + roomCode + '/rc/answer').set(v); touchActivity();
+    }
+    function raceNextTurn() {
+      const rc = (currentRoom && currentRoom.rc) || {};
+      if (rc.phase !== 'answers' || !rc.answer) return;
+      const h = rcHunters();
+      if (!h.length) return;
+      database.ref('rooms/' + roomCode + '/rc').update({ question: null, answer: null, phase: 'ask', turnIdx: ((rc.turnIdx || 0) + 1) % h.length });
+      touchActivity();
+    }
+    function raceWatchdog() {
+      const rc = (currentRoom && currentRoom.rc) || {};
+      if (rc.phase === 'over' || rcWatchBusy) return;
+      const players = currentRoom.players || {};
+      const alive = pid => players[pid] && !players[pid].dcAt;
+      // Target gone → game over (nobody left to answer)
+      if (!players[rc.targetPid]) {
+        database.ref('rooms/' + roomCode).update({ 'rc/phase': 'over', 'rc/winner': null, 'rc/endReason': 'target-left', state: 'finished' });
+        return;
+      }
+      // No hunters left → over
+      if (rcHunters().length === 0) {
+        database.ref('rooms/' + roomCode).update({ 'rc/phase': 'over', 'rc/winner': null, 'rc/endReason': 'hunters-left', state: 'finished' });
+        return;
+      }
+      // Pending hunter guess → resolve
+      if (rc.guess) {
+        rcWatchBusy = true;
+        try {
+          const correct = rc.guess.charId === rc.secretId;
+          const log = (rc.log || []).slice(-39);
+          const name = (players[rc.guess.by] || {}).name || '?';
+          const charName = ((currentRoom.characters || []).find(c => c.id === rc.guess.charId) || {}).name || '?';
+          log.push(correct
+            ? { k: 'find', txt: '🏆 ' + name + ' FOUND the mystery character: ' + charName + '!' }
+            : { k: 'miss', txt: '❌ ' + name + ' tried ' + charName + ' — wrong!' });
+          const upd = { 'rc/guess': null, 'rc/log': log, 'rc/phase': 'ask', 'rc/question': null, 'rc/answer': null };
+          if (correct) { upd['rc/phase'] = 'over'; upd['rc/winner'] = rc.guess.by; upd.state = 'finished'; }
+          else upd['rc/turnIdx'] = ((rc.turnIdx || 0) + 1) % Math.max(rcHunters().length, 1);
+          database.ref('rooms/' + roomCode).update(upd);
+        } finally { rcWatchBusy = false; }
+        return;
+      }
+      const turnPid = rcTurnPid();
+      if (turnPid && !alive(turnPid)) {
+        const h = rcHunters();
+        database.ref('rooms/' + roomCode + '/rc').update({ question: null, answer: null, phase: 'ask', turnIdx: ((rc.turnIdx || 0) + 1) % Math.max(h.length, 1) });
+      }
+    }
+    async function raceGuess(charId) {
+      const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
+      showInteraction('🎯 Make a guess?', 'You think the mystery character is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
+        { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
+        { label: '🎯 Guess!', onclick: async () => {
+          closeInteraction();
+          rcGuessMode = false;
+          await database.ref('rooms/' + roomCode + '/rc/guess').set({ by: playerId, charId });
+          touchActivity();
+        }, class: 'warning' }
+      ]);
+    }
+    function raceToggleGuess() {
+      const rc = (currentRoom && currentRoom.rc) || {};
+      if (rc.phase === 'over') return;
+      if (rc.targetPid === playerId) { showNotification('You are the TARGET — the hunters do the guessing!'); return; }
+      if (rcTurnPid() !== playerId) { showNotification('You can guess on your turn only!'); return; }
+      rcGuessMode = !rcGuessMode;
+      if (rcGuessMode) showNotification('🎯 Guess mode: click the card you think is the mystery character!');
+      renderRaceBoard();
+    }
+    function raceClearMarks() { rcMarks = {}; renderRaceBoard(); }
+    function updateRace() {
+      const rc = currentRoom.rc || {};
+      const players = currentRoom.players || {};
+      const isTarget = rc.targetPid === playerId;
+      const targetName = (players[rc.targetPid] || {}).name || '?';
+      const turnPid = rcTurnPid();
+      const turnName = (players[turnPid] || {}).name || '—';
+      document.getElementById('rcTurnBadge').textContent = rc.phase === 'over' ? '🏁 Finished' : ('🎤 ' + turnName + (turnPid === playerId ? ' (You)' : ''));
+      document.getElementById('rcPhaseBadge').textContent = rc.phase === 'over' ? '🏁 Game over' : (rc.question ? '✋ Target answering…' : '💬 Question time');
+      // Banner: target sees their own secret; hunters see the mystery card
+      const banner = document.getElementById('rcBanner');
+      if (isTarget) {
+        const myChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
+        banner.classList.remove('br-hide');
+        banner.onclick = () => banner.classList.toggle('br-hide');
+        banner.innerHTML = `<img src="${myChar ? myChar.image : ''}" alt=""><div class="br-mysecret-info"><div class="br-mysecret-label">🎯 You are the TARGET — answer questions honestly (tap to hide)</div><div class="br-mysecret-name">${myChar ? myChar.name : '—'}</div></div>`;
+      } else {
+        banner.onclick = null;
+        banner.innerHTML = `<div class="br-mysecret-info"><div class="br-mysecret-label">⚡ RACE — mystery character</div><div class="br-mysecret-name">Hunt <b style="color:var(--warning)">${escapeHtml(targetName)}</b>'s secret before the others!</div></div>`;
+      }
+      renderRaceBoard(); renderRaceQA(); renderRaceLog();
+      if (rc.phase === 'over') renderMultiEnd('race'); else document.getElementById('multiEndScreen').classList.remove('show');
+    }
+    function renderRaceBoard() {
+      const board = document.getElementById('rcBoard'); if (!board || !currentRoom) return;
+      board.className = 'board' + (rcGuessMode ? ' guessing' : '');
+      board.innerHTML = '';
+      (currentRoom.characters || []).forEach(char => {
+        const card = document.createElement('div'); card.className = 'card';
+        if (rcMarks[char.id]) card.classList.add('eliminated');
+        const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
+        const info = document.createElement('div'); info.className = 'card-info';
+        info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
+        card.appendChild(info);
+        card.addEventListener('click', () => { rcGuessMode ? raceGuess(char.id) : (rcMarks[char.id] ? delete rcMarks[char.id] : rcMarks[char.id] = true, renderRaceBoard()); });
+        board.appendChild(card);
+      });
+    }
+    function renderRaceQA() {
+      const area = document.getElementById('rcQuestionArea'); if (!area || !currentRoom) return;
+      const rc = currentRoom.rc || {};
+      const players = currentRoom.players || {};
+      if (rc.phase === 'over') { area.innerHTML = '<div class="question-display"><div class="text">🏁 Game over — check the results!</div></div>'; return; }
+      const isTarget = rc.targetPid === playerId;
+      const targetName = (players[rc.targetPid] || {}).name || '?';
+      const turnPid = rcTurnPid();
+      const turnName = (players[turnPid] || {}).name || '?';
+      if (!rc.question) {
+        if (isTarget) area.innerHTML = `<div class="question-display"><div class="text">🎯 You are the TARGET — wait for <b>${escapeHtml(turnName)}</b>'s question…</div></div>`;
+        else if (turnPid === playerId) area.innerHTML = `<div class="question-form"><input type="text" id="rcQuestionInput" placeholder="Ask the target a yes/no question…" maxlength="200"><button class="success" onclick="raceAsk()">Ask</button></div><div class="uc-hint-line">…or guess the mystery character with 🎯 below the board.</div>`;
+        else area.innerHTML = `<div class="question-display"><div class="label">Waiting…</div><div class="text">🎤 <b>${escapeHtml(turnName)}</b> is thinking of a question…</div></div>`;
+        const inp = document.getElementById('rcQuestionInput');
+        if (inp) inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') raceAsk(); });
+        return;
+      }
+      const q = rc.question;
+      let bottom = '';
+      if (!rc.answer) {
+        if (isTarget) bottom = `<div class="answer-buttons"><button class="success" onclick="raceAnswer('YES')">✓ YES</button><button class="danger" onclick="raceAnswer('NO')">✕ NO</button></div>`;
+        else bottom = `<div class="uc-hint-line">⏳ Waiting for <b>${escapeHtml(targetName)}</b>'s answer…</div>`;
+      } else {
+        bottom = `<div class="uc-hint-line" style="font-size:1rem">Answer: <b>${rc.answer === 'YES' ? '✅ YES' : '🚫 NO'}</b></div>`;
+        if (q.by === playerId) bottom += `<button class="success full" onclick="raceNextTurn()" style="margin-top:8px">➜ Next turn</button>`;
+      }
+      area.innerHTML = `<div class="question-display"><div class="label">🎤 ${escapeHtml((players[q.by] || {}).name || '?')} asks the target</div><div class="text">${escapeHtml(String(q.text || ''))}</div>${bottom}</div>`;
+    }
+    function renderRaceLog() {
+      const logEl = document.getElementById('rcLog'); if (!logEl || !currentRoom) return;
+      const log = ((currentRoom.rc || {}).log) || [];
+      if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>'; return; }
+      logEl.innerHTML = '';
+      [...log].reverse().forEach(e => {
+        const d = document.createElement('div');
+        d.className = 'br-log-' + (e.k === 'find' ? 'find' : e.k === 'miss' ? 'miss' : e.k === 'q' ? 'q' : 'info');
+        d.textContent = e.txt;
+        logEl.appendChild(d);
+      });
+    }
+
+    // ---------- SHARED END SCREEN + REPLAY (battle & race) ----------
+    function meParticipants() {
+      // players eligible to click "Play Again": seated and not spectating this game
+      const g = (currentRoom || {}).game;
+      const gd = g === 'battle' ? ((currentRoom || {}).br || {}) : ((currentRoom || {}).rc || {});
+      return Object.keys((currentRoom && currentRoom.players) || {}).filter(pid => {
+        const p = currentRoom.players[pid] || {};
+        if (p.outInGame && p.outInGame === gd.gameId) return false;
+        return true;
+      });
+    }
+    function renderMultiEnd(kind) {
+      const screen = document.getElementById('multiEndScreen');
+      const activeScreen = document.querySelector('.screen.active');
+      const sid = activeScreen ? activeScreen.id : '';
+      if (sid !== 'battleScreen' && sid !== 'raceScreen') { screen.classList.remove('show'); return; }
+      const players = currentRoom.players || {};
+      const title = document.getElementById('meTitle');
+      const sub = document.getElementById('meSub');
+      const list = document.getElementById('meList');
+      list.innerHTML = '';
+      if (kind === 'battle') {
+        const br = currentRoom.br || {};
+        const secrets = br.secrets || {};
+        const ranking = (br.order || []).filter(pid => players[pid]).sort((a, b) => {
+          const diff = ((br.points || {})[b] || 0) - ((br.points || {})[a] || 0);
+          if (diff) return diff;
+          const aF = (br.found || {})[a] ? 1 : 0, bF = (br.found || {})[b] ? 1 : 0;
+          return aF - bF; // unfound ranks above on tie
+        });
+        const winner = ranking[0];
+        const meWin = winner === playerId;
+        title.textContent = meWin ? '🏆 You win the Battle Royale!' : '🏁 Battle Royale over!';
+        sub.textContent = meWin ? 'Champion hunter!' : '👑 ' + ((players[winner] || {}).name || '?') + ' takes it!';
+        ranking.forEach((pid, i) => {
+          const p = players[pid] || {};
+          const found = (br.found || {})[pid];
+          const secChar = (currentRoom.characters || []).find(c => c.id === secrets[pid]);
+          const row = document.createElement('div');
+          row.className = 'me-row' + (pid === playerId ? ' me' : '');
+          row.style.setProperty('--c', brColorOf(pid));
+          row.innerHTML = `<span class="me-rank">${['🥇','🥈','🥉'][i] || (i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${(br.points || {})[pid] || 0} pts${found ? '' : ' · 🕵️ never found'}</span>`;
+          if (secChar) { const s = document.createElement('small'); s.style.color = 'var(--muted)'; s.style.width = '100%'; s.textContent = (found ? 'secret: ' : 'secret was: ') + (secChar.name || '?'); row.appendChild(s); row.style.flexWrap = 'wrap'; }
+          list.appendChild(row);
+        });
+      } else {
+        const rc = currentRoom.rc || {};
+        const winner = rc.winner;
+        const secretChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
+        if (winner) {
+          title.textContent = winner === playerId ? '🏆 You found it first!' : '🏁 Race over!';
+          sub.textContent = '🏆 ' + ((players[winner] || {}).name || '?') + ' found ' + (secretChar ? secretChar.name : 'the character') + ' first!';
+        } else {
+          title.textContent = '🏁 Race over';
+          sub.textContent = rc.endReason === 'target-left' ? 'The target left the game!' : 'No hunters left!';
+        }
+        if (secretChar) {
+          const row = document.createElement('div');
+          row.className = 'me-row';
+          row.innerHTML = `<span class="me-rank">🎭</span><span>The mystery character was <b>${escapeHtml(secretChar.name || '?')}</b></span>`;
+          list.appendChild(row);
+        }
+        rcHunters().concat(rc.targetPid ? [rc.targetPid] : []).filter(pid => players[pid]).forEach(pid => {
+          const p = players[pid] || {};
+          const row = document.createElement('div');
+          row.className = 'me-row' + (pid === playerId ? ' me' : '');
+          row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${pid === rc.targetPid ? '🎯 target' : (pid === winner ? '🏆 winner' : '🔍 hunter')}</span>`;
+          list.appendChild(row);
+        });
+      }
+      // Replay counting (same pattern as Undercover)
+      const restarts = currentRoom.restarts || {};
+      if (restarts[playerId]) screen.classList.remove('show'); else screen.classList.add('show');
+      const eligible = meParticipants();
+      const clicked = eligible.filter(pid => restarts[pid]).length;
+      const statusEl = document.getElementById('meRestartStatus');
+      const btn = document.getElementById('meRestartBtn');
+      if (eligible.length > 0 && clicked >= eligible.length) {
+        if (isHost) { if (statusEl) statusEl.textContent = 'Everyone is ready! New game…'; launchNewMulti(); }
+        else if (statusEl) statusEl.textContent = 'Waiting for the host…';
+      } else if (statusEl) statusEl.textContent = 'Ready for a new game: ' + clicked + '/' + eligible.length;
+      if (btn) {
+        if (restarts[playerId]) { btn.textContent = 'Waiting…'; btn.disabled = true; }
+        else { btn.textContent = 'Play Again'; btn.disabled = false; }
+      }
+    }
+    let multiLaunching = false;
+    function multiRestart() {
+      if (!currentRoom || !roomCode) return;
+      database.ref('rooms/' + roomCode + '/restarts/' + playerId).set(true);
+      touchActivity();
+      showNotification('Play Again clicked! Waiting for others…');
+      const btn = document.getElementById('meRestartBtn');
+      if (btn) { btn.textContent = 'Waiting…'; btn.disabled = true; }
+    }
+    async function launchNewMulti() {
+      if (multiLaunching) return;
+      multiLaunching = true;
+      try {
+        await maybePromoteQueue(true); // ⏳ queued players take free seats first
+        const snap = await database.ref('rooms/' + roomCode).once('value');
+        currentRoom = snap.val();
+        document.getElementById('multiEndScreen').classList.remove('show');
+        await multiDeal(currentRoom.game);
+      } finally { multiLaunching = false; }
+    }
+    async function returnToLobbyFromMulti() {
+      const gd = currentRoom && currentRoom.game === 'battle' ? (currentRoom.br || {}) : (currentRoom && currentRoom.rc || {});
+      const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && gd.gameId;
+      if (!inGame) { showScreen('lobbyScreen'); return; }
+      showInteraction('Return to Lobby?', 'The game continues for the others — you wait in the lobby until it ends.', [
+        { label: 'Stay in the game', onclick: () => { closeInteraction(); }, class: 'secondary' },
+        { label: 'To Lobby', onclick: async () => {
+          closeInteraction();
+          try {
+            const updates = {};
+            updates['rooms/' + roomCode + '/players/' + playerId + '/outInGame'] = gd.gameId;
+            updates['rooms/' + roomCode + '/players/' + playerId + '/ready'] = false;
+            await database.ref().update(updates);
+          } catch (e) {}
+          document.getElementById('multiEndScreen').classList.remove('show');
+          showScreen('lobbyScreen');
+        }, class: 'danger' }
+      ]);
+    }
+
     // Runs once per page load: removes rooms abandoned by everyone.
     // Live rooms idle > 1h are already closed by the in-room watcher; this is
     // the backstop for rooms where nobody is connected (crashed/closed tabs).
@@ -1169,13 +2073,26 @@
 
     async function hostStartGame() {
       if (!isHost || !currentRoom) return;
+      // ⏳ Fill free seats from the queue BEFORE dealing, so waiting players
+      // are part of this game
+      await maybePromoteQueue(true);
+      const snap = await database.ref('rooms/' + roomCode).once('value');
+      currentRoom = snap.val();
       const allReady = Object.values(currentRoom.players || {}).every(p => p.ready);
       const playerCount = Object.keys(currentRoom.players || {}).length;
-      if (currentRoom.game === 'undercover') {
+      const g = currentRoom.game;
+      if (g === 'undercover') {
         if (playerCount < 3) { showNotification('Undercover needs at least 3 players!'); return; }
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await startUndercoverGame();
+        return;
+      }
+      if (g === 'battle' || g === 'race') {
+        if (playerCount < 3) { showNotification((GAME_LABELS[g] || 'This game') + ' needs at least 3 players!'); return; }
+        if (!allReady) { showNotification('All players must be ready!'); return; }
+        touchActivity();
+        await multiDeal(g);
         return;
       }
       if (!allReady) { showNotification('All players must be ready!'); return; }
@@ -1206,12 +2123,18 @@
       if (source === 'favorites' && accountData.length > 0) {
         if (accountData.length === 1) {
           selectedChars = pickUnique(allChars, totalChars);
-        } else {
+        } else if (accountData.length === 2) {
           const count1 = settings.distribution || Math.floor(totalChars / 2);
           const count2 = totalChars - count1;
           const chars1 = pickUnique(shuffleArray((accountData[0].characters || []).slice()), count1);
           const chars2 = pickUnique(shuffleArray((accountData[1].characters || []).slice()), count2);
           selectedChars = shuffleArray([...chars1, ...chars2]);
+        } else {
+          // 3+ synced accounts (multiplayer rooms): every account shares the board equally
+          const per = Math.floor(totalChars / accountData.length);
+          accountData.forEach(acc => selectedChars.push(...pickUnique(shuffleArray((acc.characters || []).slice()), per)));
+          if (selectedChars.length < totalChars) selectedChars = shuffleArray([...selectedChars, ...pickUnique(shuffleArray(allChars.slice()), totalChars - selectedChars.length)]);
+          selectedChars = shuffleArray(selectedChars);
         }
       } else if (source === 'mix' && accountData.length > 0) {
         // Half generic, half favorites (deduped by AniList id); if one side
@@ -1242,6 +2165,11 @@
     function showCharacterSelection() {
       if (!currentRoom || !currentRoom.characters) { console.error('No characters available'); return; }
       characters = currentRoom.characters; selectedCharacter = null;
+      // Restore the classic 2P texts/controls (multiplayer modes customize them)
+      document.querySelector('.selection-header h2').textContent = '🎯 Choose Your Secret Character';
+      document.querySelector('.selection-header p').textContent = 'Pick a character for your opponent to guess';
+      document.getElementById('confirmSelectionBtn').style.display = 'inline-block';
+      document.querySelector('.selection-controls').style.display = 'flex';
       showScreen('selectionScreen'); renderCharacterGrid();
       // Clean up previous listener to avoid duplicates
       database.ref('rooms/' + roomCode + '/selections').off('value');
@@ -1260,6 +2188,11 @@
     }
 
     function selectCharacter(char, cardElement) {
+      // Race mode: only the TARGET picks the mystery character
+      if (currentRoom && currentRoom.game === 'race' && currentRoom.state === 'selection') {
+        const tp = (currentRoom.rc || {}).targetPid;
+        if (tp && tp !== playerId) { showNotification('🔒 Only the TARGET picks the mystery character!'); return; }
+      }
       document.querySelectorAll('.selectable-card').forEach(c => c.classList.remove('selected'));
       cardElement.classList.add('selected');
       selectedCharacter = char;
@@ -1286,7 +2219,10 @@
     }
 
     async function updateSelectionStatus(selections) {
-      if (!selections || !currentRoom) return;
+      if (!currentRoom) return;
+      // Multiplayer rooms handle their own selection flow (3-8 players)
+      if (currentRoom.game === 'battle' || currentRoom.game === 'race') return;
+      if (!selections) return;
       const players = Object.keys(currentRoom.players || {});
       // Opponent vanished during selection → it can't continue alone, back to the lobby
       if (players.length < 2 && isHost && currentRoom.state === 'selection') {
@@ -1609,6 +2545,7 @@
       // Guard: the room listener can fire multiple times while state is still
       // 'finished' with all restarts set — only launch once.
       if (newGameLaunching) return;
+      await maybePromoteQueue(true); // ⏳ queued players take free seats before the new deal
       if (Object.keys((currentRoom && currentRoom.players) || {}).length < 2) {
         showNotification('🚪 Not enough players left — back to the lobby.');
         await returnToLobby();
@@ -1647,7 +2584,7 @@
       document.getElementById('ucEndScreen').classList.remove('show');
       await database.ref('rooms/' + roomCode).update({
         state: 'lobby', characters: null, secrets: null, selections: null, currentTurn: null,
-        eliminations: null, winner: null, currentQuestion: null, questionHistory: null, gameChat: null, restarts: null, uc: null
+        eliminations: null, winner: null, currentQuestion: null, questionHistory: null, gameChat: null, restarts: null, uc: null, br: null, rc: null
       });
       await database.ref('rooms/' + roomCode + '/players/' + playerId + '/ready').set(false);
       if (currentRoom && currentRoom.players) {
@@ -2112,6 +3049,9 @@
       if (ucLaunching) return;
       ucLaunching = true;
       try {
+        await maybePromoteQueue(true); // ⏳ fill seats from the queue before re-dealing
+        const snap = await database.ref('rooms/' + roomCode).once('value');
+        currentRoom = snap.val();
         document.getElementById('ucEndScreen').classList.remove('show');
         await startUndercoverGame();
       } finally { ucLaunching = false; }
@@ -2578,6 +3518,8 @@
       if (roomCode && playerId) {
         // Cancel the disconnect marker first (avoids a ghost entry), then leave cleanly
         try { database.ref('rooms/' + roomCode + '/players/' + playerId + '/dcAt').onDisconnect().cancel(); } catch (e) {}
+        try { database.ref('rooms/' + roomCode + '/queue/' + playerId).onDisconnect().cancel(); } catch (e) {}
         database.ref('rooms/' + roomCode + '/players/' + playerId).remove();
+        database.ref('rooms/' + roomCode + '/queue/' + playerId).remove();
       }
     });
