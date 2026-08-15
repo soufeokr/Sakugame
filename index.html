@@ -180,7 +180,7 @@
       <p>Configure your room settings</p>
       <div class="settings-section">
         <h3>🏠 Room Settings</h3>
-        <div class="input-group"><label>Game</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">🎭 Anime Guess Who? (2 players)</option><option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option><option value="race">⚡ Guess Who — Race (3-8 players)</option><option value="undercover">🕵️ Undercover (3-8 players)</option></select></div>
+        <div class="input-group"><label>Game</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">🎭 Anime Guess Who? (2 players)</option><option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option><option value="race">⚡ Guess Who — Race (3-8 players)</option><option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option><option value="undercover">🕵️ Undercover (3-8 players)</option></select></div>
         <div class="input-group">
           <label>Room Visibility</label>
           <div class="radio-group">
@@ -236,6 +236,21 @@
         <div class="slider-container race-only-settings" style="display: none;">
           <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="hostRaceQuestionsValue">8</strong></div>
           <input type="range" id="hostRaceQuestionsSlider" min="3" max="15" value="8" oninput="updateRaceQuestionsSlider()">
+        </div>
+        <div class="input-group blur-only-settings" style="display: none;">
+          <label>What to guess</label>
+          <div class="radio-group">
+            <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div>🧍 Characters</div><small style="color: var(--muted);">blurred portraits</small></label>
+            <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div>🎬 Anime covers</div><small style="color: var(--muted);">blurred posters</small></label>
+          </div>
+        </div>
+        <div class="slider-container blur-only-settings" style="display: none;">
+          <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="hostBgRoundsValue">10</strong></div>
+          <input type="range" id="hostBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateBgRoundsSlider()">
+        </div>
+        <div class="slider-container blur-only-settings" style="display: none;">
+          <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="hostBgStageSecValue">12s</strong></div>
+          <input type="range" id="hostBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateBgStageSecSlider()">
         </div>
         <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
         <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">💀 If <b>all hunters</b> run out of lives, the 🎯 TARGET wins! Running out of ❓ questions means you can only guess… or pass.</p>
@@ -426,8 +441,7 @@
     </div>
   </div>
 
-  <!-- ⚡ GUESS WHO — RACE (3-8 players): everyone hunts the target's character -->
-  <div class="screen" id="raceScreen">
+  <!-- ⚡ GUESS WHO — RACE (3-8 players): everyone hunts the target's character -->  <div class="screen" id="raceScreen">
     <div class="uc-container">
       <div class="uc-main">
         <div class="uc-header">
@@ -451,6 +465,34 @@
     </div>
   </div>
 
+  <!-- 🌫️ BLUR GUESS (solo or up to 8): name the blurred character as early as possible -->
+  <div class="screen" id="blurScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="uc-badge" id="bgRoundBadge">🌫️ Round 1/10</div>
+          <div class="uc-badge" id="bgStageBadge">Blur stage 1/5</div>
+          <div class="uc-badge" id="bgTimerBadge">⏳ 12s</div>
+        </div>
+        <div class="bg-img-wrap" id="bgImgWrap"><img id="bgImage" src="" alt="Mystery character"></div>
+        <div class="bg-status" id="bgStatus">🌫️ Who is this?!</div>
+        <div class="question-form" id="bgGuessBar">
+          <div class="bg-guess-wrap">
+            <input type="text" id="bgGuessInput" placeholder="Type the character's name… (any name: Deku, Burdock…)" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <div class="bg-suggest" id="bgSuggest"></div>
+          </div>
+          <button class="success" onclick="blurGuess()">Guess!</button>
+        </div>
+        <div class="bg-chips" id="bgChips"></div>
+        <div class="game-controls">
+          <button class="warning" id="bgSkipBtn" onclick="blurSkip()" title="Reveal & skip this round (host)">⏭ <span class="btn-label">Skip round</span></button>
+          <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby">🚪 <span class="btn-label">To Lobby</span></button>
+        </div>
+        <div class="br-log-wrap"><h3>📜 Rounds</h3><div class="br-log" id="bgLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
@@ -463,6 +505,7 @@
             <option value="guesswho">🎭 Anime Guess Who? (2 players)</option>
             <option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option>
             <option value="race">⚡ Guess Who — Race (3-8 players)</option>
+            <option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option>
             <option value="undercover">🕵️ Undercover (3-8 players)</option>
           </select>
         </div>
@@ -521,6 +564,25 @@
           <input type="range" id="modalRaceQuestionsSlider" min="3" max="15" value="8" oninput="updateModalRaceQuestions()">
         </div>
         <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Applies from the next game.</p>
+      </div>
+      <div class="settings-section" id="modalBgSettings" style="display: none;">
+        <h3>⚙️ Game Settings - Blur Guess</h3>
+        <div class="input-group">
+          <label>What to guess</label>
+          <div class="radio-group">
+            <label class="radio-option selected" id="modalBgModeChars" onclick="changeBgMode('characters')"><div>🧍 Characters</div></label>
+            <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div>🎬 Anime covers</div></label>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="modalBgRoundsValue">10</strong></div>
+          <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
+        </div>
+        <div class="slider-container">
+          <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="modalBgStageSecValue">12s</strong></div>
+          <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
+        </div>
+        <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. Blur Guess uses the FULL pool (no character count). Applies from the next game.</p>
       </div>
       <button class="full success" onclick="closeSettings()">Save & Close</button>
     </div>
@@ -699,8 +761,9 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
   <script src="characters.js"></script>
+  <script src="animes.js"></script>
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b3030b0ed3b0fd',t:'MTc4Njc0MjUxNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b93da7d82ecac8',t:'MTc4NjgwNzgyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

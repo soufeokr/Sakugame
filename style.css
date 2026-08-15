@@ -476,6 +476,26 @@
   .me-rank { min-width: 34px; font-size: 1.05rem; }
   .me-pts { margin-left: auto; color: var(--warning); font-size: 0.8rem; white-space: nowrap; }
 
+  /* 🌫️ Blur Guess: big clear frame, unblur animation, status + score chips */
+  .bg-img-wrap { background: #0f0f1a; border-radius: 16px; padding: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 3px solid #2a2a4a; transition: border-color 0.4s; }
+  .bg-img-wrap.revealed { border-color: var(--success); box-shadow: 0 0 24px rgba(0, 200, 83, 0.35); }
+  #bgImage { width: min(300px, 62vw); aspect-ratio: 23 / 35; object-fit: cover; border-radius: 10px; background: #16163a; transition: filter 0.7s ease, transform 0.7s ease; }
+  .bg-status { text-align: center; color: var(--text); font-weight: 800; margin: 12px 0 4px; font-size: 0.95rem; min-height: 1.4em; }
+
+  /* ⌨️ Blur Guess autocomplete dropdown */
+  .bg-guess-wrap { position: relative; flex: 1; min-width: 0; }
+  .bg-guess-wrap input { width: 100%; box-sizing: border-box; }
+  .bg-suggest { display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #16162b; border: 2px solid var(--accent); border-radius: 12px; max-height: 264px; overflow-y: auto; z-index: 80; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65); }
+  .bg-suggest.show { display: block; }
+  .bg-sug-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; cursor: pointer; border-bottom: 1px solid #2a2a4a; transition: background 0.15s; -webkit-tap-highlight-color: transparent; }
+  .bg-sug-row:last-child { border-bottom: none; }
+  .bg-sug-row:hover, .bg-sug-row:active { background: rgba(2, 169, 255, 0.16); }
+  .bg-sug-img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #0f0f1a; flex-shrink: 0; }
+  .bg-sug-name { flex: 1; font-weight: 800; color: var(--text); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-sug-via { flex-shrink: 0; font-size: 0.7rem; font-weight: 700; color: var(--accent); background: rgba(2, 169, 255, 0.14); padding: 2px 8px; border-radius: 999px; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-chips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 2px 4px; flex-wrap: wrap; justify-content: center; }
+  #bgGuessBar { margin-top: 8px; }
+
   /* ❤️❓ Race hunters bar: each hunter's lives & questions, color-coded */
   .rc-hunters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin-bottom: 8px; flex-wrap: wrap; justify-content: center; }
   .rc-hunter { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--c, #2a2a4a); background: #0f0f1a; color: var(--text); border-radius: 22px; padding: 4px 12px 4px 4px; flex-shrink: 0; }
@@ -556,6 +576,8 @@
     .br-mysecret-name { font-size: 0.85rem; }
     .br-chip .chip-name { max-width: 64px; }
     .rc-hunter .rc-hunter-name { max-width: 64px; }
+    #bgImage { width: min(240px, 70vw); }
+    .bg-status { font-size: 0.88rem; }
     .br-log { max-height: 130px; }
     .qa-ans { font-size: 0.72rem; padding: 3px 8px; }
     .me-row { font-size: 0.82rem; padding: 8px 10px; }

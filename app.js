@@ -436,17 +436,7 @@
         const userData = await fetchAniListFavorites(name);
         const favs = userData.characters;
         if (favs.length < 6) { showNotification(name + ' has only ' + favs.length + ' favorites. Need at least 6.'); return; }
-        const mappedChars = favs.map(char => {
-          const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
-          return {
-            id: char.id,
-            name: char.name ? char.name.full : 'Unknown',
-            image: char.image ? char.image.large : '',
-            series: media.title ? media.title.romaji : 'Unknown',
-            gender: (char.gender || 'Unknown').toLowerCase(),
-            mediaType: (media.type || 'ANIME').toLowerCase()
-          };
-        });
+        const mappedChars = mapAniListChars(favs);
         hostAccounts.push({ username: name, characters: mappedChars, count: mappedChars.length });
       } catch (e) { showNotification('Could not load synced AniList: ' + e.message); }
     }
@@ -464,17 +454,7 @@
         const userData = await fetchAniListFavorites(name);
         const favs = userData.characters;
         if (favs.length < 6) { showNotification(name + ' has only ' + favs.length + ' favorites. Need at least 6.'); return; }
-        const mappedChars = favs.map(char => {
-          const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
-          return {
-            id: char.id,
-            name: char.name ? char.name.full : 'Unknown',
-            image: char.image ? char.image.large : '',
-            series: media.title ? media.title.romaji : 'Unknown',
-            gender: (char.gender || 'Unknown').toLowerCase(),
-            mediaType: (media.type || 'ANIME').toLowerCase()
-          };
-        });
+        const mappedChars = mapAniListChars(favs);
         await database.ref('rooms/' + roomCode + '/accounts/' + name).set({ username: name, characters: mappedChars, count: mappedChars.length });
         touchActivity();
         showNotification('Your AniList account (' + name + ') was added to the room.');
@@ -511,7 +491,7 @@
                   pageInfo { hasNextPage }
                   nodes {
                     id
-                    name { full }
+                    name { full alternative }
                     image { large }
                     gender
                     media(page: 1, perPage: 1, sort: POPULARITY_DESC) {
@@ -535,6 +515,35 @@
         page++;
       }
       return { name: username, characters: allCharacters };
+    }
+
+    // Map raw AniList favorite nodes to compact room entries. Keeps the
+    // alternative names ("Deku", "Goku Son", "Burdock"…) in `al` so the
+    // Blur Guess matcher/autocomplete can find characters by any of their
+    // names — pure-Japanese aliases and duplicates of the main name are dropped.
+    function mapAniListChars(favs) {
+      return favs.map(char => {
+        const media = (char.media && char.media.nodes && char.media.nodes[0]) ? char.media.nodes[0] : { title: { romaji: 'Unknown' }, type: 'ANIME' };
+        const full = char.name ? char.name.full : '';
+        const seenAl = new Set([bgNorm(full)]);
+        const al = [];
+        (char.name && Array.isArray(char.name.alternative) ? char.name.alternative : []).forEach(a => {
+          const n = bgNorm(a);
+          if (!n || seenAl.has(n)) return;
+          seenAl.add(n);
+          al.push(a);
+        });
+        const entry = {
+          id: char.id,
+          name: full || 'Unknown',
+          image: char.image ? char.image.large : '',
+          series: media.title ? media.title.romaji : 'Unknown',
+          gender: (char.gender || 'Unknown').toLowerCase(),
+          mediaType: (media.type || 'ANIME').toLowerCase()
+        };
+        if (al.length) entry.al = al;
+        return entry;
+      });
     }
 
     let roomCode = null;
@@ -572,12 +581,31 @@
     //   opponent gets a ❌ color, finds give points, ranking at the end.
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
-    const GAME_LABELS = { guesswho: '🎭 Anime Guess Who?', undercover: '🕵️ Undercover', battle: '🎭👥 Guess Who — Battle Royale', race: '⚡ Guess Who — Race' };
+    const GAME_LABELS = { guesswho: '🎭 Anime Guess Who?', undercover: '🕵️ Undercover', battle: '🎭👥 Guess Who — Battle Royale', race: '⚡ Guess Who — Race', blur: '🌫️ Blur Guess' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
     const RACE_DEFAULT_LIVES = 3;     // hunter wrong guesses before they're out (race)
     const RACE_DEFAULT_QUESTIONS = 8; // max questions each hunter may ask (race)
     let hostRaceLives = RACE_DEFAULT_LIVES;         // race option on the create-room screen
     let hostRaceQuestions = RACE_DEFAULT_QUESTIONS; // race option on the create-room screen
+
+    // ===== 🌫️ BLUR GUESS state =====
+    // A picture (character portrait OR anime cover) clears over 5 stages,
+    // one every `settings.bgStageSec` seconds (customizable, default 12 s).
+    // Base points = 6 - stage (stage 1 = 5 pts … stage 5 = 1 pt); with several
+    // players the fastest correct answers add a 🏅 speed bonus (+3/+2/+1).
+    // Blur has NO character-count board: rounds are drawn from the FULL source
+    // pool (generic 1001 / synced favorites / mix — or the 500 anime covers).
+    const BLUR_STAGE_SEC = 12;         // default seconds per blur stage
+    const BLUR_STAGES = 5;             // number of unblur stages
+    const BLUR_ROUNDS_DEFAULT = 10;    // default number of rounds per game
+    const BLUR_ROUNDS_MAX = 80;        // rounds slider max
+    const BLUR_STAGE_SEC_MIN = 5, BLUR_STAGE_SEC_MAX = 30; // ⏱ timer slider bounds
+    let hostBgRounds = BLUR_ROUNDS_DEFAULT; // rounds option on the create-room screen
+    let hostBgStageSec = BLUR_STAGE_SEC;    // timer option on the create-room screen
+    let hostBgMode = 'characters';          // 'characters' | 'covers' on the create-room screen
+    let bgWatchBusy = false;           // host watchdog guard
+    let bgHostTimer = null;            // host-only 1s heartbeat for stages/reveals
+    let blurTicker = null;             // 500ms countdown renderer (display only)
     let brMarkTargets = new Set(); // opponent pids I mark with ❌ — SEVERAL colors at once!
     let brGuessMode = false;       // click-a-card-to-guess mode (battle)
     let rcGuessMode = false;       // same for race
@@ -613,7 +641,7 @@
       document.getElementById('interactionWindow').classList.remove('show');
       // The floating 💬 chat button exists in the lobby and during games
       const chatBtn = document.getElementById('chatToggleBtn');
-      const chatVisible = (screenId === 'lobbyScreen' || screenId === 'gameScreen' || screenId === 'undercoverScreen' || screenId === 'battleScreen' || screenId === 'raceScreen');
+      const chatVisible = (screenId === 'lobbyScreen' || screenId === 'gameScreen' || screenId === 'undercoverScreen' || screenId === 'battleScreen' || screenId === 'raceScreen' || screenId === 'blurScreen');
       if (chatBtn) chatBtn.style.display = chatVisible ? 'flex' : 'none';
       if (!chatVisible) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
       // The 🌐 public room list only streams while the join screen is open
@@ -723,18 +751,22 @@
     function onGameSelectChange() {
       hostGame = document.getElementById('gameSelect').value || 'guesswho';
       const isUc = hostGame === 'undercover';
-      const isMulti = hostGame === 'battle' || hostGame === 'race';
+      const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur';
       document.getElementById('hostPoolGroup').style.display = isUc ? 'none' : 'block';
-      document.getElementById('hostGwSettings').style.display = isUc ? 'none' : 'block';
+      // Blur Guess draws from the FULL source pool — no character count board needed
+      document.getElementById('hostGwSettings').style.display = (isUc || hostGame === 'blur') ? 'none' : 'block';
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
-      // ❤️/❓ sliders are Race-only
+      // ❤️/❓ sliders are Race-only, 🌫️ rounds are Blur-only
       document.querySelectorAll('.race-only-settings').forEach(el => { el.style.display = hostGame === 'race' ? 'block' : 'none'; });
+      document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = hostGame === 'blur' ? 'block' : 'none'; });
       if (isMulti) {
-        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : 'Race';
+        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : 'Blur Guess';
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
           ? '🎭👥 Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Mark cards with each opponent\'s ❌ color, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
-          : '⚡ One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. The hunters take turns asking — the first to guess the mystery character wins!';
+          : hostGame === 'race'
+            ? '⚡ One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. The hunters take turns asking — the first to guess the mystery character wins!'
+            : '🌫️ A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses add a 🏅 speed bonus (+3/+2/+1). Playable SOLO too!';
       }
     }
     function updateUcMaxPlayers() {
@@ -753,6 +785,19 @@
       hostRaceQuestions = parseInt(document.getElementById('hostRaceQuestionsSlider').value);
       document.getElementById('hostRaceQuestionsValue').textContent = hostRaceQuestions;
     }
+    function updateBgRoundsSlider() {
+      hostBgRounds = parseInt(document.getElementById('hostBgRoundsSlider').value);
+      document.getElementById('hostBgRoundsValue').textContent = hostBgRounds;
+    }
+    function updateBgStageSecSlider() {
+      hostBgStageSec = parseInt(document.getElementById('hostBgStageSecSlider').value);
+      document.getElementById('hostBgStageSecValue').textContent = hostBgStageSec + 's';
+    }
+    function selectHostBgMode(mode) {
+      hostBgMode = mode === 'covers' ? 'covers' : 'characters';
+      document.getElementById('hostBgModeChars').classList.toggle('selected', hostBgMode === 'characters');
+      document.getElementById('hostBgModeCovers').classList.toggle('selected', hostBgMode === 'covers');
+    }
     function selectUcMrWhite(on) {
       ucMrWhite = !!on;
       document.getElementById('hostUcMwOff').classList.toggle('selected', !on);
@@ -762,7 +807,7 @@
     async function createGameRoom() {
       const game = document.getElementById('gameSelect').value || 'guesswho';
         const isUc = game === 'undercover';
-        const isMulti = game === 'battle' || game === 'race';
+        const isMulti = game === 'battle' || game === 'race' || game === 'blur';
       if (!isUc && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('⭐ Favorites needs a synced AniList account (👤 profile menu) — or switch the pool to 🎴 Generic!'); return; }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
@@ -781,6 +826,11 @@
           roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
+          if (game === 'blur') {
+            roomData.settings.bgRounds = hostBgRounds;
+            roomData.settings.bgStageSec = hostBgStageSec;
+            roomData.settings.bgMode = hostBgMode;
+          }
         }
         await database.ref('rooms/' + roomCode).set(roomData);
         setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
@@ -918,6 +968,20 @@
             if (participates) { if (isBattle) updateBattle(); else updateRace(); }
             if (isHost && currentRoom.state === 'playing') { if (isBattle) battleWatchdog(); else raceWatchdog(); }
           }
+        } else if (currentRoom.game === 'blur') {
+          const bg = currentRoom.bg || {};
+          if (currentRoom.state === 'selection') {
+            // brief "dealing" transit — Blur Guess has no pick phase
+            if (!document.getElementById('blurScreen').classList.contains('active')) showScreen('blurScreen');
+            const st = document.getElementById('bgStatus'); if (st) st.textContent = '🌫️ Dealing the pictures…';
+          }
+          if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
+            const meP = (currentRoom.players || {})[playerId] || {};
+            const participates = bg.gameId && meP.outInGame !== bg.gameId;
+            if (participates && !document.getElementById('blurScreen').classList.contains('active')) showScreen('blurScreen');
+            if (participates) updateBlur();
+            if (isHost && currentRoom.state === 'playing') { blurWatchdog(); ensureBgHostTimer(); }
+          }
         } else {
           if (currentRoom.state === 'selection' && !document.getElementById('selectionScreen').classList.contains('active')) { showCharacterSelection(); }
           if (currentRoom.state === 'playing' && !document.getElementById('gameScreen').classList.contains('active')) { startGame(); }
@@ -1045,7 +1109,8 @@
       const gameNameEl = document.getElementById('lobbyGameName');
       if (gameNameEl) gameNameEl.textContent = GAME_LABELS[currentRoom.game] || 'Anime Guess Who?';
       const isMultiGame = currentRoom.game === 'undercover' || currentRoom.game === 'battle' || currentRoom.game === 'race';
-      const canStart = isMultiGame ? (allReady && playerCount >= 3) : (allReady && playerCount === 2);
+      const isBlurGame = currentRoom.game === 'blur';
+      const canStart = isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
       // My own "you're waiting" banner + hide Ready while queued
       const qBanner = document.getElementById('queueBanner');
@@ -1181,6 +1246,7 @@
       if (g === 'undercover') gd = currentRoom.uc;
       else if (g === 'battle') gd = currentRoom.br;
       else if (g === 'race') gd = currentRoom.rc;
+      else if (g === 'blur') gd = currentRoom.bg;
       if (!gd || !gd.gameId) return; // 2P Guess Who ends via its own buttons
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
       if (seated.length === 0) return;
@@ -1441,6 +1507,7 @@
     // ---------- DEAL ----------
     async function multiDeal(game) {
       if (!isHost || !currentRoom) return;
+      if (game === 'blur') { await blurDeal(); return; }
       if (game === 'race') {
         const pids = Object.keys(currentRoom.players || {});
         const targetPid = pids[Math.floor(Math.random() * pids.length)];
@@ -2024,11 +2091,396 @@
       });
     }
 
-    // ---------- SHARED END SCREEN + REPLAY (battle & race) ----------
+    // ---------- 🌫️ BLUR GUESS ----------
+    // Everyone (even solo) watches the same blurred portrait. It clears over
+    // BLUR_STAGES stages, one every BLUR_STAGE_SEC seconds (the HOST drives
+    // the clock; everyone else's countdown is display-only).
+    const bgParticipants = (room) => { const r = room || currentRoom; const bg = (r && r.bg) || {}; return Object.keys((r && r.players) || {}).filter(pid => (((r.players[pid]) || {}).outInGame || null) !== bg.gameId); };
+
+    // The ⏱ timer for one blur stage, from the room settings (host can tune
+    // it mid-game in ⚙️; next stage/*next round* uses the new value).
+    function bgStageMs() {
+      const v = ((currentRoom && currentRoom.settings) || {}).bgStageSec;
+      return Math.min(BLUR_STAGE_SEC_MAX, Math.max(BLUR_STAGE_SEC_MIN, v || BLUR_STAGE_SEC)) * 1000;
+    }
+
+    // Blur Guess has NO "character count" board: the candidate list is the
+    // FULL source pool — every generic character / every synced favorite /
+    // the mix, or the 500 anime covers in 🎬 covers mode.
+    function bgCandidateChars() {
+      const r = currentRoom || {};
+      const s = r.settings || {};
+      const bg = r.bg || {};
+      const mode = bg.mode || s.bgMode || 'characters';
+      if (mode === 'covers') {
+        return (typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : [];
+      }
+      const accountData = Object.values(r.accounts || {});
+      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      let source = s.source || (accountData.length > 0 ? 'favorites' : 'generic');
+      if (source !== 'generic' && accountData.length === 0) source = 'generic'; // favorites asked but nobody synced
+      let all = [];
+      if (source === 'generic' || source === 'mix') all = all.concat(generic);
+      if ((source === 'favorites' || source === 'mix') && accountData.length > 0) {
+        accountData.forEach(a => all.push(...((a && a.characters) || [])));
+      }
+      const seen = new Set();
+      return all.filter(c => { if (!c || c.id == null || !c.name || seen.has(c.id)) return false; seen.add(c.id); return true; });
+    }
+
+    // Compact the rounds entry we store in Firebase: everything the clients
+    // need to show & match the answer, already resolved (image + aliases).
+    function bgRoundEntry(c) {
+      const e = { id: c.id, name: c.name, image: c.image || '' };
+      if (c.series) e.series = c.series;
+      if (Array.isArray(c.al) && c.al.length) e.al = c.al;
+      return e;
+    }
+
+    // Deal a Blur Guess game: line up `bgRounds` pictures from the full
+    // candidate pool, straight into 'playing' (no pick phase, no board).
+    async function blurDeal() {
+      const s = currentRoom.settings || {};
+      const totalRounds = s.bgRounds || BLUR_ROUNDS_DEFAULT;
+      const mode = s.bgMode === 'covers' ? 'covers' : 'characters';
+      const gameId = Date.now();
+      // brief "dealing" marker so everyone shows the blur screen right away
+      await database.ref('rooms/' + roomCode).update({ restarts: null, 'bg/gameId': gameId, 'bg/phase': 'setup', 'bg/mode': mode });
+      const snap = await database.ref('rooms/' + roomCode).once('value');
+      const fresh = snap.val() || {};
+      const cand = bgCandidateChars();
+      const rounds = shuffleArray(cand.slice()).slice(0, Math.min(totalRounds, cand.length)).map(bgRoundEntry);
+      if (!rounds.length) {
+        await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, bg: null });
+        showNotification('Not enough pictures for Blur Guess! Check the pool source settings.');
+        return;
+      }
+      const scores = {};
+      Object.keys(fresh.players || {}).forEach(p => { scores[p] = 0; });
+      const upd = { state: 'playing', characters: null, selections: null, 'bg/gameId': gameId, 'bg/mode': mode, 'bg/phase': 'playing',
+        'bg/rounds': rounds, 'bg/roundIdx': 0, 'bg/stage': 1, 'bg/found': null, 'bg/scores': scores,
+        'bg/deadline': Date.now() + bgStageMs() };
+      upd['bg/log/' + gameLogPushKey('bg')] = { k: 'info', txt: (mode === 'covers' ? '🎬 Guess the anime cover' : '🌫️ Guess the character') + ' starts — ' + rounds.length + ' rounds! Earlier guess = more points (5 → 1), fastest gets the 🏅 speed bonus (+3/+2/+1)!' };
+      await database.ref('rooms/' + roomCode).update(upd);
+    }
+
+    // Accent/punctuation-proof answer matching. A guess is correct when it
+    // equals (after normalizing: lowercase, no accents, no punctuation):
+    //   • the FULL main name or any FULL alternative name ("deku", "burdock"),
+    //   • OR any single word of 4+ letters inside those names ("midoriya",
+    //     "izuku", "goku" via the alias "Goku Son").
+    function bgNorm(s) {
+      return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    function bgNamesOf(ch) {
+      if (!ch) return [];
+      if (typeof ch === 'string') return [ch];
+      return [ch.name || ''].concat(Array.isArray(ch.al) ? ch.al : []);
+    }
+    function bgMatches(guess, ch) {
+      const g = bgNorm(guess);
+      if (!g) return false;
+      return bgNamesOf(ch).some(nm => {
+        const n = bgNorm(nm);
+        if (!n) return false;
+        if (g === n) return true;
+        return n.split(' ').some(t => g === t && t.length >= 4);
+      });
+    }
+
+    // ---------- ⌨️ GUESS AUTOCOMPLETE ----------
+    // While typing in the Blur Guess bar, suggest characters whose name,
+    // aliases OR ANIME (series) name contain the typed text — "bleach" →
+    // Ichigo, Rukia…; "deku" → Izuku Midoriya. Rank: name-start hits first,
+    // then alias starts, then substrings, then 📺 series matches.
+    // (Series search only SUGGESTS — it never counts as a correct answer.)
+    // A tap fills the input AND submits the guess right away (phone-friendly).
+    function bgFindSuggestions(query) {
+      const g = bgNorm(query);
+      if (!g) return [];
+      const pool = bgCandidateChars(); // full source pool, mode-aware (deduped by id)
+      const hits = [];
+      pool.forEach(c => {
+        let best = null;
+        bgNamesOf(c).forEach((nm, i) => {
+          const n = bgNorm(nm);
+          if (!n || n.indexOf(g) === -1) return;
+          const isMain = i === 0;
+          const rank = isMain ? (n.indexOf(g) === 0 ? 0 : 2) : (n.indexOf(g) === 0 ? 1 : 3);
+          if (!best || rank < best.rank) best = { c: c, rank: rank, via: isMain ? null : ('aka ' + nm) };
+        });
+        const sn = bgNorm(c.series);
+        if (sn && sn.indexOf(g) !== -1) {
+          const rank = 4 + (sn.indexOf(g) === 0 ? 0 : 1);
+          if (!best || rank < best.rank) best = { c: c, rank: rank, via: '📺 ' + c.series };
+        }
+        if (best) hits.push(best);
+      });
+      hits.sort((a, b) => (a.rank - b.rank) || (a.c.name.length - b.c.name.length));
+      return hits.slice(0, 8);
+    }
+
+    function hideBgSuggest() {
+      const box = document.getElementById('bgSuggest');
+      if (box) { box.classList.remove('show'); box.innerHTML = ''; }
+    }
+
+    function updateBgSuggest() {
+      const inp = document.getElementById('bgGuessInput');
+      const box = document.getElementById('bgSuggest');
+      if (!inp || !box) return;
+      const bg = (currentRoom && currentRoom.bg) || {};
+      if (bg.phase !== 'playing' || (bg.found || {})[playerId]) { hideBgSuggest(); return; }
+      const q = inp.value;
+      if (!bgNorm(q)) { hideBgSuggest(); return; }
+      const hits = bgFindSuggestions(q);
+      if (!hits.length) { hideBgSuggest(); return; }
+      box.innerHTML = '';
+      hits.forEach(h => {
+        const row = document.createElement('div');
+        row.className = 'bg-sug-row';
+        const img = document.createElement('img');
+        img.className = 'bg-sug-img'; img.src = h.c.image || ''; img.alt = ''; img.loading = 'lazy';
+        const nm = document.createElement('span');
+        nm.className = 'bg-sug-name'; nm.textContent = h.c.name;
+        row.appendChild(img); row.appendChild(nm);
+        if (h.via) {
+          const tag = document.createElement('span');
+          tag.className = 'bg-sug-via'; tag.textContent = h.via; // "aka …" or "📺 …"
+          row.appendChild(tag);
+        }
+        // pointerdown fires BEFORE the input's blur → the tap always lands
+        row.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          inp.value = h.c.name;
+          hideBgSuggest();
+          blurGuess();
+        });
+        box.appendChild(row);
+      });
+      box.classList.add('show');
+    }
+    const bgCurrentChar = (room) => {
+      const r = room || currentRoom; const bg = (r && r.bg) || {};
+      const total = (bg.rounds || []).length;
+      const idx = Math.min(bg.roundIdx || 0, Math.max(total - 1, 0));
+      // rounds entries are compact {id,name,image,series?,al?} objects
+      // (old ids-only rounds fall back to the room board, pre-2026-08-15 rooms)
+      const entry = (bg.rounds || [])[idx];
+      if (entry && typeof entry === 'object') return entry;
+      return ((r.characters || []).find(c => c.id === entry)) || {};
+    };
+
+    function blurGuess() {
+      const bg = (currentRoom && currentRoom.bg) || {};
+      if (bg.phase !== 'playing' || (bg.found || {})[playerId]) return;
+      const inp = document.getElementById('bgGuessInput'); if (!inp) return;
+      const text = inp.value.trim(); if (!text) return;
+      const ch = bgCurrentChar();
+      if (bgMatches(text, ch)) {
+        const prior = Object.keys(bg.found || {}).length; // 0 = first finder
+        const base = Math.max(1, (BLUR_STAGES + 1) - (bg.stage || 1)); // stage 1 → 5 … stage 5 → 1
+        const bonus = [3, 2, 1, 0][Math.min(prior, 3)];                // 🏅 speed bonus
+        const pts = base + bonus;
+        const upd = {};
+        upd['found/' + playerId] = { stage: bg.stage || 1, rank: prior + 1, base: base, bonus: bonus, pts: pts };
+        upd['scores/' + playerId] = ((bg.scores || {})[playerId] || 0) + pts;
+        database.ref('rooms/' + roomCode + '/bg').update(upd);
+        inp.value = '';
+        hideBgSuggest();
+        showNotification('✅ Correct! +' + pts + ' pts (' + base + ' base' + (bonus ? ' + 🏅 ' + bonus + ' speed bonus' : '') + ')', 4000);
+        touchActivity();
+      } else {
+        showNotification('❌ Nope! Keep trying — it gets clearer every few seconds…', 2500);
+      }
+    }
+
+    // The reveal content (answer + who scored what) — shared by the watchdog
+    // transition and the host's ⏭ Skip button.
+    function blurRevealLogUpdate(bg) {
+      const players = currentRoom.players || {};
+      const ch = bgCurrentChar();
+      const found = bg.found || {};
+      const parts = bgParticipants();
+      const gains = parts.filter(pid => found[pid])
+        .sort((a, b) => (found[a].rank || 9) - (found[b].rank || 9))
+        .map(pid => ((players[pid] || {}).name || '?') + ' +' + found[pid].pts + ' (stage ' + found[pid].stage + ')');
+      const upd = { phase: 'reveal', deadline: Date.now() + 6000 };
+      upd['log/' + gameLogPushKey('bg')] = { k: 'find', txt: '🏁 Round ' + ((bg.roundIdx || 0) + 1) + '/' + (bg.rounds || []).length + ': it was ' + (ch.name || '?') + (ch.series ? ' (' + ch.series + ')' : '') + '!' };
+      upd['log/' + gameLogPushKey('bg')] = { k: gains.length ? 'ans' : 'info', txt: gains.length ? ('✅ ' + gains.join(' · ')) : '😶 Nobody found it that time!' };
+      return upd;
+    }
+
+    function blurSkip() {
+      if (!isHost || !currentRoom) { showNotification('Host only!'); return; }
+      const bg = currentRoom.bg || {};
+      if (bg.phase !== 'playing') return;
+      database.ref('rooms/' + roomCode + '/bg').update(blurRevealLogUpdate(bg));
+      touchActivity();
+    }
+
+    // HOST watchdog: stages, early reveals, next round, game over.
+    // Driven by the room listener AND by a 1s host timer (see below) —
+    // without the timer, a room with no writes (nobody guessing/chatting)
+    // would freeze the clock: the countdown hits 0 and nothing advances.
+    // bgWatchBusy stays true until each write resolves so back-to-back
+    // ticks can never double-log or double-advance.
+    function blurWatchdog() {
+      if (bgWatchBusy || abortingEmptyGame || !isHost) return;
+      const bg = (currentRoom && currentRoom.bg) || {};
+      if (!bg.gameId) return;
+      const players = currentRoom.players || {};
+      const parts = bgParticipants();
+      if (parts.length === 0) return; // everyone backed out → the auto-abort resets the room
+      const found = bg.found || {};
+      const now = Date.now();
+      const stepMs = bgStageMs(); // ⏱ customizable in the room settings
+      const endBusy = () => { bgWatchBusy = false; };
+      const poke = () => { touchActivity(); };
+      if (bg.phase === 'playing') {
+        const allFound = parts.every(pid => found[pid]);
+        if (!allFound && now < (bg.deadline || 0)) return; // still waiting on this stage
+        if (!allFound && (bg.stage || 1) < BLUR_STAGES) {
+          bgWatchBusy = true;
+          database.ref('rooms/' + roomCode + '/bg').update({ stage: (bg.stage || 1) + 1, deadline: now + stepMs })
+            .then(poke).catch(() => {}).then(endBusy, endBusy);
+          return;
+        }
+        // round over → reveal
+        bgWatchBusy = true;
+        database.ref('rooms/' + roomCode + '/bg').update(blurRevealLogUpdate(bg))
+          .then(poke).catch(() => {}).then(endBusy, endBusy);
+        return;
+      }
+      if (bg.phase === 'reveal' && now >= (bg.deadline || 0)) {
+        const nextIdx = (bg.roundIdx || 0) + 1;
+        bgWatchBusy = true;
+        if (nextIdx >= (bg.rounds || []).length) {
+          const winPid = parts.slice().sort((a, b) => ((bg.scores || {})[b] || 0) - ((bg.scores || {})[a] || 0))[0];
+          const upd2 = { state: 'finished', 'bg/phase': 'over' };
+          upd2['bg/log/' + gameLogPushKey('bg')] = { k: 'find', txt: '🏆 ' + ((players[winPid] || {}).name || '?') + ' wins Blur Guess with ' + ((bg.scores || {})[winPid] || 0) + ' pts!' };
+          database.ref('rooms/' + roomCode).update(upd2).then(poke).catch(() => {}).then(endBusy, endBusy);
+        } else {
+          database.ref('rooms/' + roomCode + '/bg').update({ roundIdx: nextIdx, stage: 1, found: null, phase: 'playing', deadline: now + stepMs })
+            .then(poke).catch(() => {}).then(endBusy, endBusy);
+        }
+      }
+    }
+
+    // HOST-only 1s heartbeat for the Blur Guess clock. It starts when the
+    // listener sees a live blur game with me as host, and stops itself the
+    // moment that's no longer true (game over, back to lobby, host moved).
+    function ensureBgHostTimer() {
+      if (bgHostTimer) return;
+      bgHostTimer = setInterval(() => {
+        const active = isHost && currentRoom && currentRoom.game === 'blur' && currentRoom.state === 'playing';
+        if (!active) { clearInterval(bgHostTimer); bgHostTimer = null; return; }
+        blurWatchdog();
+      }, 1000);
+    }
+
+    // ---------- BLUR GUESS RENDER ----------
+    const BLUR_LEVELS = [20, 12, 7, 3, 0];
+    const BLUR_SCALES = [1.25, 1.2, 1.15, 1.08, 1.02];
+    function updateBlurTimer() {
+      const bg = (currentRoom && currentRoom.bg) || {};
+      const el = document.getElementById('bgTimerBadge'); if (!el) return;
+      if (bg.phase !== 'playing' && bg.phase !== 'reveal') { el.textContent = '🏁 Over'; return; }
+      const left = Math.max(0, Math.ceil(((bg.deadline || 0) - Date.now()) / 1000));
+      el.textContent = '⏳ ' + left + 's';
+    }
+    function ensureBlurTicker() {
+      if (blurTicker) return;
+      blurTicker = setInterval(() => {
+        const scr = document.getElementById('blurScreen');
+        if (!scr || !scr.classList.contains('active')) { clearInterval(blurTicker); blurTicker = null; return; }
+        updateBlurTimer();
+      }, 500);
+    }
+    function updateBlur() {
+      const bg = (currentRoom && currentRoom.bg) || {};
+      const players = currentRoom.players || {};
+      const total = (bg.rounds || []).length;
+      const idx = Math.min(bg.roundIdx || 0, Math.max(total - 1, 0));
+      const ch = bgCurrentChar();
+      const stage = Math.min(bg.stage || 1, BLUR_STAGES);
+      const revealed = bg.phase !== 'playing';
+      const bgModeNow = bg.mode || ((currentRoom.settings || {}).bgMode) || 'characters';
+      const emo = bgModeNow === 'covers' ? '🎬' : '🌫️';
+      const stageSec = Math.round(bgStageMs() / 1000);
+      document.getElementById('bgRoundBadge').textContent = bg.phase === 'setup' ? (emo + ' Dealing…') : (emo + ' Round ' + Math.min(idx + 1, total || 1) + '/' + (total || '?'));
+      document.getElementById('bgStageBadge').textContent = bg.phase === 'over' ? '🏁 Over' : revealed && bg.phase === 'reveal' ? '✅ Revealed!' : ('Blur stage ' + stage + '/' + BLUR_STAGES + (stage < BLUR_STAGES ? ' → +' + ((BLUR_STAGES + 1) - stage) + ' pts now' : ''));
+      const img = document.getElementById('bgImage');
+      if (img.getAttribute('data-cid') !== String(ch.id)) {
+        img.src = ch.image || ''; img.setAttribute('data-cid', String(ch.id));
+        // new round → clear any leftover typing/suggestions from the previous character
+        const inp = document.getElementById('bgGuessInput');
+        if (inp) inp.value = '';
+        hideBgSuggest();
+      }
+      img.style.filter = 'blur(' + (revealed ? 0 : BLUR_LEVELS[stage - 1]) + 'px)';
+      img.style.transform = 'scale(' + (revealed ? 1.02 : BLUR_SCALES[stage - 1]) + ')';
+      document.getElementById('bgImgWrap').classList.toggle('revealed', revealed && bg.phase !== 'over');
+      // guess bar
+      const gin = document.getElementById('bgGuessInput');
+      if (gin) gin.placeholder = bgModeNow === 'covers' ? 'Type the anime name…' : "Type the character's name… (any name: Deku, Burdock…)";
+      const myFind = (bg.found || {})[playerId];
+      const barVisible = bg.phase === 'playing' && !myFind;
+      document.getElementById('bgGuessBar').style.display = barVisible ? 'flex' : 'none';
+      if (!barVisible) hideBgSuggest();
+      // status line
+      const st = document.getElementById('bgStatus');
+      const parts = bgParticipants();
+      const thinking = parts.filter(pid => !(bg.found || {})[pid]).map(pid => (players[pid] || {}).name || '?');
+      if (bg.phase === 'over') st.textContent = '🏁 Game over — check the results!';
+      else if (bg.phase === 'reveal') {
+        const gains = parts.filter(pid => (bg.found || {})[pid])
+          .sort((a, b) => (bg.found[a].rank || 9) - (bg.found[b].rank || 9))
+          .map(pid => ((players[pid] || {}).name || '?') + ' +' + bg.found[pid].pts);
+        st.innerHTML = '✅ It was <b>' + escapeHtml(String(ch.name || '?')) + '</b>' + (ch.series ? ' <span style="color:var(--muted);font-weight:700;">(' + escapeHtml(String(ch.series)) + ')</span>' : '') + '!' + (gains.length ? ' ' + gains.join(' · ') : ' 😶 Nobody found it!');
+      } else if (myFind) {
+        st.innerHTML = '✅ <b>+' + myFind.pts + ' pts!</b> ⏳ Still thinking: ' + (thinking.length ? escapeHtml(thinking.join(', ')) : 'nobody — next round!');
+      } else {
+        st.innerHTML = stage === 1
+          ? (emo + ' <b>' + (bgModeNow === 'covers' ? 'Which anime is this?!' : 'Who is this?!') + '</b> It clears every ' + stageSec + ' seconds…')
+          : '😶 Still thinking: ' + escapeHtml(thinking.join(', '));
+      }
+      // score chips
+      const chips = document.getElementById('bgChips');
+      chips.innerHTML = '';
+      const sorted = parts.slice().sort((a, b) => ((bg.scores || {})[b] || 0) - ((bg.scores || {})[a] || 0));
+      sorted.forEach((pid, i) => {
+        const p = players[pid] || {};
+        const f = (bg.found || {})[pid];
+        const chip = document.createElement('div');
+        chip.className = 'rc-hunter' + (f ? ' turn' : '');
+        chip.style.setProperty('--c', '#02a9ff');
+        chip.innerHTML = `<span class="rc-hunter-turn">${['🥇','🥈','🥉'][i] || '🎖️'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="chip-pts">${(bg.scores || {})[pid] || 0} pts</span>${f ? '<span class="rc-hunter-res">✅ stage ' + f.stage + '</span>' : ''}`;
+        chips.appendChild(chip);
+      });
+      const skipBtn = document.getElementById('bgSkipBtn');
+      if (skipBtn) skipBtn.style.display = (isHost && bg.phase === 'playing') ? 'flex' : 'none';
+      renderBlurLog();
+      if (bg.phase === 'over') renderMultiEnd('blur'); else document.getElementById('multiEndScreen').classList.remove('show');
+      ensureBlurTicker();
+      updateBlurTimer();
+    }
+    function renderBlurLog() {
+      const logEl = document.getElementById('bgLog'); if (!logEl || !currentRoom) return;
+      const log = gameLogList(currentRoom.bg);
+      if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>'; return; }
+      logEl.innerHTML = '';
+      log.slice(-60).reverse().forEach(e => {
+        const d = document.createElement('div');
+        d.className = 'br-log-' + (e.k === 'find' ? 'find' : e.k === 'q' ? 'q' : 'info');
+        d.textContent = e.txt;
+        logEl.appendChild(d);
+      });
+    }
+
     function meParticipants() {
       // players eligible to click "Play Again": seated and not spectating this game
-      const g = (currentRoom || {}).game;
-      const gd = g === 'battle' ? ((currentRoom || {}).br || {}) : ((currentRoom || {}).rc || {});
+      const gd = multiGd();
       return Object.keys((currentRoom && currentRoom.players) || {}).filter(pid => {
         const p = currentRoom.players[pid] || {};
         if (p.outInGame && p.outInGame === gd.gameId) return false;
@@ -2039,7 +2491,7 @@
       const screen = document.getElementById('multiEndScreen');
       const activeScreen = document.querySelector('.screen.active');
       const sid = activeScreen ? activeScreen.id : '';
-      if (sid !== 'battleScreen' && sid !== 'raceScreen') { screen.classList.remove('show'); return; }
+      if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen') { screen.classList.remove('show'); return; }
       const players = currentRoom.players || {};
       const title = document.getElementById('meTitle');
       const sub = document.getElementById('meSub');
@@ -2069,6 +2521,28 @@
           if (secChar) { const s = document.createElement('small'); s.style.color = 'var(--muted)'; s.style.width = '100%'; s.textContent = (found ? 'secret: ' : 'secret was: ') + (secChar.name || '?'); row.appendChild(s); row.style.flexWrap = 'wrap'; }
           list.appendChild(row);
         });
+      } else if (kind === 'blur') {
+        const bg = currentRoom.bg || {};
+        const scores = bg.scores || {};
+        const ranking = bgParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
+        const winner = ranking[0];
+        const meWin = winner === playerId;
+        title.textContent = meWin ? '🏆 You win Blur Guess!' : '🏁 Blur Guess over!';
+        sub.textContent = meWin ? 'Sharpest eyes in the room! 👀' : '👑 ' + ((players[winner] || {}).name || '?') + ' takes it!';
+        ranking.forEach((pid, i) => {
+          const p = players[pid] || {};
+          const row = document.createElement('div');
+          row.className = 'me-row' + (pid === playerId ? ' me' : '');
+          row.innerHTML = `<span class="me-rank">${['🥇','🥈','🥉'][i] || (i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${scores[pid] || 0} pts</span>`;
+          list.appendChild(row);
+        });
+        const played = (bg.rounds || []).length;
+        if (played) {
+          const row = document.createElement('div');
+          row.className = 'me-row';
+          row.innerHTML = `<span class="me-rank">🌫️</span><span>${played} rounds played — fastest eyes win the 🏅 speed bonuses!</span>`;
+          list.appendChild(row);
+        }
       } else {
         const rc = currentRoom.rc || {};
         const winner = rc.winner;
@@ -2144,7 +2618,7 @@
       const updates = {
         state: 'lobby', characters: null, selections: null, restarts: null, winner: null,
         secrets: null, currentTurn: null, eliminations: null, currentQuestion: null,
-        questionHistory: null, uc: null, br: null, rc: null
+        questionHistory: null, uc: null, br: null, rc: null, bg: null
       };
       Object.keys(currentRoom.players || {}).forEach(pid => {
         updates['players/' + pid + '/ready'] = false;
@@ -2153,8 +2627,10 @@
       await database.ref('rooms/' + roomCode).update(updates);
       touchActivity();
     }
+    // game data node for the current multiplayer game (battle/race/blur)
+    const multiGd = (r) => { const rr = r || currentRoom; if (!rr) return {}; return rr.game === 'battle' ? (rr.br || {}) : rr.game === 'race' ? (rr.rc || {}) : rr.game === 'blur' ? (rr.bg || {}) : {}; };
     async function returnToLobbyFromMulti() {
-      const gd = currentRoom && currentRoom.game === 'battle' ? (currentRoom.br || {}) : (currentRoom && currentRoom.rc || {});
+      const gd = multiGd();
       const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && gd.gameId;
       if (!inGame) { showScreen('lobbyScreen'); return; }
       // Game over? Then this button brings EVERYONE back to a real lobby
@@ -2219,6 +2695,12 @@
       if (joinInput) joinInput.addEventListener('input', (e) => { e.target.value = e.target.value.toUpperCase(); });
       const questionInput = document.getElementById('questionInput');
       if (questionInput) questionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') askQuestion(); });
+      const bgGuessInput = document.getElementById('bgGuessInput');
+      if (bgGuessInput) {
+        bgGuessInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') blurGuess(); });
+        bgGuessInput.addEventListener('input', updateBgSuggest);
+        bgGuessInput.addEventListener('blur', () => setTimeout(hideBgSuggest, 150)); // small delay so taps on suggestions land first
+      }
     });
 
     function openRoomSettings() {
@@ -2228,7 +2710,8 @@
       const gsel = document.getElementById('modalGameSelect');
       if (gsel) gsel.value = currentRoom.game || 'guesswho';
       document.getElementById('modalPoolGroup').style.display = isUc ? 'none' : 'block';
-      document.getElementById('modalGwSettings').style.display = isUc ? 'none' : 'block';
+      // Blur Guess draws from the FULL source pool — no character count board needed
+      document.getElementById('modalGwSettings').style.display = (isUc || currentRoom.game === 'blur') ? 'none' : 'block';
       document.getElementById('modalUwSettings').style.display = isUc ? 'block' : 'none';
       const raceBox = document.getElementById('modalRaceSettings');
       if (raceBox) {
@@ -2240,6 +2723,23 @@
           document.getElementById('modalRaceLivesValue').textContent = L;
           document.getElementById('modalRaceQuestionsSlider').value = Q;
           document.getElementById('modalRaceQuestionsValue').textContent = Q;
+        }
+      }
+      const isBlur = currentRoom.game === 'blur';
+      const bgBox = document.getElementById('modalBgSettings');
+      if (bgBox) {
+        bgBox.style.display = isBlur ? 'block' : 'none';
+        if (isBlur) {
+          const s = currentRoom.settings || {};
+          const R = s.bgRounds || BLUR_ROUNDS_DEFAULT;
+          document.getElementById('modalBgRoundsSlider').value = R;
+          document.getElementById('modalBgRoundsValue').textContent = R;
+          const T = Math.min(BLUR_STAGE_SEC_MAX, Math.max(BLUR_STAGE_SEC_MIN, s.bgStageSec || BLUR_STAGE_SEC));
+          document.getElementById('modalBgStageSecSlider').value = T;
+          document.getElementById('modalBgStageSecValue').textContent = T + 's';
+          const m = s.bgMode === 'covers' ? 'covers' : 'characters';
+          document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
+          document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
         }
       }
       if (isUc) {
@@ -2359,6 +2859,23 @@
       document.getElementById('modalRaceQuestionsValue').textContent = v;
       if (isHost && currentRoom && currentRoom.game === 'race') { await database.ref('rooms/' + roomCode + '/settings/raceQuestions').set(v); touchActivity(); }
     }
+    // Blur Guess room settings (lobby modal): number of rounds
+    async function updateModalBgRounds() {
+      const v = parseInt(document.getElementById('modalBgRoundsSlider').value);
+      document.getElementById('modalBgRoundsValue').textContent = v;
+      if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgRounds').set(v); touchActivity(); }
+    }
+    async function updateModalBgStageSec() {
+      const v = parseInt(document.getElementById('modalBgStageSecSlider').value);
+      document.getElementById('modalBgStageSecValue').textContent = v + 's';
+      if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgStageSec').set(v); touchActivity(); }
+    }
+    async function changeBgMode(mode) {
+      const m = mode === 'covers' ? 'covers' : 'characters';
+      document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
+      document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
+      if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgMode').set(m); touchActivity(); }
+    }
 
     // ===== 🎮 CHANGE THE GAME FROM THE LOBBY (host) =====
     function modalGameChanged() {
@@ -2369,7 +2886,7 @@
       const newGame = sel.value;
       if (newGame === cur) return;
       sel.value = cur; // revert until confirmed
-      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race';
+      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race' || newGame === 'blur';
       const seats = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
       const seatedCount = Object.keys(currentRoom.players || {}).length;
       const overflow = Math.max(0, seatedCount - seats);
@@ -2382,7 +2899,7 @@
       if (!isHost || !currentRoom || !roomCode) return;
       const oldGame = currentRoom.game || 'guesswho';
       if (newGame === oldGame) return;
-      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race';
+      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race' || newGame === 'blur';
       const newMax = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
       const s = currentRoom.settings || {};
       const updates = { game: newGame, maxPlayers: newMax, restarts: null };
@@ -2394,6 +2911,11 @@
       if (newGame === 'race') {
         updates['settings/raceLives'] = s.raceLives || RACE_DEFAULT_LIVES;
         updates['settings/raceQuestions'] = s.raceQuestions || RACE_DEFAULT_QUESTIONS;
+      }
+      if (newGame === 'blur') {
+        updates['settings/bgRounds'] = s.bgRounds || BLUR_ROUNDS_DEFAULT;
+        updates['settings/bgStageSec'] = s.bgStageSec || BLUR_STAGE_SEC;
+        updates['settings/bgMode'] = s.bgMode || 'characters';
       }
       // Fewer seats in the new mode → extra players wait in the ⏳ queue
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
@@ -2432,6 +2954,13 @@
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await multiDeal(g);
+        return;
+      }
+      if (g === 'blur') {
+        if (playerCount < 1) { showNotification('Need at least 1 player to start!'); return; }
+        if (!allReady) { showNotification('All players must be ready!'); return; }
+        touchActivity();
+        await multiDeal('blur');
         return;
       }
       if (!allReady) { showNotification('All players must be ready!'); return; }

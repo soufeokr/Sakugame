@@ -2,14 +2,16 @@
    🎴 SAKUGAME — GENERIC CHARACTER POOL (characters.js)
    ------------------------------------------------------------
    The 1000 most-favorited anime characters on AniList
-   (fetched 2026-08-14 via the AniList public API).
+   (fetched 2026-08-14 via the AniList public API;
+    🏷️ alternative names / nicknames added 2026-08-15).
    Players WITHOUT an AniList account can play with these.
 
    You can edit this file freely: add/remove characters, as long
    as each entry keeps this shape:
      { "id": 123, "name": "...", "image": "https://...",
        "series": "...", "gender": "male|female|unknown",
-       "mediaType": "anime|manga" }
+       "mediaType": "anime|manga",
+       "al": ["Nickname", "Alt spelling", ...]   ← optional }
    ============================================================ */
 
 const GENERIC_CHARACTERS =
@@ -20,7 +22,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b45627-CR68RyZmddGG.png",
   "series": "Shingeki no Kyojin",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Levi Heichou (\u30ea\u30f4\u30a1\u30a4\u5175\u9577)",
+   "Captain Levi",
+   "Jinrui Saikyou no Heishi (\u4eba\u985e\u6700\u5f37\u306e\u5175\u58eb)",
+   "Humanity's Strongest Soldier",
+   "Heishichou (\u5175\u58eb\u9577)"
+  ]
  },
  {
   "id": 127691,
@@ -28,15 +37,23 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127691-9zqh1xpIubn7.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Satoru Gojo"
+  ]
  },
  {
   "id": 27,
   "name": "Killua Zoldyck",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b27-Z5O02kQUydpT.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kill",
+   "Kil",
+   "Evans"
+  ]
  },
  {
   "id": 40,
@@ -44,7 +61,22 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40-MNypXsxSRb1R.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mugiwara (\u9ea6\u308f\u3089)",
+   "Straw Hat",
+   "Mugi (\u9ea6)",
+   "Straw",
+   "Mugiwara no Luffy (\u9ea6\u308f\u3089\u306e\u30eb\u30d5\u30a3)",
+   "Straw Hat Luffy",
+   "Lucy",
+   "Luffyland",
+   "Mugiwara-ya",
+   "Ruffy",
+   "Monkey D. Rufy",
+   "Rufy",
+   "Rubber"
+  ]
  },
  {
   "id": 40882,
@@ -52,7 +84,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40882-dsj7IP943WFF.jpg",
   "series": "Shingeki no Kyojin",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Eren Jaeger",
+   "Eren J\u00e4ger",
+   "Shi ni Isogi Yarou (\u6b7b\u306b\u6025\u304e\u91ce\u90ce)",
+   "Suicidal Maniac"
+  ]
  },
  {
   "id": 71,
@@ -60,7 +98,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71-1W4panC53vfs.png",
   "series": "DEATH NOTE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryuga Hideki",
+   "Ryuzaki",
+   "Eraldo Coil",
+   "Deneuve",
+   "Asahi",
+   "Suzuki",
+   "L-Prime"
+  ]
  },
  {
   "id": 417,
@@ -68,7 +115,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b417-gVLmIJu9phcK.png",
   "series": "Code Geass: Hangyaku no Lelouch",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lulu",
+   "Zero",
+   "King of Elevens",
+   "The Demon",
+   "Black King",
+   "Black Demon",
+   "Julius Kingsley"
+  ]
  },
  {
   "id": 62,
@@ -76,7 +132,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b62-S7oAeA9WInjV.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Zolo",
+   "Kaizoku Gari (\u6d77\u8cca\u72e9\u308a)",
+   "Pirate Hunter",
+   "Marimo Head",
+   "Mr. Bushido",
+   "Zorojuro",
+   "Moss Head",
+   "Lorenor Zorro"
+  ]
  },
  {
   "id": 88572,
@@ -84,7 +150,19 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88572-IzTwXEHSobRs.jpg",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Satella",
+   "Lia",
+   "Emilia-tan",
+   "Witch of Glaciation",
+   "Hyouketsu no Majo (\u6c37\u7d50\u306e\u9b54\u5973)",
+   "Witch of Frost",
+   "Han Ma (\u534a\u9b54)",
+   "Half-Devil",
+   "Mili",
+   "Emily"
+  ]
  },
  {
   "id": 40881,
@@ -100,7 +178,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87275-mb13EWZBdbh3.png",
   "series": "Tokyo Ghoul",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Eyepatch",
+   "Kane-yan",
+   "Kanekichi"
+  ]
  },
  {
   "id": 89334,
@@ -108,7 +191,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89334-OPj1hCzvrt7X.png",
   "series": "Mob Psycho 100",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Century's Greatest Psychic",
+   "Master"
+  ]
  },
  {
   "id": 422,
@@ -116,7 +203,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b422-XTaiTuvRohsV.png",
   "series": "Kenpuu Denki Berserk",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Black Swordsman",
+   "Hundred Man Slayer",
+   "Heartless Swordsman",
+   "Struggler",
+   "Kuroi Kenshi"
+  ]
  },
  {
   "id": 14,
@@ -124,7 +218,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14-9Kb1E5oel1ke.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sharingan no Itachi (\u5199\u8f2a\u773c\u306e\u30a4\u30bf\u30c1)",
+   "Itachi of the Sharingan"
+  ]
  },
  {
   "id": 34470,
@@ -132,7 +230,20 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b34470-Jw2LXZBL5R8i.png",
   "series": "Steins;Gate",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Christina",
+   "Assistant",
+   "American Virgin",
+   "Perverted Genius Girl",
+   "Celeb 17",
+   "The Zombie",
+   "Kuu-meow",
+   "k.makise",
+   "KuriGohan Kamehameha",
+   "Lab Member 004",
+   "KURI_KAME"
+  ]
  },
  {
   "id": 137080,
@@ -148,7 +259,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127212-FVm2tD0erQ5B.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sukuna's Vessel",
+   "The Tiger of West Junior High"
+  ]
  },
  {
   "id": 85,
@@ -156,7 +271,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b85-mkVBh2yjxjmx.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Copy Ninja",
+   "Kakashi of the Sharingan",
+   "Sukea"
+  ]
  },
  {
   "id": 10138,
@@ -164,7 +284,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10138-zOPrka0ddZOR.png",
   "series": "VINLAND SAGA",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Thorsson"
+  ]
  },
  {
   "id": 127222,
@@ -188,15 +311,24 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126824-MqsCncTO1qpv.png",
   "series": "Kusuriya no Hitorigoto",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shaomao",
+   "Xiaomao",
+   "Mi\u00eau Mi\u00eau"
+  ]
  },
  {
   "id": 28,
   "name": "Kurapika",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b28-ivA7UGnfE40a.png",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chain User",
+   "Chain Bastard"
+  ]
  },
  {
   "id": 35252,
@@ -204,7 +336,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b35252-DY9TW6pusqeh.png",
   "series": "Steins;Gate",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rintaro",
+   "Hououin Kyouma (\u9cf3\u51f0\u9662\u51f6\u771f)",
+   "Okarin (\u30aa\u30ab\u30ea\u30f3)",
+   "Mad Scientist",
+   "Future Gadget Lab Member #001",
+   "Lintahlo",
+   "M3",
+   "Salieri's Neighbor",
+   "Rinta-kun"
+  ]
  },
  {
   "id": 80,
@@ -212,7 +355,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b80-26EhwSsSqQ50.png",
   "series": "DEATH NOTE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kira",
+   "Light Asahi",
+   "God"
+  ]
  },
  {
   "id": 120649,
@@ -220,7 +368,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120649-NPaWaIpWy60E.png",
   "series": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Muscle Queen",
+   "Auntie",
+   "Princess",
+   "Demon",
+   "Mistress Kaguya",
+   "Vice President"
+  ]
  },
  {
   "id": 130102,
@@ -228,7 +384,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b130102-FO1VHNnEnLlB.png",
   "series": "Chainsaw Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chainsaw Man (\u30c1\u30a7\u30f3\u30bd\u30fc\u30de\u30f3)",
+   "Chainsaw Devil",
+   "Chainsaw-sama (\u30c1\u30a7\u30f3\u30bd\u30fc\u69d8)",
+   "Lord Chainsaw",
+   "Chainsaw-kun (\u30c1\u30a7\u30f3\u30bd\u30fc\u541b)",
+   "Chainsaw Kid",
+   "Akai Chainsaw Man (\u8d64\u3044\u30c1\u30a7\u30f3\u30bd\u30fc\u30de\u30f3)",
+   "Red Chainsaw Man"
+  ]
  },
  {
   "id": 90169,
@@ -236,7 +402,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90169-4wr1Zehnsac8.png",
   "series": "Violet Evergarden",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Auto Memories Doll",
+   "Leidenschaftlich's Soldier Maiden",
+   "Vi"
+  ]
  },
  {
   "id": 89616,
@@ -244,7 +415,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89616-dXmdOc7L6SDi.png",
   "series": "Mob Psycho 100",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mob (\u30e2\u30d6)",
+   "White T Poison",
+   "Shige",
+   "Shadow Leader"
+  ]
  },
  {
   "id": 137079,
@@ -252,7 +429,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137079-6yLEUYR3bmpr.png",
   "series": "Chainsaw Man",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Powy",
+   "Chi no Majin (\u8840\u306e\u9b54\u4eba)",
+   "Blood Fiend",
+   "Number One"
+  ]
  },
  {
   "id": 11,
@@ -260,7 +443,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b11-TA5Nuk7EDUZG.jpg",
   "series": "Hagane no Renkinjutsushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ed",
+   "Fullmetal Alchemist",
+   "Pipsqueak",
+   "Little Red Runt",
+   "Shorty",
+   "Insect",
+   "Hero of the People"
+  ]
  },
  {
   "id": 17,
@@ -268,7 +460,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b17-phjcWCkRuIhu.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nine-Tails Jinchuuriki",
+   "The Show-Off",
+   "Number One Unpredictable",
+   "Noisy Ninja",
+   "Number One Hyperactive",
+   "Knucklehead Ninja",
+   "Fox"
+  ]
  },
  {
   "id": 126071,
@@ -276,7 +477,20 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126071-BTNEc1nRIv68.png",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gonpachiro Kamaboko",
+   "Monjiro",
+   "Santaro",
+   "Kentaro",
+   "Soichiro",
+   "Ponjiro",
+   "Gengo Shakariki",
+   "Tontaro Itadaki",
+   "Kanjiro Anago",
+   "Tangoro Hamado",
+   "Jangoro Amado"
+  ]
  },
  {
   "id": 89220,
@@ -284,7 +498,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89220-KNBwaVFAR8FD.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shouto (\u30b7\u30e7\u30fc\u30c8)",
+   "Shoto Todoroki",
+   "Half-and-Half",
+   "Icy-Hot"
+  ]
  },
  {
   "id": 126635,
@@ -292,7 +512,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126635-L0y3I92JSUkN.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sea Urchin Head"
+  ]
  },
  {
   "id": 88892,
@@ -300,7 +523,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88892-bdOha3lNcaN6.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Katsuki Bakugo",
+   "Kacchan (\u304b\u3063\u3061\u3083\u3093)"
+  ]
  },
  {
   "id": 500,
@@ -316,7 +543,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89198-qKmRTw4Y3PRC.png",
   "series": "Bungou Stray Dogs",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mackerel",
+   "Bandage Wasting Device"
+  ]
  },
  {
   "id": 6356,
@@ -324,7 +555,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b6356-RImEfUfHpC58.png",
   "series": "JoJo no Kimyou na Bouken (2000)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "JoJo",
+   "Josef Joestar",
+   "Mr. Joestar",
+   "Old Man",
+   "Geezer"
+  ]
  },
  {
   "id": 89361,
@@ -332,7 +570,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89361-tq8PQQ4MmF0M.png",
   "series": "Kono Subarashii Sekai ni Shukufuku wo!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Crazy Explosion Girl",
+   "Psycho Girl"
+  ]
  },
  {
   "id": 133676,
@@ -340,7 +582,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b133676-kV2czE3C8Qls.png",
   "series": "Sono Bisque Doll wa Koi wo Suru",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Marine (\u307e\u308a\u3093)"
+  ]
  },
  {
   "id": 88575,
@@ -348,7 +593,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88575-Ayu8UPDA8NS6.png",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rem-rin"
+  ]
  },
  {
   "id": 121103,
@@ -356,7 +604,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121103-UGLxT8utLPnq.png",
   "series": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Subject F",
+   "Love Detective Chika",
+   "Fortune Teller Chika",
+   "Secretary Fujiwara"
+  ]
  },
  {
   "id": 13020,
@@ -370,7 +624,7 @@ const GENERIC_CHARACTERS =
   "id": 30,
   "name": "Gon Freecss",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b30-lyFExKyDhefc.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -380,7 +634,30 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b672-cP5VPriN67xJ.png",
   "series": "Gintama",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yorozuya",
+   "Mr. Odd Jobs",
+   "Shiroyasha",
+   "Gin",
+   "Gin-chan",
+   "Kintoki",
+   "Paako",
+   "Ginpachi-sensei",
+   "Ginnoji",
+   "GFundz",
+   "Boss",
+   "Ginpachi Sakata (\u5742\u7530\u9280\u516b)",
+   "Corpse Eating Demon",
+   "White Yaksha",
+   "Gin-san",
+   "Tokiko",
+   "Ginko",
+   "Johnny",
+   "Danna",
+   "Earth Big Brother",
+   "Earth dad"
+  ]
  },
  {
   "id": 127518,
@@ -396,7 +673,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123212-ewZgUQr9vvEM.png",
   "series": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Argos-4",
+   "Ayanokoji",
+   "Aya-non",
+   "Kiyo-pon",
+   "X",
+   "The False Genius",
+   "Elevator Boy"
+  ]
  },
  {
   "id": 124382,
@@ -404,7 +690,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124382-bSBkjtYjJQtr.png",
   "series": "Darling in the Franxx",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "015"
+  ]
  },
  {
   "id": 124142,
@@ -412,7 +701,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124142-XUO1g7wRqkaT.png",
   "series": "Dr. STONE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sorcerer",
+   "Sorcerer Gentleman",
+   "Professor Senku",
+   "String bean",
+   "Dr. Senku",
+   "Lab"
+  ]
  },
  {
   "id": 124381,
@@ -420,7 +717,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124381-aoGWQW1GjgpO.png",
   "series": "Darling in the Franxx",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Code:002",
+   "Partner Killer (\u30d1\u30fc\u30c8\u30ca\u30fc\u6bba\u3057)",
+   "9' Iota",
+   "Nine Iota (\u30ca\u30a4\u30f3\u30a4\u30aa\u30bf)",
+   "9'\u03b9"
+  ]
  },
  {
   "id": 126375,
@@ -436,7 +740,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b73935-ON5d0mAcrItd.jpg",
   "series": "One Punch Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "One Punch Man",
+   "Bald Cape",
+   "Hagemanto (\u30cf\u30b2\u30de\u30f3\u30c8)",
+   "Caped Baldy"
+  ]
  },
  {
   "id": 64769,
@@ -444,7 +754,27 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b64769-WoWlCMLLgJ14.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shoyo Hinata",
+   "Shou",
+   "Shorty",
+   "The Strongest Decoy",
+   "No. 10",
+   "The Greatest Decoy",
+   "The Ultimate Decoy",
+   "Number One Shortie",
+   "Chibi-chan",
+   "Mini Spider Man",
+   "Copper Top",
+   "Pipsqueak",
+   "Mr. I Got A Fever And Got Benched",
+   "Sho-chan",
+   "Hina",
+   "Human Tangerine",
+   "Little Ginger",
+   "Lit"
+  ]
  },
  {
   "id": 46494,
@@ -452,7 +782,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46494-g7xYYuBtYPnO.png",
   "series": "Shingeki no Kyojin",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Armin Arlelt"
+  ]
  },
  {
   "id": 129130,
@@ -460,23 +793,43 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n129130-SJC0Kn1DU39E.jpg",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Svinosuke",
+   "Inoko",
+   "The Boar"
+  ]
  },
  {
   "id": 31,
   "name": "Hisoka Morow",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b31-FZckOuu7L1un.png",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hisoka Morou",
+   "The Magician",
+   "Grim Reaper"
+  ]
  },
  {
   "id": 90107,
   "name": "Kusuo Saiki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90107-ZULW5HlPX1uU.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no \u03a8-nan (ONA)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kuu",
+   "Kusuko",
+   "Kuriko",
+   "Cyborg Sodaman Mark II",
+   "Psi",
+   "Cyborg Ciderman II",
+   "Saichael",
+   "Four Eyes"
+  ]
  },
  {
   "id": 89028,
@@ -484,7 +837,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89028-8w1I9o1ISHMg.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Deku (\u30c7\u30af)",
+   "Young Midoriya"
+  ]
  },
  {
   "id": 66173,
@@ -492,7 +849,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b66173-g8eU1LGWPB8O.png",
   "series": "Hori-san to Miyamura-kun",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ikkun",
+   "Konoha",
+   "Isumi"
+  ]
  },
  {
   "id": 125886,
@@ -508,7 +870,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129928-BCEjVaP0AQSw.png",
   "series": "Ore dake Level Up na Ken",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sung Jin-Woo",
+   "Shun Mizushino (\u6c34\u7be0\u65ec)",
+   "World's Weakest Hunter",
+   "The Weakest Hunter of All Mankind"
+  ]
  },
  {
   "id": 88573,
@@ -516,7 +884,25 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88573-F8yMTK9GhnTA.png",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Barusu",
+   "Lolimancer",
+   "Young Su",
+   "Baru",
+   "Subaruun",
+   "Natsumi Schwartz",
+   "Bals",
+   "Le Chevalier de la Demi-Elfe",
+   "The Half Elf's Knight",
+   "Natsuki Schwartz",
+   "Spirit Knight",
+   "Purge King",
+   "Captain",
+   "Boss",
+   "Suu",
+   "Basu"
+  ]
  },
  {
   "id": 121102,
@@ -524,7 +910,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121102-tiQFxnSEIAwm.png",
   "series": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Captain",
+   "Treasurer Ishigami",
+   "Yu-kun",
+   "Yu-chin"
+  ]
  },
  {
   "id": 71121,
@@ -532,7 +924,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71121-7R7CnQd3lHgt.png",
   "series": "Shingeki no Kyojin",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hanji",
+   "Hans"
+  ]
  },
  {
   "id": 129131,
@@ -548,7 +944,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b305-6lisPmHtCnLT.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black Leg",
+   "Mr. Prince",
+   "Love Cook",
+   "Ero Cook",
+   "Curly Eyebrows",
+   "O-Soba Mask",
+   "Sangoro",
+   "Mr. Nosebleed",
+   "San-gorou"
+  ]
  },
  {
   "id": 22037,
@@ -556,7 +963,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22037-sY7GWSKYr2Nl.jpg",
   "series": "Bakemonogatari",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsundere-chan",
+   "Gahara-san"
+  ]
  },
  {
   "id": 68,
@@ -564,7 +975,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b68-moBLY2WO2am3.png",
   "series": "Hagane no Renkinjutsushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Flame Alchemist",
+   "Hero of Ishval",
+   "Roy-Boy"
+  ]
  },
  {
   "id": 137081,
@@ -572,7 +988,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137081-TSrUR3mUJL6r.png",
   "series": "Chainsaw Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chonmage (\u30c1\u30e7\u30f3\u30de\u30b2)",
+   "Topknot"
+  ]
  },
  {
   "id": 94,
@@ -580,7 +1000,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b94-d631a3Z2KPvd.png",
   "series": "Shin Seiki Evangelion",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Second Child",
+   "Asuka Langley Shikinami",
+   "Princess"
+  ]
  },
  {
   "id": 4003,
@@ -588,7 +1013,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4003-gWDSEGbeOAll.png",
   "series": "JoJo no Kimyou na Bouken (2000)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "JoJo",
+   "Qtaro",
+   "Professor Kuujou",
+   "Jotaro Kujo"
+  ]
  },
  {
   "id": 1,
@@ -596,7 +1027,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1-ChxaldmieFlQ.png",
   "series": "Cowboy Bebop",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Spike Spike",
+   "Swimming Bird"
+  ]
  },
  {
   "id": 61,
@@ -604,7 +1039,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b61-ywXUyyocEEqt.png",
   "series": "ONE PIECE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Akuma no Ko (\u60aa\u9b54\u306e\u5b50)",
+   "Demon Child",
+   "Devil Child",
+   "Miss All Sunday",
+   "Light of the Revolution",
+   "O-Robi",
+   "Robiland",
+   "Ms. Sunday"
+  ]
  },
  {
   "id": 133700,
@@ -620,15 +1065,28 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5-a7bkJgjhhigE.png",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ichi-nii",
+   "Substitute Soul Reaper",
+   "Itsygo",
+   "Ryoka Boy"
+  ]
  },
  {
   "id": 138102,
   "name": "Yor Forger",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138102-ZOAu9jI2d5ke.png",
-  "series": "SPY×FAMILY",
+  "series": "SPY\u00d7FAMILY",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yor Briar (\u30e8\u30eb\u30fb\u30d6\u30e9\u30a4\u30a2)",
+   "Ibara-hime (\u3044\u3070\u3089\u59eb)",
+   "Thorn Princess",
+   "Yorticia",
+   "Tornprinsessa"
+  ]
  },
  {
   "id": 64771,
@@ -636,7 +1094,23 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b64771-BuCVs7B8bBdh.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "King of the Court",
+   "Kageyama the Kalm",
+   "Bakageyama",
+   "Bateyama-kun",
+   "Bakayama",
+   "Kalm-geyama",
+   "Yamayama-kun",
+   "Wearyama-kun",
+   "Crappyama",
+   "Tired-yama",
+   "Your Highness",
+   "Pipsqueak",
+   "Brazen Jerk",
+   "Simpleton Idiot"
+  ]
  },
  {
   "id": 23602,
@@ -644,7 +1118,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b23602-Z4MDNYcoAWZu.png",
   "series": "Bakemonogatari",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kiss-Shot Acerola-Orion Heart-Under-Blade (\u30ad\u30b9\u30b7\u30e7\u30c3\u30c8\u30fb\u30a2\u30bb\u30ed\u30e9\u30aa\u30ea\u30aa\u30f3\u30fb\u30cf\u30fc\u30c8\u30a2\u30f3\u30c0\u30fc\u30d6\u30ec\u30fc\u30c9)",
+   "Tekketsu ni shite Nekketsu ni shite Reiketsu no Kyuuketsuki (\u9244\u8840\u306b\u3057\u3066\u71b1\u8840\u306b\u3057\u3066\u51b7\u8840\u306e\u5438\u8840\u9b3c)",
+   "The Iron-blooded\u201a Hot-blooded\u201a Cold-blooded Vampire",
+   "Beautiful Princess",
+   "Acerola",
+   "Laura"
+  ]
  },
  {
   "id": 133704,
@@ -652,7 +1134,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b133704-8wLTGjc234q2.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nanamin",
+   "7:3 Sorcerer"
+  ]
  },
  {
   "id": 13,
@@ -660,7 +1146,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13-SISLEw1oAD7a.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Uchiha Survivor",
+   "The Last Uchiha",
+   "Sasuke of the Sharingan"
+  ]
  },
  {
   "id": 123962,
@@ -668,7 +1159,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123962-eL9yGV0NLMF7.png",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Satoru Mikami (\u4e09\u4e0a\u609f)",
+   "Slime-san",
+   "Sensei",
+   "Milord",
+   "Ruler of Monsters",
+   "King of Tempest",
+   "Rising Star",
+   "Rimu-chi",
+   "Great Phantom Thief Satoru"
+  ]
  },
  {
   "id": 84677,
@@ -676,7 +1178,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b84677-PFmohzIXD1ud.png",
   "series": "Noragami",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yatty",
+   "Amagiri no Mikoto",
+   "Jersey",
+   "Drippy"
+  ]
  },
  {
   "id": 130050,
@@ -684,7 +1192,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b130050-qsLThJs5VIbz.png",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Water Hashira",
+   "Water Pillar",
+   "Half-and-half Haori"
+  ]
  },
  {
   "id": 46496,
@@ -692,15 +1205,28 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46496-Mu86MENd5wNB.png",
   "series": "Shingeki no Kyojin",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Eyebrow"
+  ]
  },
  {
   "id": 138100,
   "name": "Anya Forger",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138100-4Li0tWRCa5bQ.png",
-  "series": "SPY×FAMILY",
+  "series": "SPY\u00d7FAMILY",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Test Subject 007",
+   "Anya Williams",
+   "Anya Levski",
+   "Anya Roche",
+   "Anya Klein",
+   "K-212",
+   "Princess Anya",
+   "Chihuahua Girl"
+  ]
  },
  {
   "id": 134167,
@@ -708,7 +1234,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b134167-5TCytk45YByD.png",
   "series": "Jujutsu Kaisen",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Miss Zenin"
+  ]
  },
  {
   "id": 498,
@@ -716,7 +1245,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b498-lwawtSpLyATL.png",
   "series": "Fate/stay night",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rin Tousaka",
+   "Poppins of July",
+   "Red Devil",
+   "The Consultant",
+   "Red Evil",
+   "Kischur's Nightmare"
+  ]
  },
  {
   "id": 67065,
@@ -724,7 +1261,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67065-Dhec6tE2yWA9.png",
   "series": "Yahari Ore no Seishun Love Come wa Machigatteiru.",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hikki",
+   "Hikitani",
+   "Hikio",
+   "8man"
+  ]
  },
  {
   "id": 22036,
@@ -732,7 +1275,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22036-Ed3CjwPlDLp4.png",
   "series": "Bakemonogatari",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Arararagi",
+   "Koyomin",
+   "Koyokoyo",
+   "Devil Boy",
+   "Kind Monster Sir",
+   "Monstieur"
+  ]
  },
  {
   "id": 133701,
@@ -740,7 +1291,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b133701-rCQuDpHr3UZL.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Double-Faced Specter",
+   "King of Curses",
+   "Ryoumen Sukuna (\u4e21\u9762\u5bbf\u513a)",
+   "Disgraced One",
+   "The Fallen"
+  ]
  },
  {
   "id": 80243,
@@ -748,7 +1306,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b80243-RzxE51iUU5eq.png",
   "series": "Koe no Katachi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shoko",
+   "Shou",
+   "Sho",
+   "Sho-chan"
+  ]
  },
  {
   "id": 497,
@@ -756,7 +1320,21 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b497-Yg5pNmC8kxzs.png",
   "series": "Fate/stay night",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Saber (\u30bb\u30a4\u30d0\u30fc)",
+   "Altria Pendragon",
+   "King Arthur",
+   "King of Knights",
+   "Blue Saber",
+   "Arturia Pendragon",
+   "Goddess Rhongomyniad",
+   "Lion King",
+   "Elise Watoson",
+   "Once and Future King",
+   "Proud Knight-King",
+   "Arthur Pendragon"
+  ]
  },
  {
   "id": 66171,
@@ -764,7 +1342,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b66171-o2vk3689wWFK.png",
   "series": "Hori-san to Miyamura-kun",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kyon-Kyon",
+   "Kyo-chan",
+   "Honey-san",
+   "Ice Queen",
+   "Hannya"
+  ]
  },
  {
   "id": 126373,
@@ -780,13 +1365,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b257562-Ru35NYPfsqhY.png",
   "series": "Slow Loop",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bocchi-chan",
+   "Hitori Gotoh",
+   "guitarhero"
+  ]
  },
  {
   "id": 38005,
   "name": "Homura Akemi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b38005-T3NR8p2f021x.jpg",
-  "series": "Mahou Shoujo Madoka☆Magica",
+  "series": "Mahou Shoujo Madoka\u2606Magica",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -796,7 +1386,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129133-VlTPowwt68rJ.png",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Flame Hashira",
+   "Flame Pillar",
+   "Ilds\u00f8ylen",
+   "Googly Eyes"
+  ]
  },
  {
   "id": 67327,
@@ -804,7 +1400,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67327-zQb1dlC7joPb.jpg",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yu",
+   "Noya",
+   "Nishiya",
+   "Karasuno's Guardian God",
+   "Nishi"
+  ]
  },
  {
   "id": 71933,
@@ -812,7 +1415,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71933-HQ1TSjlrJ8Hv.jpg",
   "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Cool 'n' Aloof",
+   "Reddie Redhead",
+   "Mr. Humiliated Failure in The First Semester",
+   "Twisted Twit",
+   "Knight",
+   "Eternal Eighth Grader",
+   "Buddy",
+   "Ginger Shrimp",
+   "Semi-Senioritis"
+  ]
  },
  {
   "id": 88350,
@@ -828,7 +1442,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/86-cA1zL7fyls8E.jpg",
   "series": "Shin Seiki Evangelion",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "First Child",
+   "Look-alike",
+   "Tentative Name: Rei Ayanami"
+  ]
  },
  {
   "id": 129571,
@@ -836,7 +1455,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129571-GHJk7gviHOOw.jpg",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yuta Okkotsu"
+  ]
  },
  {
   "id": 188783,
@@ -852,7 +1474,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89-ZtZhXkh1rITn.png",
   "series": "Shin Seiki Evangelion",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Third Child"
+  ]
  },
  {
   "id": 209,
@@ -860,7 +1485,21 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b209-NOAbiLvJt1QA.png",
   "series": "Fruits Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kyo Soma",
+   "Kyonkyon",
+   "Kyonkichi",
+   "Kyokyo",
+   "Lucky Kyo",
+   "Cat lovers",
+   "Kyo Sohma",
+   "Stupid Cat",
+   "Carrots",
+   "Orange Top",
+   "Jari-gaki",
+   "Prince Kyon"
+  ]
  },
  {
   "id": 127221,
@@ -884,7 +1523,20 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b719-y984mDWyGf5n.jpg",
   "series": "MONSTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Liebheart",
+   "Johann",
+   "Michael Reichmann",
+   "Franz Heinau",
+   "Erich Springer",
+   "The Nameless Monster",
+   "Otto",
+   "Hans",
+   "Thomas",
+   "The Devil",
+   "J"
+  ]
  },
  {
   "id": 80491,
@@ -892,7 +1544,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b80491-NK6pxb6oH61P.png",
   "series": "Koe no Katachi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shou",
+   "Yashou",
+   "Sho-Chan",
+   "Cho-ya"
+  ]
  },
  {
   "id": 121724,
@@ -900,7 +1558,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121724-SJTdODjeO7e6.jpg",
   "series": "Yakusoku no Neverland",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sleepy Cyclops"
+  ]
  },
  {
   "id": 121104,
@@ -908,7 +1569,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121104-7TYRl3EEsDYU.png",
   "series": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Haysaca A. Smith",
+   "Haysaca A. Smithee",
+   "Herthaka",
+   "Smithee A.",
+   "Rat"
+  ]
  },
  {
   "id": 126372,
@@ -924,7 +1592,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124440-Lpdo6y8cljV6.png",
   "series": "Black Clover",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hakaishin (\u7834\u58ca\u795e)",
+   "Destruction God"
+  ]
  },
  {
   "id": 71267,
@@ -932,7 +1604,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71267-q44J2MXMinXD.jpg",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kyanma",
+   "Nekoma's Brain",
+   "Pudding Head",
+   "Kodzuken",
+   "Kenken"
+  ]
  },
  {
   "id": 1111,
@@ -940,7 +1619,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1111-UhmlFtRFrnWa.png",
   "series": "Code Geass: Hangyaku no Lelouch",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Witch of Britannia",
+   "Gray Witch",
+   "Pizza Girl",
+   "C2"
+  ]
  },
  {
   "id": 36828,
@@ -948,7 +1633,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b36828-j5ib0adAzGMx.png",
   "series": "Sword Art Online",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Asuna (\u30a2\u30b9\u30ca)",
+   "Berserker Healer (\u30d0\u30fc\u30b5\u30af\u30d2\u30fc\u30e9\u30fc)",
+   "Lightning Flash (\u9583\u5149)",
+   "Mama (\u30de\u30de)",
+   "Erika (\u30a8\u30ea\u30ab)"
+  ]
  },
  {
   "id": 157115,
@@ -964,7 +1656,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b145341-CuPldCLZMvvf.png",
   "series": "Tokyo Revengers",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mikey (\u30de\u30a4\u30ad\u30fc)",
+   "Invincible Mikey",
+   "Shrimp",
+   "Michael"
+  ]
  },
  {
   "id": 13580,
@@ -972,7 +1670,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13580-1J7PwIB8kTpu.png",
   "series": "BANANA FISH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aslan Jade Callenreese"
+  ]
  },
  {
   "id": 71611,
@@ -980,7 +1681,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71611-cUZwVfzeNXD9.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tohru Oikawa",
+   "Grand King",
+   "Hanger-san",
+   "Oikawa the Great"
+  ]
  },
  {
   "id": 65643,
@@ -988,23 +1695,54 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65643-jimrOw0RGtoB.png",
   "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Prince of the Fateful Eternal Wind",
+   "Octopus of Idiotic Perverted Chicken",
+   "Quiz Show",
+   "Octopus",
+   "The Creature of Mass Destruction",
+   "Guinea Pig",
+   "Unkillable Teacher",
+   "Demon King",
+   "Octorazzi"
+  ]
  },
  {
   "id": 138101,
   "name": "Loid Forger",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138101-7NCB0Md8zA6G.png",
-  "series": "SPY×FAMILY",
+  "series": "SPY\u00d7FAMILY",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tasogare (\u9ec4\u660f)",
+   "Twilight",
+   "Twain Foney",
+   "Papa",
+   "Roid",
+   "Loi-Loi",
+   "Loidman",
+   "Robert",
+   "Lionel",
+   "Lawrence",
+   "Roland Spoofy",
+   "Twi-Guy",
+   "Skumring"
+  ]
  },
  {
   "id": 58,
   "name": "Chrollo Lucilfer",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b58-USOmsz3nursi.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kuroro Rushirufuru",
+   "Danchou",
+   "Quwrof Wrlccywrlir"
+  ]
  },
  {
   "id": 13767,
@@ -1012,7 +1750,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13767-U604OJN9dxCn.jpg",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shi no Gekai (\u6b7b\u306e\u5916\u79d1\u533b)",
+   "Surgeon of Death",
+   "Dark Doctor",
+   "Trafal-Guy",
+   "Traffy",
+   "Torao"
+  ]
  },
  {
   "id": 67067,
@@ -1020,7 +1766,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67067-gqhgjlni0Bcf.png",
   "series": "Yahari Ore no Seishun Love Come wa Machigatteiru.",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yukinon"
+  ]
  },
  {
   "id": 148740,
@@ -1028,7 +1777,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b148740-ceAibPxLW8rR.png",
   "series": "Chainsaw Man",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lady Reze"
+  ]
  },
  {
   "id": 723,
@@ -1036,15 +1788,26 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b723-vp5hPptgnNEC.png",
   "series": "ONE PIECE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dorobou Neko (\u6ce5\u68d2\u732b)",
+   "Cat Burglar",
+   "O-Nami",
+   "Namizo",
+   "Namiland"
+  ]
  },
  {
   "id": 141061,
-  "name": "Vladilena Milizé",
+  "name": "Vladilena Miliz\u00e9",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b141061-jqIhB9jmClQ3.png",
   "series": "86: Eighty Six",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lena",
+   "Handler One"
+  ]
  },
  {
   "id": 11772,
@@ -1052,7 +1815,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b11772-p7MO37Mk0f5g.png",
   "series": "JoJo no Kimyou na Bouken: Steel Ball Run - 1st STAGE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "J.Lo"
+  ]
  },
  {
   "id": 123385,
@@ -1060,7 +1826,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123385-ild8gXk13xcO.png",
   "series": "Houseki no Kuni PV",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Phos",
+   "Three-and-a-Half"
+  ]
  },
  {
   "id": 174873,
@@ -1068,7 +1838,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b174873-FNf08aPYTVXY.jpg",
   "series": "86: Eighty Six",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gunslinger"
+  ]
  },
  {
   "id": 69411,
@@ -1076,7 +1849,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b69411-lxM0FRvWHqlv.png",
   "series": "Shigatsu wa Kimi no Uso",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Free-spirit"
+  ]
  },
  {
   "id": 4004,
@@ -1092,7 +1868,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136070-MC9LLxJsHyHE.png",
   "series": "Kimetsu no Yaiba",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Insect Hashira",
+   "Insect Pillar"
+  ]
  },
  {
   "id": 123285,
@@ -1100,7 +1880,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123285-tKijiuQErDS0.png",
   "series": "Black Clover: Jump Festa 2016 Special",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bakasta"
+  ]
  },
  {
   "id": 89225,
@@ -1108,7 +1891,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89225-XBgvUhI9naVI.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shota Aizawa",
+   "Eraser Head",
+   "Erasure Hero",
+   "Eraser"
+  ]
  },
  {
   "id": 89364,
@@ -1116,7 +1905,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89364-7Th8Tv1XKJtt.png",
   "series": "Kono Subarashii Sekai ni Shukufuku wo!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kazutrash",
+   "Crapuma"
+  ]
  },
  {
   "id": 246,
@@ -1124,7 +1917,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/246-wsRRr6z1kii8.png",
   "series": "Dragon Ball",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Goku Son"
+  ]
  },
  {
   "id": 121889,
@@ -1140,7 +1936,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b6194-HOyr8E7FCFHJ.png",
   "series": "Vagabond",
   "gender": "male",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Shinmen Takezo",
+   "Demon"
+  ]
  },
  {
   "id": 154224,
@@ -1148,7 +1948,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b154224-7dJ09BKEnG3v.png",
   "series": "Kanojo, Okarishimasu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Maya",
+   "Kaori",
+   "Numa (\u6cbc)"
+  ]
  },
  {
   "id": 125659,
@@ -1156,7 +1961,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125659-O37MZQWibV7g.png",
   "series": "Shingeki no Kyojin: The Final Season",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mia (\u30df\u30a2)"
+  ]
  },
  {
   "id": 121101,
@@ -1164,7 +1972,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121101-Q8HzKP15At2d.png",
   "series": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kaichou (\u4f1a\u9577)",
+   "Prez",
+   "Myuu"
+  ]
  },
  {
   "id": 128651,
@@ -1172,15 +1985,24 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128651-GaZImkP2Of1R.png",
   "series": "Jibaku Shounen Hanako-kun",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Number 7 (\u4e03\u756a)",
+   "Crazy Knife (\u30af\u30ec\u30a4\u30b8\u30fc\u30ca\u30a4\u30d5)",
+   "Gon (\u30b4\u30f3)"
+  ]
  },
  {
   "id": 23277,
   "name": "Meruem",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b23277-EYmIxzL64Mji.png",
-  "series": "HUNTER×HUNTER (2011)",
+  "series": "HUNTER\u00d7HUNTER (2011)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The King (\u738b",
+   "\u014c)"
+  ]
  },
  {
   "id": 36765,
@@ -1188,7 +2010,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b36765-BnLbXg0Tzzh9.png",
   "series": "Sword Art Online",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kirito (\u30ad\u30ea\u30c8)",
+   "The Black Swordsman",
+   "Papa (\u30d1\u30d1)",
+   "Daddy"
+  ]
  },
  {
   "id": 207,
@@ -1196,7 +2024,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b207-RQ4EUdTD0K62.png",
   "series": "Fruits Basket",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tohru Honda"
+  ]
  },
  {
   "id": 2075,
@@ -1204,7 +2035,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2075-sWb5Xz76JWdX.png",
   "series": "Tengen Toppa Gurren Lagann",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Fearless Demon Leader",
+   "Aniki (Bro)"
+  ]
  },
  {
   "id": 12064,
@@ -1212,7 +2047,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12064-7PDN3ylIeAZn.png",
   "series": "Toradora!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Palmtop Tiger"
+  ]
  },
  {
   "id": 45887,
@@ -1220,7 +2058,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b45887-QPtJH0KwqthW.jpg",
   "series": "Shingeki no Kyojin",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sasha Braus",
+   "Imo Onna (\u828b\u5973)",
+   "Potato Girl"
+  ]
  },
  {
   "id": 507,
@@ -1228,7 +2071,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b507-g9yz1GTLtPla.jpg",
   "series": "Howl no Ugoku Shiro",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Jenkins",
+   "Pendragon"
+  ]
  },
  {
   "id": 2072,
@@ -1236,7 +2083,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2072-Lc6jEdsueJUK.jpg",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Fire Fist Ace",
+   "Portgaz D. Ace",
+   "Portgaz D. Trace"
+  ]
  },
  {
   "id": 81929,
@@ -1244,7 +2096,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b81929-WPVp2LQoWgkc.png",
   "series": "One Punch Man",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Terrible Tornado"
+  ]
  },
  {
   "id": 13085,
@@ -1252,7 +2107,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13085-CkmgXL7SSLxL.jpg",
   "series": "JoJo no Kimyou na Bouken: Diamond wa Kudakenai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "JoJo",
+   "Josuke Higashikata"
+  ]
  },
  {
   "id": 67329,
@@ -1260,7 +2119,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67329-k7mDdqQ6rJ4w.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsukki",
+   "Four-eyes"
+  ]
  },
  {
   "id": 2007,
@@ -1276,7 +2139,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87277-oUaqrI1iBzu6.png",
   "series": "Tokyo Ghoul",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rabbit"
+  ]
  },
  {
   "id": 12055,
@@ -1292,7 +2158,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b284157-cqYawN7XCNJx.jpg",
   "series": "Cyberpunk: Edgerunners",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lucyna Kushinada"
+  ]
  },
  {
   "id": 309,
@@ -1300,7 +2169,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b309-H64NhbJ2ywIQ.jpg",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tanuki",
+   "Chopperman",
+   "Cotton Candy Lover",
+   "Racoon Dog",
+   "Chobro",
+   "Chopa-emon  (\u30c1\u30e7\u30c3\u30d1\u3048\u3082\u3093)",
+   "Chopperemon"
+  ]
  },
  {
   "id": 89362,
@@ -1316,7 +2194,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b718-b6ZZVp822lw0.png",
   "series": "MONSTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kenzo Tenma",
+   "Dr. Tenma"
+  ]
  },
  {
   "id": 83797,
@@ -1324,7 +2206,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83797-ix0Cl5OMfV22.png",
   "series": "Kill la Kill",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryuko Matoi"
+  ]
  },
  {
   "id": 424,
@@ -1332,7 +2217,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b424-Jfrsf8I7zBps.png",
   "series": "Kenpuu Denki Berserk",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The White Hawk",
+   "The Hawk of Light",
+   "Falcon of Darkness",
+   "The Absolute"
+  ]
  },
  {
   "id": 183965,
@@ -1348,7 +2239,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b77605-NrjhQwZwgJ3l.png",
   "series": "Nanatsu no Taizai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Fox's Sin of Greed",
+   "Bandit Ban",
+   "Undead Ban"
+  ]
  },
  {
   "id": 88348,
@@ -1356,7 +2252,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88348-bIe5XnXdRpmX.png",
   "series": "Mushoku Tensei: Isekai Ittara Honki Dasu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rudy (\u30eb\u30c7\u30a3)",
+   "Doronuma (\u6ce5\u6cbc)",
+   "Quagmire",
+   "Kennel Master",
+   "Shadow Moon Knight"
+  ]
  },
  {
   "id": 210,
@@ -1364,7 +2267,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b210-mw01NrQfRjzT.png",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mr Hat-And-Clogs"
+  ]
  },
  {
   "id": 458,
@@ -1372,7 +2278,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b458-tlKqPcuR287U.png",
   "series": "BLACK LAGOON",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rebecca Lee (\u30ec\u30d9\u30c3\u30ab\u30fb\u30ea\u30fc)",
+   "Two Hands",
+   "Becky"
+  ]
  },
  {
   "id": 133699,
@@ -1388,7 +2299,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65865-AC0ru7cDXUgK.png",
   "series": "Chuunibyou demo Koi ga Shitai!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Jaou Shingan (\u90aa\u738b\u771f\u773c)",
+   "Tyrant's Eye",
+   "Jaou Shingan no Tsukaite (\u90aa\u738b\u771f\u773c\u306e\u4f7f\u3044\u624b)",
+   "Wielder of Tyrant's Eye",
+   "Master (\u30de\u30b9\u30bf\u30fc)"
+  ]
  },
  {
   "id": 121956,
@@ -1396,7 +2314,20 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121956-5FbIbcd6gAZW.png",
   "series": "Komi-san wa, Komyushou desu.",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Comi",
+   "Shoko",
+   "show.komi-1224",
+   "Goddess",
+   "Princess Komilia",
+   "Commu-Master",
+   "Komyu",
+   "Komi-cat",
+   "Shokotaso",
+   "Silent Killer",
+   "Shaa"
+  ]
  },
  {
   "id": 46484,
@@ -1420,7 +2351,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b70069-DEV7X6o2L7oG.jpg",
   "series": "Date A Live",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nightmare"
+  ]
  },
  {
   "id": 136071,
@@ -1428,7 +2362,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136071-99Kexnnn2PiV.png",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sound Hashira",
+   "Sound Pillar"
+  ]
  },
  {
   "id": 2257,
@@ -1436,7 +2374,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2257-jnalsdnIX1vN.jpg",
   "series": "Tengen Toppa Gurren Lagann",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Digger"
+  ]
  },
  {
   "id": 11222,
@@ -1444,7 +2385,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b11222-Se9QoJHDSeYY.png",
   "series": "JoJo no Kimyou na Bouken: Stone Ocean",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "JoJo",
+   "Jolyne Cujoh",
+   "Chorokichi"
+  ]
  },
  {
   "id": 1662,
@@ -1452,7 +2398,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1662-4E5J0LX9jZKZ.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gaara of the Desert",
+   "Sabaku no Gaara"
+  ]
  },
  {
   "id": 2219,
@@ -1468,7 +2418,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22055-EaTsy30ihdgb.png",
   "series": "Bakemonogatari",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Class Rep-chan"
+  ]
  },
  {
   "id": 88412,
@@ -1476,7 +2429,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88412-sIOJUnIkyFRe.png",
   "series": "Tokyo Ghoul",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rei"
+  ]
  },
  {
   "id": 2514,
@@ -1484,7 +2440,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2514-hnE6LEdqm7Su.png",
   "series": "Fate/stay night",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Archer",
+   "King of Heroes",
+   "King of Kings",
+   "Golden King",
+   "King of Babylon",
+   "Oldest King",
+   "AUO",
+   "Gil-kun",
+   "Wedge of Heaven"
+  ]
  },
  {
   "id": 75,
@@ -1492,7 +2459,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b75-IkEpzO21LgFy.jpg",
   "series": "DEATH NOTE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryuu"
+  ]
  },
  {
   "id": 141060,
@@ -1500,7 +2470,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b141060-ZJFvHqBBSvhN.png",
   "series": "86: Eighty Six",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shin",
+   "Reaper",
+   "Undertaker"
+  ]
  },
  {
   "id": 121700,
@@ -1516,7 +2491,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89201-K0X5HNq88Oub.png",
   "series": "Bungou Stray Dogs",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rampo"
+  ]
  },
  {
   "id": 162722,
@@ -1524,7 +2502,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b162722-btzdghBizxKS.jpg",
   "series": "Jujutsu Kaisen 2nd Season",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sorcerer Killer",
+   "Toji Fushiguro",
+   "Touji Zenin"
+  ]
  },
  {
   "id": 55131,
@@ -1540,7 +2523,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12-tCKu8yK5kFL5.jpg",
   "series": "Hagane no Renkinjutsushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Al",
+   "Armored Alchemist"
+  ]
  },
  {
   "id": 88937,
@@ -1548,7 +2535,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88937-2GSqkX9TIzYy.png",
   "series": "Haikyuu!! 2nd Season",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Airhead",
+   "Horned Owl Bastard",
+   "Simpleton Ace",
+   "Owl with frosted tips"
+  ]
  },
  {
   "id": 71269,
@@ -1556,7 +2549,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71269-pi9vjyxKPFAu.jpg",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kuro"
+  ]
  },
  {
   "id": 63351,
@@ -1564,7 +2560,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b63351-0WmsDENpiscp.png",
   "series": "Akame ga Kill!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Demon Sword Murasame",
+   "Honors Student"
+  ]
  },
  {
   "id": 835,
@@ -1580,7 +2580,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89243-R2WJlNuj3aEs.jpg",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Eijiro Kirishima",
+   "Sturdy Hero: Red Riot",
+   "Gouken Hero: Red Riot (\u525b\u5065\u30d2\u30fc\u30ed\u30fc \u70c8\u6012\u983c\u96c4\u6597)",
+   "Ei"
+  ]
  },
  {
   "id": 65645,
@@ -1588,7 +2594,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65645-nWH4mBMW5lYw.png",
   "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Androgynous",
+   "Gender",
+   "The Grim Reaper in Camo"
+  ]
  },
  {
   "id": 75216,
@@ -1596,7 +2607,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b75216-KDU8333eIcqf.jpg",
   "series": "Shokugeki no Souma",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Soma Yukihira"
+  ]
  },
  {
   "id": 913,
@@ -1604,7 +2618,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b913-NIFkKazWM8VO.png",
   "series": "Dragon Ball GT",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Prince of All Saiyans",
+   "Vegeta IV",
+   "Prince Vegeta",
+   "Saiyan Prince"
+  ]
  },
  {
   "id": 434,
@@ -1620,7 +2640,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89853-06qMPkrGlgP1.png",
   "series": "Bungou Stray Dogs",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Slug",
+   "Mr. Fancy Hat",
+   "Hat Rack",
+   "Snail",
+   "Ability User A5158"
+  ]
  },
  {
   "id": 137975,
@@ -1628,7 +2655,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137975-6TH7PiLWJaqy.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aoi Todo"
+  ]
  },
  {
   "id": 5189,
@@ -1636,7 +2666,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5189-GR1xdok9SFsN.jpg",
   "series": "FAIRY TAIL",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Titania",
+   "Elsa",
+   "Elsa Scarlett"
+  ]
  },
  {
   "id": 19492,
@@ -1644,7 +2679,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b19492-gvMnKxhUhT9V.jpg",
   "series": "JoJo no Kimyou na Bouken: Steel Ball Run - 1st STAGE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Joe Kid",
+   "JoJo"
+  ]
  },
  {
   "id": 145344,
@@ -1668,7 +2707,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b145345-zyirrSsKIDCb.png",
   "series": "Tokyo Revengers",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Draken (\u30c9\u30e9\u30b1\u30f3)",
+   "Kenchin",
+   "Vice-Leader of The Tokyo \u534d Gang",
+   "Kenny"
+  ]
  },
  {
   "id": 89224,
@@ -1676,7 +2721,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89224-K6KEuQAuYKzq.jpg",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "All Might (\u30aa\u30fc\u30eb\u30de\u30a4\u30c8)",
+   "Toshi",
+   "Symbol of Peace"
+  ]
  },
  {
   "id": 222594,
@@ -1692,7 +2742,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128106-zSTsuULvz6PX.png",
   "series": "Kanojo, Okarishimasu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chizuru Mizuhara (\u6c34\u539f\u5343\u9db4)"
+  ]
  },
  {
   "id": 88889,
@@ -1708,7 +2761,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46498-ritqAj9FW6jX.png",
   "series": "Shingeki no Kyojin",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Jean Kirschtein",
+   "Jeanie",
+   "Horse Face"
+  ]
  },
  {
   "id": 7373,
@@ -1716,7 +2774,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b7373-1BH0gELuZmHD.jpg",
   "series": "Ookami to Koushinryou",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wise Wolf of Yoitsu"
+  ]
  },
  {
   "id": 88349,
@@ -1724,7 +2785,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88349-5dsNUah3oBj8.png",
   "series": "Mushoku Tensei: Isekai Ittara Honki Dasu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mad Dog"
+  ]
  },
  {
   "id": 10010,
@@ -1732,7 +2796,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10010-fNspzan5MzNk.png",
   "series": "Fate/stay night",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Magus Killer",
+   "Kerry",
+   "EMIYA (Assassin)"
+  ]
  },
  {
   "id": 908,
@@ -1740,7 +2809,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b908-JSYUkJLCw1f0.png",
   "series": "BLEACH",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Goddess of Flash",
+   "Demon cat"
+  ]
  },
  {
   "id": 260329,
@@ -1756,7 +2829,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b130848-AuuIm6GR8ody.jpg",
   "series": "Enen no Shouboutai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Beni",
+   "Waka",
+   "Asakusa no Hakaiou (\u6d45\u8349\u306e\u7834\u58ca\u738b)",
+   "Asakusa's King of Destruction",
+   "Moonlight Kamen (\u3080\u30fc\u3093\u3089\u3044\u3068\u4eee\u9762)",
+   "Moonlight Mask"
+  ]
  },
  {
   "id": 73979,
@@ -1764,7 +2845,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b73979-tVi9maPID881.jpg",
   "series": "One Punch Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Demon Cyborg"
+  ]
  },
  {
   "id": 12659,
@@ -1780,7 +2864,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10529-AloL8jjZwjsg.png",
   "series": "JoJo no Kimyou na Bouken: Ougon no Kaze",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "GioGio",
+   "Haruno Shiobana"
+  ]
  },
  {
   "id": 2,
@@ -1788,7 +2876,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2-0Iszg6Izgt4p.png",
   "series": "Cowboy Bebop",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Poker Alice",
+   "Queen of Hearts",
+   "Romani"
+  ]
  },
  {
   "id": 3096,
@@ -1796,7 +2889,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3096-qCXXA8G0J8rk.png",
   "series": "MONSTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Neumeier (\u30ce\u30a4\u30de\u30a4\u30e4\u30fc)"
+  ]
  },
  {
   "id": 8455,
@@ -1812,7 +2908,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13045-TIpIF82cMkG9.png",
   "series": "JoJo no Kimyou na Bouken: Ougon no Kaze",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bruno Buccellati"
+  ]
  },
  {
   "id": 125168,
@@ -1820,7 +2919,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125168-cOydxRHEbAYb.png",
   "series": "BEASTARS",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Legosi",
+   "Wolf boy",
+   "Eyebrows",
+   "Sad Brows",
+   "Mr. Wolf",
+   "Degoshi"
+  ]
  },
  {
   "id": 136837,
@@ -1828,7 +2935,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136837-3WR22FYet8Hv.jpg",
   "series": "Kage no Jitsuryokusha ni Naritakute!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shadow",
+   "Minoru Kagenou (\u5f71\u91ce\u30df\u30ce\u30eb)",
+   "Stylish Boukan Slayer (Stylish Thug Slayer)",
+   "Fido",
+   "Pooch",
+   "Jimina Seinen (\u5730\u5473\u306a\u9752\u5e74)",
+   "Mundane Mann",
+   "Stylish Touzoku Slayer (Stylish Bandit Slayer)"
+  ]
  },
  {
   "id": 65239,
@@ -1836,7 +2953,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65239-2S3t2vSyUew9.png",
   "series": "Akame ga Kill!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Empire's Strongest General",
+   "Ice Queen"
+  ]
  },
  {
   "id": 1086,
@@ -1850,9 +2971,13 @@ const GENERIC_CHARACTERS =
   "id": 29,
   "name": "Leorio Paradinight",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b29-RgzoSeKmDYzl.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Leorio Paradiknight",
+   "Leorio Paladiknight"
+  ]
  },
  {
   "id": 14864,
@@ -1860,7 +2985,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14864-MMntDWi2EkyR.png",
   "series": "Dororo to Hyakkimaru",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dr. Shimizu",
+   "Dr.Hyakki",
+   "Maruo Hyakki",
+   "Ben",
+   "Hyaku-sama"
+  ]
  },
  {
   "id": 136072,
@@ -1868,7 +3000,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136072-xVwyRUKdpybi.png",
   "series": "Kimetsu no Yaiba",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Love Hashira",
+   "Love Pillar",
+   "The Eightfold Girl"
+  ]
  },
  {
   "id": 2535,
@@ -1876,7 +3013,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2535-Xq9WKNPJQEt3.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yondaime Hokage",
+   "Fourth Hokage",
+   "Konoha's Yellow Flash"
+  ]
  },
  {
   "id": 2423,
@@ -1884,7 +3026,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2423-RO5MyoXSA9OL.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ero-Sennin (\u30a8\u30ed\u4ed9\u4eba)",
+   "Toad Sage",
+   "Pervy Sage"
+  ]
  },
  {
   "id": 125619,
@@ -1900,7 +3047,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89277-xBGb4B5YISXg.png",
   "series": "One Punch Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Garo",
+   "Human Monster",
+   "Hero Hunter",
+   "Wolf Man"
+  ]
  },
  {
   "id": 168774,
@@ -1916,7 +3069,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b261674-a8tJYvtzqWgC.png",
   "series": "Slow Loop",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Archangel of Shimokitazawa"
+  ]
  },
  {
   "id": 724,
@@ -1924,7 +3080,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b724-GFGgI9AJQkfy.jpg",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Long-Nose",
+   "Usohachi",
+   "Usoland",
+   "Sogeking",
+   "Lysop"
+  ]
  },
  {
   "id": 21044,
@@ -1932,7 +3095,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b21044-K0pEhdOEmAwG.png",
   "series": "3-gatsu no Lion",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Zero",
+   "Rookie King"
+  ]
  },
  {
   "id": 218648,
@@ -1948,7 +3115,19 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b50389-gIhJkyk8xj1P.png",
   "series": "High School DxD",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Buchou (\u90e8\u9577)",
+   "President",
+   "Ria",
+   "Crimson-Haired Ruin Princess",
+   "Princess of Destruction",
+   "Princess of Gremory",
+   "Devil Princess",
+   "Switch Princess",
+   "Heiress of the House of Gremory",
+   "Red Dragon Emperor's Legal Wife"
+  ]
  },
  {
   "id": 162213,
@@ -1964,7 +3143,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67069-6B3xnHfJUO0F.png",
   "series": "Yahari Ore no Seishun Love Come wa Machigatteiru.",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gahama-chan"
+  ]
  },
  {
   "id": 121052,
@@ -1972,7 +3154,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121052-bQZT3nIvaryX.png",
   "series": "Youjo Senki",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Devil of the Rhine",
+   "White Silver",
+   "Tanya von Degurechaff",
+   "Rusted Silver",
+   "Mad Dog"
+  ]
  },
  {
   "id": 67321,
@@ -1980,7 +3169,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67321-cxP7NdI0JC3H.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Suga",
+   "Mr. Refreshing"
+  ]
  },
  {
   "id": 19565,
@@ -1988,7 +3181,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b19565-7gMiEAm7NGNK.png",
   "series": "K-ON!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Onee-chan"
+  ]
  },
  {
   "id": 24482,
@@ -1996,7 +3192,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24482-E6087V4uAVqL.jpg",
   "series": "Ao no Exorcist",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Son of Satan"
+  ]
  },
  {
   "id": 4963,
@@ -2004,7 +3203,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4963-7ZMcCtXW5hkY.png",
   "series": "Mirai Nikki OVA",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Second",
+   "Yunocchi"
+  ]
  },
  {
   "id": 121725,
@@ -2012,7 +3215,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121725-LQciVJOjnMVh.png",
   "series": "Yakusoku no Neverland",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Antenna"
+  ]
  },
  {
   "id": 172759,
@@ -2036,7 +3242,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b674-w8wCh0A5Qa8R.png",
   "series": "Gintama",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gura",
+   "China Girl",
+   "Leader",
+   "Gurako"
+  ]
  },
  {
   "id": 53641,
@@ -2044,7 +3256,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b53641-F3GYG0k2xCBj.png",
   "series": "Nisemonogatari",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Suzuki"
+  ]
  },
  {
   "id": 1555,
@@ -2052,7 +3267,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1555-Q41GLTV3FvYF.png",
   "series": "NARUTO",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Byakugan Princess (\u767d\u773c\u306e\u59eb)",
+   "Byakugan no Hime"
+  ]
  },
  {
   "id": 19566,
@@ -2068,7 +3287,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b157116-2jYQf3y8NeTZ.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Choso"
+  ]
  },
  {
   "id": 203384,
@@ -2092,7 +3314,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b82525-sKk2FGRKN4aK.png",
   "series": "No Game No Life",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Blank"
+  ]
  },
  {
   "id": 601,
@@ -2100,7 +3325,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n601-CVySkaFQgsPW.jpg",
   "series": "HELLSING",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Count",
+   "No-Life King",
+   "Monster",
+   "Vlad Tepes",
+   "Vlad III Dracula",
+   "The Bird of Hermes",
+   "Dracula",
+   "Arucard"
+  ]
  },
  {
   "id": 264529,
@@ -2116,7 +3351,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120974-cZHsjS8DX9WW.png",
   "series": "Kobayashi-san Chi no Maidragon",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kanna Kobayashi (\u5c0f\u6797\u30ab\u30f3\u30ca)"
+  ]
  },
  {
   "id": 89363,
@@ -2130,17 +3368,25 @@ const GENERIC_CHARACTERS =
   "id": 195120,
   "name": "Reki Kyan",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b195120-ndTbU0TpVLWw.png",
-  "series": "SK∞",
+  "series": "SK\u221e",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Reki (\u30ec\u30ad)",
+   "Slime-san (\u30b9\u30e9\u30a4\u30e0\u3055\u3093)",
+   "Mr. Slime"
+  ]
  },
  {
   "id": 90112,
   "name": "Shun Kaidou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90112-KVRcvbKBKLxY.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no \u03a8-nan (ONA)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Jet-Black Wing"
+  ]
  },
  {
   "id": 120462,
@@ -2148,7 +3394,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n120462-oSWdz2MhkbDE.png",
   "series": "Enen no Shouboutai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Devil's Footprints",
+   "Akuma"
+  ]
  },
  {
   "id": 88817,
@@ -2156,7 +3406,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88817-Aku5CuN6wO2z.png",
   "series": "Tate no Yuusha no Nariagari",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shield Hero",
+   "Saint Merchant",
+   "Shield Demon King",
+   "Grand Duke"
+  ]
  },
  {
   "id": 162969,
@@ -2180,7 +3436,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89221-gSF2a4gPbG4m.png",
   "series": "Boku no Hero Academia",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ochaco Uraraka",
+   "Uravity (\u30a6\u30e9\u30d3\u30c6\u30a3)"
+  ]
  },
  {
   "id": 909,
@@ -2188,7 +3448,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b909-slhoFBon7oiH.jpg",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ken-chan",
+   "Kenny",
+   "Demon of Battle"
+  ]
  },
  {
   "id": 89122,
@@ -2204,7 +3469,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129330-ZUtYw4n7N0uH.png",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu 2nd Season",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Witch of Greed"
+  ]
  },
  {
   "id": 140856,
@@ -2228,7 +3496,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n130716-5564jUgQxK9a.png",
   "series": "Enen no Shouboutai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sister"
+  ]
  },
  {
   "id": 35253,
@@ -2236,7 +3507,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b35253-u6QVgLLyHq2W.png",
   "series": "Steins;Gate",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mayushii",
+   "Mayu",
+   "Lab Member 002"
+  ]
  },
  {
   "id": 18344,
@@ -2260,7 +3536,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10863-DsfonbP2CATa.png",
   "series": "Kuroshitsuji",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black",
+   "Sebas-chan",
+   "Bassy",
+   "Sebby"
+  ]
  },
  {
   "id": 125736,
@@ -2268,7 +3550,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125736-LIaof9PjXvH3.png",
   "series": "Majo no Tabitabi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Witch of Ashes",
+   "Ashen Witch"
+  ]
  },
  {
   "id": 136844,
@@ -2276,7 +3562,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136844-UoqciaLvz5Jf.png",
   "series": "Given",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mafuyu Sato"
+  ]
  },
  {
   "id": 89226,
@@ -2284,7 +3573,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89226-qGXqFthO4SM3.jpg",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hand Guy"
+  ]
  },
  {
   "id": 5187,
@@ -2292,7 +3584,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5187-y1OEdRu9sPN2.png",
   "series": "FAIRY TAIL",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Salamander (\u30b5\u30e9\u30de\u30f3\u30c0\u30fc)",
+   "Dragon Slayer"
+  ]
  },
  {
   "id": 89590,
@@ -2300,7 +3596,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89590-K3RdKR4VnYM4.png",
   "series": "Vanitas no Carte",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Vampire of the Blue Moon"
+  ]
  },
  {
   "id": 13701,
@@ -2308,7 +3607,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13701-aFJLRPGAWAae.png",
   "series": "Toaru Majutsu no Index",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Railgun",
+   "Number Three",
+   "Tokiwadai's Ace",
+   "Strongest Electromaster",
+   "Electric Princess",
+   "Biri-Biri (\u30d3\u30ea\u30d3\u30ea)"
+  ]
  },
  {
   "id": 282389,
@@ -2324,7 +3631,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b43815-WRbln8jA1mPk.jpg",
   "series": "Akatsuki no Yona",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Thunder Beast",
+   "Dark Dragon",
+   "Darkness Dragon",
+   "Black Dragon"
+  ]
  },
  {
   "id": 184313,
@@ -2340,7 +3653,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b727-wUJx7M1z5xON.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Red-Haired",
+   "Akagami",
+   "Shanks den r\u00f8de"
+  ]
  },
  {
   "id": 183885,
@@ -2348,7 +3666,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b183885-HOmw8CqcJdv3.jpg",
   "series": "[Oshi no Ko]",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aqua",
+   "Prodigy Baby"
+  ]
  },
  {
   "id": 268676,
@@ -2372,7 +3694,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b162-kfdfqsX7Xjf0.png",
   "series": "TRIGUN",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Humanoid Typhoon",
+   "Eriks",
+   "Tongari",
+   "Needle Noggin",
+   "Valentinez Alkalinella Xifax Sicidabohertz Gombigobilla Blue Stradivari Talentrent Pierre Andri Charton-Haymoss Ivanovici Baldeus George Doitzel Kaiser III"
+  ]
  },
  {
   "id": 51347,
@@ -2380,7 +3709,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b51347-YMb9fndAriXd.png",
   "series": "High School DxD",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   " Priestess of Thunder and Light",
+   "The Ultimate Sadist",
+   "The President's Hitman"
+  ]
  },
  {
   "id": 89103,
@@ -2388,7 +3722,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89103-ZsnA0r77GHsR.png",
   "series": "Overlord",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ainz Ooal Gown",
+   "Dark Warrior Momon",
+   "Great One",
+   "The One",
+   "Supreme Being",
+   "Raven Black Hero",
+   "Demon God",
+   "Great Sorcerer King",
+   "Undead King"
+  ]
  },
  {
   "id": 1120,
@@ -2404,15 +3749,24 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b17706-9OF3wt3wnO6s.png",
   "series": "Oyasumi Punpun",
   "gender": "male",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Punpun Punyama (\u30d7\u30f3\u5c71\u30d7\u30f3\u30d7\u30f3)",
+   "Ono-D",
+   "Takashi Fujikawa"
+  ]
  },
  {
   "id": 195116,
   "name": "Langa Hasegawa",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b195116-C2Y5jRPiTSng.png",
-  "series": "SK∞",
+  "series": "SK\u221e",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ranga",
+   "Snow (\u30b9\u30ce\u30fc)"
+  ]
  },
  {
   "id": 1261,
@@ -2420,7 +3774,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1261-HYRv3HpsSL92.jpg",
   "series": "Shin Seiki Evangelion",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kaoru",
+   "Tabris"
+  ]
  },
  {
   "id": 87655,
@@ -2428,7 +3786,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87655-50i1Y554Vs3z.png",
   "series": "Dungeon ni Deai wo Motomeru no wa Machigatteiru Darou ka",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sword Princess",
+   "War Princess"
+  ]
  },
  {
   "id": 126374,
@@ -2444,7 +3806,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3180-ITMGBLWNBOgV.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kono Yo no Kyuuseishu (\u3053\u306e\u4e16\u306e\u6551\u4e16\u4e3b)",
+   "Saviour of this World",
+   "Yogen no Ko (\u4e88\u8a00\u306e\u5b50)",
+   "Child of the Prophecy",
+   "Sanninme no Rikudou (\u4e09\u4eba\u76ee\u306e\u516d\u9053)",
+   "Third Six Paths",
+   "Kami (\u795e)",
+   "God"
+  ]
  },
  {
   "id": 43814,
@@ -2460,7 +3832,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89199-h8tHKG8vKPNZ.png",
   "series": "Bungou Stray Dogs",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Silent Rabid Dog",
+   "Black-Fanged Hellhound",
+   "Ability User of Destruction and Disaster"
+  ]
  },
  {
   "id": 127445,
@@ -2484,7 +3861,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120970-knjWLdlQIs1y.jpg",
   "series": "Kobayashi-san Chi no Maidragon",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tooru"
+  ]
  },
  {
   "id": 306,
@@ -2492,7 +3872,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b306-oUTOO45xInXt.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bushy Brows",
+   "The Green Beast of Konoha"
+  ]
  },
  {
   "id": 170266,
@@ -2500,7 +3884,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b170266-bBXPkNJnd3mg.png",
   "series": "Chainsaw Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chainsaw no Akuma (\u30c1\u30a7\u30f3\u30bd\u30fc\u306e\u60aa\u9b54)",
+   "Chainsaw Devil"
+  ]
  },
  {
   "id": 137260,
@@ -2508,7 +3896,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137260-xmSis8FmwhEE.png",
   "series": "Jigokuraku",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Garan no Gabimaru (\u304c\u3089\u3093\u306e\u753b\u7709\u4e38)",
+   "Gabimaru the Hollow"
+  ]
  },
  {
   "id": 52723,
@@ -2516,7 +3908,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b52723-YbLFn4JmoAVQ.png",
   "series": "Nisekoi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dera-chan",
+   "Onee-chan"
+  ]
  },
  {
   "id": 139038,
@@ -2532,7 +3928,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87287-cBUVUJNbvfvT.png",
   "series": "Owari no Seraph",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mika"
+  ]
  },
  {
   "id": 46490,
@@ -2548,7 +3947,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89249-Ygc30RlYoFta.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Stun Gun Hero: Chargezuma (\u30b9\u30bf\u30f3\u30ac\u30f3\u30d2\u30fc\u30ed\u30fc\u30fb\u30c1\u30e3\u30fc\u30b8\u30ba\u30de)",
+   "Stun Gun Hero: Chargebolt"
+  ]
  },
  {
   "id": 496,
@@ -2556,7 +3959,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b496-GI0waavDjyk3.png",
   "series": "Fate/stay night",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Emiyan",
+   "Sherou"
+  ]
  },
  {
   "id": 144594,
@@ -2564,7 +3971,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b144594-0dbO1NSYeZ12.png",
   "series": "Chainsaw Man",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Beni"
+  ]
  },
  {
   "id": 124696,
@@ -2572,7 +3982,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124696-du2Kszxelh1S.png",
   "series": "Ijiranaide, Nagatoro-san",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hayacchi",
+   "Toro-chan"
+  ]
  },
  {
   "id": 136069,
@@ -2580,7 +3994,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136069-6PLglx4tETUX.png",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mist Hashira",
+   "Mist Pillar"
+  ]
  },
  {
   "id": 284163,
@@ -2596,7 +4014,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b84781-sNnhOZ1SZ66f.png",
   "series": "Kami no Tou: Tower of God",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Koon Aguero Agnis",
+   "Blue Turtle",
+   "A.A",
+   "Mr. Mask"
+  ]
  },
  {
   "id": 284158,
@@ -2604,7 +4028,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b284158-z1uGKC3IYVa1.png",
   "series": "Cyberpunk: Edgerunners",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "D",
+   "Davey"
+  ]
  },
  {
   "id": 19,
@@ -2612,7 +4040,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b19-7Ot7WSWZ7LKF.png",
   "series": "Ouran Koukou Host Club",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tamaki Suoh",
+   "Tama-chan",
+   "Daddy",
+   "The Host Club King",
+   "Lonesome Prince",
+   "Lord",
+   "Boss",
+   "Milord"
+  ]
  },
  {
   "id": 8945,
@@ -2620,15 +4058,22 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/8945-gyPfrVpCb5CF.jpg",
   "series": "JoJo no Kimyou na Bouken (2000)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Noriaki Kakyoin",
+   "Tenmei Kakyoin"
+  ]
  },
  {
   "id": 3195,
   "name": "Feitan Portor",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/3195.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Fei"
+  ]
  },
  {
   "id": 130715,
@@ -2636,7 +4081,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n130715-IYNBAHBQa14y.png",
   "series": "Enen no Shouboutai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Stupid",
+   "Knight King"
+  ]
  },
  {
   "id": 69407,
@@ -2644,7 +4093,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b69407-eyIvpsFPeARS.png",
   "series": "Shigatsu wa Kimi no Uso",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Human Metronome"
+  ]
  },
  {
   "id": 2456,
@@ -2652,7 +4104,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2456-rTjIXMLPHTu2.jpg",
   "series": "Devilman",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Devilman"
+  ]
  },
  {
   "id": 88708,
@@ -2666,7 +4121,7 @@ const GENERIC_CHARACTERS =
   "id": 37832,
   "name": "Madoka Kaname",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b37832-lzVj5IkUciLd.jpg",
-  "series": "Mahou Shoujo Madoka☆Magica",
+  "series": "Mahou Shoujo Madoka\u2606Magica",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -2692,7 +4147,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b72921-XDHNd1wflN6P.png",
   "series": "Nanatsu no Taizai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dragon's Sin of Wrath",
+   "Captain"
+  ]
  },
  {
   "id": 2087,
@@ -2700,7 +4159,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2087-l5WP4W4vmfJJ.png",
   "series": "Fate/stay night",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wrought Iron Hero (\u932c\u9244\u306e\u82f1\u970a)",
+   "Faker (\u30d5\u30a7\u30a4\u30ab\u30fc)"
+  ]
  },
  {
   "id": 208,
@@ -2708,7 +4171,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b208-5TmAqqh82wNe.png",
   "series": "Fruits Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yuki Soma",
+   "Prince Yuki",
+   "Yunyun"
+  ]
  },
  {
   "id": 55147,
@@ -2716,7 +4184,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b55147-1fCU8lONEuZQ.png",
   "series": "Sword Art Online II",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sinon (\u30b7\u30ce\u30f3)",
+   "Hecate"
+  ]
  },
  {
   "id": 8439,
@@ -2730,9 +4202,12 @@ const GENERIC_CHARACTERS =
   "id": 124586,
   "name": "Rin Shima",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124586-9lGoHg1zZkFr.png",
-  "series": "Yuru Camp△",
+  "series": "Yuru Camp\u25b3",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shimarin"
+  ]
  },
  {
   "id": 5627,
@@ -2740,7 +4215,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5627-av8oD3zhKvDl.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dead Bones",
+   "Soul King",
+   "Satan-sama",
+   "Boneland",
+   "Honekichi",
+   "Bonekichi",
+   "The Starving Skeleton",
+   "Humming Brook"
+  ]
  },
  {
   "id": 18,
@@ -2748,7 +4233,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18-SAz5kAo2Fhm1.png",
   "series": "Ouran Koukou Host Club",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Haru-chan",
+   "Honor Student",
+   "Little Piglet",
+   "Host Club Dog",
+   "Lumpy",
+   "Poor Kitten"
+  ]
  },
  {
   "id": 73227,
@@ -2756,7 +4249,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b73227-AY45waaQAos0.png",
   "series": "Danganronpa 3: The End of Kibougamine Gakuen - Zetsubou-hen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Servant",
+   "Meshitsukai (\u53ec\u4f7f\u3044)",
+   "Ultimate Lucky Student",
+   "Super High School Level Good Luck (\u8d85\u9ad8\u6821\u7d1a\u306e\u5e78\u904b)"
+  ]
  },
  {
   "id": 21928,
@@ -2764,7 +4263,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b21928-4zjiuRL3omAo.jpg",
   "series": "BANANA FISH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ei",
+   "Ei-Chan"
+  ]
  },
  {
   "id": 121514,
@@ -2780,7 +4283,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b144674-Y2Y6BlAPu22v.png",
   "series": "Blue Period",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yakkun"
+  ]
  },
  {
   "id": 701,
@@ -2788,7 +4294,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b701-gNKbnxT6dbrf.png",
   "series": "NANA",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hachi",
+   "Hachiko"
+  ]
  },
  {
   "id": 82523,
@@ -2796,7 +4306,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b82523-JB9oevKyXWfc.png",
   "series": "No Game No Life",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Blank"
+  ]
  },
  {
   "id": 122687,
@@ -2804,7 +4317,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122687-jl1wk9rjO57e.png",
   "series": "Kakegurui",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Meari"
+  ]
  },
  {
   "id": 53901,
@@ -2828,7 +4344,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22052-beyfl4AyMGhn.png",
   "series": "Bakemonogatari",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lost Snail"
+  ]
  },
  {
   "id": 151486,
@@ -2836,7 +4355,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b151486-rAFZZZm0Byu0.png",
   "series": "Yuukoku no Moriarty",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Will",
+   "Liam",
+   "Will-bo",
+   "Little Will"
+  ]
  },
  {
   "id": 75284,
@@ -2844,7 +4369,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b75284-4Hiyq7DOwvy7.png",
   "series": "Shokugeki no Souma",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Erina-cchi",
+   "God Tongue"
+  ]
  },
  {
   "id": 61371,
@@ -2852,7 +4381,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b61371-rhWX0wz2DDs3.jpg",
   "series": "Sakurasou no Pet na Kanojo",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mashiron"
+  ]
  },
  {
   "id": 63845,
@@ -2860,7 +4392,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b63845-43rWjycWhYFF.png",
   "series": "Danganronpa: Kibou no Gakuen to Zetsubou no Koukousei - The Animation",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kyoko Kirigiri",
+   "Miss Conan"
+  ]
  },
  {
   "id": 16342,
@@ -2868,7 +4404,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b16342-kVOF6V5Q94go.png",
   "series": "ONE PIECE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hebihime (\u86c7\u59eb)",
+   "Snake Princess",
+   "Kaizoku Jotei (\u6d77\u8cca\u5973\u5e1d)",
+   "Pirate Empress",
+   "Hammock"
+  ]
  },
  {
   "id": 4368,
@@ -2884,7 +4427,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b55133-S7lRrP0gKXpX.png",
   "series": "Hyouka",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chi-chan",
+   "Chitandael"
+  ]
  },
  {
   "id": 131106,
@@ -2892,7 +4439,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b131106-ZJOpYOpurcYS.png",
   "series": "Tonikaku Kawaii",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsukasa Tsukuyomi (\u6708\u8aad\u53f8)"
+  ]
  },
  {
   "id": 6977,
@@ -2900,7 +4450,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b6977-rCtlFRoYgE07.png",
   "series": "Kimi ni Todoke",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sadako"
+  ]
  },
  {
   "id": 89223,
@@ -2908,7 +4461,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89223-5762vburxnlz.png",
   "series": "Boku no Hero Academia",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsu",
+   "Rainy Season Hero: Froppy (\u6885\u96e8\u5165\u308a\u30d2\u30fc\u30ed\u30fc\u30d5\u30ed\u30c3\u30d4\u30fc)",
+   "Miss Ribbit (\u30b1\u30ed\u30b1\u30ed)"
+  ]
  },
  {
   "id": 123328,
@@ -2916,7 +4474,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123328-NZApzipm9Qwy.png",
   "series": "Satsuriku no Tenshi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Zack"
+  ]
  },
  {
   "id": 5186,
@@ -2924,7 +4485,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5186-izgXf2S86K9u.png",
   "series": "FAIRY TAIL",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Luigi",
+   "Lu-chan",
+   "Blondie"
+  ]
  },
  {
   "id": 138789,
@@ -2932,7 +4498,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138789-AhE8m0LWjE7E.png",
   "series": "Ore dake Level Up na Ken",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shizuku Kousaka (\u5411\u5742\u96eb)",
+   "Blade Dancer"
+  ]
  },
  {
   "id": 67325,
@@ -2940,7 +4510,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67325-yPkbZJkofp5w.jpg",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryu",
+   "Ryuu",
+   "Monk Cut"
+  ]
  },
  {
   "id": 4606,
@@ -2948,7 +4523,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4606-61r9h3WUrkA9.png",
   "series": "Clannad Movie",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ginga Daiuchuu",
+   "Eternal",
+   "Ethanol"
+  ]
  },
  {
   "id": 123213,
@@ -2956,7 +4536,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123213-jUfrGBXfW7BL.png",
   "series": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Muddykita"
+  ]
  },
  {
   "id": 90181,
@@ -2964,7 +4547,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90181-wRPm0OEaucmw.png",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Beako",
+   "Betty",
+   "Campaign Slayer"
+  ]
  },
  {
   "id": 13084,
@@ -2980,7 +4568,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b81931-fmouMoprPVbV.png",
   "series": "One Punch Man",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hellish Blizzard",
+   "Jigoku no Fubuki (\u5730\u7344\u306e\u30d5\u30d6\u30ad)"
+  ]
  },
  {
   "id": 180887,
@@ -2988,7 +4580,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b180887-s9sJWFuO18J8.png",
   "series": "Zenchiteki na Dokusha no Shiten kara",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dokja"
+  ]
  },
  {
   "id": 122189,
@@ -2996,7 +4591,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122189-ai5CYyRv1CAH.png",
   "series": "Wotaku ni Koi wa Muzukashii",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hiro",
+   "Hirotakantius"
+  ]
  },
  {
   "id": 310,
@@ -3004,7 +4603,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b310-3GLKM2I3EiRf.png",
   "series": "SLAM DUNK",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tensai Baskettoman",
+   "The Rebound King",
+   "Basket Genius"
+  ]
  },
  {
   "id": 152231,
@@ -3012,7 +4616,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b152231-vHM4WlaYIVB5.jpg",
   "series": "Chainsaw Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Angel Devil",
+   "Angel (\u30a8\u30f3\u30b8\u30a7\u30eb)"
+  ]
  },
  {
   "id": 222593,
@@ -3020,7 +4628,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b222593-qBqUvpodooAI.png",
   "series": "Dandadan",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Okarun (\u30aa\u30ab\u30eb\u30f3)"
+  ]
  },
  {
   "id": 145343,
@@ -3028,7 +4639,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b145343-vRrkdWEUXwYM.jpg",
   "series": "Tokyo Revengers",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Poindexter"
+  ]
  },
  {
   "id": 423,
@@ -3036,7 +4650,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b423-AmVFCaJJOBsc.png",
   "series": "Kenpuu Denki Berserk",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Elaine",
+   "Black Witch",
+   "Thousand Soldiers' Commander"
+  ]
  },
  {
   "id": 425,
@@ -3068,7 +4687,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136843-z6IjhOi636WT.png",
   "series": "Given",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rikka",
+   "Uecchi",
+   "Ue-sama"
+  ]
  },
  {
   "id": 127278,
@@ -3076,7 +4700,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127278-0qCQciTkPOMS.jpg",
   "series": "Kusuriya no Hitorigoto",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Renshi"
+  ]
  },
  {
   "id": 87511,
@@ -3092,7 +4719,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89897-5vU7N3ayiKRr.png",
   "series": "Boku no Hero Academia",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kyoka Jiro",
+   "Hearing Hero: Earphone Jack"
+  ]
  },
  {
   "id": 24596,
@@ -3100,7 +4731,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24596-IKSguezbPH9D.png",
   "series": "Durarara!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Iza-nii"
+  ]
  },
  {
   "id": 90225,
@@ -3116,7 +4750,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1081-xLTqHfLL2I2W.png",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Schiffer"
+  ]
  },
  {
   "id": 128299,
@@ -3124,7 +4761,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128299-eMEsWazNXE56.png",
   "series": "Boku no Hero Academia 4",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hawks (\u30db\u30fc\u30af\u30b9)"
+  ]
  },
  {
   "id": 144596,
@@ -3132,7 +4772,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b144596-kvL6SD2litJu.png",
   "series": "Chainsaw Man",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Vomit Girl",
+   "Gero Onna (\u30b2\u30ed\u5973)"
+  ]
  },
  {
   "id": 1533,
@@ -3140,7 +4784,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1533-tSqUrj2DOK5p.png",
   "series": "Gintama",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Zura",
+   "Fruit Punch Samurai",
+   "Zurako",
+   "Captain Katsura",
+   "Katsuo",
+   "ObaZ"
+  ]
  },
  {
   "id": 36820,
@@ -3148,7 +4800,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b36820-bW2c6TbIqgKO.jpg",
   "series": "Kuroko no Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mine-chin",
+   "Aominecchi",
+   "Dai-chan",
+   "Ahomine"
+  ]
  },
  {
   "id": 125934,
@@ -3156,7 +4814,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125934-HZkorJEHedRy.png",
   "series": "Boku no Hero Academia 3",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Suneater (\u30b5\u30f3\u30a4\u30fc\u30bf\u30fc)"
+  ]
  },
  {
   "id": 87886,
@@ -3172,7 +4833,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88346-h8kCL93AXj4n.png",
   "series": "Mushoku Tensei: Isekai Ittara Honki Dasu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sylphy"
+  ]
  },
  {
   "id": 21173,
@@ -3180,7 +4844,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b21173-0RB5dOJdGt9y.png",
   "series": "K-ON!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Azu-nyan",
+   "Azu-chan",
+   "Captain Azusa"
+  ]
  },
  {
   "id": 123527,
@@ -3188,7 +4857,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123527-rz0OotcLY0E4.png",
   "series": "Boku no Hero Academia 3",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lemillion (\u30eb\u30df\u30ea\u30aa\u30f3)"
+  ]
  },
  {
   "id": 68315,
@@ -3196,7 +4868,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b68315-f9RBjyJCoj95.jpg",
   "series": "PSYCHO-PASS",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kou"
+  ]
  },
  {
   "id": 63,
@@ -3204,7 +4879,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/63-xloedtYxiJ2E.jpg",
   "series": "Hagane no Renkinjutsushi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Win",
+   "Mechanic Otaku",
+   "Automail Geek",
+   "Crazy Gearhead"
+  ]
  },
  {
   "id": 122064,
@@ -3220,7 +4901,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b70-k4bCgDspyOdI.png",
   "series": "Hagane no Renkinjutsushi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   " Lieutenant",
+   "Elizabeth",
+   "The Hawk's Eye"
+  ]
  },
  {
   "id": 2754,
@@ -3228,7 +4914,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2754-B4gGSlNYgsyh.jpg",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Joker",
+   "Doffy",
+   "Heavenly Demon"
+  ]
  },
  {
   "id": 22369,
@@ -3236,7 +4927,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22369-zC7OgGbfO7b6.jpg",
   "series": "Angel Beats!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tenshi (\u5929\u4f7f)",
+   "Angel"
+  ]
  },
  {
   "id": 141694,
@@ -3244,7 +4939,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b141694-0COi0GVXPuEn.png",
   "series": "Kimetsu no Yaiba: Mugen Ressha-hen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Upper Moon Three"
+  ]
  },
  {
   "id": 209532,
@@ -3268,7 +4966,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128652-2LLhX7bBtwyC.png",
   "series": "Jibaku Shounen Hanako-kun",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Daikon"
+  ]
  },
  {
   "id": 42528,
@@ -3276,7 +4977,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b42528-WS92Fmtwx7x0.png",
   "series": "Magi: The labyrinth of magic",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sin",
+   "High King of Seven Seas",
+   "Stupid King",
+   "Legendary Dungeon Capturer",
+   "The Sailor",
+   "The Conqueror"
+  ]
  },
  {
   "id": 127596,
@@ -3292,7 +5001,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b81853-CY99xwoziDG4.png",
   "series": "Death Billiards",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bartender",
+   "Dekim"
+  ]
  },
  {
   "id": 136548,
@@ -3300,7 +5013,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136548-FjWExC5ScBqW.jpg",
   "series": "Fumetsu no Anata e",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Immortal",
+   "Holy Fushi",
+   "Immortal Demon",
+   "Fu"
+  ]
  },
  {
   "id": 88576,
@@ -3308,7 +5027,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88576-NWkotUiJ3mK3.png",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ram-chi",
+   "Ramu"
+  ]
  },
  {
   "id": 19568,
@@ -3316,7 +5039,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b19568-pF5UBfB6U8G2.png",
   "series": "K-ON!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mugi (\u3080\u304e)",
+   "Tsumugi-ojousama",
+   "Mistress"
+  ]
  },
  {
   "id": 18769,
@@ -3324,7 +5052,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18769-1SOeKdgkjBef.png",
   "series": "Kuroko no Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Phantom Sixth Member",
+   "Tetsu",
+   "Kurokocchi",
+   "Kuro-chin"
+  ]
  },
  {
   "id": 2671,
@@ -3332,7 +5066,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/2671-DflaemZz0xJo.png",
   "series": "Cardcaptor Sakura",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sakura Avalon",
+   "Master of the Clow",
+   "Sakura Gauthier"
+  ]
  },
  {
   "id": 127292,
@@ -3340,7 +5079,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127292-MAWgxbS0Cbrs.png",
   "series": "Dungeon Meshi CM",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Marushiru"
+  ]
  },
  {
   "id": 62481,
@@ -3348,7 +5090,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b62481-ZZDa7vn17lMU.png",
   "series": "Shingeki no Kyojin",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Christa",
+   "Cattle-Taming Goddess"
+  ]
  },
  {
   "id": 90202,
@@ -3356,7 +5102,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90202-1H7FIX2hDmYd.png",
   "series": "Nanatsu no Taizai: Imashime no Fukkatsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lion's Sin of Pride",
+   "Master of the Sun",
+   "Thin Moustache"
+  ]
  },
  {
   "id": 130713,
@@ -3364,7 +5115,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b130713-TgLx8rgtGpXV.png",
   "series": "Enen no Shouboutai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Oggress"
+  ]
  },
  {
   "id": 22054,
@@ -3372,7 +5126,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/22054-n6Jsvp80bUhD.jpg",
   "series": "Bakemonogatari",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Suruga Gaen",
+   "Ruga",
+   "Gaen's Legacy"
+  ]
  },
  {
   "id": 158386,
@@ -3380,7 +5139,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b158386-orMtLSB0aNW8.png",
   "series": "Fugou Keiji: Balance:UNLIMITED",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Daisuke Kambe"
+  ]
  },
  {
   "id": 260328,
@@ -3402,9 +5164,12 @@ const GENERIC_CHARACTERS =
   "id": 729,
   "name": "Yuusuke Urameshi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b729-V6GlADOEZv3x.png",
-  "series": "Yuu☆Yuu☆Hakusho",
+  "series": "Yuu\u2606Yuu\u2606Hakusho",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yusuke Urameshi"
+  ]
  },
  {
   "id": 4092,
@@ -3420,7 +5185,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12323-NAoqDYOn2RSo.png",
   "series": "Kiseijuu: Sei no Kakuritsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shin"
+  ]
  },
  {
   "id": 41026,
@@ -3428,7 +5196,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b41026-WkbhSjdpZISG.jpg",
   "series": "Ao Haru Ride",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kou Tanaka"
+  ]
  },
  {
   "id": 369,
@@ -3436,7 +5207,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b369-NDFi2A2BzqO6.png",
   "series": "Fruits Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hatsuharu Soma",
+   "Black Haru",
+   "White Haru",
+   "Haru"
+  ]
  },
  {
   "id": 2751,
@@ -3444,7 +5221,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2751-NnzW0N2vCTjX.jpg",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shirohige (\u767d\u3072\u3052)",
+   "Whitebeard",
+   "Strongest Man in the World",
+   "The Man closest to One Piece",
+   "Ward Newgate"
+  ]
  },
  {
   "id": 11804,
@@ -3452,7 +5236,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b11804-iGb4oJ99VCcz.jpg",
   "series": "Ashita no Joe",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aniki"
+  ]
  },
  {
   "id": 199892,
@@ -3460,7 +5247,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b199892-IUa7rBAT4j9H.png",
   "series": "Wonder Egg Priority",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ai Ohto"
+  ]
  },
  {
   "id": 83019,
@@ -3484,7 +5274,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90224-sSpYZe1avAKW.jpg",
   "series": "Yuuri!!! on ICE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yurio",
+   "The Fairy of Russia"
+  ]
  },
  {
   "id": 48391,
@@ -3492,7 +5286,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b48391-SuJot8cVKjHj.png",
   "series": "Nisekoi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gorilla",
+   "Mistress",
+   "Honey",
+   "Half-san",
+   "Ojou-sama"
+  ]
  },
  {
   "id": 144665,
@@ -3508,7 +5309,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n64-ChX6ZzHHjXqA.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Cyborg",
+   "Bakanky",
+   "Iron Man",
+   "Fraland",
+   "Franosuke",
+   "Frankie"
+  ]
  },
  {
   "id": 266041,
@@ -3524,7 +5333,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12531-joBTjTP3fonc.png",
   "series": "Kuroshitsuji",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Smile",
+   "Young Master",
+   "Bocchan",
+   "The Queen's Watchdog",
+   "Earl"
+  ]
  },
  {
   "id": 8456,
@@ -3540,7 +5356,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2707-YKWmn4q87oF8.png",
   "series": "Dragon Ball GT",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kid Trunks",
+   "Future Trunks"
+  ]
  },
  {
   "id": 89898,
@@ -3548,7 +5368,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89898-yAYDmPQPSOTV.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Jet-Black Hero: Tsukuyomi",
+   "Shikkoku Hero: Tsukuyomi (\u6f06\u9ed2\u30d2\u30fc\u30ed\u30fc \u30c4\u30af\u30e8\u30df)"
+  ]
  },
  {
   "id": 22370,
@@ -3556,7 +5380,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22370-pNQxFEv1K7lS.jpg",
   "series": "Angel Beats!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yurippe"
+  ]
  },
  {
   "id": 130751,
@@ -3572,7 +5399,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b11919-a7TkrWsP3H1Z.png",
   "series": "Soul Eater",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chrona",
+   "Demon Sword"
+  ]
  },
  {
   "id": 89197,
@@ -3580,7 +5411,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89197-vB5kP72ruckV.png",
   "series": "Bungou Stray Dogs",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Jinko",
+   "Weretiger",
+   "White Reaper"
+  ]
  },
  {
   "id": 24595,
@@ -3588,7 +5424,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24595-GIy3ql42WQfY.png",
   "series": "Durarara!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shizu-chan"
+  ]
  },
  {
   "id": 123181,
@@ -3596,7 +5435,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123181-t0pV6LtaDUf6.png",
   "series": "Grand Blue",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chii-chan"
+  ]
  },
  {
   "id": 89241,
@@ -3604,7 +5446,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89241-Q8KzAfX4Qe2y.png",
   "series": "Boku no Hero Academia",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yao-momo",
+   "Bonbatsu Hero Creati (\u4e07\u7269\u30d2\u30fc\u30ed\u30fc\u30af\u30ea\u30a8\u30a4\u30c6\u30a3)",
+   "Everything Hero: Creati"
+  ]
  },
  {
   "id": 183884,
@@ -3616,11 +5463,14 @@ const GENERIC_CHARACTERS =
  },
  {
   "id": 89835,
-  "name": "Noé Archiviste",
+  "name": "No\u00e9 Archiviste",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89835-xnAJMex6Uq0U.png",
   "series": "Vanitas no Carte",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Noe"
+  ]
  },
  {
   "id": 4839,
@@ -3636,7 +5486,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3293-2GiFTmLQnBw8.jpg",
   "series": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Prince Ling",
+   "Lin Yao"
+  ]
  },
  {
   "id": 19567,
@@ -3644,7 +5498,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b19567-ztMNJBxTNqmZ.png",
   "series": "K-ON!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ricchan",
+   "President Ritsu",
+   "Prez",
+   "Private Ricchan"
+  ]
  },
  {
   "id": 128036,
@@ -3652,7 +5512,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128036-lW0dxNwerqw4.png",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mirimu Naava",
+   "Destroyer",
+   "Demon Lord of Absurdity",
+   "Greatest Among the Ten Great Demon Lords At Digging Up Sweet Potatoes"
+  ]
  },
  {
   "id": 15,
@@ -3660,7 +5526,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b15-AAj73hDX9bor.jpg",
   "series": "Hajime no Ippo: THE FIGHTING!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Wind God",
+   "Big-Mara Ippo"
+  ]
  },
  {
   "id": 17440,
@@ -3668,7 +5538,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b17440-XvYe5JY862ZT.png",
   "series": "VINLAND SAGA",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Thorkell the Tall",
+   "Thorkell the Invincible",
+   "Torkjell H\u00f8ge"
+  ]
  },
  {
   "id": 558,
@@ -3676,7 +5551,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b558-8tSMZ4a0LWrn.jpg",
   "series": "Code Geass: Hangyaku no Lelouch",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Red Lotus",
+   "Karen Kouzuki (\u7d05\u6708\u30ab\u30ec\u30f3)",
+   "Q1"
+  ]
  },
  {
   "id": 88860,
@@ -3684,7 +5564,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88860-catfcwlvUYst.jpg",
   "series": "Dungeon ni Deai wo Motomeru no wa Machigatteiru Darou ka",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Little Rookie",
+   "Rabbit Foot",
+   "Record Holder",
+   "Ox Slayer"
+  ]
  },
  {
   "id": 2093,
@@ -3692,7 +5578,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2093-kdFZhqcNSsqW.png",
   "series": "Dragon Ball GT",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Great Saiyaman",
+   "The Gold Fighter"
+  ]
  },
  {
   "id": 88938,
@@ -3700,7 +5590,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88938-MQdQoMzEigo1.png",
   "series": "Haikyuu!! 2nd Season",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   " Fukuroudani's Setter"
+  ]
  },
  {
   "id": 155702,
@@ -3708,7 +5601,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b155702-S8irhsg4QTPf.png",
   "series": "Kawaii dake ja Nai Shikimori-san",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mi-chan",
+   "Micchon"
+  ]
  },
  {
   "id": 14941,
@@ -3716,7 +5613,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14941-qh15JS5cEQDL.jpg",
   "series": "Kaichou wa Maid-sama!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kaichou",
+   "Misa",
+   "Devil President"
+  ]
  },
  {
   "id": 245,
@@ -3724,7 +5626,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b245-buy3Cfn6IFSB.jpg",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shiro-chan (\u30b7\u30ed\u3061\u3083\u3093)",
+   "Lil' Shiro"
+  ]
  },
  {
   "id": 88748,
@@ -3732,7 +5638,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88748-zPL68ZFgFRH8.png",
   "series": "Saenai Heroine no Sodatekata",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Megumi Kano",
+   "Meguri"
+  ]
  },
  {
   "id": 71479,
@@ -3740,7 +5650,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71479-huCD908XIdqv.png",
   "series": "Shingeki no Kyojin",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Freckles",
+   "Freckles Ymir"
+  ]
  },
  {
   "id": 2650,
@@ -3748,7 +5662,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2650-zgkj5l8mIOnn.png",
   "series": "Gintama",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mayora",
+   "Demonic Vice-Commander",
+   "Mayonnaise Lover 13",
+   "Mayo 13",
+   "Toushi",
+   "Thorny"
+  ]
  },
  {
   "id": 123284,
@@ -3764,7 +5686,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83799-oPxSwMA9XAvu.png",
   "series": "Kill la Kill",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Satsuki Kiryuin",
+   "Steel Queen"
+  ]
  },
  {
   "id": 127118,
@@ -3780,7 +5706,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b218266-ypsehWLIcfER.png",
   "series": "Shiguang Dailiren",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Toki (\u30c8\u30ad)"
+  ]
  },
  {
   "id": 125661,
@@ -3788,7 +5717,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125661-FiqFvAtNlL0v.png",
   "series": "Shingeki no Kyojin Season 2",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Beast Titan"
+  ]
  },
  {
   "id": 127613,
@@ -3812,7 +5744,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b73205-XVUjSJd97PbC.jpg",
   "series": "Danganronpa 3: The End of Kibougamine Gakuen - Zetsubou-hen",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ultimate Gamer",
+   "Super High School Level Gamer (\u8d85\u9ad8\u6821\u7d1a\u306e\u30b2\u30fc\u30de\u30fc)"
+  ]
  },
  {
   "id": 57499,
@@ -3828,7 +5764,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b7156-DUwViOmpWw2B.jpg",
   "series": "Zoku Sayonara Zetsubou Sensei",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "CV01",
+   "Ch\u016by\u012bn W\u00e8il\u00e1i (\u521d\u97f3\u672a\u6765)"
+  ]
  },
  {
   "id": 12295,
@@ -3836,7 +5776,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12295-d45uTNeJHuus.png",
   "series": "Toradora!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryuu-chan",
+   "Taka-chan"
+  ]
  },
  {
   "id": 75450,
@@ -3844,7 +5788,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b75450-vDO1lQup1pe7.jpg",
   "series": "Sword Art Online: Alicization",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Alice Schuberg",
+   "Alicia",
+   "Little One"
+  ]
  },
  {
   "id": 125603,
@@ -3860,7 +5809,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2063-7BKqQbrhtDD2.png",
   "series": "Tengen Toppa Gurren Lagann",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yoko Littner",
+   "Yomako"
+  ]
  },
  {
   "id": 41402,
@@ -3876,7 +5829,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b16021-w5Jn1eb807vt.png",
   "series": "Carnival Phantasm",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rider (\u30e9\u30a4\u30c0\u30fc)",
+   "Alexander the Great",
+   "King of Conquerors"
+  ]
  },
  {
   "id": 84679,
@@ -3884,7 +5842,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b84679-GdMxvYy36M9H.png",
   "series": "Noragami",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hiyorin"
+  ]
  },
  {
   "id": 126458,
@@ -3892,7 +5853,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126458-wCulCEFEPZSK.png",
   "series": "Goblin Slayer",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Orcbolg",
+   "Beard-cutter"
+  ]
  },
  {
   "id": 1795,
@@ -3900,7 +5865,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1795-vKakY5aXVyCl.jpg",
   "series": "GHOST IN THE SHELL: Koukaku Kidoutai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shousa (\u5c11\u4f50)",
+   "Major"
+  ]
  },
  {
   "id": 126371,
@@ -3916,7 +5885,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b217334-buImnwO26SgS.jpg",
   "series": "Tokidoki Bosotto Rossiya-go de Dereru Tonari no Alya-san",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Alya (\u30a2\u30fc\u30ea\u30e3)"
+  ]
  },
  {
   "id": 123528,
@@ -3930,9 +5902,13 @@ const GENERIC_CHARACTERS =
   "id": 209903,
   "name": "Vivy",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b209903-ue6AE5qBvMgI.png",
-  "series": "Vivy: Fluorite Eye’s Song",
+  "series": "Vivy: Fluorite Eye\u2019s Song",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Diva",
+   "Model No. A-035624"
+  ]
  },
  {
   "id": 65229,
@@ -3940,7 +5916,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65229-hYOZtUlIpd5G.png",
   "series": "Akame ga Kill!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Genius Sniper",
+   "Bench-Warmer"
+  ]
  },
  {
   "id": 506,
@@ -3956,7 +5936,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b158734-k8FAVIyXKdW1.jpg",
   "series": "MASHLE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mushroom Head",
+   "Mash Vandead"
+  ]
  },
  {
   "id": 914,
@@ -3964,7 +5948,19 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b914-KuS8AWjqBrqa.jpg",
   "series": "Dragon Ball",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ma Junior",
+   "Big Green",
+   "King Piccolo",
+   "Demon Junior",
+   "Mr. Piccolo",
+   "Piccolo Jr.",
+   "Cor Petit Jr.",
+   "Szatan Serduszko",
+   "Store Gr\u00f8nn",
+   "Satan Petit-C\u0153ur"
+  ]
  },
  {
   "id": 16,
@@ -3972,7 +5968,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b16-80wd87nl1Rue.png",
   "series": "Cowboy Bebop",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Edward IV",
+   "Ed",
+   "Radical Ed",
+   "Radical Edward",
+   "Ed the Hacker",
+   "Fran\u00e7oise"
+  ]
  },
  {
   "id": 183,
@@ -3980,7 +5984,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b183-SKDRguIQJ0Iz.png",
   "series": "Azumanga Daiou THE ANIMATION",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Osaka (\u5927\u962a)"
+  ]
  },
  {
   "id": 167841,
@@ -3988,7 +5995,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b167841-Pp08TBnzGhK4.jpg",
   "series": "Tokyo Revengers",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Taka",
+   "Joker"
+  ]
  },
  {
   "id": 124136,
@@ -4004,7 +6015,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88950-0ER2ke5pswxq.png",
   "series": "Charlotte",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "One-Eyed Grim Reaper"
+  ]
  },
  {
   "id": 147005,
@@ -4012,7 +6026,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b147005-5vLFz3lTsssh.png",
   "series": "Kanojo, Okarishimasu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "sara_gatangoton"
+  ]
  },
  {
   "id": 123182,
@@ -4044,7 +6061,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88993-YNw36YYleasn.png",
   "series": "Owari no Seraph",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Baka-Guren"
+  ]
  },
  {
   "id": 84681,
@@ -4052,7 +6072,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b84681-vFMPNxeDkoqt.png",
   "series": "Noragami",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sekki",
+   "Yukki"
+  ]
  },
  {
   "id": 11895,
@@ -4068,15 +6092,31 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10285-oyIek2zBT5Vm.jpg",
   "series": "Umineko no Naku Koro ni",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Golden Witch",
+   "Beatrice the Golden",
+   "Endless Witch",
+   "Beato",
+   "Riiche",
+   "Milady",
+   "Princess",
+   "Ruler of Rokkenjima's Night",
+   "The Great Lady Beatrice"
+  ]
  },
  {
   "id": 2169,
   "name": "Konata Izumi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/2169-5xDzQnt3MtQk.png",
-  "series": "Lucky☆Star",
+  "series": "Lucky\u2606Star",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kona-chan",
+   "KonaKona",
+   "Densetsu no Shoujo A"
+  ]
  },
  {
   "id": 137222,
@@ -4100,7 +6140,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138595-Z6j0gP9s7avX.png",
   "series": "Maou Gakuin no Futekigousha: Shijou Saikyou no Maou no Shiso, Tensei shite Shison-tachi no Gakkou e Kayou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Anosh Portikoro",
+   "Demon King Anos",
+   "Misfit",
+   "Demon King of Tyranny",
+   "Founder",
+   "Hero of the Unitary",
+   "The True Demon King"
+  ]
  },
  {
   "id": 35255,
@@ -4108,7 +6157,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b35255-Ra9Aq5Kn9lYq.png",
   "series": "Steins;Gate",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Suzu",
+   "Part-Time Warrior",
+   "008",
+   "Suzu-meow",
+   "The Silent Slaughterer"
+  ]
  },
  {
   "id": 124143,
@@ -4124,7 +6180,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b907-kgnDKeMtEN5y.png",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bya-kun"
+  ]
  },
  {
   "id": 120800,
@@ -4140,7 +6199,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b133678-IitCgjDxQGgu.png",
   "series": "Sono Bisque Doll wa Koi wo Suru",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wacchan (\u308f\u3063\u3061\u3083\u3093)"
+  ]
  },
  {
   "id": 88753,
@@ -4148,7 +6210,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88753-RO3lBZgzwdJF.jpg",
   "series": "Plastic Memories",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aira"
+  ]
  },
  {
   "id": 127840,
@@ -4156,7 +6221,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127840-z2LUox2R2Ivg.jpg",
   "series": "Seishun Buta Yarou wa Bunny Girl Senpai no Yume wo Minai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Schoolgirl of Justice",
+   "Petite Devil"
+  ]
  },
  {
   "id": 218267,
@@ -4164,7 +6233,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b218267-dl2RO0rxGOAU.png",
   "series": "Shiguang Dailiren",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hikaru (\u30d2\u30ab\u30eb)"
+  ]
  },
  {
   "id": 13783,
@@ -4172,7 +6244,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13783-FvmhRaCOKzKQ.png",
   "series": "Natsume Yuujinchou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nutmeg"
+  ]
  },
  {
   "id": 195602,
@@ -4180,7 +6255,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b195602-Cc0vrUDl7r15.png",
   "series": "Otonari no Tenshi-sama ni Itsunomanika Dame Ningen ni Sareteita Ken",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Angel",
+   "Mahirun"
+  ]
  },
  {
   "id": 7,
@@ -4188,7 +6267,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b7-JdR4betokDjR.jpg",
   "series": "BLEACH",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hime"
+  ]
  },
  {
   "id": 87654,
@@ -4196,7 +6278,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87654-UmmuLPwSK2Hd.jpg",
   "series": "Dungeon ni Deai wo Motomeru no wa Machigatteiru Darou ka",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Vesta",
+   "Loli Kyonyuu (\u30ed\u30ea\u5de8\u4e73)",
+   "Loli Big-Boobs"
+  ]
  },
  {
   "id": 69725,
@@ -4212,7 +6299,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b84769-NaLHptr4KXKd.png",
   "series": "Kami no Tou: Tower of God",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Twenty-fifth Bam",
+   "Bam",
+   "Baam",
+   "Yoru",
+   "Black Turtle",
+   "Completed One",
+   "Berserker Boy",
+   "The Wild Card"
+  ]
  },
  {
   "id": 137263,
@@ -4220,7 +6317,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137263-I2krXFEFOHjL.png",
   "series": "Jigokuraku",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yamada Asaemon Sagiri (\u5c71\u7530\u6d45\u30a7\u9580\u4f50\u5207)"
+  ]
  },
  {
   "id": 13917,
@@ -4228,7 +6328,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13917-160NVNDNgywA.png",
   "series": "Toaru Majutsu no Index",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ippou Tsuukou (\u4e00\u65b9\u901a\u884c)",
+   "Yuriko Suzushina (\u9234\u79d1\u767e\u5408\u5b50)"
+  ]
  },
  {
   "id": 132849,
@@ -4244,7 +6348,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n50057-BiD7X42rU5H1.jpg",
   "series": "Watashi ga Motenai no wa Dou Kangaetemo Omaera ga Warui!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mokocchi",
+   "Kuro"
+  ]
  },
  {
   "id": 268677,
@@ -4260,7 +6368,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122191-sigwgpeam2U1.png",
   "series": "Wotaku ni Koi wa Muzukashii",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hana"
+  ]
  },
  {
   "id": 129841,
@@ -4268,7 +6379,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129841-brgGFuOv1h0n.png",
   "series": "Tongari Boushi no Atelier",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kieffrey"
+  ]
  },
  {
   "id": 9192,
@@ -4276,7 +6390,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b9192-Jly0Soaxc6DX.png",
   "series": "Dorohedoro",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Magician Killer",
+   "Caiman"
+  ]
  },
  {
   "id": 8087,
@@ -4284,7 +6402,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8087-GTrObHQvujB5.png",
   "series": "JoJo no Kimyou na Bouken (2000)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "JoJo"
+  ]
  },
  {
   "id": 126073,
@@ -4292,7 +6413,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126073-iGqIQigXLkge.png",
   "series": "Haikyuu!!: Karasuno Koukou VS Shiratorizawa Gakuen Koukou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Guess Monster"
+  ]
  },
  {
   "id": 2282,
@@ -4300,7 +6424,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2282-X0uYqwmwxiPo.png",
   "series": "Gintama",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sou-chan",
+   "The Prince of the Planet of Sadists",
+   "S King",
+   "Bakaiser",
+   "Hitman Sougo 13"
+  ]
  },
  {
   "id": 131519,
@@ -4308,7 +6439,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b131519-KgmdjieEssj7.png",
   "series": "Gokushufudou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Immortal Dragon",
+   "Tacchan"
+  ]
  },
  {
   "id": 89275,
@@ -4324,7 +6459,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b503-SmS87yq6l2tD.png",
   "series": "Fate/stay night",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Illya"
+  ]
  },
  {
   "id": 13773,
@@ -4340,7 +6478,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121775-6iSltmB7pcwR.png",
   "series": "Bokutachi wa Benkyou ga Dekinai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Fuminocchi"
+  ]
  },
  {
   "id": 1424,
@@ -4348,7 +6489,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1424-dcHnhsX7XfrP.jpg",
   "series": "NANA",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shin"
+  ]
  },
  {
   "id": 16059,
@@ -4356,13 +6500,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b16059-mUfErMfV09e5.jpg",
   "series": "Dorohedoro",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "NO1"
+  ]
  },
  {
   "id": 195121,
   "name": "Miya Chinen",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b195121-FehldtuXxYXh.png",
-  "series": "SK∞",
+  "series": "SK\u221e",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -4372,7 +6519,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b139486-pc8YX5srjNy4.png",
   "series": "Haikyuu!! TO THE TOP",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsumu"
+  ]
  },
  {
   "id": 1534,
@@ -4396,7 +6546,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1336-VjllcTHMDuhI.png",
   "series": "Kidou Senshi Gundam",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Red Comet",
+   "\u00c9douard Mass (\u30a8\u30c9\u30ef\u30a5\u30fb\u30de\u30b9)",
+   "Casval Rem Deikun"
+  ]
  },
  {
   "id": 385,
@@ -4420,7 +6575,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88421-F8yaeVfHjwYn.png",
   "series": "Tokyo Ghoul",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hide"
+  ]
  },
  {
   "id": 121516,
@@ -4436,7 +6594,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89617-HHZ1kziYxc0q.png",
   "series": "Mob Psycho 100",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dimple",
+   "Covinhas",
+   "Fossette"
+  ]
  },
  {
   "id": 2780,
@@ -4444,7 +6607,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2780-4S84iiE9LyIY.png",
   "series": "Ginga Eiyuu Densetsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wen-li Yang",
+   "Miracle Yang",
+   "Magician Yang",
+   "The Hero of El Facil"
+  ]
  },
  {
   "id": 145342,
@@ -4452,7 +6621,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b145342-GSUutL83jGgI.png",
   "series": "Tokyo Revengers",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Takemitchy",
+   "Crybaby",
+   "Hero",
+   "Wuss-boy",
+   "Shitty-michi"
+  ]
  },
  {
   "id": 3568,
@@ -4476,15 +6652,26 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b627-VkiKQwzH1c8S.png",
   "series": "FLCL",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Vespa Woman",
+   "Raharu",
+   "Haru"
+  ]
  },
  {
   "id": 124576,
   "name": "Nadeshiko Kagamihara",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124576-daumBIJ4lOwq.png",
-  "series": "Yuru Camp△",
+  "series": "Yuru Camp\u25b3",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Fujiko",
+   "Nade-chan",
+   "Mamashiko",
+   "Nabeshiko"
+  ]
  },
  {
   "id": 124704,
@@ -4492,7 +6679,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124704-bndQyaj7X9dv.png",
   "series": "Golden Kamuy",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sugimoto the Immortal (\u4e0d\u6b7b\u8eab\u306e\u6749\u5143)",
+   "Vagrant Boy (\u30ce\u30e9\u574a)"
+  ]
  },
  {
   "id": 71609,
@@ -4508,7 +6699,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b68583-sEP2wyE2Tk7a.png",
   "series": "PSYCHO-PASS",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lemonade Candy"
+  ]
  },
  {
   "id": 20147,
@@ -4516,7 +6710,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20147-paS2fNaB3yOv.png",
   "series": "JoJo no Kimyou na Bouken: Steel Ball Run - 2nd - 3rd STAGE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "President Valentine"
+  ]
  },
  {
   "id": 24312,
@@ -4524,7 +6721,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24312-A39sjFFj3Zrg.png",
   "series": "3-gatsu no Lion",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hina"
+  ]
  },
  {
   "id": 174190,
@@ -4540,7 +6740,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137777-kGViiNyx0wa7.jpg",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Snake Hashira",
+   "Snake Pillar"
+  ]
  },
  {
   "id": 291639,
@@ -4564,7 +6768,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b28331-At0Nz4p6qZHx.jpg",
   "series": "Durarara!!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Headless Rider",
+   "The Black Rider"
+  ]
  },
  {
   "id": 351,
@@ -4572,7 +6780,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b351-XMQzTuMy2Xtn.jpg",
   "series": "Hagane no Renkinjutsushi",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ultimate Shield",
+   "Mightiest Shield",
+   "Greed the Avaricious"
+  ]
  },
  {
   "id": 126818,
@@ -4580,7 +6793,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126818-vWeIwxSERSHd.png",
   "series": "Dungeon Meshi CM",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Laius",
+   "Laios Touden"
+  ]
  },
  {
   "id": 132494,
@@ -4588,7 +6805,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b132494-R05zeZPjDG3l.jpg",
   "series": "NieR:Automata Ver1.1a",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "YoRHa No.2 Type B",
+   "2B"
+  ]
  },
  {
   "id": 88239,
@@ -4596,7 +6817,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88239-aiUFUPNjmAh7.jpg",
   "series": "Noragami",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Vaisravana",
+   "Veena",
+   "Bisha",
+   "Bishamonten"
+  ]
  },
  {
   "id": 133702,
@@ -4604,7 +6831,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b133702-Y7JRG5vAvjIL.png",
   "series": "Jujutsu Kaisen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Patchface"
+  ]
  },
  {
   "id": 89242,
@@ -4612,7 +6842,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89242-u1des6AfOzVQ.png",
   "series": "Boku no Hero Academia 2",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hitoshi Shinso"
+  ]
  },
  {
   "id": 149594,
@@ -4620,7 +6853,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b149594-mWkRlJYUZGPG.png",
   "series": "Tian Guan Ci Fu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lang San (\u4e09\u90ce)",
+   "Xueyu Tanhua (\u8840\u96e8\u63a2\u82b1)",
+   "Xiaohua (\u5c0f\u82b1)",
+   "Hua Chengzhu (\u82b1\u57ce\u4e3b)",
+   "San Ran (\u30b5\u30f3\u30e9\u30f3)"
+  ]
  },
  {
   "id": 69,
@@ -4636,7 +6876,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10731-qqAJQX9TeSvJ.png",
   "series": "Vagabond",
   "gender": "male",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Ganryuu"
+  ]
  },
  {
   "id": 83015,
@@ -4676,7 +6919,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88890-lJFKK5czkH9E.jpg",
   "series": "Dungeon ni Deai wo Motomeru no wa Machigatteiru Darou ka",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryu Lion",
+   "Lyu"
+  ]
  },
  {
   "id": 191672,
@@ -4692,7 +6939,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b16058-WGqEK3I9bH7c.jpg",
   "series": "Dorohedoro",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Senpai"
+  ]
  },
  {
   "id": 87887,
@@ -4708,15 +6958,22 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122190-3VC3pxCguyu7.png",
   "series": "Wotaku ni Koi wa Muzukashii",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Naru",
+   "Narus"
+  ]
  },
  {
   "id": 195118,
   "name": "Kaoru Sakurayashiki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b195118-Q2toyBV5TqOO.png",
-  "series": "SK∞",
+  "series": "SK\u221e",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Cherry Blossom (\u30c1\u30a7\u30ea\u30fc\u30d6\u30ed\u30c3\u30b5\u30e0)"
+  ]
  },
  {
   "id": 139,
@@ -4724,7 +6981,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b139-QnuZQbLodMF3.png",
   "series": "D.Gray-man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Crown Clown",
+   "God's Joker",
+   "Bean Sprout",
+   "Short Stack",
+   "Destroyer of Time"
+  ]
  },
  {
   "id": 28991,
@@ -4740,7 +7004,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127465-vxaYSRgh7Rjf.png",
   "series": "Modao Zushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wei Ying (\u9b4f\u5a74)",
+   "Yiling Patriarch (\u5937\u9675\u8001\u7956)"
+  ]
  },
  {
   "id": 3149,
@@ -4748,7 +7016,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3149-j6cl8A9yup51.png",
   "series": "NARUTO: Shippuuden",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kamen no Otoko (\u4eee\u9762\u306e\u7537)",
+   "Masked Man",
+   "No One",
+   "Kyuuseishu (\u6551\u4e16\u4e3b)",
+   "Saviour"
+  ]
  },
  {
   "id": 17438,
@@ -4756,7 +7031,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b17438-NwyOSMxycmck.png",
   "series": "VINLAND SAGA",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Cnut the Great",
+   "Canuto",
+   "Knut",
+   "Prince"
+  ]
  },
  {
   "id": 141671,
@@ -4764,7 +7045,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b141671-ukMBUI4c2p53.png",
   "series": "Jibaku Shounen Hanako-kun",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bent-Neck Boy"
+  ]
  },
  {
   "id": 22552,
@@ -4780,7 +7064,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124435-gXFVXWrCcieK.jpg",
   "series": "Black Clover",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wizard King"
+  ]
  },
  {
   "id": 32801,
@@ -4796,7 +7083,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88344-zn7wbe8rKgqT.png",
   "series": "Mahoutsukai no Yome: Hoshi Matsu Hito",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Daughter of Thorn"
+  ]
  },
  {
   "id": 124145,
@@ -4812,7 +7102,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2948-Er1xnL05k1oU.png",
   "series": "Gintama",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hikusugi-kun"
+  ]
  },
  {
   "id": 1427,
@@ -4828,7 +7121,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83023-l6SV5nBLfVkv.jpg",
   "series": "Kyoto Animation: Suiei-hen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Haru"
+  ]
  },
  {
   "id": 21959,
@@ -4836,13 +7132,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b21959-Cm9Rlh0EFAQw.png",
   "series": "JoJo no Kimyou na Bouken (TV)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Caesar-chan",
+   "Caesarino"
+  ]
  },
  {
   "id": 57,
   "name": "Illumi Zoldyck",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b57-pTFguojSOQZW.png",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -4852,7 +7152,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b149589-dC9wt4beVBUU.png",
   "series": "Tian Guan Ci Fu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "His Royal Majesty the Crown Prince (\u592a\u5b50\u6bbf\u4e0b)",
+   "Flower Crown Martial God (\u82b1\u51a0\u6b66\u795e)",
+   "His Highness Who Pleased the Gods (\u592a\u5b50\u60a6\u795e)",
+   "Shei Ryen (\u30b7\u30a8\u30a4\u30fb\u30ea\u30a7\u30f3)",
+   "Fang Xin (\u82b3\u5fc3\u5251)",
+   "State Perceptor Fang Xin (\u56fd\u5e08\u82b3\u5fc3\u5251)",
+   "Hua Xie (\u82b1\u8c22)",
+   "General Hua (\u82b1\u5c06\u519b)"
+  ]
  },
  {
   "id": 845,
@@ -4860,7 +7170,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b845-yzHSqt8WpnO5.png",
   "series": "Hajime no Ippo: THE FIGHTING!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Bear Slayer",
+   "Japanese Hawk",
+   "Lord of perverts"
+  ]
  },
  {
   "id": 147,
@@ -4868,7 +7183,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b147-miunGYp6fkzb.png",
   "series": "Rurouni Kenshin: Meiji Kenkaku Romantan - Tsuioku-hen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hitokiri Battousai",
+   "Himura Battousai",
+   "Shinta",
+   "Ken-san"
+  ]
  },
  {
   "id": 249,
@@ -4876,7 +7197,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b249-2YImP6IQTe8t.png",
   "series": "Suzumiya Haruhi no Yuuutsu",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nagatocchi"
+  ]
  },
  {
   "id": 89121,
@@ -4892,7 +7216,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67749-56bkWIb9ZpWy.jpg",
   "series": "Akatsuki no Yona",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Blue Dragon",
+   "Sinha"
+  ]
  },
  {
   "id": 1353,
@@ -4908,7 +7236,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n79995-UtAWfXTwgTMf.jpg",
   "series": "Fate/Apocrypha",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rider of Black",
+   "Kuro no Rider",
+   "Sailor Paladin",
+   "Knight of Evaporated Sanity"
+  ]
  },
  {
   "id": 132222,
@@ -4932,7 +7266,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137774-O1iYrnGLB71l.png",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wind Hashira",
+   "Wind Pillar"
+  ]
  },
  {
   "id": 122463,
@@ -4940,7 +7278,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122463-p4o7qOTJ2Lba.jpg",
   "series": "Made in Abyss",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lord of Dawn",
+   "The Novel",
+   "Delver of the Abyss"
+  ]
  },
  {
   "id": 88727,
@@ -4948,11 +7291,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88727-K9H1teOxoSLP.png",
   "series": "Yahari Ore no Seishun Love Come wa Machigatteiru. Zoku",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Irohasu"
+  ]
  },
  {
   "id": 8464,
-  "name": "Black☆Star",
+  "name": "Black\u2606Star",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8464-oKu98OyJ3eZt.png",
   "series": "Soul Eater",
   "gender": "male",
@@ -4964,7 +7310,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b144593-hdCTT9t54z0s.png",
   "series": "Chainsaw Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Master",
+   "Mad Dog Kishibe"
+  ]
  },
  {
   "id": 124449,
@@ -4980,7 +7330,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b42038-3xNprwetDcl1.jpg",
   "series": "Kuroko no Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Seijuro Akashi",
+   "Akashicchi",
+   "Aka-chin",
+   "Sei-chan"
+  ]
  },
  {
   "id": 124522,
@@ -4988,15 +7344,22 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124522-lJK4Hy6Aokie.png",
   "series": "Black Clover",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sisgoleon"
+  ]
  },
  {
   "id": 732,
   "name": "Hiei",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b732-rg4H7yyv3LRo.png",
-  "series": "Yuu☆Yuu☆Hakusho",
+  "series": "Yuu\u2606Yuu\u2606Hakusho",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hiei of the Evil Eye",
+   "Hiei Jaganshi"
+  ]
  },
  {
   "id": 18938,
@@ -5004,13 +7367,22 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18938-yZANEfjsVhW4.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kaikyou no Jinbe",
+   "Knight of the Sea",
+   "First Son of the Sea",
+   "Jimbei",
+   "Jinbei",
+   "Jinbee",
+   "Boss Jinbe"
+  ]
  },
  {
   "id": 5833,
   "name": "Shizuku Murasaki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/5833.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "unknown",
   "mediaType": "anime"
  },
@@ -5020,7 +7392,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20148-mVGqsVJ2t27v.png",
   "series": "JoJo no Kimyou na Bouken: Steel Ball Run - 1st STAGE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dio"
+  ]
  },
  {
   "id": 199890,
@@ -5034,7 +7409,7 @@ const GENERIC_CHARACTERS =
   "id": 14489,
   "name": "Isaac Netero",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14489-WgGsdlQJka65.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -5044,7 +7419,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89247-hu5MCqfoN82E.png",
   "series": "Boku no Hero Academia",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Pinky  (\u30d4\u30f3\u30ad\u30fc)",
+   "Ridley Hero: Alien Queen"
+  ]
  },
  {
   "id": 65259,
@@ -5052,7 +7431,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65259-rKR5JNNWyRC0.jpg",
   "series": "Date A Live",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tohka Yatogami",
+   "Princess"
+  ]
  },
  {
   "id": 43121,
@@ -5060,7 +7443,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b43121-o2KuUeEfh6AS.png",
   "series": "Magi: The labyrinth of magic",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mori",
+   "Morg"
+  ]
  },
  {
   "id": 463,
@@ -5068,7 +7455,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b463-QBLeLf6XxVg6.png",
   "series": "DEATH NOTE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mello"
+  ]
  },
  {
   "id": 122691,
@@ -5084,7 +7474,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67689-QaYw1qDMjwKM.png",
   "series": "Haikyuu!!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Glasses-chan"
+  ]
  },
  {
   "id": 2030,
@@ -5092,7 +7485,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2030-GQvVYPEYkXCy.jpg",
   "series": "Bishoujo Senshi Sailor Moon",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Serena",
+   "Sailor Moon",
+   "Usako",
+   "Buns",
+   "Meatball Head",
+   "Bunny",
+   "Odango",
+   "Annie Tsukino",
+   "Lilla Stumpan"
+  ]
  },
  {
   "id": 126475,
@@ -5108,7 +7512,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136845-4jHomiPMsJ6n.png",
   "series": "Given",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Haru"
+  ]
  },
  {
   "id": 21332,
@@ -5116,7 +7523,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b21332-aPRs1Xq7ZHoV.jpg",
   "series": "Kuroko no Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ki-chan"
+  ]
  },
  {
   "id": 121661,
@@ -5140,7 +7550,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n46486-izhPjzut6WCZ.png",
   "series": "Shingeki no Kyojin",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Conny"
+  ]
  },
  {
   "id": 464,
@@ -5148,7 +7561,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n464-6KeJpU6g7Hwj.jpg",
   "series": "DEATH NOTE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Near (\u30cb\u30a2)",
+   "N"
+  ]
  },
  {
   "id": 252,
@@ -5156,7 +7573,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b252-2V9wYXSAktsX.png",
   "series": "Suzumiya Haruhi no Yuuutsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "John Smith"
+  ]
  },
  {
   "id": 89183,
@@ -5172,7 +7592,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/81645-dvD1Ac67IkpJ.png",
   "series": "Little Witch Academia",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Akko"
+  ]
  },
  {
   "id": 78093,
@@ -5180,7 +7603,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b78093-QnJ9wDICvhSR.png",
   "series": "Komi-san wa, Komyushou desu.",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shigeo",
+   "\u2020JIN-JIN\u2020"
+  ]
  },
  {
   "id": 120536,
@@ -5188,7 +7615,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120536-PxdNxEhQwE8d.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Coraz\u00f3n",
+   "Cora-san",
+   "Second Corazon"
+  ]
  },
  {
   "id": 1694,
@@ -5202,9 +7634,12 @@ const GENERIC_CHARACTERS =
   "id": 12300,
   "name": "Neferpitou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12300-kYzopQUTLa9A.png",
-  "series": "HUNTER×HUNTER (2011)",
+  "series": "HUNTER\u00d7HUNTER (2011)",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Pitou"
+  ]
  },
  {
   "id": 18343,
@@ -5212,7 +7647,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18343-YU7AhH28tElo.jpg",
   "series": "Kamisama Hajimemashita",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Human God"
+  ]
  },
  {
   "id": 43778,
@@ -5220,7 +7658,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b43778-A9Ixc5ZeCsD6.png",
   "series": "JoJo no Kimyou na Bouken: JoJolion",
   "gender": "male",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Josuke Higashikata",
+   "Johsuke",
+   "Hat Josuke",
+   "Gappy",
+   "JoJo"
+  ]
  },
  {
   "id": 1358,
@@ -5234,7 +7679,7 @@ const GENERIC_CHARACTERS =
   "id": 40006,
   "name": "Kyouko Sakura",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40006-zOwYYimuiO3m.png",
-  "series": "Mahou Shoujo Madoka☆Magica",
+  "series": "Mahou Shoujo Madoka\u2606Magica",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -5244,7 +7689,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90223-N2yiCBMBHxZu.png",
   "series": "Yuuri!!! on ICE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Debu/Fatso",
+   "Katsudon/Pork Cutlet Bowl",
+   "Buta/Pig",
+   "Kobuta-chan/Piglet/Little Piggy"
+  ]
  },
  {
   "id": 135385,
@@ -5252,7 +7703,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b135385-gfcFoxReUVzq.png",
   "series": "Enen no Shouboutai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "52"
+  ]
  },
  {
   "id": 131653,
@@ -5260,7 +7714,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b131653-V7EuHwSdIpOs.jpg",
   "series": "Tenkuu Shinpan",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "White Grim Reaper (\u767d\u3044\u6b7b\u795e)",
+   "Sniper Mask"
+  ]
  },
  {
   "id": 35510,
@@ -5268,7 +7726,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b35510-qMAnMK0udakL.jpg",
   "series": "Kokou no Hito",
   "gender": "male",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "The Immortal Solo Climber"
+  ]
  },
  {
   "id": 167444,
@@ -5276,7 +7737,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b167444-JTHkkJAX4E3q.png",
   "series": "Blue Lock",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hyoma Chigiri",
+   "Princess",
+   "Red Panther"
+  ]
  },
  {
   "id": 747,
@@ -5300,7 +7766,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b307-xieUEdhdTVwQ.png",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Leaf's Noble Green Beast",
+   "Konoha no Kedakaki Aoi Moujuu (\u6728\u30ce\u8449\u306e\u6c17\u9ad8\u304d\u78a7\u3044\u731b\u7363)",
+   "Bushier Brows Sensei",
+   "Gekimayu-sensei (\u30b2\u30ad\u30de\u30e6\u5148\u751f)"
+  ]
  },
  {
   "id": 122693,
@@ -5316,13 +7788,18 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88956-RbwleCQc741G.png",
   "series": "Shokugeki no Souma",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chief Alice",
+   "Heaven Sent Child of Molecular Gastronomy",
+   "Global Innovator"
+  ]
  },
  {
   "id": 38395,
   "name": "Sayaka Miki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b38395-d24OayatTB5h.jpg",
-  "series": "Mahou Shoujo Madoka☆Magica",
+  "series": "Mahou Shoujo Madoka\u2606Magica",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -5340,7 +7817,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b162248-57Xgk6EmwKRQ.png",
   "series": "Kage no Jitsuryokusha ni Naritakute!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Delta the Loose Cannon",
+   "Delta the Suicide Weapon"
+  ]
  },
  {
   "id": 9719,
@@ -5348,7 +7829,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b9719-xh4xqTV6byNl.png",
   "series": "FAIRY TAIL",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rain Woman",
+   "Juvia of the Great Sea",
+   "Juvia of the Deep"
+  ]
  },
  {
   "id": 29577,
@@ -5364,7 +7850,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2819-FaPLslMytO9p.png",
   "series": "Initial D FOURTH STAGE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tak",
+   "The White Ghost of Akina"
+  ]
  },
  {
   "id": 122444,
@@ -5372,7 +7862,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122444-9rGUpcjwygHD.png",
   "series": "Made in Abyss",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Regu",
+   "The Treasure of the Deep"
+  ]
  },
  {
   "id": 1742,
@@ -5380,7 +7874,24 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1742-NiV278NBFOvZ.png",
   "series": "Meitantei Conan",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shinichi Kudou (\u5de5\u85e4\u65b0\u4e00)",
+   "Kinichi",
+   "Shin-chan",
+   "Cool Kid",
+   "Silver Bullet-kun",
+   "Glasses Kid",
+   "Holmes' Apprentice",
+   "Kid Killer",
+   "Cool Guy",
+   "Magician",
+   "Tantei-kun",
+   "Kuroshiro-kun",
+   "Sleeping Kogoro's Bag of Wisdom",
+   "Jimmy Kudo",
+   "Arthur Hirai"
+  ]
  },
  {
   "id": 22,
@@ -5388,7 +7899,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22-Xikbs9JJ9Qop.png",
   "series": "Ouran Koukou Host Club",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hika-chan"
+  ]
  },
  {
   "id": 138851,
@@ -5396,7 +7910,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138851-KqCx4CjktnPl.png",
   "series": "Skip to Loafer",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Omitsu"
+  ]
  },
  {
   "id": 2767,
@@ -5404,7 +7921,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2767-r61Cj9v8I0wl.png",
   "series": "NARUTO",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Princess Tsunade",
+   "The Legendary Sannin",
+   "Slug Princess"
+  ]
  },
  {
   "id": 6044,
@@ -5420,7 +7942,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b23-8TQAV1BRyqxa.png",
   "series": "Ouran Koukou Host Club",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kyo-chan",
+   "Mommy",
+   "Shadow Prince",
+   "Low Blood Pressure Demon Lord"
+  ]
  },
  {
   "id": 367,
@@ -5428,7 +7956,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b367-Jc6wMVpL76Ib.png",
   "series": "Fruits Basket",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Momiji Soma",
+   "Momicchi"
+  ]
  },
  {
   "id": 206604,
@@ -5444,7 +7976,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2727-eH2xoFpmfbS4.png",
   "series": "Mononoke-hime",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Princess Mononoke",
+   "Wolf Girl"
+  ]
  },
  {
   "id": 66963,
@@ -5460,7 +7996,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b96114-uqnjPK9012rB.png",
   "series": "Uma Musume: Pretty Derby",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gray Monster",
+   "Idol Horse",
+   "Oguri Kyappu"
+  ]
  },
  {
   "id": 21938,
@@ -5484,7 +8025,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128033-fLbTgW4M2yj3.png",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Samurai",
+   "Tyrant",
+   "Immortal",
+   "Legendary Ogre Goddess At Digging Up Sweet Potatoes"
+  ]
  },
  {
   "id": 135018,
@@ -5492,7 +8039,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b135018-1vrthiQQS7O1.jpg",
   "series": "Mairimashita! Iruma-kun",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Iruma-chi",
+   "Irumi",
+   "Irumean"
+  ]
  },
  {
   "id": 121590,
@@ -5500,7 +8052,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121590-0IyliPlkGSZa.png",
   "series": "PERSONA 5 the Animation: THE DAY BREAKERS",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Protagonist (\u4e3b\u4eba\u516c)",
+   "Akira Kurusu",
+   "Joker",
+   "Trickster",
+   "The Phantom",
+   "Inmate",
+   "Renren"
+  ]
  },
  {
   "id": 124077,
@@ -5508,7 +8069,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124077-TODX2ThCdyx2.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dogtooth"
+  ]
  },
  {
   "id": 179966,
@@ -5516,15 +8080,36 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b179966-kDKDLbx84kpT.png",
   "series": "Schwarzesmarken",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Iris",
+   "Schwarz 01",
+   "Eins",
+   "Iron Lily Princess",
+   "Only One",
+   "The Ice Queen",
+   "Red German",
+   "Captain Bernhard",
+   "Comrade Captain",
+   "Goddess of Revolution (\u9769\u547d\u306e\u5973\u795e)",
+   "Divine Savior (\u6551\u56fd\u306e\u5973\u795e)",
+   "Black Commander (\u9ed2\u306e\u6307\u63ee\u8005)",
+   "Queen of Midsummer (\u771f\u590f\u306e\u5973\u738b)",
+   "Saiai no Imouto (\u6700\u611b\u306e\u59b9)"
+  ]
  },
  {
   "id": 731,
   "name": "Kurama",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b731-cv0jfjVrD09V.jpg",
-  "series": "Yuu☆Yuu☆Hakusho",
+  "series": "Yuu\u2606Yuu\u2606Hakusho",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shuichi Minamino (\u5357\u91ce\u79c0\u4e00)",
+   "Youko",
+   "Kurama the Yoko"
+  ]
  },
  {
   "id": 139631,
@@ -5532,7 +8117,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b139631-JC76pYY2Q51Z.png",
   "series": "Mieruko-chan",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Meme-chan"
+  ]
  },
  {
   "id": 415,
@@ -5540,7 +8128,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b415-8uO4w6WtaTBS.png",
   "series": "Gungrave",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Beyond the Grave"
+  ]
  },
  {
   "id": 205579,
@@ -5548,7 +8139,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b205579-FRvVyrOIG8Yz.jpg",
   "series": "Kaijuu 8-gou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Vice-Commander Hoshina (\u4fdd\u79d1\u526f\u968a\u9577)"
+  ]
  },
  {
   "id": 12960,
@@ -5564,7 +8158,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b161698-EENPlUHgwebK.png",
   "series": "Shokei Shoujo no Virgin Road",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Flarette"
+  ]
  },
  {
   "id": 132847,
@@ -5572,7 +8169,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b132847-rxYUEsbcLxTm.png",
   "series": "Arifureta Shokugyou de Sekai Saikyou",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yue Nagumo"
+  ]
  },
  {
   "id": 67333,
@@ -5580,7 +8180,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67333-on5KXeKxZqKs.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ace"
+  ]
  },
  {
   "id": 120889,
@@ -5588,7 +8191,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/120889-o9uGSBNtqgJ8.png",
   "series": "Shoujo Shuumatsu Ryokou",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chi",
+   "Chii"
+  ]
  },
  {
   "id": 89208,
@@ -5596,7 +8203,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89208-Zjsz22lCmrIE.png",
   "series": "Bungou Stray Dogs",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Doctor",
+   "Angel of Death"
+  ]
  },
  {
   "id": 42,
@@ -5604,7 +8215,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b42-mMWsls5Qx6wG.jpg",
   "series": "Black Cat",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black Cat",
+   "Chrono Number XIII"
+  ]
  },
  {
   "id": 88264,
@@ -5612,7 +8227,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88264-v9VFbSWtQq2C.png",
   "series": "Rakudai Kishi no Cavalry",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Crimson Princess"
+  ]
  },
  {
   "id": 55743,
@@ -5620,7 +8238,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b55743-g5JD7Dj6iP7R.png",
   "series": "Mahouka Koukou no Rettousei",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Onii-sama",
+   "Ooguro Ryuuya"
+  ]
  },
  {
   "id": 148985,
@@ -5628,7 +8250,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b148985-7TtdK4VTzPEe.png",
   "series": "Boku no Hero Academia 4",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mirko",
+   "Miruko"
+  ]
  },
  {
   "id": 70899,
@@ -5660,7 +8286,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b158448-4ayIN90zJJnp.png",
   "series": "GREAT PRETENDER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Blonde Bastard"
+  ]
  },
  {
   "id": 54151,
@@ -5668,7 +8297,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b54151-V8Qh2l2gTxvH.jpg",
   "series": "Non Non Biyori",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ren-chon"
+  ]
  },
  {
   "id": 89426,
@@ -5676,7 +8308,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89426-9VS3dWDKDs4v.jpg",
   "series": "ReLIFE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hishiron"
+  ]
  },
  {
   "id": 1605,
@@ -5692,7 +8327,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b70733-d564H7iUj7Y2.png",
   "series": "Hataraku Maou-sama!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sadao Maou (\u771f\u5965\u8c9e\u592b)",
+   "Milord",
+   "Sire",
+   "The Devil",
+   "Demon King Satan"
+  ]
  },
  {
   "id": 44,
@@ -5700,7 +8342,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/44.jpg",
   "series": "Black Cat",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Little Princess"
+  ]
  },
  {
   "id": 1084,
@@ -5724,7 +8369,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b66-bLbGWXrmDqfV.png",
   "series": "Hagane no Renkinjutsushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kizu no Otoko (\u50b7\u306e\u7537)",
+   "The Scarred Man"
+  ]
  },
  {
   "id": 67323,
@@ -5740,7 +8389,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87-1sKGYKWY8EHQ.jpg",
   "series": "Kino no Tabi: the Beautiful World",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mysterious Bishoujo Gun Fighter Rider Kino"
+  ]
  },
  {
   "id": 120652,
@@ -5748,7 +8400,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120652-YxrBBPbmJno2.png",
   "series": "Kono Subarashii Sekai ni Shukufuku wo!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Frog Slayer"
+  ]
  },
  {
   "id": 135020,
@@ -5756,7 +8411,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b135020-4ARYfbKjwAbA.jpg",
   "series": "Mairimashita! Iruma-kun",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Amelie Azazel",
+   "Merry",
+   "Young King Ameri",
+   "Lady Redhead",
+   "Scarlet-chan",
+   "Makka-chan",
+   "Melie"
+  ]
  },
  {
   "id": 126893,
@@ -5764,7 +8428,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126893-K5JlGa9DxPUE.png",
   "series": "Fire Punch",
   "gender": "unknown",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Director"
+  ]
  },
  {
   "id": 2450,
@@ -5772,7 +8439,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2450-fybfLw3SlimN.jpg",
   "series": "NANA",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yasu",
+   "Yas-san",
+   "Ya-san",
+   "Baldy"
+  ]
  },
  {
   "id": 14957,
@@ -5788,7 +8461,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136842-Ip5LDrd7qwE1.png",
   "series": "Given",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aki"
+  ]
  },
  {
   "id": 127449,
@@ -5804,7 +8480,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b51343-pt1UDTRvAXfY.png",
   "series": "High School DxD",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shirone"
+  ]
  },
  {
   "id": 40851,
@@ -5812,7 +8491,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40851-BChYgBB31gyx.png",
   "series": "TIGER & BUNNY",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wild Tiger"
+  ]
  },
  {
   "id": 41311,
@@ -5828,7 +8510,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120890-pu5qO3xxvvcx.png",
   "series": "Shoujo Shuumatsu Ryokou",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yuu"
+  ]
  },
  {
   "id": 137809,
@@ -5844,7 +8529,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89621-3uLnmhFOGYFv.png",
   "series": "Mob Psycho 100",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Teru"
+  ]
  },
  {
   "id": 32893,
@@ -5858,9 +8546,12 @@ const GENERIC_CHARACTERS =
   "id": 20594,
   "name": "Kite",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20594-QQJBR3LYobbv.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER\u00d7HUNTER",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kaito"
+  ]
  },
  {
   "id": 13021,
@@ -5868,7 +8559,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13021-XJAVDHwMWek2.png",
   "series": "VINLAND SAGA",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Troll of Jom",
+   "Jomstrollet"
+  ]
  },
  {
   "id": 88750,
@@ -5876,7 +8571,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88750-s7ZxVssLyP0p.png",
   "series": "Saenai Heroine no Sodatekata",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Utako Kasumi",
+   "Utaha-senpai",
+   "Shi-chan"
+  ]
  },
  {
   "id": 1672,
@@ -5884,7 +8584,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1672-Raauaugc30ke.png",
   "series": "Trinity Blood",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Crusnik",
+   "Avelina"
+  ]
  },
  {
   "id": 89836,
@@ -5892,7 +8596,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89836-xLr4mkxojjc3.png",
   "series": "Vanitas no Carte",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Hellfire Witch",
+   "Lord Ruthven's Bourreau"
+  ]
  },
  {
   "id": 18323,
@@ -5916,7 +8624,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88946-YbTQAGJAdpoH.jpg",
   "series": "Tokyo Ghoul",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "CCG's Reaper",
+   "White Reaper"
+  ]
  },
  {
   "id": 17675,
@@ -5924,7 +8636,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b17675-rrayRQnq2awa.png",
   "series": "JoJo no Kimyou na Bouken: Stone Ocean",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Weather Forecast",
+   "V\u00e6rmelding",
+   "Weather"
+  ]
  },
  {
   "id": 122464,
@@ -5932,7 +8649,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122464-xnYajKbuEa29.jpg",
   "series": "Made in Abyss",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ozen",
+   "The Immovable",
+   "The Immovable Sovereign"
+  ]
  },
  {
   "id": 2258,
@@ -5940,7 +8662,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2258-G45d2iDhEJVp.png",
   "series": "Noir",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Noir",
+   "Nowaru"
+  ]
  },
  {
   "id": 9797,
@@ -5948,7 +8674,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b9797-Aey93S4tUFAA.jpg",
   "series": "Ga-Rei-Zero",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black Shrine Maiden"
+  ]
  },
  {
   "id": 2865,
@@ -5956,7 +8685,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2865-n2zjwVfgOHZq.jpg",
   "series": "ayakashi: Japanese Classic Horror",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Medicine Seller",
+   "Otoko (\u7537)",
+   "Inner Self",
+   "Znachor"
+  ]
  },
  {
   "id": 197173,
@@ -5972,7 +8707,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b243404-X1fmwpqHPdyb.jpg",
   "series": "Tokidoki Bosotto Rossiya-go de Dereru Tonari no Alya-san",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Noble Princess"
+  ]
  },
  {
   "id": 124380,
@@ -5980,7 +8718,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124380-ct1wJHIl9BY1.jpg",
   "series": "Darling in the Franxx",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Code:016",
+   "Darling"
+  ]
  },
  {
   "id": 3934,
@@ -5988,7 +8730,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n3934-MKTV6tQeP8T3.png",
   "series": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Northern Cliff of Briggs",
+   "Ice Queen",
+   "Northern Wall of Briggs"
+  ]
  },
  {
   "id": 157232,
@@ -5996,7 +8743,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b157232-5GuWeqoFN9Kq.jpg",
   "series": "Chainsaw Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shark Fiend"
+  ]
  },
  {
   "id": 89029,
@@ -6004,7 +8754,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/89029-dkTeY6564JNP.png",
   "series": "GATE: Jieitai Kanochi nite, Kaku Tatakaeri",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rory the Reaper"
+  ]
  },
  {
   "id": 65523,
@@ -6012,7 +8765,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65523-OztiX9PhydrG.png",
   "series": "Danganronpa: Kibou no Gakuen to Zetsubou no Koukousei - The Animation",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Super High School Level Gyaru (\u8d85\u9ad8\u6821\u7d1a\u306e\u30ae\u30e3\u30eb)",
+   "Super High School Level Gal",
+   "Ultimate Fashionista"
+  ]
  },
  {
   "id": 43280,
@@ -6020,7 +8778,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b43280-dxRTpIioqSg7.png",
   "series": "Guilty Crown",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Egoist",
+   "Inorin"
+  ]
  },
  {
   "id": 74167,
@@ -6028,7 +8790,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b74167-FE8EtGtHUM77.png",
   "series": "One Punch Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Speed of Sound",
+   "Speed-o'-Sound",
+   "Sonic",
+   "Jack-o'-lantern Panic"
+  ]
  },
  {
   "id": 129840,
@@ -6052,7 +8820,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b131033-0LguIALHCBEH.jpg",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black",
+   "Kuro (\u30af\u30ed)",
+   "Noir"
+  ]
  },
  {
   "id": 130783,
@@ -6068,7 +8841,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137270-PTFen9fxyo4H.png",
   "series": "Jigokuraku",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Keishu no Yuzuriha (\u50be\u4e3b\u306e\u6760)",
+   "Yuzuriha of the Keishu",
+   "Kitsune (\u72d0)",
+   "Fox"
+  ]
  },
  {
   "id": 559,
@@ -6076,7 +8855,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b559-KRvTdc6zdCuU.jpg",
   "series": "Code Geass: Hangyaku no Lelouch",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "White Knight",
+   "White Grim Reaper",
+   "Knight of Seven",
+   "Spinzaku"
+  ]
  },
  {
   "id": 64573,
@@ -6084,7 +8869,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b64573-Lketo3ID6eNl.jpg",
   "series": "Kingdom",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shin Ri",
+   "Shin Li"
+  ]
  },
  {
   "id": 13725,
@@ -6092,7 +8881,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b13725-Vk30kjvVT82z.png",
   "series": "Toradora!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Amin",
+   "Bakachi",
+   "Stupid Chihuahua"
+  ]
  },
  {
   "id": 266438,
@@ -6100,7 +8894,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b266438-3Veykti1lXgg.png",
   "series": "Gachiakuta",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Engine"
+  ]
  },
  {
   "id": 3066,
@@ -6108,7 +8905,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3066-bq8s1DooZyTJ.png",
   "series": "Ginga Eiyuu Densetsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Von M\u00fcsel",
+   "Golden Lion",
+   "Invincible Hero"
+  ]
  },
  {
   "id": 40197,
@@ -6116,7 +8918,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40197-We1zbfXwnVFf.png",
   "series": "Kokoro Connect",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Inaban",
+   "Dereban"
+  ]
  },
  {
   "id": 14040,
@@ -6132,7 +8938,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10498-Ep1aY2liGmIA.png",
   "series": "Grappler Baki (TV)",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Champion",
+   "Chij\u014d Saiky\u014d no Gaki",
+   "22067"
+  ]
  },
  {
   "id": 2064,
@@ -6140,7 +8951,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n2064-OpnF4nLi6bvL.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hawk-Eyes",
+   "Strongest Swordsman in the World"
+  ]
  },
  {
   "id": 124162,
@@ -6148,7 +8963,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/124162-htFFNeC04bzw.jpg",
   "series": "Dr. STONE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ace Detective Suika"
+  ]
  },
  {
   "id": 169395,
@@ -6156,7 +8974,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b169395-7xUFV2mINMZu.png",
   "series": "Blue Lock",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Eyelashes"
+  ]
  },
  {
   "id": 269,
@@ -6164,7 +8985,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b269-sbPL4w1ygjSe.jpg",
   "series": "Kareshi Kanojo no Jijou",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Oo-totoro (\u5927\u30c8\u30c8\u30ed)",
+   "Big Totoro",
+   "Big Toto"
+  ]
  },
  {
   "id": 127689,
@@ -6172,7 +8998,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127689-SC65fBVrUx8v.png",
   "series": "Dungeon Meshi CM",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sen"
+  ]
  },
  {
   "id": 738,
@@ -6180,7 +9009,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b738-z0w63Laqb6hW.png",
   "series": "Elfen Lied",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nyuu"
+  ]
  },
  {
   "id": 37687,
@@ -6196,7 +9028,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83801-52RnDXQDZ1I7.png",
   "series": "Nanatsu no Taizai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Grizzly's Sin of Sloth",
+   "King of Fairies",
+   "Fairy King Harlequin",
+   "Fatty"
+  ]
  },
  {
   "id": 176840,
@@ -6204,7 +9042,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b176840-8KRqXXLJeLOg.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yama-Guy",
+   "Yama-o"
+  ]
  },
  {
   "id": 158450,
@@ -6212,7 +9054,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b158450-8Tvl7X2VtHj0.png",
   "series": "GREAT PRETENDER",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Abbie"
+  ]
  },
  {
   "id": 76364,
@@ -6220,15 +9065,30 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b76364-ATlG8j4fx3vg.png",
   "series": "Masamune-kun no Revenge",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Cruel Princess (\u6b8b\u8650\u59eb\u201a Zangyaku Hime)"
+  ]
  },
  {
   "id": 499,
-  "name": "Cú  Chulainn",
+  "name": "C\u00fa  Chulainn",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b499-gS5RAdupSKWQ.png",
   "series": "Fate/stay night",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lancer",
+   "Child of Light",
+   "Blue Spearman of the Wind",
+   "Beast of Culann",
+   "Hound of Culann",
+   "S\u00e9tanta",
+   "Child of the Sun",
+   "C\u00fa Alter",
+   "Mad King C\u00fa Chulainn",
+   "C\u00fa Chulainn (Alter)"
+  ]
  },
  {
   "id": 145097,
@@ -6236,7 +9096,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b145097-TYg5SshsyvUU.png",
   "series": "Dr. STONE: NEW WORLD",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryusui Nanami"
+  ]
  },
  {
   "id": 76026,
@@ -6244,7 +9107,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b76026-cQAQTlZFfG2e.png",
   "series": "Shokugeki no Souma",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dunce",
+   "L\u00e9gumes Koro-pok-guru",
+   "L\u00e9gumes Zashiki-warashi",
+   "L\u00e9gumes Yuki-ko"
+  ]
  },
  {
   "id": 129132,
@@ -6252,7 +9121,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129132-4nIZakUZ1o8W.jpg",
   "series": "Kimetsu no Yaiba",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsukihiko",
+   "Toshikuni"
+  ]
  },
  {
   "id": 2019,
@@ -6260,7 +9133,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2019-Ute2SDjpctzZ.png",
   "series": "GUNSLINGER GIRL",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Princess"
+  ]
  },
  {
   "id": 40852,
@@ -6268,7 +9144,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40852-hx7JVh3Ao4kS.jpg",
   "series": "TIGER & BUNNY",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bunny",
+   "Handsome",
+   "Revenge Boy"
+  ]
  },
  {
   "id": 88915,
@@ -6284,7 +9165,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8446-uTTlVv5DRQnr.png",
   "series": "Soul Eater",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Steiny",
+   "DWMA's Strongest Meister"
+  ]
  },
  {
   "id": 2259,
@@ -6292,7 +9177,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/2259.jpg",
   "series": "Noir",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Korushika no Musume (Daughter of Corsica)",
+   "Noir"
+  ]
  },
  {
   "id": 24496,
@@ -6300,7 +9189,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24496-h2oMSeBxyYUc.jpg",
   "series": "JoJo no Kimyou na Bouken: Diamond wa Kudakenai",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Koichi Hirose"
+  ]
  },
  {
   "id": 70861,
@@ -6316,7 +9208,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2773-3xlmBrQw3Yl1.png",
   "series": "Tetsuwan Birdy",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Birdy the Berserker Killer",
+   "Arita Shion"
+  ]
  },
  {
   "id": 50387,
@@ -6324,7 +9220,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b50387-99BEgVCuqwxa.png",
   "series": "High School DxD",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Breast Dragon Emperor",
+   "Red Dragon Emperor "
+  ]
  },
  {
   "id": 230873,
@@ -6332,7 +9232,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b230873-hTaTgyabFAKA.jpg",
   "series": "Make Heroine ga Oosugiru!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yanna-chan"
+  ]
  },
  {
   "id": 126093,
@@ -6372,13 +9275,29 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b36309-6KM0riV4lqfN.jpg",
   "series": "TRIGUN",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Narrador",
+   "Rozpr\u00e1va\u010d",
+   "Vypr\u00e1v\u011b\u010d",
+   "D\u0131\u015f ses",
+   "Narratore",
+   "Pripovjeda\u010d",
+   "Narradora",
+   "Ng\u01b0\u1eddi d\u1eabn chuy\u1ec7n",
+   "Tagapagsalaysay",
+   "Erz\u00e4hlperson",
+   "Forteller",
+   "Ber\u00e4ttare",
+   "Narrateur",
+   "Narrato"
+  ]
  },
  {
   "id": 90108,
   "name": "Riki Nendou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90108-BJYQbUaMLS7G.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no \u03a8-nan (ONA)",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -6388,7 +9307,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122124-6ymNNXYfvyXO.png",
   "series": "Kumo desu ga, Nani ka?",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Phantom Spider",
+   "Nightmare of the Labyrinth",
+   "\"I\""
+  ]
  },
  {
   "id": 65227,
@@ -6396,7 +9320,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65227-PWmfiEVJbCwQ.png",
   "series": "Akame ga Kill!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Onee-San"
+  ]
  },
  {
   "id": 151495,
@@ -6404,7 +9331,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b151495-MQz2Bntpg1sO.png",
   "series": "Yuukoku no Moriarty",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sherly"
+  ]
  },
  {
   "id": 2018,
@@ -6420,7 +9350,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b22726-S7mGKZn16Djh.png",
   "series": "Oyasumi Punpun",
   "gender": "female",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Aiko Orihara (\u7e54\u539f\u611b\u5b50)"
+  ]
  },
  {
   "id": 722,
@@ -6428,7 +9361,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b722-Ernx5wHAXugB.jpg",
   "series": "TRIGUN",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nicholas the Chapel",
+   "Nicholas the Punisher"
+  ]
  },
  {
   "id": 17080,
@@ -6444,7 +9381,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b7467-0xxnaxQGfhkY.jpg",
   "series": "ONE PIECE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ghost Princess"
+  ]
  },
  {
   "id": 230204,
@@ -6452,7 +9392,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b230204-cNRNjAj1FP4j.png",
   "series": "WIND BREAKER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Othello-kun"
+  ]
  },
  {
   "id": 17676,
@@ -6460,7 +9403,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b17676-6m5VaQl0SR20.jpg",
   "series": "JoJo no Kimyou na Bouken: Stone Ocean",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Emilio Pucci",
+   "Father Pucci",
+   "Whitesnake",
+   "The New Father"
+  ]
  },
  {
   "id": 64167,
@@ -6468,7 +9417,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b64167-qMxw0Sijwc18.png",
   "series": "Sakurasou no Pet na Kanojo",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nanamin",
+   "Ponytail"
+  ]
  },
  {
   "id": 43669,
@@ -6492,7 +9445,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b132848-HsUfgM0nr2Dz.jpg",
   "series": "Arifureta Shokugyou de Sekai Saikyou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Otaku",
+   "Love Smashers",
+   "Duelist Smasher Whitehead",
+   "Master",
+   "Papa"
+  ]
  },
  {
   "id": 180901,
@@ -6500,7 +9460,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b180901-vEAE20MjhHA0.png",
   "series": "Zenchiteki na Dokusha no Shiten kara",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Han Soo-Young"
+  ]
  },
  {
   "id": 89019,
@@ -6508,7 +9471,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89019-sH6Zg8rpfPWD.png",
   "series": "Himouto! Umaru-chan",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Komaru",
+   "UMR",
+   "Tanukichi",
+   "Racoon-chan"
+  ]
  },
  {
   "id": 47163,
@@ -6516,7 +9485,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b47163-ANj57c8yDZso.png",
   "series": "Chihayafuru",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chi-chan"
+  ]
  },
  {
   "id": 162123,
@@ -6532,7 +9504,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88414-r2Xd7jJeMrvR.jpg",
   "series": "Tokyo Ghoul",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "No Face"
+  ]
  },
  {
   "id": 124110,
@@ -6548,7 +9523,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n4875-Ga2TVjP70R6r.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mr. 2",
+   "Bon Clay (\u30dc\u30f3\u30af\u30fc\u30ec\u30a4)",
+   "Bon-chan"
+  ]
  },
  {
   "id": 191241,
@@ -6556,7 +9536,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b191241-FaDEXRL1CgJr.png",
   "series": "Ao no Hako",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Chii",
+   "Natsu"
+  ]
  },
  {
   "id": 74653,
@@ -6564,7 +9548,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b74653-XpMcsLVZBnkZ.jpg",
   "series": "Nanatsu no Taizai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Serpent's Sin of Envy "
+  ]
  },
  {
   "id": 40592,
@@ -6572,7 +9559,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b40592-mAEyaQyJu5oc.png",
   "series": "Ano Hi Mita Hana no Namae wo Bokutachi wa Mada Shiranai.",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Menma"
+  ]
  },
  {
   "id": 64749,
@@ -6580,7 +9570,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/64749-a2ZdRWW1D5TR.jpg",
   "series": "Akame ga Kill!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tatsumi The Blacksmith"
+  ]
  },
  {
   "id": 89222,
@@ -6588,7 +9581,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89222-TL8MQM3wJgEB.png",
   "series": "Boku no Hero Academia",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tenya Ida",
+   "Turbo Hero: Ingenium (\u30bf\u30fc\u30dc\u30d2\u30fc\u30ed\u30fc\u30fb\u30a4\u30f3\u30b2\u30cb\u30a6\u30e0)"
+  ]
  },
  {
   "id": 18770,
@@ -6596,7 +9593,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18770-iLAk9O3GGUvN.png",
   "series": "Kuroko no Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bakagami",
+   "Kagamicchi"
+  ]
  },
  {
   "id": 266433,
@@ -6604,7 +9605,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b266433-8JWks5k2OPJn.png",
   "series": "Gachiakuta",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Trash Vandal"
+  ]
  },
  {
   "id": 126825,
@@ -6628,7 +9632,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128034-Gg5MrpTFNSv8.png",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Storm Dragon"
+  ]
  },
  {
   "id": 122192,
@@ -6636,7 +9643,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b122192-qnLmMg3YaGNd.png",
   "series": "Wotaku ni Koi wa Muzukashii",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kaba",
+   "Bakakura",
+   "KBKR"
+  ]
  },
  {
   "id": 150417,
@@ -6644,7 +9656,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b150417-DVMK9sQwBx8a.png",
   "series": "Blue Period",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yuka-chan (\u30e6\u30ab\u3061\u3083\u3093)"
+  ]
  },
  {
   "id": 5188,
@@ -6660,7 +9675,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128040-QOhtFHgfOT5O.png",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Oni Princess",
+   "Shrine Maiden"
+  ]
  },
  {
   "id": 135019,
@@ -6668,7 +9687,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b135019-5HdzxMIHvgPB.jpg",
   "series": "Mairimashita! Iruma-kun",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Clarin"
+  ]
  },
  {
   "id": 65525,
@@ -6676,7 +9698,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65525-BoB482T3oEoN.jpg",
   "series": "Danganronpa: Kibou no Gakuen to Zetsubou no Koukousei - The Animation",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Celeste",
+   "Celes",
+   "Queen of Liars",
+   "Ultimate Gambler",
+   "Super High School Level Gambler (\u8d85\u9ad8\u6821\u7d1a\u306e\u30ae\u30e3\u30f3\u30d6\u30e9\u30fc)"
+  ]
  },
  {
   "id": 12305,
@@ -6684,7 +9713,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b12305-AdKOcp0az9mq.jpg",
   "series": "Toradora!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Minorin"
+  ]
  },
  {
   "id": 1087,
@@ -6692,7 +9724,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1087-wMTny26FezYB.png",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kitsune"
+  ]
  },
  {
   "id": 2761,
@@ -6708,7 +9743,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125170-TIHSOgfQbkbU.png",
   "series": "BEASTARS",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rouis"
+  ]
  },
  {
   "id": 126828,
@@ -6716,7 +9754,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126828-nZDnMK4Bw7f9.png",
   "series": "Tate no Yuusha no Nariagari",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Firo"
+  ]
  },
  {
   "id": 234824,
@@ -6724,7 +9765,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b234824-i3s64ueaBqGq.png",
   "series": "Dandadan",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Santa Dodoria (\u30c9\u30c9\u30ea\u30a2\u4e09\u592a)"
+  ]
  },
  {
   "id": 721,
@@ -6732,7 +9776,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b721-VSOxZHBedxtD.png",
   "series": "MONSTER",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Heinrich Lunge"
+  ]
  },
  {
   "id": 275749,
@@ -6748,7 +9795,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b138067-oHmQo5cOSZMN.png",
   "series": "Bungou Stray Dogs 2nd Season",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Dos",
+   "\u30d5\u30e7\u30fc\u30c9\u30eb\u30fbD"
+  ]
  },
  {
   "id": 264336,
@@ -6764,7 +9815,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120655-LfUD7Mb1Mncg.jpg",
   "series": "Kono Subarashii Sekai ni Shukufuku wo!",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Koori no Majo (\u6c37\u306e\u9b54\u5973)",
+   "Ice Witch"
+  ]
  },
  {
   "id": 148749,
@@ -6788,7 +9843,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3120-oZ4uB6NX5ReK.png",
   "series": "Cardcaptor Sakura",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Madison Taylor"
+  ]
  },
  {
   "id": 128038,
@@ -6796,7 +9854,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b128038-VgVcqf6NDGJ5.png",
   "series": "Tensei Shitara Slime Datta Ken",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Samurai General",
+   "Oni King",
+   "Young Master",
+   "Heavenly King"
+  ]
  },
  {
   "id": 89589,
@@ -6804,7 +9868,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89589-0ICQRy2iXj2l.png",
   "series": "Boku no Hero Academia 3",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Twice (\u30c8\u30a5\u30ef\u30a4\u30b9)"
+  ]
  },
  {
   "id": 25273,
@@ -6828,7 +9895,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18324-WauBT7sWq4hA.jpg",
   "series": "Akagami no Shirayuki-hime",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Zen Wistalia"
+  ]
  },
  {
   "id": 3029,
@@ -6836,7 +9906,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3029-urpwynZhFdbi.jpg",
   "series": "Cardcaptor Sakura",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Syaoran",
+   "Shaoran",
+   "Li Showron"
+  ]
  },
  {
   "id": 4966,
@@ -6844,7 +9919,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4966-Bb0hjxjJtidY.jpg",
   "series": "Mirai Nikki OVA",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Natsuko Ooshima",
+   "Nacchan",
+   "Ninth"
+  ]
  },
  {
   "id": 270095,
@@ -6868,11 +9948,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b158385-ewIQvz0SYL1e.png",
   "series": "Fugou Keiji: Balance:UNLIMITED",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Whiskey"
+  ]
  },
  {
   "id": 246057,
-  "name": "Übel",
+  "name": "\u00dcbel",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b246057-ixvDfpng6I1S.png",
   "series": "Sousou no Frieren",
   "gender": "female",
@@ -6890,9 +9973,13 @@ const GENERIC_CHARACTERS =
   "id": 129137,
   "name": "Katarina Claes",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129137-jTXVGAICPfvX.png",
-  "series": "Otome Game no Hametsu Flag shika Nai Akuyaku Reijou ni Tensei shiteshimatta…",
+  "series": "Otome Game no Hametsu Flag shika Nai Akuyaku Reijou ni Tensei shiteshimatta\u2026",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Bakarina",
+   "Catarina"
+  ]
  },
  {
   "id": 46957,
@@ -6900,7 +9987,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46957-eiztsJtmmRjF.png",
   "series": "Carnival Phantasm",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Caren Fujimura",
+   "Caren Himuro",
+   "Caren Gotou"
+  ]
  },
  {
   "id": 725,
@@ -6908,7 +10000,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n725-g04AaiaK5f9B.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Clown",
+   "Captain Buggy",
+   "Big Nose",
+   "Buggy the Star Clown",
+   "Buggy the Genius Jester",
+   "Baggy"
+  ]
  },
  {
   "id": 88411,
@@ -6916,7 +10016,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88411-dI6vqLy4pvHK.png",
   "series": "Tokyo Ghoul",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black Rabbit"
+  ]
  },
  {
   "id": 89965,
@@ -6924,7 +10027,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/89965-dvE5D72YCP5I.png",
   "series": "91Days",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Avilio Bruno"
+  ]
  },
  {
   "id": 124144,
@@ -6932,15 +10038,21 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124144-KOjcmhunbvYn.png",
   "series": "Dr. STONE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Strongest High School Primate"
+  ]
  },
  {
   "id": 90109,
   "name": "Kokomi Teruhashi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90109-hr98ksrKzMOe.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no \u03a8-nan (ONA)",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tenshi"
+  ]
  },
  {
   "id": 89856,
@@ -6956,7 +10068,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b720-VFo5SzZsVfzl.png",
   "series": "MONSTER",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nina Fortner (\u30cb\u30ca\u30fb\u30d5\u30a9\u30eb\u30c8\u30ca\u30fc)"
+  ]
  },
  {
   "id": 2079,
@@ -6964,7 +10079,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2079-RnhPS44vyqpJ.jpg",
   "series": "Hagane no Renkinjutsushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Strong Arm Alchemist"
+  ]
  },
  {
   "id": 127925,
@@ -6988,7 +10106,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b206-4HokrxTIqu7L.jpg",
   "series": "Fruits Basket",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Shigure Soma",
+   "Gure",
+   "Shii-Chan"
+  ]
  },
  {
   "id": 8298,
@@ -6996,7 +10119,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8298-ATUVKng0oyHR.png",
   "series": "Sen to Chihiro no Kamikakushi",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "No Face"
+  ]
  },
  {
   "id": 67769,
@@ -7004,7 +10130,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b67769-6TSfn8kz4KVf.jpg",
   "series": "Fate/Zero",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ruler (\u30eb\u30fc\u30e9\u30fc)",
+   "Joan of Arc",
+   "The Maid of Orl\u00e9ans",
+   "Holy Maiden of Salvation",
+   "Juana de Arco",
+   "La Pucelle d'Orl\u00e9ans",
+   "The Maiden of Orleans",
+   "St. Joan"
+  ]
  },
  {
   "id": 120625,
@@ -7012,7 +10148,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120625-i2xfexhHTwMQ.png",
   "series": "Bungou Stray Dogs 2nd Season",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Odasaku"
+  ]
  },
  {
   "id": 12054,
@@ -7028,7 +10167,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b384-AoWCsQyG0WI7.png",
   "series": "Sen to Chihiro no Kamikakushi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sen"
+  ]
  },
  {
   "id": 81935,
@@ -7036,7 +10178,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b81935-NGDgB9J4MMlF.png",
   "series": "One Punch Man",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mumen Rider (\u7121\u514d\u30e9\u30a4\u30c0\u30fc)",
+   "License-less Rider"
+  ]
  },
  {
   "id": 236,
@@ -7044,7 +10190,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b236-xWbhQJYxYn2P.png",
   "series": "Tsubasa Chronicle",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yuko",
+   "YKindou",
+   "Space-Time Witch",
+   "Dimensional Witch"
+  ]
  },
  {
   "id": 126357,
@@ -7052,7 +10204,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/126357-d5wTLYqKchRv.jpg",
   "series": "Boku no Hero Academia 3",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Overhaul (\u30aa\u30fc\u30d0\u30fc\u30db\u30fc\u30eb)"
+  ]
  },
  {
   "id": 461,
@@ -7060,7 +10215,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b461-1hBKMLSpTY0e.png",
   "series": "BLACK LAGOON",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Sofiya Pavlovena",
+   "Fry Face",
+   "Kapitan",
+   "Vladilena"
+  ]
  },
  {
   "id": 24,
@@ -7068,7 +10229,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24-QssbnrJO2Cfz.png",
   "series": "Ouran Koukou Host Club",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kao-chan"
+  ]
  },
  {
   "id": 125300,
@@ -7076,7 +10240,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125300-mb168DIpLbWC.png",
   "series": "Uma Musume: Pretty Derby",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tokai Teio"
+  ]
  },
  {
   "id": 20,
@@ -7084,7 +10251,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20-VNIsuFhxyiJu.png",
   "series": "Ouran Koukou Host Club",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Honey"
+  ]
  },
  {
   "id": 2455,
@@ -7100,7 +10270,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b55977-wqiEfiJUuEFw.png",
   "series": "Fate/stay night",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Knight of Treachery",
+   "Saber of Red",
+   "Aka no Saber"
+  ]
  },
  {
   "id": 37154,
@@ -7116,7 +10291,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120939-Xl4FXBKS9kpE.png",
   "series": "Gabriel Dropout",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Satania (\u30b5\u30bf\u30fc\u30cb\u30e3)"
+  ]
  },
  {
   "id": 88899,
@@ -7124,7 +10302,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88899-ydsougsJFwCi.png",
   "series": "Owari no Seraph",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   " Queen Krul",
+   "Krullie"
+  ]
  },
  {
   "id": 180693,
@@ -7132,7 +10314,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b180693-i9RZuHTDwXov.png",
   "series": "Kaijuu 8-gou",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ashiro Taichou (\u4e9c\u767d\u968a\u9577)",
+   "Commander Ashiro"
+  ]
  },
  {
   "id": 124701,
@@ -7140,7 +10326,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124701-PecnElfoJlP1.png",
   "series": "Golden Kamuy",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ekasiotompuy",
+   "Asuko Kochoube (\u5c0f\u8776\u8fba\u660e\u65e5\u5b50)",
+   "Beloved child of the Ainu",
+   "Ainu woman for a new era"
+  ]
  },
  {
   "id": 17364,
@@ -7172,7 +10364,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b376-gDdhShL8BIVg.jpg",
   "series": "Fruits Basket",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hana-chan"
+  ]
  },
  {
   "id": 58443,
@@ -7188,7 +10383,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b624-qdFGCDB5Zhco.png",
   "series": "HELLSING",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Police Girl",
+   "Draculina",
+   "Yuri Kate",
+   "Mignonette",
+   "Hellsing's New Trump Card",
+   "Kitten"
+  ]
  },
  {
   "id": 368,
@@ -7196,7 +10399,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b368-zJEE8gpxBb5f.jpg",
   "series": "Fruits Basket",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Hatori Soma",
+   "Tori"
+  ]
  },
  {
   "id": 90188,
@@ -7204,7 +10411,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90188-1tmWiAVmtMxX.png",
   "series": "Shuumatsu no Izetta",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Wei\u00dfe Hexe",
+   "White Witch"
+  ]
  },
  {
   "id": 2533,
@@ -7212,7 +10423,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/2533.jpg",
   "series": "Madlax",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kind Killer"
+  ]
  },
  {
   "id": 2160,
@@ -7220,7 +10434,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n2160-CbHDsANTwxg2.jpg",
   "series": "DARKER THAN BLACK: Kuro no Keiyakusha",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Li Shengshun",
+   "Li Henshik",
+   "The Black Reaper",
+   "BK-201"
+  ]
  },
  {
   "id": 164753,
@@ -7236,7 +10456,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3-JjH9Si9UM1NZ.png",
   "series": "Cowboy Bebop",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Running Rock",
+   "Black Dog",
+   "Jet Jet"
+  ]
  },
  {
   "id": 82037,
@@ -7244,7 +10469,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b82037-xvKHWk4AE4df.png",
   "series": "Death Billiards",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Black-haired Woman"
+  ]
  },
  {
   "id": 47167,
@@ -7252,7 +10480,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b47167-YVdJ5jYLKSbj.png",
   "series": "Chihayafuru",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Eyelashes"
+  ]
  },
  {
   "id": 203119,
@@ -7260,7 +10491,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b203119-1vybpGB6PaEh.png",
   "series": "Tensei Oujo to Tensai Reijou no Mahou Kakumei",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Anis (\u30a2\u30cb\u30b9)",
+   "Princess Anisphia",
+   "Princess Peculiar (\u30ad\u30c6\u30ec\u30c4\u738b\u5973)"
+  ]
  },
  {
   "id": 47653,
@@ -7276,7 +10512,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89200-mZJo7iEwJGzg.png",
   "series": "Bungou Stray Dogs",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Four-Eyes"
+  ]
  },
  {
   "id": 72923,
@@ -7284,7 +10523,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b72923-Hidpb955mwMW.png",
   "series": "Nanatsu no Taizai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ellie",
+   "Elie"
+  ]
  },
  {
   "id": 203120,
@@ -7292,7 +10535,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b203120-8vNUsyywkAn9.png",
   "series": "Tensei Oujo to Tensai Reijou no Mahou Kakumei",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Euphie (\u30e6\u30d5\u30a3)"
+  ]
  },
  {
   "id": 20326,
@@ -7300,7 +10546,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20326-OgUY6upSqUv3.jpg",
   "series": "Ping Pong THE ANIMATION",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Peco"
+  ]
  },
  {
   "id": 180692,
@@ -7308,7 +10557,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b180692-rPGXuxhcKw5N.png",
   "series": "Kaijuu 8-gou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Monster #8",
+   "Kaiju #8"
+  ]
  },
  {
   "id": 215188,
@@ -7316,7 +10569,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b215188-U9LE5bw90V7S.png",
   "series": "takt op.Destiny",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Destiny",
+   "Cosette Schneider (\u30b3\u30bc\u30c3\u30c8\u30fb\u30b7\u30e5\u30ca\u30a4\u30c0\u30fc)"
+  ]
  },
  {
   "id": 14020,
@@ -7324,7 +10581,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14020-r0qXmjKEWv7L.png",
   "series": "Pandora Hearts",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mad Hatter",
+   "Clown"
+  ]
  },
  {
   "id": 121430,
@@ -7332,7 +10593,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121430-n1k9M5RdkXyI.png",
   "series": "Mahoutsukai no Yome: Hoshi Matsu Hito",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ains",
+   "Thorn",
+   "Pilum Murialis",
+   "Pilum Muralis"
+  ]
  },
  {
   "id": 155706,
@@ -7348,7 +10615,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b726-DqAIpscMuYYx.png",
   "series": "ONE PIECE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Miss Wednesday",
+   "Nefeltari Vivi"
+  ]
  },
  {
   "id": 2749,
@@ -7356,7 +10627,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2749-e8ebEBN1SlS2.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mr. 0",
+   "Crocoboy",
+   "Sir Crocodile",
+   "Desert King"
+  ]
  },
  {
   "id": 126948,
@@ -7372,7 +10649,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89180-rN6OVPki8h3V.png",
   "series": "Nanatsu no Taizai",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Boar's Sin of Gluttony",
+   "Brittania's Greatest Sorcerer"
+  ]
  },
  {
   "id": 126158,
@@ -7380,7 +10661,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126158-Wix9rh7unTDQ.png",
   "series": "Boku no Hero Academia 2",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Endeavor (\u30a8\u30f3\u30c7\u30f4\u30a1\u30fc)"
+  ]
  },
  {
   "id": 200291,
@@ -7396,7 +10680,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/65231-2QpM2yw2X86k.png",
   "series": "Akame ga Kill!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lubbo",
+   "Rabakku"
+  ]
  },
  {
   "id": 4,
@@ -7404,7 +10692,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/4.jpg",
   "series": "Cowboy Bebop",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Poochie"
+  ]
  },
  {
   "id": 41197,
@@ -7412,7 +10703,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b41197-1aJMe2IA78fT.png",
   "series": "GANGSTA.",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Nick",
+   "Nico"
+  ]
  },
  {
   "id": 728,
@@ -7420,7 +10715,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b728-zHw77BzLzQKT.jpg",
   "series": "NARUTO",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kirigakure no Kijin (\u9727\u96a0\u308c\u306e\u9b3c\u4eba)",
+   "Demon of the Hidden Mist"
+  ]
  },
  {
   "id": 18823,
@@ -7428,7 +10727,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18823-EHKT9u7r91s0.png",
   "series": "Gintama",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsukki",
+   "The Moon of Yoshiwara",
+   "Courtesan of Death"
+  ]
  },
  {
   "id": 4835,
@@ -7436,7 +10740,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4835-Blt6iPoFEQnr.jpg",
   "series": "Meitantei Conan",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "The Invader",
+   "Lamu"
+  ]
  },
  {
   "id": 2174,
@@ -7452,7 +10760,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b651-S4mzVOTMzej6.png",
   "series": "Hagane no Renkinjutsushi",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Envy the Jealous",
+   "Envy the Bizarre"
+  ]
  },
  {
   "id": 41949,
@@ -7460,7 +10772,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b41949-LaoaHJ2tJxBw.png",
   "series": "Magi: The labyrinth of magic",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Magi"
+  ]
  },
  {
   "id": 1996,
@@ -7476,7 +10791,22 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2213-xqqwnMLn1Nqc.png",
   "series": "Shingetsutan Tsukihime",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Princess of the True Ancestors",
+   "White Princess",
+   "White Berserker",
+   "Warcueid",
+   "White Princess of the True Ancestors",
+   "Golden Princess",
+   "Moon Princess",
+   "Phantas-Moon",
+   "Fluffy Idol Morcueid",
+   "Archetype: Earth",
+   "Berserk Arcueid",
+   "Red Arcueid",
+   "Eco-Arc"
+  ]
  },
  {
   "id": 269308,
@@ -7484,7 +10814,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b269308-XTwR7eKuYRl2.png",
   "series": "Yeokdaegeum Yeongji Seolgyesa",
   "gender": "male",
-  "mediaType": "manga"
+  "mediaType": "manga",
+  "al": [
+   "Kim Su-Ho (\uae40\uc218\ud638)"
+  ]
  },
  {
   "id": 32507,
@@ -7492,7 +10825,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b32507-IRB4mLw5kdo6.png",
   "series": "JoJo no Kimyou na Bouken: Stone Ocean",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "F.F.",
+   "Atroe"
+  ]
  },
  {
   "id": 137776,
@@ -7508,15 +10845,21 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/73881-Ukr6cBzK8dsi.png",
   "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Da Densest"
+  ]
  },
  {
   "id": 169679,
   "name": "Bond",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b169679-EFPubVtZFYom.jpg",
-  "series": "SPY×FAMILY",
+  "series": "SPY\u00d7FAMILY",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Subject 8"
+  ]
  },
  {
   "id": 89181,
@@ -7532,7 +10875,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b906-ImRjx5HFM8X6.png",
   "series": "BLEACH",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Freeloader",
+   "Red Pineapple"
+  ]
  },
  {
   "id": 378,
@@ -7540,7 +10887,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b378-pjsuS5BGmjQw.png",
   "series": "ARIA The ANIMATION",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Momiko",
+   "Miss Expert of Happiness"
+  ]
  },
  {
   "id": 19713,
@@ -7572,7 +10923,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/88096-SljWAMO10C6l.jpg",
   "series": "Zankyou no Terror",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Touji Hisami (\u4e45\u898b\u51ac\u4e8c)",
+   "Sphinx #2"
+  ]
  },
  {
   "id": 21,
@@ -7580,7 +10935,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b21-anlrcOlyRHgO.png",
   "series": "Ouran Koukou Host Club",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Mori"
+  ]
  },
  {
   "id": 643,
@@ -7588,7 +10946,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b643-nHYwe1Dm7XoR.jpg",
   "series": "Ergo Proxy",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Real"
+  ]
  },
  {
   "id": 88577,
@@ -7596,7 +10957,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88577-oKKnibqGgSSD.png",
   "series": "Re:Zero kara Hajimeru Isekai Seikatsu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kensei (\u5263\u8056)",
+   "Sword Saint",
+   "Knight Implacable"
+  ]
  },
  {
   "id": 46163,
@@ -7604,13 +10970,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46163-FNug6cIPWxYk.png",
   "series": "Bokura no LIVE Kimi to no LIFE",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Niko Yazawa"
+  ]
  },
  {
   "id": 38194,
   "name": "Mami Tomoe",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b38194-gnlnx4XN4HYP.jpg",
-  "series": "Mahou Shoujo Madoka☆Magica",
+  "series": "Mahou Shoujo Madoka\u2606Magica",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -7620,7 +10989,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b120977-x50lrAuIAsHE.png",
   "series": "Kobayashi-san Chi no Maidragon",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Elma Joui",
+   "Lady Elma"
+  ]
  },
  {
   "id": 88351,
@@ -7628,7 +11001,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88351-grqY44xz6bvP.png",
   "series": "Mushoku Tensei: Isekai Ittara Honki Dasu",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Watch Dog",
+   "Dead End"
+  ]
  },
  {
   "id": 66595,
@@ -7644,7 +11021,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b502-Nc5U3ghTR7Gy.png",
   "series": "Fate/stay night",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Rider (\u30e9\u30a4\u30c0\u30fc)",
+   "Bewitching Black Serpent",
+   "Gorgon (\u30b4\u30eb\u30b4\u30fc\u30f3)"
+  ]
  },
  {
   "id": 140637,
@@ -7652,7 +11034,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b140637-jTJb40wOjsPs.png",
   "series": "Shuumatsu no Valkyrie",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "No.00000000001",
+   "Father of Humanity"
+  ]
  },
  {
   "id": 125917,
@@ -7676,7 +11062,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b76816-sS6LcPRxisQ9.png",
   "series": "Haikyuu!!",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ushiwaka",
+   "Super Ace",
+   "The Lefty",
+   "Japan"
+  ]
  },
  {
   "id": 177,
@@ -7700,7 +11092,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124459-UggsjRUfNtko.png",
   "series": "Black Clover",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Xerx Lugner"
+  ]
  },
  {
   "id": 179810,
@@ -7708,7 +11103,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b179810-E34imq24Z2Gw.jpg",
   "series": "Yubisaki to Renren",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Itsu"
+  ]
  },
  {
   "id": 30579,
@@ -7724,7 +11122,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18130-qD7dREeDAkLE.png",
   "series": "Dororo to Hyakkimaru",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Roro"
+  ]
  },
  {
   "id": 126137,
@@ -7764,7 +11165,15 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1747-LYyYIvIZIdnE.jpg",
   "series": "Meitantei Conan",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "\u602a\u76d7\u30ad\u30c3\u30c9 (Phantom Thief)",
+   "Kaitou Kid",
+   "Moonlight Magician",
+   "1412",
+   "Lupin of the Modern Era",
+   "Bakaito"
+  ]
  },
  {
   "id": 84783,
@@ -7772,7 +11181,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b84783-m1qgQvKVAoNn.jpg",
   "series": "Kami no Tou: Tower of God",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gator",
+   "Rac Wreckraiser"
+  ]
  },
  {
   "id": 87970,
@@ -7788,7 +11201,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3892-Cv49n98SjFIE.png",
   "series": "Fruits Basket: 1st Season",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Isuzu Soma",
+   "Rin"
+  ]
  },
  {
   "id": 223350,
@@ -7796,7 +11213,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b223350-yNmgtin88wwu.png",
   "series": "Azur Lane Anime PVs",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ryza (\u30e9\u30a4\u30b6)"
+  ]
  },
  {
   "id": 180892,
@@ -7804,7 +11224,17 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b180892-P9NUpKANX4W5.png",
   "series": "Zenchiteki na Dokusha no Shiten kara",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Joong-Hyuk Yoo",
+   "Yoo Jonghyuk",
+   "Yu Joong-Hyeok",
+   "Sunfish Bastard",
+   "Master",
+   "Captain",
+   "Conquering King",
+   "Supreme King"
+  ]
  },
  {
   "id": 167188,
@@ -7826,9 +11256,17 @@ const GENERIC_CHARACTERS =
   "id": 1375,
   "name": "Yami Yuugi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b1375-J4lAw8j1ICi1.png",
-  "series": "Yu☆Gi☆Oh! Duel Monsters",
+  "series": "Yu\u2606Gi\u2606Oh! Duel Monsters",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yami no Yuugi (\u95c7\u306e\u904a\u622f)",
+   "Yami Yugi",
+   "The Other Yugi",
+   "The Other Me",
+   "Pharaoh",
+   "Nameless Pharaoh"
+  ]
  },
  {
   "id": 508,
@@ -7844,13 +11282,20 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b152004-h2AbqFq0zZOZ.png",
   "series": "Jibaku Shounen Hanako-kun",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Tsuchigomori-sensei",
+   "School Mystery Number 5/Number 5",
+   "Tsuchigomori of the 4PM Bookstacks",
+   "Spider-face",
+   "Gloomy Spider"
+  ]
  },
  {
   "id": 127134,
   "name": "Aren Kuboyasu",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127134-gFFW9MmrXPbt.jpg",
-  "series": "Saiki Kusuo no Ψ-nan",
+  "series": "Saiki Kusuo no \u03a8-nan",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -7868,7 +11313,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b129563-jHUu5LCMVMtp.png",
   "series": "Maou-jou de Oyasumi",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Syalis-hime (\u30b9\u30e4\u30ea\u30b9\u59eb)",
+   "Princess Syalis",
+   "Miracle Sya (\u30df\u30e9\u30af\u30eb\u30fb\u30b9\u30e4)",
+   "Suya-Suya"
+  ]
  },
  {
   "id": 19407,
@@ -7876,7 +11327,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n19407-EKt1ldJOjSOK.jpg",
   "series": "Umineko no Naku Koro ni",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gretel",
+   "Missy"
+  ]
  },
  {
   "id": 2738,
@@ -7884,7 +11339,14 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2738-xKZ8i1kLvWRL.png",
   "series": "GOLDEN BOY: Sasurai no Obenkyou Yarou",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Kintarou Oe",
+   "Kintaro Oe",
+   "Kin",
+   "Golden Boy",
+   "Noodle Boy"
+  ]
  },
  {
   "id": 196522,
@@ -7900,7 +11362,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b145722-qSJ71S6vpeeM.png",
   "series": "Ore dake Level Up na Ken",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Ygritte"
+  ]
  },
  {
   "id": 89025,
@@ -7908,7 +11373,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b89025-mUe7SN8rIaWP.png",
   "series": "Kekkai Sensen",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Leo"
+  ]
  },
  {
   "id": 10418,
@@ -7916,7 +11384,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10418-nDUxYpR4dpmA.png",
   "series": "Nichijou no 0-wa",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Yukko"
+  ]
  },
  {
   "id": 65261,
@@ -7924,7 +11395,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65261-VebXn2wCS8K8.png",
   "series": "Date A Live",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Super Genius"
+  ]
  },
  {
   "id": 169401,
@@ -7932,7 +11406,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b169401-jeepvEsqW4Ns.png",
   "series": "Blue Lock",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "King"
+  ]
  },
  {
   "id": 122698,
@@ -7940,13 +11417,16 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/122698-8UvXcLs1LGYY.jpg",
   "series": "Kakegurui",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Luna"
+  ]
  },
  {
   "id": 539,
-  "name": "Nausicaä",
+  "name": "Nausica\u00e4",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b539-R8ZUxGrcEGGn.png",
-  "series": "Kaze no Tani no Nausicaä",
+  "series": "Kaze no Tani no Nausica\u00e4",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -7956,7 +11436,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124790-QR7zyemTK0zq.png",
   "series": "Violet Evergarden",
   "gender": "unknown",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Gil",
+   "Major Gilbert"
+  ]
  },
  {
   "id": 127466,
@@ -7964,7 +11448,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127466-J3otX1gFDatJ.png",
   "series": "Modao Zushi",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Lan Zhan (\u84dd\u6e5b)",
+   "HanGuang-Jun (\u542b\u5149\u541b)"
+  ]
  },
  {
   "id": 123216,
@@ -7972,7 +11460,10 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123216-N9tQZf2XIKu6.png",
   "series": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Class Rep Ichinose"
+  ]
  },
  {
   "id": 2752,
@@ -7980,7 +11471,11 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2752-0ENS2a39muDz.png",
   "series": "ONE PIECE",
   "gender": "male",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Aokiji (\u9752\u96c9)",
+   "The Blue Pheasant"
+  ]
  },
  {
   "id": 173760,
@@ -7996,7 +11491,12 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b64523-LPeAiw8Yx517.jpg",
   "series": "Sword Art Online II",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Zekken (\u7d76\u5263)",
+   "Absolute Sword",
+   "Yuuki (\u30e6\u30a6\u30ad)"
+  ]
  },
  {
   "id": 161742,
@@ -8004,7 +11504,13 @@ const GENERIC_CHARACTERS =
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b161742-5YJ759FUsZNf.png",
   "series": "Tantei wa mou, Shindeiru.",
   "gender": "female",
-  "mediaType": "anime"
+  "mediaType": "anime",
+  "al": [
+   "Great Detective",
+   "Daydream",
+   "Ace Detective",
+   "Mom"
+  ]
  },
  {
   "id": 122777,
@@ -8013,5 +11519,16 @@ const GENERIC_CHARACTERS =
   "series": "Kakegurui",
   "gender": "female",
   "mediaType": "anime"
+ },
+ {
+  "id": 6122,
+  "name": "Bardock",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b6122-N8XCxV2YPd1r.png",
+  "series": "Dragon Ball Z",
+  "gender": "male",
+  "mediaType": "anime",
+  "al": [
+   "Burdock"
+  ]
  }
 ];
