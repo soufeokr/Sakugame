@@ -790,7 +790,7 @@
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
           ? '🎭👥 Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Mark cards with each opponent\'s ❌ color, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
           : hostGame === 'race'
-            ? '⚡ One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. The hunters take turns asking — the first to guess the mystery character wins!'
+            ? '⚡ One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. Hunters take turns ASKING — but 🆓 GUESSING is free for everyone, at any moment (wrong = -1 ❤️)! First to find the mystery character wins!'
             : '🌫️ A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses add a 🏅 speed bonus (+3/+2/+1). Playable SOLO too!';
       }
     }
@@ -1948,21 +1948,22 @@
         database.ref('rooms/' + roomCode).update(upd);
         return;
       }
-      // Pending hunter guess → resolve
+      // Pending hunter guess → resolve. 🆓 Guesses are FREE now: they live
+      // OUTSIDE the question flow — a wrong guess only costs a ❤️, it never
+      // eats the turn, wipes the current question or skips anyone.
       if (rc.guess) {
         rcWatchBusy = true;
         try {
           const correct = rc.guess.charId === rc.secretId;
           const name = (players[rc.guess.by] || {}).name || '?';
           const charName = ((currentRoom.characters || []).find(c => c.id === rc.guess.charId) || {}).name || '?';
-          const upd = { 'rc/guess': null, 'rc/phase': 'ask', 'rc/question': null, 'rc/answer': null };
+          const upd = { 'rc/guess': null };
           if (correct) {
             upd['rc/phase'] = 'over'; upd['rc/winner'] = rc.guess.by; upd.state = 'finished';
             upd['rc/log/' + gameLogPushKey('rc')] = { k: 'find', txt: '🏆 ' + name + ' FOUND the mystery character: ' + charName + '!' };
           } else {
             const left = Math.max(0, rcLivesOf(currentRoom, rc.guess.by) - 1);
             upd['rc/livesLeft/' + rc.guess.by] = left;
-            upd['rc/turnIdx'] = ((rc.turnIdx || 0) + 1) % Math.max(rcActiveHunters().length, 1);
             upd['rc/log/' + gameLogPushKey('rc')] = left > 0
               ? { k: 'miss', txt: '❌ ' + name + ' tried ' + charName + ' — wrong! 💔 ' + left + ' lives left' }
               : { k: 'miss', txt: '💀 ' + name + ' tried ' + charName + ' — wrong… and is OUT of lives!' };
@@ -1978,16 +1979,31 @@
       }
     }
     async function raceGuess(charId) {
+      const rc = (currentRoom && currentRoom.rc) || {};
+      if (rc.phase === 'over') return;
+      if (rc.targetPid === playerId || !rcHuntersInGame().includes(playerId)) return;
       if (rcLivesOf(currentRoom, playerId) <= 0) { showNotification('💀 You have no lives left!'); return; }
       const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
       const livesTxt = '💔 You have <b>' + rcLivesOf(currentRoom, playerId) + '</b> lives — a wrong guess costs one!';
-      showInteraction('🎯 Make a guess?', 'You think the mystery character is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.<br>' + livesTxt + '</small>', [
+      showInteraction('🎯 Make a guess?', 'You think the mystery character is <b>' + escapeHtml(charName) + '</b>?<br><small>🆓 Free guess — allowed at ANY moment, even off-turn.<br>' + livesTxt + '</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: '🎯 Guess!', onclick: async () => {
           closeInteraction();
-          rcGuessMode = false;
-          await database.ref('rooms/' + roomCode + '/rc/guess').set({ by: playerId, charId });
-          touchActivity();
+          // ⚡ First-come-first-served: the transaction ONLY lands the guess if the
+          // slot is empty — with free guessing, two hunters can click at the same
+          // time and nobody's guess may be overwritten (or skipped from the log).
+          try {
+            const res = await database.ref('rooms/' + roomCode + '/rc/guess').transaction(cur => (cur == null ? { by: playerId, charId: charId } : undefined));
+            if (res && res.committed) {
+              rcGuessMode = false; renderRaceBoard(); touchActivity();
+            } else {
+              showNotification('⏳ Someone else\'s guess is being resolved — try again in a second!');
+            }
+          } catch (e) {
+            // Older builds / no-transaction fallback: simple set still beats nothing
+            await database.ref('rooms/' + roomCode + '/rc/guess').set({ by: playerId, charId: charId });
+            rcGuessMode = false; renderRaceBoard(); touchActivity();
+          }
         }, class: 'warning' }
       ]);
     }
@@ -1995,10 +2011,12 @@
       const rc = (currentRoom && currentRoom.rc) || {};
       if (rc.phase === 'over') return;
       if (rc.targetPid === playerId) { showNotification('You are the TARGET — the hunters do the guessing!'); return; }
+      if (!rcHuntersInGame().includes(playerId)) { showNotification('You are not in this hunt — sit back and watch!'); return; }
       if (rcLivesOf(currentRoom, playerId) <= 0) { showNotification('💀 You are out of lives — watch the others hunt!'); return; }
-      if (rcTurnPid() !== playerId) { showNotification('You can guess on your turn only!'); return; }
+      // 🆓 Guesses are FREE — anyone can shoot at any moment, even off-turn.
+      // Questions stay turn-by-turn; only a WRONG guess costs 1 ❤️.
       rcGuessMode = !rcGuessMode;
-      if (rcGuessMode) showNotification('🎯 Guess mode: click the card you think is the mystery character!');
+      if (rcGuessMode) showNotification('🎯 Guess mode: click the card you think is the mystery character! (any time — wrong = -1 ❤️)');
       renderRaceBoard();
     }
     function raceClearMarks() { rcMarks = {}; showNotification('🧹 Eliminated cards restored!'); renderRaceBoard(); }
@@ -2082,10 +2100,10 @@
         if (isTarget) area.innerHTML = `<div class="question-display"><div class="text">🎯 You are the TARGET — wait for <b>${escapeHtml(turnName)}</b>'s question…</div></div>`;
         else if (myLives <= 0) area.innerHTML = `<div class="question-display"><div class="label">💀 Out of lives</div><div class="text">You guessed wrong too many times — watch the others hunt!</div></div>`;
         else if (turnPid === playerId) {
-          if (myQs > 0) area.innerHTML = `<div class="question-form"><input type="text" id="rcQuestionInput" placeholder="Ask the target a yes/no question…" maxlength="200"><button class="success" onclick="raceAsk()">Ask</button></div><div class="uc-hint-line">❓ ${myQs} questions left · ❤️ ${myLives} lives · …or guess with 🎯 below the board.</div>`;
+          if (myQs > 0) area.innerHTML = `<div class="question-form"><input type="text" id="rcQuestionInput" placeholder="Ask the target a yes/no question…" maxlength="200"><button class="success" onclick="raceAsk()">Ask</button></div><div class="uc-hint-line">❓ ${myQs} questions left · ❤️ ${myLives} lives · 🎯 guessing is FREE — anytime, even off-turn (wrong = -1 ❤️).</div>`;
           else area.innerHTML = `<div class="question-display"><div class="label">❓ No questions left!</div><div class="text">You can't ask anymore — <b>guess 🎯</b> the mystery character… or pass:</div><button class="secondary full" onclick="racePassTurn()" style="margin-top:8px">⏭️ Pass my turn</button></div>`;
         }
-        else area.innerHTML = `<div class="question-display"><div class="label">Waiting…</div><div class="text">🎤 <b>${escapeHtml(turnName)}</b> is thinking of a question…</div></div>`;
+        else area.innerHTML = `<div class="question-display"><div class="label">Waiting…</div><div class="text">🎤 <b>${escapeHtml(turnName)}</b> is thinking of a question…</div><div class="uc-hint-line">🆓 You can 🎯 guess at ANY moment — wrong guess = -1 ❤️ (${rcLivesOf(currentRoom, playerId)} left)</div></div>`;
         const inp = document.getElementById('rcQuestionInput');
         if (inp) inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') raceAsk(); });
         return;
