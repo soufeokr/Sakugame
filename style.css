@@ -450,9 +450,13 @@
   .br-chip .chip-name { font-size: 0.82rem; font-weight: 800; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .br-chip .chip-pts { color: var(--warning); font-size: 0.72rem; font-weight: 900; }
   .br-chip .chip-state { font-size: 0.75rem; }
-  .br-chip.sel { box-shadow: 0 0 14px var(--c); background: #16163a; }
-  .br-chip.sel .chip-name::before { content: '✔ '; }
+  .br-chip.sel { box-shadow: 0 0 14px var(--c); background: #16163a; transform: translateY(-2px); }
+  .br-chip.sel .chip-name::before { content: '👁 '; }
   .br-chip-hint { color: var(--muted); font-size: 0.72rem; text-align: center; margin: -2px 0 8px; }
+  /* 🎨 Per-player boards: every card wears the active board's color + glow,
+     so you instantly see whose tracking board you're on */
+  .board.br-fenced .card { border-color: var(--boardc, #2a2a4a); box-shadow: 0 0 7px var(--boardc, #2a2a4a), 0 2px 8px rgba(0, 0, 0, 0.5); }
+  .board.br-fenced .card:hover:not(.guessing) { border-color: var(--boardc, #2a2a4a); box-shadow: 0 0 12px var(--boardc, #2a2a4a), 0 4px 12px rgba(0, 0, 0, 0.55); }
   /* ❌ marks: big, bright, glowing — impossible to miss on a card */
   .br-mark { width: 26px; height: 26px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: #fff; background: var(--c, #888); text-shadow: 0 0 6px #fff; box-shadow: 0 0 10px var(--c, #888), 0 0 22px var(--c, #888), 0 2px 6px rgba(0,0,0,0.65); animation: brMarkPulse 1.6s ease-in-out infinite; }
   @keyframes brMarkPulse { 0%, 100% { box-shadow: 0 0 8px var(--c, #888), 0 2px 6px rgba(0,0,0,0.6); } 50% { box-shadow: 0 0 14px var(--c, #888), 0 0 28px var(--c, #888), 0 2px 8px rgba(0,0,0,0.6); } }
@@ -460,6 +464,9 @@
   .card.br-found::after { content: '🔍'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(15, 15, 26, 0.55); z-index: 2; }
   .board.guessing { outline: 3px dashed var(--warning); outline-offset: 3px; border-radius: 12px; }
   .board.guessing .card { animation: none; box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.25); }
+  .board.br-fenced.guessing .card { box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.35), 0 0 10px var(--boardc, #2a2a4a); }
+  /* 🚫 Blur Guess: instant swap between rounds — never show a clear flash */
+  #bgImage.bg-no-anim { transition: none !important; }
   .uc-hint-line { color: var(--muted); font-size: 0.8rem; margin-top: 8px; text-align: center; }
   .qa-answers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; justify-content: center; }
   .qa-ans { display: inline-flex; align-items: center; gap: 6px; background: #1a1a2e; border: 2px solid var(--c, #2a2a4a); padding: 4px 10px; border-radius: 16px; font-size: 0.78rem; font-weight: 800; }
@@ -493,6 +500,13 @@
   .bg-sug-img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #0f0f1a; flex-shrink: 0; }
   .bg-sug-name { flex: 1; font-weight: 800; color: var(--text); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .bg-sug-via { flex-shrink: 0; font-size: 0.7rem; font-weight: 700; color: var(--accent); background: rgba(2, 169, 255, 0.14); padding: 2px 8px; border-radius: 999px; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-sug-row.active { background: rgba(2, 169, 255, 0.28); box-shadow: inset 3px 0 0 var(--accent); }
+
+  /* 🗂️ Settings tabs (create-room screen + lobby settings modal) */
+  .settings-tabs { display: flex; gap: 8px; margin: 6px 0 18px; background: rgba(255, 255, 255, 0.04); padding: 5px; border-radius: 14px; }
+  .settings-tab { flex: 1; padding: 10px 8px; border-radius: 10px; border: none; background: transparent; color: var(--muted); font-weight: 800; font-size: 0.92rem; cursor: pointer; font-family: inherit; transition: background 0.2s, color 0.2s; }
+  .settings-tab:hover { color: var(--text); }
+  .settings-tab.active { background: var(--accent); color: #fff; box-shadow: 0 4px 14px rgba(2, 169, 255, 0.35); }
   .bg-chips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 2px 4px; flex-wrap: wrap; justify-content: center; }
   #bgGuessBar { margin-top: 8px; }
 

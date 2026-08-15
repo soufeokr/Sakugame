@@ -178,82 +178,94 @@
     <div class="panel">
       <h2>Create Game Room</h2>
       <p>Configure your room settings</p>
-      <div class="settings-section">
-        <h3>🏠 Room Settings</h3>
-        <div class="input-group"><label>Game</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">🎭 Anime Guess Who? (2 players)</option><option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option><option value="race">⚡ Guess Who — Race (3-8 players)</option><option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option><option value="undercover">🕵️ Undercover (3-8 players)</option></select></div>
-        <div class="input-group">
-          <label>Room Visibility</label>
-          <div class="radio-group">
-            <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div>🔒 Private</div><small style="color: var(--muted);">Code only</small></label>
-            <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div>🌐 Public</div><small style="color: var(--muted);">Listed</small></label>
+      <div class="settings-tabs">
+        <button class="settings-tab active" id="createTabBtnRoom" onclick="showCreateTab('room')">🏠 Room</button>
+        <button class="settings-tab" id="createTabBtnGame" onclick="showCreateTab('game')">⚙️ Game</button>
+      </div>
+      <!-- 🏠 TAB 1 — room settings: game mode, visibility, player count -->
+      <div id="createTabRoom">
+        <div class="settings-section">
+          <div class="input-group"><label>Game Mode</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">🎭 Anime Guess Who? (2 players)</option><option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option><option value="race">⚡ Guess Who — Race (3-8 players)</option><option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option><option value="undercover">🕵️ Undercover (3-8 players)</option></select></div>
+          <div class="input-group">
+            <label>Room Visibility</label>
+            <div class="radio-group">
+              <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div>🔒 Private</div><small style="color: var(--muted);">Code only</small></label>
+              <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div>🌐 Public</div><small style="color: var(--muted);">Listed</small></label>
+            </div>
           </div>
-        </div>
-        <div class="input-group" id="hostPoolGroup">
-          <label>Character Pool</label>
-          <div class="radio-group">
-            <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div>🎴 Generic</div><small style="color: var(--muted);">1000 famous characters — no AniList needed</small></label>
-            <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div>⭐ Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
-            <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div>🎲 Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
+          <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🎭 Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <div class="slider-container" id="hostMultiMaxBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
+            <input type="range" id="hostMultiMaxSlider" min="3" max="8" value="6" oninput="updateMultiMaxPlayers()">
+          </div>
+          <div class="slider-container" id="hostUcMaxBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="hostUcMaxValue">5</strong></div>
+            <input type="range" id="hostUcMaxSlider" min="3" max="8" value="5" oninput="updateUcMaxPlayers()">
           </div>
         </div>
       </div>
-      <div class="settings-section" id="hostGwSettings">
-        <h3>⚙️ Game Settings - Guess Who</h3>
-        <div class="slider-container">
-          <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
-          <input type="range" id="hostCharCountSlider" min="12" max="48" value="24" step="4" oninput="updateHostCharCount()">
-        </div>
-        <div class="slider-container" id="hostDistContainer" style="display: none;">
-          <div class="slider-label"><span id="hostDistLabel">Distribution</span></div>
-          <input type="range" id="hostDistSlider" min="0" max="24" value="12" oninput="updateHostDist()">
-        </div>
-      </div>
-      <div class="settings-section" id="hostUcSettings" style="display: none;">
-        <h3>⚙️ Game Settings - Undercover</h3>
-        <div class="slider-container">
-          <div class="slider-label"><span>Max Players</span><strong id="hostUcMaxValue">5</strong></div>
-          <input type="range" id="hostUcMaxSlider" min="3" max="8" value="5" oninput="updateUcMaxPlayers()">
-        </div>
-        <div class="input-group">
-          <label>Mr. White <small style="color: var(--muted);">(a player with NO word — needs 4+ players)</small></label>
-          <div class="radio-group">
-            <label class="radio-option selected" id="hostUcMwOff" onclick="selectUcMrWhite(false)"><div>🚫 Disabled</div></label>
-            <label class="radio-option" id="hostUcMwOn" onclick="selectUcMrWhite(true)"><div>⚪ Enabled</div></label>
+      <!-- ⚙️ TAB 2 — game-specific settings -->
+      <div id="createTabGame" style="display: none;">
+        <div class="settings-section" id="hostPoolGroup">
+          <h3>🎴 Character Pool</h3>
+          <div class="input-group">
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div>🎴 Generic</div><small style="color: var(--muted);">1000 famous characters — no AniList needed</small></label>
+              <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div>⭐ Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
+              <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div>🎲 Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
+            </div>
           </div>
         </div>
-        <p style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🕵️ Everyone gets a secret anime word — except the Undercover (who gets a similar one) and Mr. White (who gets nothing). Describe your word each round, spot the impostor, and vote them out!</p>
-      </div>
-      <div class="settings-section" id="hostMultiSettings" style="display: none;">
-        <h3>⚙️ Game Settings — <span id="hostMultiLabel">Multiplayer</span></h3>
-        <div class="slider-container">
-          <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
-          <input type="range" id="hostMultiMaxSlider" min="3" max="8" value="6" oninput="updateMultiMaxPlayers()">
-        </div>
-        <div class="slider-container race-only-settings" style="display: none;">
-          <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(wrong guesses allowed)</small></span><strong id="hostRaceLivesValue">3</strong></div>
-          <input type="range" id="hostRaceLivesSlider" min="1" max="5" value="3" oninput="updateRaceLivesSlider()">
-        </div>
-        <div class="slider-container race-only-settings" style="display: none;">
-          <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="hostRaceQuestionsValue">8</strong></div>
-          <input type="range" id="hostRaceQuestionsSlider" min="3" max="15" value="8" oninput="updateRaceQuestionsSlider()">
-        </div>
-        <div class="input-group blur-only-settings" style="display: none;">
-          <label>What to guess</label>
-          <div class="radio-group">
-            <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div>🧍 Characters</div><small style="color: var(--muted);">blurred portraits</small></label>
-            <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div>🎬 Anime covers</div><small style="color: var(--muted);">blurred posters</small></label>
+        <div class="settings-section" id="hostGwSettings">
+          <h3>⚙️ Game Settings - Guess Who</h3>
+          <div class="slider-container">
+            <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
+            <input type="range" id="hostCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateHostCharCount()">
+          </div>
+          <div class="slider-container" id="hostDistContainer" style="display: none;">
+            <div class="slider-label"><span id="hostDistLabel">Distribution</span></div>
+            <input type="range" id="hostDistSlider" min="0" max="24" value="12" oninput="updateHostDist()">
           </div>
         </div>
-        <div class="slider-container blur-only-settings" style="display: none;">
-          <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="hostBgRoundsValue">10</strong></div>
-          <input type="range" id="hostBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateBgRoundsSlider()">
+        <div class="settings-section" id="hostUcSettings" style="display: none;">
+          <h3>⚙️ Game Settings - Undercover</h3>
+          <div class="input-group">
+            <label>Mr. White <small style="color: var(--muted);">(a player with NO word — needs 4+ players)</small></label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostUcMwOff" onclick="selectUcMrWhite(false)"><div>🚫 Disabled</div></label>
+              <label class="radio-option" id="hostUcMwOn" onclick="selectUcMrWhite(true)"><div>⚪ Enabled</div></label>
+            </div>
+          </div>
+          <p style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🕵️ Everyone gets a secret anime word — except the Undercover (who gets a similar one) and Mr. White (who gets nothing). Describe your word each round, spot the impostor, and vote them out!</p>
         </div>
-        <div class="slider-container blur-only-settings" style="display: none;">
-          <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="hostBgStageSecValue">12s</strong></div>
-          <input type="range" id="hostBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateBgStageSecSlider()">
+        <div class="settings-section" id="hostMultiSettings" style="display: none;">
+          <h3>⚙️ Game Settings — <span id="hostMultiLabel">Multiplayer</span></h3>
+          <div class="slider-container race-only-settings" style="display: none;">
+            <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(wrong guesses allowed)</small></span><strong id="hostRaceLivesValue">3</strong></div>
+            <input type="range" id="hostRaceLivesSlider" min="1" max="5" value="3" oninput="updateRaceLivesSlider()">
+          </div>
+          <div class="slider-container race-only-settings" style="display: none;">
+            <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="hostRaceQuestionsValue">8</strong></div>
+            <input type="range" id="hostRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateRaceQuestionsSlider()">
+          </div>
+          <div class="input-group blur-only-settings" style="display: none;">
+            <label>What to guess</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div>🧍 Characters</div><small style="color: var(--muted);">blurred portraits</small></label>
+              <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div>🎬 Anime covers</div><small style="color: var(--muted);">blurred posters</small></label>
+            </div>
+          </div>
+          <div class="slider-container blur-only-settings" style="display: none;">
+            <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="hostBgRoundsValue">10</strong></div>
+            <input type="range" id="hostBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateBgRoundsSlider()">
+          </div>
+          <div class="slider-container blur-only-settings" style="display: none;">
+            <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="hostBgStageSecValue">12s</strong></div>
+            <input type="range" id="hostBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateBgStageSecSlider()">
+          </div>
+          <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
+          <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">💀 If <b>all hunters</b> run out of lives, the 🎯 TARGET wins! Running out of ❓ questions means you can only guess… or pass.</p>
         </div>
-        <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
-        <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">💀 If <b>all hunters</b> run out of lives, the 🎯 TARGET wins! Running out of ❓ questions means you can only guess… or pass.</p>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
       <button class="full back-btn" onclick="showPlayMenu()">← Back</button>
@@ -425,10 +437,10 @@
           <div class="br-my-points" id="brMyPoints">0 pts</div>
         </div>
         <div class="br-chips" id="brChips"></div>
-        <div class="br-chip-hint">🎨 Tap one or several colors — your ❌ marks land on <b>all selected colors at once</b> · 🎯 guesses use them too</div>
+        <div class="br-chip-hint">🎨 Tap a color to switch to that player's board — every card glows with their color. Your ❌ notes and 🎯 guesses are per-board!</div>
         <div class="question-box" id="brQuestionArea"></div>
         <div class="board-section">
-          <h3>All Characters</h3>
+          <h3 id="brBoardTitle">All Characters</h3>
           <div class="board" id="brBoard"></div>
           <div class="game-controls">
             <button class="secondary" onclick="battleClearMarks()" title="Clear marks">🧹 <span class="btn-label">Clear marks</span></button>
@@ -496,95 +508,108 @@
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
-      <h2>⚙️ Room Settings</h2>
-      <div class="settings-section">
-        <h3>🎮 Game Mode</h3>
-        <div class="input-group">
-          <label>Switch the game <small style="color: var(--muted);">(everyone stays in the room)</small></label>
-          <select id="modalGameSelect" onchange="modalGameChanged()">
-            <option value="guesswho">🎭 Anime Guess Who? (2 players)</option>
-            <option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option>
-            <option value="race">⚡ Guess Who — Race (3-8 players)</option>
-            <option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option>
-            <option value="undercover">🕵️ Undercover (3-8 players)</option>
-          </select>
-        </div>
+      <h2>⚙️ Settings</h2>
+      <div class="settings-tabs">
+        <button class="settings-tab active" id="settingsTabBtnRoom" onclick="showSettingsTab('room')">🏠 Room</button>
+        <button class="settings-tab" id="settingsTabBtnGame" onclick="showSettingsTab('game')">⚙️ Game</button>
       </div>
-      <div class="settings-section">
-        <h3>🏠 Room Settings</h3>
-        <div class="input-group">
-          <label>Room Visibility</label>
-          <div class="radio-group">
-            <label class="radio-option" id="modalPrivate" onclick="changeVisibility('private')"><div>🔒 Private</div></label>
-            <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div>🌐 Public</div></label>
+      <!-- 🏠 TAB 1 — room settings: game mode, visibility, player count -->
+      <div id="settingsTabRoom">
+        <div class="settings-section">
+          <div class="input-group">
+            <label>Switch the game <small style="color: var(--muted);">(everyone stays in the room)</small></label>
+            <select id="modalGameSelect" onchange="modalGameChanged()">
+              <option value="guesswho">🎭 Anime Guess Who? (2 players)</option>
+              <option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option>
+              <option value="race">⚡ Guess Who — Race (3-8 players)</option>
+              <option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option>
+              <option value="undercover">🕵️ Undercover (3-8 players)</option>
+            </select>
           </div>
-        </div>
-        <div class="input-group" id="modalPoolGroup">
-          <label>Character Pool</label>
-          <div class="radio-group">
-            <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div>🎴 Generic</div></label>
-            <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div>⭐ Favorites</div></label>
-            <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div>🎲 Mix</div></label>
+          <div class="input-group">
+            <label>Room Visibility</label>
+            <div class="radio-group">
+              <label class="radio-option" id="modalPrivate" onclick="changeVisibility('private')"><div>🔒 Private</div></label>
+              <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div>🌐 Public</div></label>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="settings-section" id="modalGwSettings">
-        <h3>⚙️ Game Settings - Guess Who</h3>
-        <div class="slider-container">
-          <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
-          <input type="range" id="modalCharCountSlider" min="12" max="48" value="24" step="4" oninput="updateModalCharCount()">
-        </div>
-        <div class="slider-container" id="modalDistContainer" style="display: none;">
-          <div class="slider-label"><span id="modalDistLabel">Distribution</span></div>
-          <input type="range" id="modalDistSlider" min="0" max="24" value="12" oninput="updateModalDist()">
-        </div>
-      </div>
-      <div class="settings-section" id="modalUwSettings" style="display: none;">
-        <h3>⚙️ Game Settings - Undercover</h3>
-        <div class="slider-container">
-          <div class="slider-label"><span>Max Players</span><strong id="modalUcMaxValue">5</strong></div>
-          <input type="range" id="modalUcMaxSlider" min="3" max="8" value="5" oninput="updateModalUcMaxPlayers()">
-        </div>
-        <div class="input-group">
-          <label>Mr. White <small style="color: var(--muted);">(needs 4+ players)</small></label>
-          <div class="radio-group">
-            <label class="radio-option" id="modalUcMwOff" onclick="changeUcMrWhite(false)"><div>🚫 Disabled</div></label>
-            <label class="radio-option" id="modalUcMwOn" onclick="changeUcMrWhite(true)"><div>⚪ Enabled</div></label>
+          <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🎭 Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <div class="slider-container" id="modalMultiMaxBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="modalMultiMaxValue">6</strong></div>
+            <input type="range" id="modalMultiMaxSlider" min="3" max="8" value="6" oninput="updateModalMultiMaxPlayers()">
+          </div>
+          <div class="slider-container" id="modalUcMaxBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="modalUcMaxValue">5</strong></div>
+            <input type="range" id="modalUcMaxSlider" min="3" max="8" value="5" oninput="updateModalUcMaxPlayers()">
           </div>
         </div>
       </div>
-      <div class="settings-section" id="modalRaceSettings" style="display: none;">
-        <h3>⚙️ Game Settings - Race</h3>
-        <div class="slider-container">
-          <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(all hunters out = 🎯 target wins)</small></span><strong id="modalRaceLivesValue">3</strong></div>
-          <input type="range" id="modalRaceLivesSlider" min="1" max="5" value="3" oninput="updateModalRaceLives()">
-        </div>
-        <div class="slider-container">
-          <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="modalRaceQuestionsValue">8</strong></div>
-          <input type="range" id="modalRaceQuestionsSlider" min="3" max="15" value="8" oninput="updateModalRaceQuestions()">
-        </div>
-        <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Applies from the next game.</p>
-      </div>
-      <div class="settings-section" id="modalBgSettings" style="display: none;">
-        <h3>⚙️ Game Settings - Blur Guess</h3>
-        <div class="input-group">
-          <label>What to guess</label>
-          <div class="radio-group">
-            <label class="radio-option selected" id="modalBgModeChars" onclick="changeBgMode('characters')"><div>🧍 Characters</div></label>
-            <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div>🎬 Anime covers</div></label>
+      <!-- ⚙️ TAB 2 — game-specific settings -->
+      <div id="settingsTabGame" style="display: none;">
+        <div class="settings-section" id="modalPoolGroup">
+          <h3>🎴 Character Pool</h3>
+          <div class="input-group">
+            <div class="radio-group">
+              <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div>🎴 Generic</div></label>
+              <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div>⭐ Favorites</div></label>
+              <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div>🎲 Mix</div></label>
+            </div>
           </div>
         </div>
-        <div class="slider-container">
-          <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="modalBgRoundsValue">10</strong></div>
-          <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
+        <div class="settings-section" id="modalGwSettings">
+          <h3>⚙️ Game Settings - Guess Who</h3>
+          <div class="slider-container">
+            <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
+            <input type="range" id="modalCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateModalCharCount()">
+          </div>
+          <div class="slider-container" id="modalDistContainer" style="display: none;">
+            <div class="slider-label"><span id="modalDistLabel">Distribution</span></div>
+            <input type="range" id="modalDistSlider" min="0" max="24" value="12" oninput="updateModalDist()">
+          </div>
         </div>
-        <div class="slider-container">
-          <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="modalBgStageSecValue">12s</strong></div>
-          <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
+        <div class="settings-section" id="modalUwSettings" style="display: none;">
+          <h3>⚙️ Game Settings - Undercover</h3>
+          <div class="input-group">
+            <label>Mr. White <small style="color: var(--muted);">(needs 4+ players)</small></label>
+            <div class="radio-group">
+              <label class="radio-option" id="modalUcMwOff" onclick="changeUcMrWhite(false)"><div>🚫 Disabled</div></label>
+              <label class="radio-option" id="modalUcMwOn" onclick="changeUcMrWhite(true)"><div>⚪ Enabled</div></label>
+            </div>
+          </div>
         </div>
-        <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. Blur Guess uses the FULL pool (no character count). Applies from the next game.</p>
+        <div class="settings-section" id="modalRaceSettings" style="display: none;">
+          <h3>⚙️ Game Settings - Race</h3>
+          <div class="slider-container">
+            <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(all hunters out = 🎯 target wins)</small></span><strong id="modalRaceLivesValue">3</strong></div>
+            <input type="range" id="modalRaceLivesSlider" min="1" max="5" value="3" oninput="updateModalRaceLives()">
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="modalRaceQuestionsValue">8</strong></div>
+            <input type="range" id="modalRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateModalRaceQuestions()">
+          </div>
+          <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Applies from the next game.</p>
+        </div>
+        <div class="settings-section" id="modalBgSettings" style="display: none;">
+          <h3>⚙️ Game Settings - Blur Guess</h3>
+          <div class="input-group">
+            <label>What to guess</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="modalBgModeChars" onclick="changeBgMode('characters')"><div>🧍 Characters</div></label>
+              <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div>🎬 Anime covers</div></label>
+            </div>
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="modalBgRoundsValue">10</strong></div>
+            <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="modalBgStageSecValue">12s</strong></div>
+            <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
+          </div>
+          <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. Blur Guess uses the FULL pool (no character count). Applies from the next game.</p>
+        </div>
+        <button class="full success" onclick="closeSettings()">Save & Close</button>
       </div>
-      <button class="full success" onclick="closeSettings()">Save & Close</button>
     </div>
   </div>
 
@@ -765,5 +790,5 @@
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2b93da7d82ecac8',t:'MTc4NjgwNzgyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2bb0b672d17e163',t:'MTc4NjgyNjc0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

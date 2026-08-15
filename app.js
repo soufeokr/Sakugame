@@ -606,10 +606,12 @@
     let bgWatchBusy = false;           // host watchdog guard
     let bgHostTimer = null;            // host-only 1s heartbeat for stages/reveals
     let blurTicker = null;             // 500ms countdown renderer (display only)
-    let brMarkTargets = new Set(); // opponent pids I mark with ❌ — SEVERAL colors at once!
+    let bgSugHits = [];                // current suggestion rows (for ← keyboard nav)
+    let bgSugIndex = -1;               // highlighted suggestion (↑/↓ arrows)
+    let brActiveBoard = null;      // 🎨 opponent pid whose colored board I'm viewing (battle)
     let brGuessMode = false;       // click-a-card-to-guess mode (battle)
     let rcGuessMode = false;       // same for race
-    let brMarks = {};              // { opponentPid: {charId:true} } — local notes, like myEliminated in 2P
+    let brMarks = {};              // { opponentPid: {charId:true} } — my ❌ notes PER BOARD, like myEliminated in 2P
     let rcMarks = {};              // { charId: true } — my own marks in race
     let lastBrGameId = null, lastRcGameId = null; // reset local marks on a new deal
     let brWatchBusy = false, rcWatchBusy = false;   // host watchdog guards
@@ -748,18 +750,41 @@
     }
 
     // ===== CREATE-ROOM SCREEN — GAME PICKER =====
+    // 🗂️ Both settings screens (create + lobby) are split in 2 tabs:
+    // 🏠 Room = game mode, visibility, player count · ⚙️ Game = everything else
+    function showCreateTab(name) {
+      const isRoom = name !== 'game';
+      document.getElementById('createTabRoom').style.display = isRoom ? 'block' : 'none';
+      document.getElementById('createTabGame').style.display = isRoom ? 'none' : 'block';
+      document.getElementById('createTabBtnRoom').classList.toggle('active', isRoom);
+      document.getElementById('createTabBtnGame').classList.toggle('active', !isRoom);
+    }
+    function showSettingsTab(name) {
+      const isRoom = name !== 'game';
+      document.getElementById('settingsTabRoom').style.display = isRoom ? 'block' : 'none';
+      document.getElementById('settingsTabGame').style.display = isRoom ? 'none' : 'block';
+      document.getElementById('settingsTabBtnRoom').classList.toggle('active', isRoom);
+      document.getElementById('settingsTabBtnGame').classList.toggle('active', !isRoom);
+    }
+
     function onGameSelectChange() {
       hostGame = document.getElementById('gameSelect').value || 'guesswho';
       const isUc = hostGame === 'undercover';
       const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur';
+      const isBlur = hostGame === 'blur';
+      // 🏠 Room tab: only ONE player-count control matches the game
+      document.getElementById('hostGwPlayersHint').style.display = (!isUc && !isMulti) ? 'block' : 'none';
+      document.getElementById('hostMultiMaxBlock').style.display = isMulti ? 'block' : 'none';
+      document.getElementById('hostUcMaxBlock').style.display = isUc ? 'block' : 'none';
+      // ⚙️ Game tab: pool for all but Undercover; Guess Who board settings for
+      // guesswho/battle/race (Blur draws from the FULL pool — no character count)
       document.getElementById('hostPoolGroup').style.display = isUc ? 'none' : 'block';
-      // Blur Guess draws from the FULL source pool — no character count board needed
-      document.getElementById('hostGwSettings').style.display = (isUc || hostGame === 'blur') ? 'none' : 'block';
+      document.getElementById('hostGwSettings').style.display = (isUc || isBlur) ? 'none' : 'block';
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
-      // ❤️/❓ sliders are Race-only, 🌫️ rounds are Blur-only
+      // ❤️/❓ sliders are Race-only, 🌫️ options are Blur-only
       document.querySelectorAll('.race-only-settings').forEach(el => { el.style.display = hostGame === 'race' ? 'block' : 'none'; });
-      document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = hostGame === 'blur' ? 'block' : 'none'; });
+      document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = isBlur ? 'block' : 'none'; });
       if (isMulti) {
         document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : 'Blur Guess';
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
@@ -1683,40 +1708,33 @@
     }
     function seatsConnectedCount() { return Object.keys((currentRoom && currentRoom.players) || {}).filter(pid => !(currentRoom.players[pid] || {}).dcAt).length; }
 
-    // 🎨 Selected color chips (multi-select), in turn order, still seated
-    function brSelectedMarks() {
-      const players = (currentRoom && currentRoom.players) || {};
-      return brOpponents().filter(pid => brMarkTargets.has(pid) && players[pid]);
-    }
-    // Selected opponents whose secret isn't found yet = valid 🎯 guess targets
-    function brGuessCandidates() {
-      const br = (currentRoom && currentRoom.br) || {};
-      return brSelectedMarks().filter(pid => !(br.found || {})[pid]);
+    // 🎨 Every opponent has their OWN board — switch with the color chips.
+    // The board I'm viewing is the "active board"; if its owner leaves or a
+    // new deal starts, fall back to the first opponent.
+    function brEnsureActiveBoard() {
+      const opps = brOpponents();
+      if (!brActiveBoard || opps.indexOf(brActiveBoard) === -1) brActiveBoard = opps[0] || null;
+      return brActiveBoard;
     }
 
+    // Guessing happens ON someone's board: in 🎯 mode, clicking a card =
+    // "THIS card is the active board owner's secret".
     async function battleGuess(charId) {
-      const candidates = brGuessCandidates();
-      if (!candidates.length) { showNotification('All selected players are already found — select other colors! 🎨'); return; }
+      const br = (currentRoom && currentRoom.br) || {};
       const players = currentRoom.players || {};
-      const nameOf = pid => escapeHtml(String((players[pid] || {}).name || '?'));
+      const target = brEnsureActiveBoard();
+      if (!target || !players[target]) { showNotification('No opponent board to guess on! 🎨'); return; }
+      if ((br.found || {})[target]) { showNotification(escapeHtml(String(players[target].name || '?')) + '\'s secret is already found — switch board with the color chips! 🎨'); return; }
       const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
-      const doGuess = async (target) => {
-        closeInteraction();
-        brGuessMode = false;
-        await database.ref('rooms/' + roomCode + '/br/guess').set({ by: playerId, target: target, charId });
-        touchActivity();
-      };
-      if (candidates.length === 1) {
-        showInteraction('🎯 Make a guess?', 'You think <b>' + nameOf(candidates[0]) + '</b>\'s secret is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
-          { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
-          { label: '🎯 Guess!', onclick: () => { doGuess(candidates[0]); }, class: 'warning' }
-        ]);
-        return;
-      }
-      // Several colors selected → ask WHOSE secret it is
-      showInteraction('🎯 Make a guess?', 'You think <b>' + escapeHtml(charName) + '</b> is the secret of…<br><select id="brGuessTargetSel" style="margin:12px 0 4px; width:100%; padding:12px; border-radius:10px; background:#0f0f1a; color:var(--text); border:2px solid var(--accent2); font-family:inherit; font-weight:800; font-size:1rem;">' + candidates.map(pid => '<option value="' + pid + '">' + nameOf(pid) + '</option>').join('') + '</select><br><small>This uses your turn — right or wrong.</small>', [
+      const nameOf = escapeHtml(String(players[target].name || '?'));
+      showInteraction('🎯 Make a guess?', 'You think <b>' + nameOf + '</b>\'s secret is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
-        { label: '🎯 Guess!', onclick: () => { const sel = document.getElementById('brGuessTargetSel'); doGuess((sel && sel.value && candidates.indexOf(sel.value) !== -1) ? sel.value : candidates[0]); }, class: 'warning' }
+        { label: '🎯 Guess!', onclick: async () => {
+          closeInteraction();
+          brGuessMode = false;
+          await database.ref('rooms/' + roomCode + '/br/guess').set({ by: playerId, target: target, charId: charId });
+          touchActivity();
+        }, class: 'warning' }
       ]);
     }
     function battleToggleGuess() {
@@ -1725,22 +1743,25 @@
       if (brTurnPid() !== playerId) { showNotification("You can guess on your turn only!"); return; }
       if (brGuessMode) { brGuessMode = false; }
       else {
-        if (brMarkTargets.size === 0) { const first = brOpponents()[0]; if (!first) { showNotification('No opponent to guess!'); return; } brMarkTargets.add(first); }
-        if (!brGuessCandidates().length) { showNotification('All selected players are already found — select another color! 🎨'); return; }
+        const target = brEnsureActiveBoard();
+        if (!target) { showNotification('No opponent to guess!'); return; }
+        if ((br.found || {})[target]) { showNotification('That secret is already found — switch to another board! 🎨'); return; }
         brGuessMode = true;
-        const names = brGuessCandidates().map(pid => escapeHtml(String((currentRoom.players[pid] || {}).name || '?'))).join(', ');
-        showNotification('🎯 Guess mode: click the card you think is the secret of: <b>' + names + '</b>');
+        showNotification('🎯 Guess mode: click the card you think is <b>' + escapeHtml(String((currentRoom.players[target] || {}).name || '?')) + '</b>\'s secret! (you are on their glowing board)');
       }
       renderBattleBoard();
     }
-    function battleClearMarks() { brMarks = {}; renderBattleBoard(); }
+    function battleClearMarks() {
+      // Clears only the board you're viewing — each board keeps its own ❌
+      const pid = brEnsureActiveBoard();
+      if (pid && brMarks[pid]) { brMarks[pid] = {}; showNotification('🧹 Board cleared!'); }
+      renderBattleBoard();
+    }
     function brToggleMark(charId) {
-      const sel = brSelectedMarks();
-      if (!sel.length) { showNotification('🎨 Tap at least one color chip first!'); return; }
-      sel.forEach(pid => {
-        if (!brMarks[pid]) brMarks[pid] = {};
-        if (brMarks[pid][charId]) delete brMarks[pid][charId]; else brMarks[pid][charId] = true;
-      });
+      const pid = brEnsureActiveBoard();
+      if (!pid) { showNotification('No opponent board selected! 🎨'); return; }
+      if (!brMarks[pid]) brMarks[pid] = {};
+      if (brMarks[pid][charId]) delete brMarks[pid][charId]; else brMarks[pid][charId] = true;
       renderBattleBoard();
     }
 
@@ -1753,26 +1774,22 @@
       const phaseNames = { ask: '💬 Question time', answers: '✋ Answering…', over: '🏁 Game over' };
       document.getElementById('brTurnBadge').textContent = br.phase === 'over' ? '🏁 Finished' : ('🎤 ' + turnName + (turnPid === playerId ? ' (You)' : ''));
       document.getElementById('brPhaseBadge').textContent = phaseNames[br.phase] || '';
-      // New deal? Local notes (❌ marks + selection) start fresh
-      if (br.gameId && br.gameId !== lastBrGameId) { lastBrGameId = br.gameId; brMarks = {}; brGuessMode = false; brMarkTargets = new Set(); }
-      // Opponent chips (colored) — MULTI-select: ❌ marks land on ALL selected colors at once
+      // New deal? Local notes (❌ marks per board + active board) start fresh
+      if (br.gameId && br.gameId !== lastBrGameId) { lastBrGameId = br.gameId; brMarks = {}; brGuessMode = false; brActiveBoard = null; }
+      // 🎨 Opponent color chips = BOARD SWITCHERS — one glowing board per player
       const opps = brOpponents();
-      brMarkTargets = new Set([...brMarkTargets].filter(pid => opps.indexOf(pid) !== -1)); // drop leavers
-      if (brMarkTargets.size === 0 && opps[0]) brMarkTargets.add(opps[0]); // sensible default
+      brEnsureActiveBoard();
       const chips = document.getElementById('brChips');
       chips.innerHTML = '';
       opps.forEach(pid => {
         const p = players[pid];
         const col = brColorOf(pid);
         const chip = document.createElement('button');
-        chip.className = 'br-chip' + (brMarkTargets.has(pid) ? ' sel' : '');
+        chip.className = 'br-chip' + (brActiveBoard === pid ? ' sel' : '');
         chip.style.setProperty('--c', col);
+        chip.title = "Switch to " + ((p && p.name) || '?') + "'s board";
         chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="chip-name">${escapeHtml(String(p.name || '?'))}</span><span class="chip-pts">${(br.points || {})[pid] || 0} pts</span>${(br.found || {})[pid] ? '<span class="chip-state">🔍 found</span>' : ''}${(p.dcAt ? '<span class="chip-state">🔌</span>' : '')}${turnPid === pid && br.phase !== 'over' ? '<span class="chip-state">🎤</span>' : ''}`;
-        chip.addEventListener('click', () => {
-          if (brMarkTargets.has(pid)) brMarkTargets.delete(pid); else brMarkTargets.add(pid);
-          if (brGuessMode && !brGuessCandidates().length) { brGuessMode = false; showNotification('🎯 Guess mode off — no selected player left to find.'); }
-          updateBattle();
-        });
+        chip.addEventListener('click', () => { brActiveBoard = pid; updateBattle(); });
         chips.appendChild(chip);
       });
       // My secret + my points
@@ -1787,22 +1804,31 @@
     function renderBattleBoard() {
       const board = document.getElementById('brBoard'); if (!board || !currentRoom) return;
       const br = currentRoom.br || {};
-      board.className = 'board' + (brGuessMode ? ' guessing' : '');
+      const players = currentRoom.players || {};
+      // 🎨 The whole board wears the ACTIVE PLAYER's color (border + glow), so
+      // you can never mix up whose tracking notes you're editing.
+      const active = brEnsureActiveBoard();
+      const col = active ? brColorOf(active) : '#2a2a4a';
+      board.className = 'board br-fenced' + (brGuessMode ? ' guessing' : '');
+      board.style.setProperty('--boardc', col);
       board.innerHTML = '';
+      const title = document.getElementById('brBoardTitle');
+      if (title) title.innerHTML = active
+        ? '🎨 <span style="color:' + col + '">' + escapeHtml(String((players[active] || {}).name || '?')) + '</span>\'s board' + (brGuessMode ? ' — 🎯 click their secret!' : ' — ❌ your notes for them')
+        : 'All Characters';
       const foundSet = {}; // charIds that are someone's revealed secret
       const secrets = br.secrets || {};
       Object.keys(br.found || {}).forEach(pid => { if (secrets[pid] != null) foundSet[secrets[pid]] = pid; });
       (currentRoom.characters || []).forEach(char => {
         const card = document.createElement('div'); card.className = 'card';
         if (foundSet[char.id] != null) { card.classList.add('br-found'); card.style.setProperty('--c', brColorOf(foundSet[char.id])); }
-        const marks = document.createElement('div'); marks.className = 'br-marks';
-        brOpponents().forEach(pid => {
-          if (brMarks[pid] && brMarks[pid][char.id]) {
-            const m = document.createElement('span'); m.className = 'br-mark'; m.style.setProperty('--c', brColorOf(pid)); m.textContent = '✕';
-            marks.appendChild(m);
-          }
-        });
-        card.appendChild(marks);
+        // ❌ marks: ONLY the active board's notes are shown (one board = one color)
+        if (active && brMarks[active] && brMarks[active][char.id]) {
+          const wrap = document.createElement('div'); wrap.className = 'br-marks';
+          const m = document.createElement('span'); m.className = 'br-mark'; m.style.setProperty('--c', col); m.textContent = '✕';
+          wrap.appendChild(m);
+          card.appendChild(wrap);
+        }
         const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
         const info = document.createElement('div'); info.className = 'card-info';
         info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
@@ -2141,7 +2167,7 @@
     // candidate pool, straight into 'playing' (no pick phase, no board).
     async function blurDeal() {
       const s = currentRoom.settings || {};
-      const totalRounds = s.bgRounds || BLUR_ROUNDS_DEFAULT;
+      const totalRounds = Math.min(BLUR_ROUNDS_MAX, Math.max(5, s.bgRounds || BLUR_ROUNDS_DEFAULT));
       const mode = s.bgMode === 'covers' ? 'covers' : 'characters';
       const gameId = Date.now();
       // brief "dealing" marker so everyone shows the blur screen right away
@@ -2223,6 +2249,18 @@
     function hideBgSuggest() {
       const box = document.getElementById('bgSuggest');
       if (box) { box.classList.remove('show'); box.innerHTML = ''; }
+      bgSugHits = [];
+      bgSugIndex = -1;
+    }
+
+    // Pick a suggestion (tap ↯ click, or Enter on the highlighted row):
+    // fills the input AND submits the guess right away (phone-friendly).
+    function bgPickSuggestion(h) {
+      const inp = document.getElementById('bgGuessInput');
+      if (!inp || !h) return;
+      inp.value = h.c.name;
+      hideBgSuggest();
+      blurGuess();
     }
 
     function updateBgSuggest() {
@@ -2235,8 +2273,10 @@
       if (!bgNorm(q)) { hideBgSuggest(); return; }
       const hits = bgFindSuggestions(q);
       if (!hits.length) { hideBgSuggest(); return; }
+      bgSugHits = hits;
+      bgSugIndex = -1; // fresh row set → no highlight until ↑/↓
       box.innerHTML = '';
-      hits.forEach(h => {
+      hits.forEach((h, i) => {
         const row = document.createElement('div');
         row.className = 'bg-sug-row';
         const img = document.createElement('img');
@@ -2250,15 +2290,29 @@
           row.appendChild(tag);
         }
         // pointerdown fires BEFORE the input's blur → the tap always lands
-        row.addEventListener('pointerdown', (e) => {
-          e.preventDefault();
-          inp.value = h.c.name;
-          hideBgSuggest();
-          blurGuess();
-        });
+        row.addEventListener('pointerdown', (e) => { e.preventDefault(); bgPickSuggestion(h); });
         box.appendChild(row);
       });
       box.classList.add('show');
+    }
+
+    // ⬆⬇ keyboard navigation through the suggestion rows (wraps around);
+    // Enter picks the highlighted suggestion, plain Enter still submits typing.
+    function bgPaintSugSel() {
+      const box = document.getElementById('bgSuggest');
+      if (!box) return;
+      for (let i = 0; i < box.children.length; i++) box.children[i].classList.toggle('active', i === bgSugIndex);
+      const row = box.children[bgSugIndex];
+      if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+    }
+    function bgSugMove(d) {
+      if (!bgSugHits.length) return;
+      bgSugIndex = (bgSugIndex + d + bgSugHits.length) % bgSugHits.length;
+      bgPaintSugSel();
+    }
+    function bgSugAccept() {
+      if (bgSugIndex >= 0 && bgSugHits[bgSugIndex]) { bgPickSuggestion(bgSugHits[bgSugIndex]); return; }
+      blurGuess();
     }
     const bgCurrentChar = (room) => {
       const r = room || currentRoom; const bg = (r && r.bg) || {};
@@ -2412,7 +2466,15 @@
       document.getElementById('bgStageBadge').textContent = bg.phase === 'over' ? '🏁 Over' : revealed && bg.phase === 'reveal' ? '✅ Revealed!' : ('Blur stage ' + stage + '/' + BLUR_STAGES + (stage < BLUR_STAGES ? ' → +' + ((BLUR_STAGES + 1) - stage) + ' pts now' : ''));
       const img = document.getElementById('bgImage');
       if (img.getAttribute('data-cid') !== String(ch.id)) {
+        // 🚫 No peeking: the old 0.7s filter transition let the NEW image
+        // fade in from UNBLURRED for a split second at every round start.
+        // Kill the animation during the swap so a round begins 100% blurred.
+        img.classList.add('bg-no-anim');
         img.src = ch.image || ''; img.setAttribute('data-cid', String(ch.id));
+        img.style.filter = 'blur(' + (revealed ? 0 : BLUR_LEVELS[stage - 1]) + 'px)';
+        img.style.transform = 'scale(' + (revealed ? 1.02 : BLUR_SCALES[stage - 1]) + ')';
+        try { void img.offsetWidth; } catch (e) {} // force reflow — apply instantly
+        img.classList.remove('bg-no-anim');
         // new round → clear any leftover typing/suggestions from the previous character
         const inp = document.getElementById('bgGuessInput');
         if (inp) inp.value = '';
@@ -2420,6 +2482,12 @@
       }
       img.style.filter = 'blur(' + (revealed ? 0 : BLUR_LEVELS[stage - 1]) + 'px)';
       img.style.transform = 'scale(' + (revealed ? 1.02 : BLUR_SCALES[stage - 1]) + ')';
+      // While the answer is revealed, quietly preload the NEXT round's
+      // picture so its swap is instant (no loading flash either)
+      if (bg.phase === 'reveal' && typeof Image !== 'undefined') {
+        const nxt = (bg.rounds || [])[(bg.roundIdx || 0) + 1];
+        if (nxt && nxt.image) { const pre = new Image(); pre.src = nxt.image; }
+      }
       document.getElementById('bgImgWrap').classList.toggle('revealed', revealed && bg.phase !== 'over');
       // guess bar
       const gin = document.getElementById('bgGuessInput');
@@ -2697,21 +2765,45 @@
       if (questionInput) questionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') askQuestion(); });
       const bgGuessInput = document.getElementById('bgGuessInput');
       if (bgGuessInput) {
-        bgGuessInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') blurGuess(); });
+        // keydown (not keypress) so the ⬆⬇ arrows & Escape are caught:
+        // ↑/↓ = navigate suggestions, Enter = highlighted suggestion (or typed text), Esc = close
+        bgGuessInput.addEventListener('keydown', (e) => {
+          const boxOpen = document.getElementById('bgSuggest') && document.getElementById('bgSuggest').classList.contains('show');
+          if (e.key === 'ArrowDown') { if (boxOpen) { e.preventDefault(); bgSugMove(1); } }
+          else if (e.key === 'ArrowUp') { if (boxOpen) { e.preventDefault(); bgSugMove(-1); } }
+          else if (e.key === 'Escape') { hideBgSuggest(); }
+          else if (e.key === 'Enter') { e.preventDefault(); bgSugAccept(); }
+        });
         bgGuessInput.addEventListener('input', updateBgSuggest);
         bgGuessInput.addEventListener('blur', () => setTimeout(hideBgSuggest, 150)); // small delay so taps on suggestions land first
       }
     });
 
-    function openRoomSettings() {
+    function openRoomSettings(tab) {
       if (!isHost || !currentRoom) return;
-      const isUc = currentRoom.game === 'undercover';
-      const isRace = currentRoom.game === 'race';
+      const game = currentRoom.game || 'guesswho';
+      const isUc = game === 'undercover';
+      const isRace = game === 'race';
+      const isMulti = game === 'battle' || game === 'race' || game === 'blur';
+      const isBlur = game === 'blur';
       const gsel = document.getElementById('modalGameSelect');
-      if (gsel) gsel.value = currentRoom.game || 'guesswho';
+      if (gsel) gsel.value = game;
+      // 🏠 Room tab: exactly one player-count control per game
+      document.getElementById('modalGwPlayersHint').style.display = (!isUc && !isMulti) ? 'block' : 'none';
+      const multiBox = document.getElementById('modalMultiMaxBlock');
+      if (multiBox) {
+        multiBox.style.display = isMulti ? 'block' : 'none';
+        if (isMulti) {
+          const mp = Math.min(8, Math.max(3, currentRoom.maxPlayers || 6));
+          document.getElementById('modalMultiMaxSlider').value = mp;
+          document.getElementById('modalMultiMaxValue').textContent = mp;
+        }
+      }
+      document.getElementById('modalUcMaxBlock').style.display = isUc ? 'block' : 'none';
+      // ⚙️ Game tab
       document.getElementById('modalPoolGroup').style.display = isUc ? 'none' : 'block';
       // Blur Guess draws from the FULL source pool — no character count board needed
-      document.getElementById('modalGwSettings').style.display = (isUc || currentRoom.game === 'blur') ? 'none' : 'block';
+      document.getElementById('modalGwSettings').style.display = (isUc || isBlur) ? 'none' : 'block';
       document.getElementById('modalUwSettings').style.display = isUc ? 'block' : 'none';
       const raceBox = document.getElementById('modalRaceSettings');
       if (raceBox) {
@@ -2725,7 +2817,6 @@
           document.getElementById('modalRaceQuestionsValue').textContent = Q;
         }
       }
-      const isBlur = currentRoom.game === 'blur';
       const bgBox = document.getElementById('modalBgSettings');
       if (bgBox) {
         bgBox.style.display = isBlur ? 'block' : 'none';
@@ -2762,7 +2853,20 @@
         document.getElementById('modalPublic').classList.add('selected');
         document.getElementById('modalPrivate').classList.remove('selected');
       }
+      // start on the 🏠 Room tab (switchRoomGame re-opens on ⚙️ after a switch)
+      showSettingsTab(tab === 'game' ? 'game' : 'room');
       document.getElementById('settingsModal').classList.add('show');
+    }
+
+    // Max players for battle/race/blur rooms (lobby ⚙️, 🏠 Room tab)
+    async function updateModalMultiMaxPlayers() {
+      const slider = document.getElementById('modalMultiMaxSlider');
+      if (!slider || !isHost || !currentRoom) return;
+      const playerCount = Object.keys(currentRoom.players || {}).length;
+      if (parseInt(slider.value) < playerCount) slider.value = playerCount; // can't go below who's already in
+      document.getElementById('modalMultiMaxValue').textContent = slider.value;
+      await database.ref('rooms/' + roomCode + '/maxPlayers').set(parseInt(slider.value));
+      touchActivity();
     }
 
     function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
@@ -2930,6 +3034,14 @@
       await database.ref('rooms/' + roomCode).update(updates);
       touchActivity();
       showNotification('🎮 Game switched to ' + (GAME_LABELS[newGame] || newGame) + (demote.length ? ' — ' + demote.map(p => p.name || '?').join(', ') + ' moved to the queue' : '') + '!');
+      // The lobby ⚙️ modal triggered this — refresh it INSTANTLY: the new
+      // game's options appear (and we jump to the ⚙️ Game tab) without
+      // closing/reopening. Local echo of the write; the listener's full
+      // snapshot lands right after.
+      try {
+        currentRoom.game = newGame;
+        if (document.getElementById('settingsModal').classList.contains('show')) openRoomSettings('game');
+      } catch (e) {}
     }
 
     async function hostStartGame() {
