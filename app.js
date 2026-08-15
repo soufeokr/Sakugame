@@ -1754,7 +1754,7 @@
     function battleClearMarks() {
       // Clears only the board you're viewing — each board keeps its own ❌
       const pid = brEnsureActiveBoard();
-      if (pid && brMarks[pid]) { brMarks[pid] = {}; showNotification('🧹 Board cleared!'); }
+      if (pid && brMarks[pid]) { brMarks[pid] = {}; showNotification('🧹 Eliminated cards restored!'); }
       renderBattleBoard();
     }
     function brToggleMark(charId) {
@@ -1814,7 +1814,7 @@
       board.innerHTML = '';
       const title = document.getElementById('brBoardTitle');
       if (title) title.innerHTML = active
-        ? '🎨 <span style="color:' + col + '">' + escapeHtml(String((players[active] || {}).name || '?')) + '</span>\'s board' + (brGuessMode ? ' — 🎯 click their secret!' : ' — ❌ your notes for them')
+        ? '🎨 <span style="color:' + col + '">' + escapeHtml(String((players[active] || {}).name || '?')) + '</span>\'s board' + (brGuessMode ? ' — 🎯 click their secret!' : ' — ❌ tap cards to eliminate')
         : 'All Characters';
       const foundSet = {}; // charIds that are someone's revealed secret
       const secrets = br.secrets || {};
@@ -1822,13 +1822,10 @@
       (currentRoom.characters || []).forEach(char => {
         const card = document.createElement('div'); card.className = 'card';
         if (foundSet[char.id] != null) { card.classList.add('br-found'); card.style.setProperty('--c', brColorOf(foundSet[char.id])); }
-        // ❌ marks: ONLY the active board's notes are shown (one board = one color)
-        if (active && brMarks[active] && brMarks[active][char.id]) {
-          const wrap = document.createElement('div'); wrap.className = 'br-marks';
-          const m = document.createElement('span'); m.className = 'br-mark'; m.style.setProperty('--c', col); m.textContent = '✕';
-          wrap.appendChild(m);
-          card.appendChild(wrap);
-        }
+        // ❌ marked cards are COMPLETELY ELIMINATED — same greyed-dark look
+        // with a big ✕ as in the 1v1 Guess Who. Tap the card again to undo.
+        // Only the active board's eliminations are shown (one board = one color).
+        if (active && brMarks[active] && brMarks[active][char.id]) card.classList.add('eliminated');
         const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
         const info = document.createElement('div'); info.className = 'card-info';
         info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
@@ -2194,56 +2191,230 @@
     // equals (after normalizing: lowercase, no accents, no punctuation):
     //   • the FULL main name or any FULL alternative name ("deku", "burdock"),
     //   • OR any single word of 4+ letters inside those names ("midoriya",
-    //     "izuku", "goku" via the alias "Goku Son").
+    //     "izuku", "goku" via the alias "Goku Son"),
+    //   • with CLOSE SPELLINGS accepted for 5+ letter words ("kirua" ≈ "killua").
     function bgNorm(s) {
       return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
     }
+
+    // ✍️ EXTRA ALIASES the community data misses — famous translations, French
+    // spellings & nicknames. Key = bgNorm() of the character's main name.
+    const BG_CHAR_EXTRA = {
+      // 🐉 Dragon Ball (AniList spells him "Gokuu Son" / "Son Gohan"…)
+      'son goku': ['sangoku'], 'gokuu son': ['sangoku', 'goku', 'son goku'],
+      'son gohan': ['sangohan'], 'son goten': ['sangoten'],
+      'krillin': ['kuririn', 'kulilin'], 'kuririn': ['krillin'],
+      'master roshi': ['kame sennin', 'muten roshi', 'tortue geniale'],
+      'frieza': ['freezer', 'freeza'], 'piccolo': ['petit coeur'],
+      'mr satan': ['hercule'], 'hercule': ['mr satan'],
+      'tien shinhan': ['tenshinhan'], 'majin buu': ['buu'],
+      'vegetto': ['vegito'], 'vegito': ['vegetto'], 'beerus': ['bills'],
+      'android 18': ['c18', 'c 18'], 'android 17': ['c17', 'c 17'],
+      // ⚔️ Hunter × Hunter
+      'killua zoldyck': ['kirua', 'killua zaoldyeck', 'kirua zoldik'],
+      'kurapika': ['curapika', 'kurapica'], 'leorio': ['leolio'],
+      // 🏴‍☠️ One Piece
+      'roronoa zoro': ['zolo'], 'monkey d luffy': ['mugiwara'],
+      'jinbe': ['jinbei', 'jimbei'], 'eustass kid': ['kid', 'eustass kidd'],
+      'portgas d ace': ['ace'], 'big mom': ['charlotte linlin'],
+      'whitebeard': ['edward newgate'], 'blackbeard': ['marshall d teach'],
+      'sakazuki': ['akainu'], 'borsalino': ['kizaru'], 'kuzan': ['aokiji'],
+      // 🛡️ Attack on Titan (French spellings)
+      'levi': ['livai'], 'levi ackerman': ['livai', 'livai ackerman'],
+      'eren yeager': ['eren jaeger'], 'hange zoe': ['hanji zoe'],
+      // 🍜 Naruto
+      'obito uchiha': ['tobi'], 'nagato': ['pain'], 'pain': ['nagato'],
+      // 🦸 My Hero Academia
+      'izuku midoriya': ['deku'], 'katsuki bakugo': ['kacchan', 'katchan'],
+      'ochaco uraraka': ['uravity'], 'ochako uraraka': ['uravity'],
+      'all might': ['toshinori yagi'], 'shoto todoroki': ['shouto todoroki'],
+      // 💀 Death Note
+      'light yagami': ['kira'], 'l lawliet': ['l', 'ryuzaki'],
+      // ⚙️ FMA / Geass / others
+      'king bradley': ['wrath'], 'lelouch lamperouge': ['zero', 'lulu', 'lelouch vi britannia'],
+      'rintarou okabe': ['okarin', 'hououin kyouma'], 'okabe rintarou': ['okarin', 'hououin kyouma'],
+      'kurisu makise': ['christina'],
+      'shigeo kageyama': ['mob'], 'ainz ooal gown': ['momonga'],
+      'koro sensei': ['koro'], 'sukuna': ['ryomen sukuna'],
+      'yuji itadori': ['yuuji itadori'], 'satoru gojo': ['gojo satoru'],
+      'loid forger': ['twilight'], 'yor forger': ['yor briar', 'thorn princess'],
+      'kazuto kirigaya': ['kirito'], 'kirigaya kazuto': ['kirito'],
+      'asuna yuuki': ['asuna'], 'yuuki asuna': ['asuna'],
+      'kyojuro rengoku': ['rengoku'], 'sung jinwoo': ['sung jin woo'],
+    };
+    // 📺 Same for ANIME TITLES — romaji title ↔ well-known English title.
+    // Key = bgNorm() of the display title. Also used to search CHARACTERS by
+    // their anime (typing "demon slayer" → Tanjiro, series "Kimetsu no Yaiba").
+    const BG_ANIME_EXTRA = {
+      'kimetsu no yaiba': ['demon slayer'],
+      'shingeki no kyojin': ['attack on titan', 'aot', 'snk'],
+      'boku no hero academia': ['my hero academia', 'mha'],
+      'yakusoku no neverland': ['the promised neverland'],
+      'shigatsu wa kimi no uso': ['your lie in april'],
+      'kimi no na wa': ['your name'],
+      'koe no katachi': ['a silent voice'],
+      'eiga koe no katachi': ['a silent voice'],
+      'sen to chihiro no kamikakushi': ['spirited away'],
+      'mononoke hime': ['princess mononoke'],
+      'howl no ugoku shiro': ['howl s moving castle'],
+      'tonari no totoro': ['my neighbor totoro'],
+      'tensei shitara slime datta ken': ['that time i got reincarnated as a slime', 'tensura'],
+      'mobu saiko hyaku': ['mob psycho 100'],
+      'jojo no kimyou na bouken': ['jojo s bizarre adventure'],
+      'ansatsu kyoushitsu': ['assassination classroom'],
+      'nanatsu no taizai': ['the seven deadly sins'],
+      'ao no exorcist': ['blue exorcist'],
+      'shokugeki no souma': ['food wars'],
+      'kaguya sama wa kokurasetai': ['kaguya sama love is war'],
+      'go toubun no hanayome': ['the quintessential quintuplets'],
+      'koukaku kidoutai': ['ghost in the shell'],
+      'tenki no ko': ['weathering with you'],
+      'boku dake ga inai machi': ['erased'],
+      'tate no yuusha no nariagari': ['the rising of the shield hero'],
+      'kono subarashii sekai ni shukufuku wo': ['konosuba'],
+      'yahari ore no seishun love comedy wa machigatteiru': ['oregairu', 'my teen romantic comedy snafu'],
+      'sousou no frieren': ['frieren beyond journey s end'],
+      'kusuriya no hitorigoto': ['the apothecary diaries'],
+      'ore dake level up na ken': ['solo leveling'],
+      'jibaku shounen hanako kun': ['toilet bound hanako kun'],
+      '3 gatsu no lion': ['march comes in like a lion'],
+      're zero kara hajimeru isekai seikatsu': ['re zero', 'rezero starting life in another world'],
+      'youkoso jitsuryoku shijou shugi no kyoushitsu e': ['classroom of the elite'],
+      'dungeon ni deai wo motomeru no wa machigatteiru darou ka': ['danmachi', 'is it wrong to try to pick up girls in a dungeon'],
+      'hunter hunter': ['hunter x hunter'],
+      'spy family': ['spy x family'],
+      'naruto shippuuden': ['naruto shippuden'],
+      'boruto naruto next generations': ['boruto'],
+      'bleach sennen kessen hen': ['bleach thousand year blood war', 'tybw'],
+      'code geass hangyaku no lelouch': ['code geass lelouch of the rebellion'],
+      'kiseijuu sei no kakuritsu': ['parasyte the maxim'],
+      'shinsekai yori': ['from the new world'],
+      'ookami kodomo no ame to yuki': ['wolf children'],
+      'kino no tabi': ['kino s journey'],
+      'sword art online': ['sao'],
+      'jigokuraku': ['hell s paradise'],
+      'tokyo kushu': ['tokyo ghoul'], 'toukyou guru': ['tokyo ghoul'],
+      'mushoku tensei isekai ittara honki dasu': ['jobless reincarnation', 'mushoku tensei'],
+      'kaijuu 8 gou': ['kaiju no 8'],
+      'fumetsu no anata e': ['to your eternity'],
+      'diamond no ace': ['ace of diamond'],
+      'kuroko no basuke': ['kuroko s basketball'],
+      'haijime no ippo': ['fighting spirit'], 'hajime no ippo': ['fighting spirit'],
+      'uchuu kyoudai': ['space brothers'],
+      'wanpanman': ['one punch man'],
+      'dr stone': ['dokuta sutoon'],
+      'violet evergarden': [],
+    };
+
+    // All searchable names of a character/anime: main + community aliases +
+    // our curated extras + a dash-joined variant ("Sung Jin-Woo" → "jinwoo").
     function bgNamesOf(ch) {
       if (!ch) return [];
       if (typeof ch === 'string') return [ch];
-      return [ch.name || ''].concat(Array.isArray(ch.al) ? ch.al : []);
+      const key = bgNorm(ch.name);
+      const extra = (BG_CHAR_EXTRA[key] || []).concat(BG_ANIME_EXTRA[key] || []);
+      const names = [ch.name || ''].concat(Array.isArray(ch.al) ? ch.al : [], extra);
+      const joined = [];
+      names.forEach(nm => { if (nm && nm.indexOf('-') !== -1) joined.push(nm.replace(/-/g, '')); });
+      return names.concat(joined);
     }
+
+    // Capped Levenshtein (bails out as soon as it exceeds `max`).
+    function bgEditDist(a, b, max) {
+      const m = a.length, n = b.length;
+      if (Math.abs(m - n) > max) return max + 1;
+      let prev = []; for (let j = 0; j <= n; j++) prev[j] = j;
+      for (let i = 1; i <= m; i++) {
+        const cur = [i]; let rowMin = i;
+        for (let j = 1; j <= n; j++) {
+          cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+          if (cur[j] < rowMin) rowMin = cur[j];
+        }
+        if (rowMin > max) return max + 1;
+        prev = cur;
+      }
+      return prev[n];
+    }
+    // "Close" words: exact, or a tight spelling variant with the SAME beginning
+    // (so "mikasa"≠"makise", "bleach"≠"black"… but "hyuga"≈"hyuuga",
+    // "goku"≈"gokuu", "shippuden"≈"shippuuden"). Bigger variants ("kirua"≈"killua",
+    // "sangoku"→"goku") are covered by the curated alias lists above.
+    function bgWordClose(a, b) {
+      if (a === b) return true;
+      if (Math.min(a.length, b.length) < 4 || Math.max(a.length, b.length) < 5) return false;
+      if (a[0] !== b[0] || a[1] !== b[1]) return false;
+      const mx = Math.max(a.length, b.length);
+      const cap = mx >= 8 ? 2 : 1; // d≤1 for short words; d≤2 only for long ones
+      return bgEditDist(a, b, cap) <= cap;
+    }
+
     function bgMatches(guess, ch) {
       const g = bgNorm(guess);
       if (!g) return false;
+      const gWords = g.split(' ');
       return bgNamesOf(ch).some(nm => {
         const n = bgNorm(nm);
         if (!n) return false;
         if (g === n) return true;
-        return n.split(' ').some(t => g === t && t.length >= 4);
+        // any 4+ letter word of the name/alias, close spellings OK
+        return n.split(' ').some(t => t.length >= 4 && gWords.some(w => w.length >= 4 && bgWordClose(w, t)));
       });
     }
 
     // ---------- ⌨️ GUESS AUTOCOMPLETE ----------
     // While typing in the Blur Guess bar, suggest characters whose name,
-    // aliases OR ANIME (series) name contain the typed text — "bleach" →
-    // Ichigo, Rukia…; "deku" → Izuku Midoriya. Rank: name-start hits first,
-    // then alias starts, then substrings, then 📺 series matches.
+    // aliases OR ANIME (series) name match the typed text — "bleach" →
+    // Ichigo, Rukia…; "deku" → Izuku Midoriya; "naruto" → Sasuke, Sakura…
+    // Series matching is TOKEN-TOLERANT ("shippuden" ≈ "Shippuuden") and knows
+    // English titles ("demon slayer" → Tanjiro!). Close spellings of names
+    // work too ("kirua" → Killua). Rank: name-start hits first, then alias
+    // starts, then substrings, then 📺 series matches — ties keep pool order
+    // (pool = AniList popularity, so the famous characters surface first).
     // (Series search only SUGGESTS — it never counts as a correct answer.)
     // A tap fills the input AND submits the guess right away (phone-friendly).
+
+    // Every searchable spelling of a show/series name (norm'd, alias-expanded).
+    function bgSeriesKeys(series) {
+      const s = bgNorm(series);
+      if (!s) return [];
+      return [s].concat((BG_ANIME_EXTRA[s] || []).map(bgNorm));
+    }
+
     function bgFindSuggestions(query) {
       const g = bgNorm(query);
       if (!g) return [];
+      const gWords = g.split(' ');
+      const gSingle = gWords.length === 1 ? g : null;
       const pool = bgCandidateChars(); // full source pool, mode-aware (deduped by id)
       const hits = [];
       pool.forEach(c => {
         let best = null;
         bgNamesOf(c).forEach((nm, i) => {
           const n = bgNorm(nm);
-          if (!n || n.indexOf(g) === -1) return;
+          if (!n) return;
           const isMain = i === 0;
-          const rank = isMain ? (n.indexOf(g) === 0 ? 0 : 2) : (n.indexOf(g) === 0 ? 1 : 3);
-          if (!best || rank < best.rank) best = { c: c, rank: rank, via: isMain ? null : ('aka ' + nm) };
+          let rank = -1;
+          if (n.indexOf(g) !== -1) {
+            rank = isMain ? (n.indexOf(g) === 0 ? 0 : 2) : (n.indexOf(g) === 0 ? 1 : 3);
+          } else if (gSingle && gSingle.length >= 4) {
+            // close spelling on a 4+ letter word: "kirua" ≈ Killua, "hyuga" ≈ Hyuuga
+            if (n.split(' ').some(t => t.length >= 4 && bgWordClose(gSingle, t))) rank = 3;
+          }
+          if (rank >= 0 && (!best || rank < best.rank)) best = { c: c, rank: rank, via: isMain ? null : ('aka ' + nm) };
         });
-        const sn = bgNorm(c.series);
-        if (sn && sn.indexOf(g) !== -1) {
-          const rank = 4 + (sn.indexOf(g) === 0 ? 0 : 1);
-          if (!best || rank < best.rank) best = { c: c, rank: rank, via: '📺 ' + c.series };
-        }
+        // 📺 by anime title (exact, substring either way, or close word)
+        let sRank = 0;
+        bgSeriesKeys(c.series).forEach(key => {
+          if (sRank || !key) return;
+          if (g === key) sRank = 4;
+          else if ((g.length >= 3 && key.indexOf(g) !== -1) || (key.length >= 3 && g.indexOf(key) !== -1)) sRank = 5;
+          else if (gWords.some(w => w.length >= 4 && key.split(' ').some(t => t.length >= 4 && bgWordClose(w, t)))) sRank = 5;
+        });
+        if (sRank && (!best || sRank < best.rank)) best = { c: c, rank: sRank, via: '📺 ' + c.series };
         if (best) hits.push(best);
       });
-      hits.sort((a, b) => (a.rank - b.rank) || (a.c.name.length - b.c.name.length));
-      return hits.slice(0, 8);
+      hits.sort((a, b) => a.rank - b.rank); // stable sort → pool (popularity) order inside a rank
+      return hits.slice(0, 15);
     }
 
     function hideBgSuggest() {
@@ -2289,8 +2460,17 @@
           tag.className = 'bg-sug-via'; tag.textContent = h.via; // "aka …" or "📺 …"
           row.appendChild(tag);
         }
-        // pointerdown fires BEFORE the input's blur → the tap always lands
-        row.addEventListener('pointerdown', (e) => { e.preventDefault(); bgPickSuggestion(h); });
+        // 📱 Tap-guard (scroll-friendly): we never preventDefault → phone users
+        // CAN scroll the list with their finger. A row is picked only when the
+        // finger LIFTS within 12px of where it landed (a real tap, not a swipe).
+        // The 150ms blur-hide in the keydown wiring gives the tap time to land.
+        row.addEventListener('pointerdown', (e) => { row._psY = e.clientY; row._psX = e.clientX; });
+        row.addEventListener('pointerup', (e) => {
+          if (row._psY == null) return;
+          const moved = Math.abs(e.clientY - row._psY) + Math.abs(e.clientX - row._psX);
+          row._psY = null; row._psX = null;
+          if (moved < 12) bgPickSuggestion(h);
+        });
         box.appendChild(row);
       });
       box.classList.add('show');

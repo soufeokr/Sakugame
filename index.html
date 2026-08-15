@@ -437,13 +437,13 @@
           <div class="br-my-points" id="brMyPoints">0 pts</div>
         </div>
         <div class="br-chips" id="brChips"></div>
-        <div class="br-chip-hint">🎨 Tap a color to switch to that player's board — every card glows with their color. Your ❌ notes and 🎯 guesses are per-board!</div>
+        <div class="br-chip-hint">🎨 Tap a color to switch to that player's board — every card glows with their color. Tap a card to ❌ ELIMINATE it (greyed like in 1v1 Guess Who — tap again to undo). Your eliminations and 🎯 guesses are per-board!</div>
         <div class="question-box" id="brQuestionArea"></div>
         <div class="board-section">
           <h3 id="brBoardTitle">All Characters</h3>
           <div class="board" id="brBoard"></div>
           <div class="game-controls">
-            <button class="secondary" onclick="battleClearMarks()" title="Clear marks">🧹 <span class="btn-label">Clear marks</span></button>
+            <button class="secondary" onclick="battleClearMarks()" title="Restore all eliminated cards on this board">🧹 <span class="btn-label">Restore all</span></button>
             <button class="warning" id="brGuessBtn" onclick="battleToggleGuess()" title="Make a Guess">🎯 <span class="btn-label">Make a Guess</span></button>
             <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby">🚪 <span class="btn-label">To Lobby</span></button>
           </div>
@@ -790,5 +790,5 @@
   <script src="undercover.js"></script>
   <script src="music.js"></script>
   <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2bb0b672d17e163',t:'MTc4NjgyNjc0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2bb6dffa8bfe21d',t:'MTc4NjgzMDc4MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
