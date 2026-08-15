@@ -1228,7 +1228,7 @@
           const updates = {
             state: 'lobby', characters: null, selections: null, secrets: null, currentTurn: null,
             eliminations: null, winner: null, currentQuestion: null, questionHistory: null,
-            restarts: null, uc: null, br: null, rc: null,
+            restarts: null, uc: null, br: null, rc: null, bg: null,
             host: playerId
           };
           updates['players/' + playerId] = { id: playerId, ready: false, name: me.name || playerName, isHost: true, avatar: me.avatar || '' };
@@ -1590,7 +1590,7 @@
       const seated = Object.keys(currentRoom.players || {});
       // Too few players mid-selection → host cancels back to the lobby
       if (isHost && seated.length < 3) {
-        database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, br: null, rc: null });
+        database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, br: null, rc: null, bg: null, uc: null });
         return;
       }
       if (currentRoom.game === 'battle') {
@@ -2001,7 +2001,7 @@
       if (rcGuessMode) showNotification('🎯 Guess mode: click the card you think is the mystery character!');
       renderRaceBoard();
     }
-    function raceClearMarks() { rcMarks = {}; renderRaceBoard(); }
+    function raceClearMarks() { rcMarks = {}; showNotification('🧹 Eliminated cards restored!'); renderRaceBoard(); }
     function updateRace() {
       const rc = currentRoom.rc || {};
       const players = currentRoom.players || {};
@@ -3744,7 +3744,7 @@
       document.getElementById('ucEndScreen').classList.remove('show');
       await database.ref('rooms/' + roomCode).update({
         state: 'lobby', characters: null, secrets: null, selections: null, currentTurn: null,
-        eliminations: null, winner: null, currentQuestion: null, questionHistory: null, gameChat: null, restarts: null, uc: null, br: null, rc: null
+        eliminations: null, winner: null, currentQuestion: null, questionHistory: null, gameChat: null, restarts: null, uc: null, br: null, rc: null, bg: null
       });
       await database.ref('rooms/' + roomCode + '/players/' + playerId + '/ready').set(false);
       if (currentRoom && currentRoom.players) {

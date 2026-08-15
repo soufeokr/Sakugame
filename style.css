@@ -98,12 +98,6 @@
   button.danger { background: var(--danger); }
   button.small { padding: 8px 14px; font-size: 0.85rem; }
   .back-btn { background: var(--accent2); margin-bottom: 20px; }
-  .divider { text-align: center; margin: 25px 0; color: var(--muted); font-size: 0.85rem; }
-  .account-item { display: flex; align-items: center; justify-content: space-between; background: #1a1a2e; padding: 12px 16px; border-radius: 10px; margin-bottom: 10px; }
-  .account-item .name { font-weight: 700; color: var(--accent); }
-  .account-item .count { color: var(--muted); font-size: 0.85rem; margin-left: 8px; }
-  .add-account-form { display: flex; gap: 10px; margin-top: 15px; }
-  .add-account-form input { flex: 1; padding: 10px; border: 2px solid #2a2a4a; border-radius: 8px; background: #1a1a2e; color: white; font-family: inherit; }
   .slider-container { margin: 16px 0; }
   .slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
   input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: #2a2a4a; outline: none; -webkit-appearance: none; }
@@ -139,9 +133,6 @@
   .profile-row button { flex-shrink: 0; padding: 10px 16px; }
   .settings-icon { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--muted); transition: all 0.2s; z-index: 10; }
   .settings-icon:hover { color: var(--accent); transform: rotate(30deg); }
-  .chat-section { flex: 1; display: flex; flex-direction: column; min-height: 0; height: 100%; }
-  .chat-header { padding: 20px; border-bottom: 2px solid #0f0f1a; flex-shrink: 0; }
-  .chat-header h3 { font-size: 1.2rem; color: var(--text); text-align: center; }
   .chat-messages { flex: 1; overflow-y: auto; padding: 20px; background: #0f0f1a; min-height: 0; }
   .chat-messages::-webkit-scrollbar { width: 8px; }
   .chat-messages::-webkit-scrollbar-track { background: #1a1a2e; }
@@ -178,7 +169,6 @@
   .game-container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; max-width: 1600px; margin: 0 auto; }
   .game-left { display: flex; flex-direction: column; gap: 16px; }
   .game-center { display: flex; flex-direction: column; gap: 16px; }
-  .game-right { display: flex; flex-direction: column; }
   .game-header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 16px 20px; border-radius: 16px; flex-wrap: wrap; gap: 12px; }
   .player-section { flex: 1; min-width: 150px; }
   .player-section h3 { font-size: 0.9rem; color: var(--muted); margin-bottom: 4px; }
@@ -227,7 +217,6 @@
   .card-info { padding: 8px; text-align: center; background: #0f0f1a; }
   .card-name { font-weight: 700; font-size: 0.8rem; line-height: 1.2; color: var(--text); }
   .game-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .game-chat { background: var(--card); border-radius: 16px; display: flex; flex-direction: column; height: calc(100vh - 180px); }
   .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal.show { display: flex; }
   .modal-content { background: var(--card); padding: 35px; border-radius: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; text-align: center; }
@@ -235,8 +224,6 @@
   .modal-close:hover { color: var(--danger); }
   .modal h2 { margin-bottom: 20px; color: var(--accent); }
   .modal-char-img { width: 150px; height: 200px; object-fit: cover; border-radius: 12px; margin: 12px auto; display: block; }
-  .spinner { border: 4px solid rgba(2,169,255,0.1); border-top: 4px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 20px auto; }
-  @keyframes spin { to { transform: rotate(360deg); } }
   /* Winning Screen (small centered card over the game) */
   .winning-screen { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 120; background: var(--card); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.8); text-align: center; border: 2px solid var(--accent); }
   .winning-screen.show { display: block; }
@@ -274,7 +261,6 @@
     .game-left { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
     .game-left > * { flex: 1; min-width: 220px; }
     .history-list { max-height: 200px; }
-    .game-chat { height: 420px; }
     .my-character-card img { width: 140px; height: 187px; }
   }
   @media (max-width: 1100px) {
@@ -293,7 +279,6 @@
   /* ===== UNDERCOVER MODE ===== */
   .uc-container { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
   .uc-main { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-  .uc-side { background: var(--card); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); display: flex; flex-direction: column; max-height: calc(100vh - 200px); overflow: hidden; }
   .uc-header { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
   .uc-badge { background: #0f0f1a; color: var(--accent); font-weight: 900; padding: 8px 18px; border-radius: 25px; font-size: 1rem; }
   .uc-word-card { text-align: center; background: #0f0f1a; border: 2px solid var(--accent2); padding: 18px; border-radius: 14px; margin-bottom: 16px; }
@@ -333,7 +318,6 @@
 
   @media (max-width: 1100px) {
     .uc-container { grid-template-columns: 1fr; }
-    .uc-side { max-height: 500px; min-height: 350px; }
   }
 
   /* ===== UNDERCOVER PAIR MANAGER ===== */
@@ -441,7 +425,10 @@
   .br-mysecret { display: flex; align-items: center; gap: 12px; background: #0f0f1a; border: 2px solid var(--accent2); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; cursor: pointer; user-select: none; }
   .br-mysecret img { width: 54px; height: 72px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
   .br-mysecret-label { font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+  .br-mysecret-info { min-width: 0; flex: 1; }
   .br-mysecret-name { font-weight: 900; font-size: 0.95rem; margin-top: 2px; }
+  /* 🎵 volume sliders wear the site's accent color */
+  .music-volume-slider { accent-color: var(--accent); cursor: pointer; }
   .br-my-points { margin-left: auto; font-weight: 900; color: var(--warning); font-size: 1.1rem; white-space: nowrap; }
   .br-mysecret.br-hide img { filter: blur(12px) brightness(0.5); }
   .br-mysecret.br-hide .br-mysecret-name { filter: blur(6px); }
@@ -459,10 +446,6 @@
   .board.br-fenced .card:hover:not(.guessing) { border-color: var(--boardc, #2a2a4a); box-shadow: 0 0 12px var(--boardc, #2a2a4a), 0 4px 12px rgba(0, 0, 0, 0.55); }
   /* ❌ Eliminated cards (1v1 Guess Who look): greyed + big ✕, glow toned down */
   .board.br-fenced .card.eliminated { box-shadow: 0 0 2px var(--boardc, #2a2a4a); }
-  /* ❌ marks: big, bright, glowing — impossible to miss on a card */
-  .br-mark { width: 26px; height: 26px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 900; color: #fff; background: var(--c, #888); text-shadow: 0 0 6px #fff; box-shadow: 0 0 10px var(--c, #888), 0 0 22px var(--c, #888), 0 2px 6px rgba(0,0,0,0.65); animation: brMarkPulse 1.6s ease-in-out infinite; }
-  @keyframes brMarkPulse { 0%, 100% { box-shadow: 0 0 8px var(--c, #888), 0 2px 6px rgba(0,0,0,0.6); } 50% { box-shadow: 0 0 14px var(--c, #888), 0 0 28px var(--c, #888), 0 2px 8px rgba(0,0,0,0.6); } }
-  .br-marks { position: absolute; top: 4px; left: 4px; right: 4px; display: flex; flex-wrap: wrap; gap: 4px; z-index: 3; }
   .card.br-found::after { content: '🔍'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(15, 15, 26, 0.55); z-index: 2; }
   .board.guessing { outline: 3px dashed var(--warning); outline-offset: 3px; border-radius: 12px; }
   .board.guessing .card { animation: none; box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.25); }
@@ -549,7 +532,6 @@
     /* ----- Guess Who: one clean column, action first ----- */
     .game-left { order: 0; flex-direction: row; gap: 10px; }      /* mini secret card + history row */
     .game-center { order: 1; gap: 10px; }                          /* header → question → board */
-    .game-right { order: 2; }                                      /* chat at the bottom */
     .my-character { order: -1; padding: 10px; flex: 1; min-width: 118px; }
     .my-character h3 { font-size: 0.85rem; margin-bottom: 6px; }
     .my-character-card img { width: 72px; height: 96px; }
@@ -584,7 +566,6 @@
     /* 💬 joins the button row: same line, same size, pinned to the right edge */
     #chatToggleBtn { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); right: 12px; width: 48px; height: 48px; font-size: 1.25rem; }
     .chat-overlay { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
-    .br-mark { width: 22px; height: 22px; border-radius: 6px; font-size: 0.95rem; }
     /* ----- multiplayer games + public rooms on phones ----- */
     .public-rooms-list { max-height: 300px; }
     .br-mysecret img { width: 46px; height: 62px; }
@@ -597,7 +578,6 @@
     .br-log { max-height: 130px; }
     .qa-ans { font-size: 0.72rem; padding: 3px 8px; }
     .me-row { font-size: 0.82rem; padding: 8px 10px; }
-    .game-chat { height: 300px; }
     .chat-messages { padding: 12px; }
     .chat-input-area { padding: 10px; }
 
@@ -607,7 +587,6 @@
     .uc-players { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
     .uc-word-card { padding: 12px; }
     .uc-word-img { width: 68px; height: 94px; }
-    .uc-side { max-height: 420px; min-height: 300px; }
     .ava-tile { width: 40px; height: 40px; margin-bottom: 4px; }
     .uc-tile-name { font-size: 0.82rem; }
 
