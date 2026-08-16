@@ -2544,6 +2544,7 @@
         touchActivity();
       } else {
         showNotification('❌ Nope! Keep trying — it gets clearer every few seconds…', 2500);
+        bgMaybeFocusGuess(); // ⌨️ keep typing on PC (e.g. after picking a suggestion with the mouse)
       }
     }
 
@@ -2649,6 +2650,25 @@
         updateBlurTimer();
       }, 500);
     }
+    // ⌨️ PC only: at the start of each round, jump straight into the guess bar
+    // so desktop players can type instantly (no click needed). Skipped on
+    // touch devices — autofocusing there would pop the keyboard over the art,
+    // and skipped while typing in the chat or after this round is found.
+    function bgMaybeFocusGuess() {
+      try {
+        if (typeof window === 'undefined') return;
+        const coarse = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || (window.innerWidth && window.innerWidth < 768);
+        if (coarse) return; // 📱 phones/tablets: no autofocus
+        const scr = document.getElementById('blurScreen');
+        if (!scr || !(scr.classList.contains('active') || scr.classList.contains('show'))) return;
+        const bg = (currentRoom && currentRoom.bg) || {};
+        if (bg.phase !== 'playing' || (bg.found || {})[playerId]) return;
+        const ae = document.activeElement;
+        if (ae && ae.tagName && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA') && ae.id !== 'bgGuessInput') return; // user is typing elsewhere (chat…)
+        const inp = document.getElementById('bgGuessInput');
+        if (inp && typeof inp.focus === 'function') inp.focus();
+      } catch (e) {}
+    }
     function updateBlur() {
       const bg = (currentRoom && currentRoom.bg) || {};
       const players = currentRoom.players || {};
@@ -2677,6 +2697,8 @@
         const inp = document.getElementById('bgGuessInput');
         if (inp) inp.value = '';
         hideBgSuggest();
+        // ⌨️ PC: put the caret in the search bar right away (after the DOM settles)
+        if (typeof setTimeout === 'function') setTimeout(bgMaybeFocusGuess, 90); else bgMaybeFocusGuess();
       }
       img.style.filter = 'blur(' + (revealed ? 0 : BLUR_LEVELS[stage - 1]) + 'px)';
       img.style.transform = 'scale(' + (revealed ? 1.02 : BLUR_SCALES[stage - 1]) + ')';
