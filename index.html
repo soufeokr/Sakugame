@@ -15,9 +15,71 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
+
+<!-- ══════ SVG ICON SPRITE — all UI icons (stroke = currentColor, inherits text color) ══════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" fill="#f4f9ff"/><path d="M10.2 7.6v8.8l7.6-4.4z" fill="#02a9ff" stroke-linejoin="round"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="8.5" width="13" height="12.5" rx="2" fill="#0f0f1a" stroke="currentColor" stroke-width="2"/><path d="M14.5 11.5l.8 1.6 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="#ffca3a"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.9"/><circle cx="9.2" cy="9.2" r="1.6" fill="#16335f"/><circle cx="14.8" cy="9.2" r="1.6" fill="#16335f"/><circle cx="12" cy="12" r="1.6" fill="#16335f"/><circle cx="9.2" cy="14.8" r="1.6" fill="#16335f"/><circle cx="14.8" cy="14.8" r="1.6" fill="#16335f"/></symbol>
+  <symbol id="i-gamepad" viewBox="0 0 24 24"><rect x="2.6" y="7.8" width="18.8" height="9.6" rx="4.8" fill="#16335f" stroke="#dfe9ff" stroke-width="1.5"/><rect x="6.3" y="11.8" width="3.6" height="1.6" rx="0.8" fill="#dfe9ff"/><rect x="7.3" y="10.8" width="1.6" height="3.6" rx="0.8" fill="#dfe9ff"/><circle cx="16.6" cy="10.9" r="1.05" fill="#ff5252"/><circle cx="18.35" cy="12.65" r="1.05" fill="#00c853"/><circle cx="16.6" cy="14.4" r="1.05" fill="#ffca3a"/><circle cx="14.85" cy="12.65" r="1.05" fill="#29b6f6"/></symbol>
+  <symbol id="i-mask" viewBox="0 0 24 24"><g transform="rotate(-10 9.5 12)"><rect x="4.5" y="4.5" width="10.5" height="14.5" rx="2" fill="#16335f" stroke="#7fa8e8" stroke-width="1.3"/></g><g transform="rotate(6 14 12)"><rect x="8.8" y="5" width="10.7" height="14.8" rx="2" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.8"/></g><g transform="translate(14.15 12.3) rotate(6)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#02a9ff" stroke-width="1.8" stroke-linecap="round" transform="scale(1.15)"/><circle cx="0" cy="3.8524999999999996" r="1.15" fill="#02a9ff"/></g></symbol>
+  <symbol id="i-spy" viewBox="0 0 24 24"><path d="M4.5 20.8a7.5 4.6 0 0 1 15 0z" fill="#16335f"/><circle cx="12" cy="10.8" r="4.5" fill="#f4f9ff"/><rect x="7.7" y="9.3" width="8.6" height="2.7" rx="1.35" fill="#16335f"/><circle cx="10.2" cy="10.65" r="0.85" fill="#f4f9ff"/><circle cx="13.8" cy="10.65" r="0.85" fill="#f4f9ff"/><rect x="5.2" y="5.9" width="13.6" height="1.9" rx="0.95" fill="#2c4a80"/><path d="M8.1 6.2a3.9 2.9 0 0 1 7.8 0z" fill="#16335f"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M2.6 8.2h3.6M3.2 16.2h3.2" stroke="#f4f9ff" stroke-width="1.7" stroke-linecap="round" opacity="0.85"/><path d="M12.8 2 5.2 13.2h4.9L9 22l8.7-11.6h-5L12.8 2z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.9" stroke-linejoin="round"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><rect x="2.8" y="4.4" width="11.5" height="15.5" rx="2" fill="#16335f" stroke="#2c4a80" stroke-width="1.2"/><rect x="7.4" y="2.8" width="13.2" height="16.5" rx="2" fill="#29b6f6" stroke="#bfe9ff" stroke-width="1.4"/><rect x="9.3" y="7.7" width="9.4" height="2.1" rx="1" fill="#ffffff" opacity="0.55"/><rect x="9.3" y="11.6" width="9.4" height="2.1" rx="1" fill="#ffffff" opacity="0.55"/><rect x="9.3" y="15.5" width="9.4" height="2.1" rx="1" fill="#ffffff" opacity="0.55"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M20.59 10.64 A8.7 8.7 0 0 1 20.59 13.36 L17.55 13.28 A5.7 5.7 0 0 1 16.83 15.02 L19.04 17.11 A8.7 8.7 0 0 1 17.11 19.04 L15.02 16.83 A5.7 5.7 0 0 1 13.28 17.55 L13.36 20.59 A8.7 8.7 0 0 1 10.64 20.59 L10.72 17.55 A5.7 5.7 0 0 1 8.98 16.83 L6.89 19.04 A8.7 8.7 0 0 1 4.96 17.11 L7.17 15.02 A5.7 5.7 0 0 1 6.45 13.28 L3.41 13.36 A8.7 8.7 0 0 1 3.41 10.64 L6.45 10.72 A5.7 5.7 0 0 1 7.17 8.98 L4.96 6.89 A8.7 8.7 0 0 1 6.89 4.96 L8.98 7.17 A5.7 5.7 0 0 1 10.72 6.45 L10.64 3.41 A8.7 8.7 0 0 1 13.36 3.41 L13.28 6.45 A5.7 5.7 0 0 1 15.02 7.17 L17.11 4.96 A8.7 8.7 0 0 1 19.04 6.89 L16.83 8.98 A5.7 5.7 0 0 1 17.55 10.72 L20.59 10.64 z M9.6 12 a2.4 2.4 0 1 0 4.8 0 a2.4 2.4 0 1 0 -4.8 0 z" fill="currentColor" fill-rule="evenodd"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><rect x="5.5" y="10.3" width="13" height="9.2" rx="1.2" fill="#f4f9ff"/><path d="M3.4 11 12 3.6 20.6 11z" fill="#02a9ff" stroke-linejoin="round"/><rect x="10.3" y="14.6" width="3.4" height="4.9" rx="0.7" fill="#16335f"/><rect x="7.2" y="12.4" width="2.6" height="2.6" rx="0.6" fill="#29b6f6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.9" fill="#ff5252"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5 5 13.4a4.8 4.8 0 0 1 0-6.9 4.8 4.8 0 0 1 6.9 0l.1.1.1-.1a4.8 4.8 0 0 1 6.9 0 4.8 4.8 0 0 1 0 6.9z" fill="#ff5c7a" stroke="#ff2e63" stroke-width="0.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g transform="rotate(-13 6 12)"><rect x="2.9" y="7.6" width="6.2" height="8.8" rx="1.1" fill="#9d6bff" stroke="#e6dcff" stroke-width="1"/></g><g transform="rotate(13 18 12)"><rect x="14.9" y="7.6" width="6.2" height="8.8" rx="1.1" fill="#00c853" stroke="#c9f5d9" stroke-width="1"/></g><rect x="8.9" y="5.2" width="6.2" height="8.8" rx="1.1" fill="#ffa726" stroke="#ffe4bb" stroke-width="1"/><g transform="translate(6 11.7) rotate(-13)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g><g transform="translate(18 11.7) rotate(13)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g><g transform="translate(12 9.3)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.8 20.5a7.4 7.4 0 0 1 14.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.8 2.6 4.2 5.5 4.2 9S14.8 18.4 12 21c-2.8-2.6-4.2-5.5-4.2-9S9.2 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7.5 6V5a2 2 0 0 1 2-2H19a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-1" fill="none" stroke="currentColor" stroke-width="2" transform="translate(-1.5,0)"/></symbol>
+  <symbol id="i-skull" viewBox="0 0 24 24"><path d="M12 3a7.5 7.5 0 0 0-7.5 7.5c0 3 1.6 4.9 3 5.7V19a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-2.8c1.4-.8 3-2.7 3-5.7A7.5 7.5 0 0 0 12 3z" fill="#dfe5f2"/><circle cx="9" cy="11.2" r="1.9" fill="#16162e"/><circle cx="15" cy="11.2" r="1.9" fill="#16162e"/><path d="M12 13.6l-1 2h2z" fill="#16162e"/><path d="M10.4 18.4v1.9M13.6 18.4v1.9" stroke="#16162e" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5c2 0 3.7.7 5.2 1.5M22 12s-3.6 6.5-10 6.5c-2 0-3.7-.7-5.2-1.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m5.7 5.7 12.6 12.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6.5V12l3.8 2.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M9.5 14.5a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7l-1.3 1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 9.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 1 0 5.7 5.7l1.3-1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5L19.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><path d="M4 4.5v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9.5A8.5 8.5 0 1 1 3.5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11.5 12.5 20 4M16 8l2.5 2.5M13.5 10.5 16 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="9.5" r="1.5" fill="currentColor"/><path d="m4 18 6-6 4 4 2.5-2.5L21 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4.5h10v4.5a5 5 0 0 1-10 0z" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.8" stroke-linejoin="round"/><path d="M7.2 6H4.7a0.8 0.8 0 0 0-.8.9c0 1.9 1.5 3.6 3.6 3.6M16.8 6h2.5a0.8 0.8 0 0 1 .8.9c0 1.9-1.5 3.6-3.6 3.6" fill="none" stroke="#ffca3a" stroke-width="1.9" stroke-linecap="round"/><rect x="11.1" y="13.2" width="1.8" height="3" fill="#ffca3a"/><rect x="8" y="16.6" width="8" height="2" rx="1" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.7"/><rect x="6.8" y="19.1" width="10.4" height="1.7" rx="0.8" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.7"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 2 15 22l-4-9-9-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5 5l9 7-9 7z" fill="currentColor"/><path d="M17 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20v-6M12 20V6M19 20v-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M2 20h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3.5a2.4 2.4 0 0 1 3.4 3.4L8 19.3l-4.5 1.2L4.7 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 13.5h7M8.5 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2.5H6a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6.5h16M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6M6.5 6.5 7.4 20a1 1 0 0 0 1 .9h7.2a1 1 0 0 0 1-.9l.9-13.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-door" viewBox="0 0 24 24"><rect x="4.2" y="3.2" width="15.6" height="17.6" rx="1.6" fill="#16335f" stroke="#dfe9ff" stroke-width="1.6"/><path d="M8.2 12h6.4" stroke="#00e676" stroke-width="2.3" stroke-linecap="round"/><path d="M12.4 9.5l3.4 2.5-3.4 2.5" fill="none" stroke="#00e676" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="12" r="1.05" fill="#ffca3a"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M8.5 18V6L20 4v11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6" cy="18" r="2.5" fill="#ffca3a"/><circle cx="17.5" cy="15.5" r="2.5" fill="#ffca3a"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 3.2V21" stroke="#dfe9ff" stroke-width="2" stroke-linecap="round"/><path d="M6 4.2h12.2l-3 3.7 3 3.7H6z" fill="#ff5252" stroke-linejoin="round"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 19.5v-5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 14.5A8.5 8.5 0 1 1 20.5 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.1 0 1.6-.8 1.6-1.6 0-.8-.5-1.2-.5-2 0-1.1.9-1.7 1.9-1.7h2.3a3.7 3.7 0 0 0 3.7-3.6C20.8 7 16.5 3.5 12 3.5z" fill="#f4f9ff"/><circle cx="8.2" cy="8.8" r="1.45" fill="#ff5252"/><circle cx="12.4" cy="7" r="1.45" fill="#ffca3a"/><circle cx="15.9" cy="9.6" r="1.45" fill="#00c853"/><circle cx="7.8" cy="13.6" r="1.45" fill="#9d6bff"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6.5 3.5h11M6.5 20.5h11" stroke="#dfe9ff" stroke-width="1.7" stroke-linecap="round"/><path d="M7.6 3.5v2.3c0 3.3 2.3 5.2 4.4 5.8-2.1.6-4.4 2.5-4.4 5.8v3.1M16.4 3.5v2.3c0 3.3-2.3 5.2-4.4 5.8 2.1.6 4.4 2.5 4.4 5.8v3.1" fill="none" stroke="#dfe9ff" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.9 20.5 12 16.4l3.1 4.1z" fill="#ffca3a"/><path d="M10.3 4.7 12 9.3l1.7-4.6z" fill="#ffca3a" opacity="0.85"/><path d="M12 11.1v3.1" stroke="#ffca3a" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 17.3 2.9 8.2l4.7 3.3L12 5.2l4.4 6.3 4.7-3.3L20 17.3z" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.9" stroke-linejoin="round"/><rect x="4" y="18.6" width="16" height="2.1" rx="1" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.8"/><circle cx="5.7" cy="9.6" r="0.8" fill="#fff7dc"/><circle cx="12" cy="7.2" r="0.8" fill="#fff7dc"/><circle cx="18.3" cy="9.6" r="0.8" fill="#fff7dc"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><path d="M7.4 3 10.4 10.6 12 9.5 9.8 3z" fill="#29b6f6"/><path d="M16.6 3 13.6 10.6 12 9.5 14.2 3z" fill="#1976d2"/><circle cx="12" cy="15.2" r="5.3" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.9"/><path d="m12 12.5.9 1.7 1.9.3-1.4 1.4.4 1.9-1.8-1-1.8 1 .4-1.9-1.4-1.4 1.9-.3z" fill="#fff7dc"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M9.4 13H4.6a1 1 0 0 0-1 1v4.6a2.6 2.6 0 0 0 2.6 2.6h11.6a2.6 2.6 0 0 0 2.6-2.6V14a1 1 0 0 0-1-1h-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="9.3" y="2.8" width="5.4" height="7.6" rx="0.9" fill="#f4f9ff"/><path d="M10.7 6.3l1 1.1 1.9-2.1" fill="none" stroke="#00c853" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M12 3.5c5 0 9 3.3 9 7.7s-4 7.7-9 7.7c-1 0-2-.1-2.9-.4L4.5 20.4l1.2-3.5C4.3 15.6 3 13.6 3 11.2c0-4.4 4-7.7 9-7.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.3 9a2.8 2.8 0 0 1 5.5.8c0 1.8-2.8 2.3-2.8 4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="0.9" fill="currentColor"/></symbol>
+  <symbol id="i-andlist" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="m7 15 3.5-7 3.5 7M8.2 12.8h4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-flower" viewBox="-24 -24 48 48"><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(0) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(72) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(144) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(216) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(288) translate(0 -19)"/><circle cx="0" cy="0" r="2.6" fill="#eaf4ff"/></symbol>
+  <symbol id="i-petal" viewBox="0 0 24 24"><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor"/><path d="M12 5v14" stroke="rgba(13,25,54,.35)" stroke-width="1.1" stroke-linecap="round"/></symbol>
+</svg>
+
+<!-- ===== decorative sakura backdrop — pure CSS + SVG (no JS), sits behind all screens ===== -->
+<div id="sakuraBg" aria-hidden="true"><svg id="sakuraBranch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 330"><defs><radialGradient id="sakGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#cfe6ff" stop-opacity="0.3"/><stop offset="55%" stop-color="#7fb0f0" stop-opacity="0.1"/><stop offset="100%" stop-color="#7fb0f0" stop-opacity="0"/></radialGradient></defs><ellipse cx="672" cy="66" rx="119" ry="96" fill="url(#sakGlow)"/><path d="M700 6 C 612 18 546 56 484 108 C 432 152 378 196 326 226 C 312 234 306 244 312 254 C 315 260 322 260 328 256 C 388 224 442 180 500 136 C 568 84 634 52 700 42 Z" fill="#1a2f66"/><path d="M588 0 C 584 40 568 76 540 108" fill="none" stroke="#1a2f66" stroke-width="16" stroke-linecap="round"/><path d="M500 128 C 486 166 462 196 430 216" fill="none" stroke="#1a2f66" stroke-width="9" stroke-linecap="round"/><path d="M624 44 C 614 80 594 110 566 132" fill="none" stroke="#1a2f66" stroke-width="10" stroke-linecap="round"/><path d="M428 162 C 414 188 394 208 370 220" fill="none" stroke="#1a2f66" stroke-width="7" stroke-linecap="round"/><path d="M660 40 C 654 66 644 90 628 110" fill="none" stroke="#1a2f66" stroke-width="7" stroke-linecap="round"/><path d="M545 120 v22" stroke="#1a2f66" stroke-width="4" stroke-linecap="round"/><path d="M380 210 v18" stroke="#1a2f66" stroke-width="4" stroke-linecap="round"/><g transform="translate(635 80) rotate(260) scale(1.17)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(613 133) rotate(202) scale(1.21)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(668 162) rotate(337) scale(1.17)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(520 194) rotate(303) scale(1.47)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(571 70) rotate(244) scale(1.22)" color="#d5eaff" opacity="0.5"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(414 251) rotate(175) scale(1.14)" color="#d5eaff" opacity="0.5"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(380 257) rotate(240) scale(1.04)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(232 258) rotate(200) scale(0.80)" color="#4368b8" opacity="0.8"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g fill="#a5d2ff" opacity="0.65"><circle cx="520" cy="240" r="4.5"/><circle cx="300" cy="236" r="3.5"/><circle cx="470" cy="150" r="3.5"/><circle cx="610" cy="44" r="4.5"/><circle cx="432" cy="180" r="3.5"/><circle cx="490" cy="262" r="3.5"/><circle cx="650" cy="230" r="4.5"/><circle cx="591" cy="36" r="2.5"/><circle cx="759" cy="56" r="3.5"/><circle cx="519" cy="82" r="2.5"/><circle cx="687" cy="102" r="3.5"/><circle cx="569" cy="140" r="2.5"/><circle cx="737" cy="160" r="3.5"/><circle cx="447" cy="128" r="2.5"/><circle cx="615" cy="148" r="3.5"/><circle cx="479" cy="50" r="2.5"/><circle cx="647" cy="70" r="3.5"/><circle cx="381" cy="176" r="2.5"/><circle cx="549" cy="196" r="3.5"/></g></svg><svg class="petal" style="--x:56%;--s:10px;--d:12s;--dl:-4s;--sw:2.5vw;--fx:-29vw;--c:#eaf4ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:58%;--s:13px;--d:15s;--dl:-12s;--sw:3vw;--fx:-32vw;--c:#bfe0ff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:60%;--s:8px;--d:10s;--dl:-1s;--sw:2.5vw;--fx:-27vw;--c:#d5eaff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:61%;--s:15px;--d:17s;--dl:-19s;--sw:3.5vw;--fx:-35vw;--c:#eaf4ff;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:63%;--s:9px;--d:12s;--dl:-7s;--sw:2.5vw;--fx:-30vw;--c:#93c6ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:65%;--s:11px;--d:14s;--dl:-15s;--sw:3vw;--fx:-33vw;--c:#c9d4ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:67%;--s:16px;--d:18s;--dl:-9s;--sw:3.5vw;--fx:-38vw;--c:#bfe0ff;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:69%;--s:8px;--d:11s;--dl:-3s;--sw:2.5vw;--fx:-28vw;--c:#eaf4ff;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:70%;--s:12px;--d:13s;--dl:-21s;--sw:3vw;--fx:-34vw;--c:#d5eaff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:72%;--s:10px;--d:12s;--dl:-6s;--sw:2.5vw;--fx:-31vw;--c:#93c6ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:74%;--s:14px;--d:16s;--dl:-13s;--sw:3vw;--fx:-36vw;--c:#eaf4ff;--o:1" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:76%;--s:13px;--d:15s;--dl:-17s;--sw:3vw;--fx:-35vw;--c:#bfe0ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:78%;--s:9px;--d:11s;--dl:-2s;--sw:2.5vw;--fx:-32vw;--c:#c9d4ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:80%;--s:17px;--d:20s;--dl:-24s;--sw:4vw;--fx:-42vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:81%;--s:11px;--d:13s;--dl:-8s;--sw:3vw;--fx:-34vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:83%;--s:8px;--d:11s;--dl:-18s;--sw:2.5vw;--fx:-30vw;--c:#bfe0ff;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:85%;--s:15px;--d:17s;--dl:-11s;--sw:3.5vw;--fx:-39vw;--c:#eaf4ff;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:86%;--s:12px;--d:14s;--dl:-22s;--sw:3vw;--fx:-37vw;--c:#93c6ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:87%;--s:10px;--d:12s;--dl:-5s;--sw:2.5vw;--fx:-33vw;--c:#d5eaff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:89%;--s:18px;--d:21s;--dl:-26s;--sw:4vw;--fx:-44vw;--c:#eaf4ff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:90%;--s:9px;--d:11s;--dl:-14s;--sw:2.5vw;--fx:-32vw;--c:#c9d4ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:92%;--s:14px;--d:16s;--dl:-20s;--sw:3.5vw;--fx:-40vw;--c:#bfe0ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:93%;--s:11px;--d:13s;--dl:-10s;--sw:3vw;--fx:-36vw;--c:#eaf4ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:94%;--s:16px;--d:19s;--dl:-27s;--sw:3.5vw;--fx:-41vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:95%;--s:8px;--d:10s;--dl:-0.5s;--sw:2.5vw;--fx:-29vw;--c:#93c6ff;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:13px;--d:15s;--dl:-23s;--sw:3vw;--fx:-38vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:97%;--s:10px;--d:12s;--dl:-16s;--sw:2.5vw;--fx:-34vw;--c:#bfe0ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:98%;--s:12px;--d:14s;--dl:-25s;--sw:3vw;--fx:-37vw;--c:#d5eaff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:99%;--s:9px;--d:11s;--dl:-0.2s;--sw:2.5vw;--fx:-31vw;--c:#eaf4ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:100%;--s:14px;--d:16s;--dl:-28s;--sw:3vw;--fx:-39vw;--c:#c9d4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:57%;--s:8px;--d:12s;--dl:-9.5s;--sw:2.5vw;--fx:-27vw;--c:#eaf4ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:66%;--s:20px;--d:23s;--dl:-29s;--sw:4vw;--fx:-46vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:75%;--s:11px;--d:13s;--dl:-11.5s;--sw:3vw;--fx:-33vw;--c:#93c6ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:84%;--s:12px;--d:15s;--dl:-20.5s;--sw:3vw;--fx:-36vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:88%;--s:10px;--d:12s;--dl:-13.5s;--sw:2.5vw;--fx:-33vw;--c:#bfe0ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:91%;--s:15px;--d:18s;--dl:-30s;--sw:3.5vw;--fx:-41vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:11px;--d:14s;--dl:-17.5s;--sw:3vw;--fx:-35vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:68%;--s:40px;--d:28s;--dl:-26s;--sw:4vw;--fx:-48vw;--c:#d5eaff;--o:0.45" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:92%;--s:44px;--d:32s;--dl:-15s;--sw:5vw;--fx:-56vw;--c:#bfe0ff;--o:0.4" viewBox="0 0 24 24"><use href="#i-petal"/></svg></div>
 
 <!-- Custom Notifications -->
 <div class="notification-container" id="notificationContainer"></div>
@@ -34,7 +96,7 @@
 <!-- Winning Screen -->
 <div class="winning-screen" id="winningScreen">
   <div class="winner-card">
-    <h2 id="winTitle">🎉 Winner!</h2>
+    <h2 id="winTitle"><svg class="ic"><use href="#i-trophy"/></svg> Winner!</h2>
     <img id="winCharImg" class="char-img" src="" alt="Winner Character">
     <h3 id="winCharName" style="color: var(--accent); font-size: 1.3rem; margin-bottom: 4px;">---</h3>
     <p class="name-with-ava center"><img id="winPlayerAvatar" class="avatar-inline" alt=""> <span id="winPlayerName" style="color: var(--text); font-size: 1rem; font-weight: 700;">Player</span></p>
@@ -62,7 +124,7 @@
 <!-- Undercover End Screen -->
 <div class="winning-screen" id="ucEndScreen">
   <div class="winner-card">
-    <h2 id="ucWinTitle">🕵️ The Undercover Wins!</h2>
+    <h2 id="ucWinTitle"><svg class="ic"><use href="#i-spy"/></svg> The Undercover Wins!</h2>
     <p id="ucWinPersonal" style="font-size: 1.05rem; font-weight: 800; margin-bottom: 10px;">---</p>
     <p class="uc-words-line" id="ucWordsLine">---</p>
   </div>
@@ -78,7 +140,7 @@
 <!-- Shared end screen for Battle Royale & Race -->
 <div class="winning-screen" id="multiEndScreen">
   <div class="winner-card">
-    <h2 id="meTitle">🏁 Game Over</h2>
+    <h2 id="meTitle"><svg class="ic"><use href="#i-flag"/></svg> Game Over</h2>
     <p id="meSub" style="font-size: 1.05rem; font-weight: 800; margin-bottom: 10px;">---</p>
   </div>
   <div class="me-list" id="meList"></div>
@@ -92,10 +154,10 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()">👤 Change Username</button>
+    <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
   </div>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()">🎮 SAKUGAME</div>
+    <div class="site-logo" onclick="goHome()"><svg class="ic"><use href="#i-logo"/></svg> SAKUGAME</div>
     <p class="site-tagline">Online Anime Gaming Platform</p>
   </div>
 
@@ -105,12 +167,12 @@
       <p class="homepage-subtitle">Play anime-themed games with friends online</p>
       <div class="homepage-buttons">
         <div class="homepage-btn" onclick="showPlayMenu()">
-          <div class="icon">🎯</div>
+          <div class="icon"><svg class="ic"><use href="#i-play"/></svg></div>
           <h3>Play</h3>
           <p>Host or join a game room</p>
         </div>
         <div class="homepage-btn" onclick="showGamesMenu()">
-          <div class="icon">🎮</div>
+          <div class="icon"><svg class="ic"><use href="#i-gamepad"/></svg></div>
           <h3>Games</h3>
           <p>Browse available games</p>
         </div>
@@ -122,12 +184,12 @@
     <div class="play-menu">
       <h2>Play</h2>
       <div class="play-options">
-        <div class="play-option" onclick="showHostRoom()">
-          <div class="icon">🏠</div>
+        <div class="play-option" " onclick="showHostRoom()">
+          <div class="icon"><svg class="ic"><use href="#i-home"/></svg></div>
           <div class="content"><h3>Host Room</h3><p>Create a new game room and invite friends</p></div>
         </div>
         <div class="play-option" onclick="showJoinRoom()">
-          <div class="icon">🚪</div>
+          <div class="icon"><svg class="ic"><use href="#i-door"/></svg></div>
           <div class="content"><h3>Join Room</h3><p>Enter a room code to join an existing game</p></div>
         </div>
       </div>
@@ -140,31 +202,38 @@
       <h2 style="text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;">Available Games</h2>
       <div class="games-grid">
         <div class="game-card">
-          <div class="game-card-img">🎭</div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-mask"/></svg></div>
           <div class="game-card-content">
             <h3>Anime Guess Who?</h3>
             <p>Classic guessing game with your favorite anime characters from AniList. Eliminate characters and guess your opponent's secret!</p>
           </div>
         </div>
         <div class="game-card">
-          <div class="game-card-img">🕵️</div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-spy"/></svg></div>
           <div class="game-card-content">
             <h3>Undercover</h3>
             <p>3-8 players! Everyone secretly gets an anime word — except the Undercover (a similar word) and Mr. White (no word at all). Give a clue each round, discuss, and vote out the impostor!</p>
           </div>
         </div>
         <div class="game-card">
-          <div class="game-card-img">🎭</div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-users"/></svg></div>
           <div class="game-card-content">
             <h3>Guess Who — Battle Royale</h3>
-            <p>3-8 players! Everyone has a secret character. Ask questions to the whole table, track each opponent with their own ❌ color, guess their secrets, and climb the points ranking!</p>
+            <p>3-8 players! Everyone has a secret character. Ask questions to the whole table, track each opponent on their own glowing board, guess their secrets, and climb the points ranking!</p>
           </div>
         </div>
         <div class="game-card">
-          <div class="game-card-img">⚡</div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
           <div class="game-card-content">
             <h3>Guess Who — Race</h3>
-            <p>3-8 players! One player is the TARGET with a mystery character. Hunters take turns ASKING questions — but everyone can 🎯 GUESS at any moment (wrong guess = -1 ❤️)! First to find the mystery character wins!</p>
+            <p>3-8 players! One player is the TARGET with a mystery character. Hunters take turns ASKING questions — but everyone can GUESS at any moment (wrong guess = -1 life)! First to find the mystery character wins!</p>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-card-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+          <div class="game-card-content">
+            <h3>Blur Guess</h3>
+            <p>Solo or up to 8 players! A blurred character or anime cover slowly clears over 5 stages — name it as early as you can for big points. The fastest correct guesses score a speed bonus!</p>
           </div>
         </div>
       </div>
@@ -179,21 +248,21 @@
       <h2>Create Game Room</h2>
       <p>Configure your room settings</p>
       <div class="settings-tabs">
-        <button class="settings-tab active" id="createTabBtnRoom" onclick="showCreateTab('room')">🏠 Room</button>
-        <button class="settings-tab" id="createTabBtnGame" onclick="showCreateTab('game')">⚙️ Game</button>
+        <button class="settings-tab active" id="createTabBtnRoom" onclick="showCreateTab('room')"><svg class="ic"><use href="#i-home"/></svg> Room</button>
+        <button class="settings-tab" id="createTabBtnGame" onclick="showCreateTab('game')"><svg class="ic"><use href="#i-gear"/></svg> Game</button>
       </div>
       <!-- 🏠 TAB 1 — room settings: game mode, visibility, player count -->
       <div id="createTabRoom">
         <div class="settings-section">
-          <div class="input-group"><label>Game Mode</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">🎭 Anime Guess Who? (2 players)</option><option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option><option value="race">⚡ Guess Who — Race (3-8 players)</option><option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option><option value="undercover">🕵️ Undercover (3-8 players)</option></select></div>
+          <div class="input-group"><label>Game Mode</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option></select></div>
           <div class="input-group">
             <label>Room Visibility</label>
             <div class="radio-group">
-              <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div>🔒 Private</div><small style="color: var(--muted);">Code only</small></label>
-              <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div>🌐 Public</div><small style="color: var(--muted);">Listed</small></label>
+              <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div><svg class="ic"><use href="#i-lock"/></svg> Private</div><small style="color: var(--muted);">Code only</small></label>
+              <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div><small style="color: var(--muted);">Listed</small></label>
             </div>
           </div>
-          <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🎭 Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="hostMultiMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
             <input type="range" id="hostMultiMaxSlider" min="3" max="8" value="6" oninput="updateMultiMaxPlayers()">
@@ -207,17 +276,17 @@
       <!-- ⚙️ TAB 2 — game-specific settings -->
       <div id="createTabGame" style="display: none;">
         <div class="settings-section" id="hostPoolGroup">
-          <h3>🎴 Character Pool</h3>
+          <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
           <div class="input-group">
             <div class="radio-group">
-              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div>🎴 Generic</div><small style="color: var(--muted);">1000 famous characters — no AniList needed</small></label>
-              <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div>⭐ Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
-              <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div>🎲 Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
+              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div><small style="color: var(--muted);">1000 famous characters — no AniList needed</small></label>
+              <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
+              <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
             </div>
           </div>
         </div>
         <div class="settings-section" id="hostGwSettings">
-          <h3>⚙️ Game Settings - Guess Who</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Guess Who</h3>
           <div class="slider-container">
             <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
             <input type="range" id="hostCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateHostCharCount()">
@@ -228,43 +297,43 @@
           </div>
         </div>
         <div class="settings-section" id="hostUcSettings" style="display: none;">
-          <h3>⚙️ Game Settings - Undercover</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Undercover</h3>
           <div class="input-group">
             <label>Mr. White <small style="color: var(--muted);">(a player with NO word — needs 4+ players)</small></label>
             <div class="radio-group">
-              <label class="radio-option selected" id="hostUcMwOff" onclick="selectUcMrWhite(false)"><div>🚫 Disabled</div></label>
-              <label class="radio-option" id="hostUcMwOn" onclick="selectUcMrWhite(true)"><div>⚪ Enabled</div></label>
+              <label class="radio-option selected" id="hostUcMwOff" onclick="selectUcMrWhite(false)"><div><svg class="ic"><use href="#i-slash"/></svg> Disabled</div></label>
+              <label class="radio-option" id="hostUcMwOn" onclick="selectUcMrWhite(true)"><div><svg class="ic"><use href="#i-check"/></svg> Enabled</div></label>
             </div>
           </div>
-          <p style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🕵️ Everyone gets a secret anime word — except the Undercover (who gets a similar one) and Mr. White (who gets nothing). Describe your word each round, spot the impostor, and vote them out!</p>
+          <p style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Everyone gets a secret anime word — except the Undercover (who gets a similar one) and Mr. White (who gets nothing). Describe your word each round, spot the impostor, and vote them out!</p>
         </div>
         <div class="settings-section" id="hostMultiSettings" style="display: none;">
-          <h3>⚙️ Game Settings — <span id="hostMultiLabel">Multiplayer</span></h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings — <span id="hostMultiLabel">Multiplayer</span></h3>
           <div class="slider-container race-only-settings" style="display: none;">
-            <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(wrong guesses allowed)</small></span><strong id="hostRaceLivesValue">3</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-heart"/></svg> Hunter lives <small style="color: var(--muted); font-weight: 400;">(wrong guesses allowed)</small></span><strong id="hostRaceLivesValue">3</strong></div>
             <input type="range" id="hostRaceLivesSlider" min="1" max="5" value="3" oninput="updateRaceLivesSlider()">
           </div>
           <div class="slider-container race-only-settings" style="display: none;">
-            <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="hostRaceQuestionsValue">8</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-help"/></svg> Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="hostRaceQuestionsValue">8</strong></div>
             <input type="range" id="hostRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateRaceQuestionsSlider()">
           </div>
           <div class="input-group blur-only-settings" style="display: none;">
             <label>What to guess</label>
             <div class="radio-group">
-              <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div>🧍 Characters</div><small style="color: var(--muted);">blurred portraits</small></label>
-              <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div>🎬 Anime covers</div><small style="color: var(--muted);">blurred posters</small></label>
+              <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div><small style="color: var(--muted);">blurred portraits</small></label>
+              <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div><small style="color: var(--muted);">blurred posters</small></label>
             </div>
           </div>
           <div class="slider-container blur-only-settings" style="display: none;">
-            <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="hostBgRoundsValue">10</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="hostBgRoundsValue">10</strong></div>
             <input type="range" id="hostBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateBgRoundsSlider()">
           </div>
           <div class="slider-container blur-only-settings" style="display: none;">
-            <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="hostBgStageSecValue">12s</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-clock"/></svg> Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="hostBgStageSecValue">12s</strong></div>
             <input type="range" id="hostBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateBgStageSecSlider()">
           </div>
           <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
-          <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">💀 If <b>all hunters</b> run out of lives, the 🎯 TARGET wins! Running out of ❓ questions means you can only guess… or pass.</p>
+          <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">If <b>all hunters</b> run out of lives, the TARGET wins! Running out of questions means you can only guess… or pass.</p>
         </div>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
@@ -283,8 +352,8 @@
       <button class="full success" onclick="joinGameRoom()">Join Room</button>
       <div class="public-rooms">
         <div class="public-rooms-head">
-          <h3>🌐 Public Rooms</h3>
-          <button class="secondary pub-refresh" onclick="refreshPublicRooms()" title="Refresh the list">🔄</button>
+          <h3><svg class="ic"><use href="#i-globe"/></svg> Public Rooms</h3>
+          <button class="secondary pub-refresh" onclick="refreshPublicRooms()" title="Refresh the list"><svg class="ic"><use href="#i-refresh"/></svg></button>
         </div>
         <div id="publicRoomsList" class="public-rooms-list"><p class="pub-empty">Looking for open rooms…</p></div>
       </div>
@@ -295,27 +364,27 @@
   <div class="screen" id="lobbyScreen">
     <div class="lobby-container">
       <div class="lobby-left" style="position: relative;">
-        <div class="settings-icon" id="lobbySettingsIcon" onclick="openRoomSettings()" style="display: none;">⚙️</div>
+        <div class="settings-icon" id="lobbySettingsIcon" onclick="openRoomSettings()" style="display: none;"><svg class="ic"><use href="#i-gear"/></svg></div>
         <h2 style="text-align: center; color: var(--accent); margin-bottom: 10px;">Game Lobby</h2>
-        <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code — or the 🔗 link — with your friends</p>
+        <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code — or the link — with your friends</p>
         <div class="lobby-code-actions">
-          <button class="blur-code-btn secondary" onclick="shareRoom()">🔗 Share Room</button>
-          <button class="blur-code-btn secondary" onclick="toggleBlur()">👁️ Blur Code</button>
+          <button class="blur-code-btn secondary" onclick="shareRoom()"><svg class="ic"><use href="#i-link"/></svg> Share Room</button>
+          <button class="blur-code-btn secondary" onclick="toggleBlur()"><svg class="ic"><use href="#i-eye"/></svg> Blur Code</button>
         </div>
         <div class="room-code" id="displayRoomCode">----</div>
         <div class="queue-banner" id="queueBanner" style="display: none;"></div>
         <div class="players-list" id="playersList"></div>
         <div id="queueSection" style="display: none;">
-          <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;">⏳ Waiting queue <small style="color: var(--muted); font-weight: 400;">— joins automatically when a seat opens</small></h3>
+          <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;"><svg class="ic"><use href="#i-hourglass"/></svg> Waiting queue <small style="color: var(--muted); font-weight: 400;">— joins automatically when a seat opens</small></h3>
           <div class="players-list" id="queueList"></div>
         </div>
         <div style="background: #0f0f1a; padding: 15px; border-radius: 10px; margin: 20px 0;">
           <strong style="color: var(--accent);">Game:</strong> <span id="lobbyGameName">Anime Guess Who?</span><br>
-          <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">🔒 Private</span><br>
+          <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">Private</span><br>
           <strong style="color: var(--accent);">Players:</strong> <span id="lobbyPlayerCount">1/2</span>
         </div>
         <button class="full success" id="readyBtn" onclick="toggleReady()">Ready</button>
-        <button class="full success" id="startGameBtn" onclick="hostStartGame()" style="display: none;">🎮 START GAME</button>
+        <button class="full success" id="startGameBtn" onclick="hostStartGame()" style="display: none;"><svg class="ic"><use href="#i-gamepad"/></svg> START GAME</button>
         <button class="full danger" onclick="leaveRoom()">Leave Room</button>
       </div>
     </div>
@@ -324,12 +393,12 @@
   <div class="screen" id="selectionScreen">
     <div class="selection-container">
       <div class="selection-header">
-        <h2>🎯 Choose Your Secret Character</h2>
+        <h2><svg class="ic"><use href="#i-target"/></svg> Choose Your Secret Character</h2>
         <p>Pick a character for your opponent to guess</p>
       </div>
       <div class="selection-status" id="selectionStatus">Click on a character to select it as your secret</div>
       <div class="selection-controls">
-        <button class="secondary" onclick="randomSelect()">🎲 Random Pick</button>
+        <button class="secondary" onclick="randomSelect()"><svg class="ic"><use href="#i-dice"/></svg> Random Pick</button>
         <button class="danger" onclick="returnToLobbyFromSelection()">← Return to Lobby</button>
       </div>
       <div class="character-grid" id="characterGrid"></div>
@@ -343,11 +412,11 @@
     <div class="game-container">
       <div class="game-left">
         <div class="history-section">
-          <h3>📜 Question History</h3>
+          <h3><svg class="ic"><use href="#i-note"/></svg> Question History</h3>
           <div class="history-list" id="historyList"><p style="text-align: center; color: var(--muted); padding: 20px;">No questions yet</p></div>
         </div>
         <div class="my-character" id="myCharacter">
-          <h3>🎯 Your Secret</h3>
+          <h3><svg class="ic"><use href="#i-target"/></svg> Your Secret</h3>
           <div class="my-character-card">
             <img id="myCharacterImg" src="" alt="Your character">
             <div class="info"><div class="name" id="myCharacterName">---</div></div>
@@ -372,8 +441,8 @@
               <div class="label">Question from opponent:</div>
               <div class="text" id="currentQuestionText">---</div>
               <div class="answer-buttons">
-                <button class="success" onclick="answerQuestion('YES')">✓ YES</button>
-                <button class="danger" onclick="answerQuestion('NO')">✕ NO</button>
+                <button class="success" onclick="answerQuestion('YES')"><svg class="ic"><use href="#i-check"/></svg> YES</button>
+                <button class="danger" onclick="answerQuestion('NO')"><svg class="ic"><use href="#i-x"/></svg> NO</button>
               </div>
             </div>
           </div>
@@ -382,9 +451,9 @@
           <h3>All Characters <span id="remainingCount">(0 remaining)</span></h3>
           <div class="board" id="gameBoard"></div>
           <div class="game-controls">
-            <button class="secondary" onclick="toggleMyCharacter()" title="Show/Hide My Character">👁️ <span class="btn-label">Show/Hide My Character</span></button>
-            <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess">🎯 <span class="btn-label">Make a Guess</span></button>
-            <button class="danger" onclick="returnToLobbyFromGame()" title="Return to Lobby">🚪 <span class="btn-label">Return to Lobby</span></button>
+            <button class="secondary" onclick="toggleMyCharacter()" title="Show/Hide My Character"><svg class="ic"><use href="#i-eye"/></svg> <span class="btn-label">Show/Hide My Character</span></button>
+            <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span></button>
+            <button class="danger" onclick="returnToLobbyFromGame()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Return to Lobby</span></button>
           </div>
         </div>
       </div>
@@ -396,11 +465,11 @@
       <div class="uc-main">
         <div class="uc-header">
           <div class="uc-badge" id="ucRoundBadge">Round 1</div>
-          <div class="uc-badge" id="ucPhaseBadge">💬 Description time</div>
-          <button class="secondary" id="ucNewWordsBtn" style="display: none;" onclick="hostRerollUndercoverWords()" title="Change the word pair (roles stay the same)">🎲 New words</button>
+          <div class="uc-badge" id="ucPhaseBadge"><svg class="ic"><use href="#i-chat"/></svg> Description time</div>
+          <button class="secondary" id="ucNewWordsBtn" style="display: none;" onclick="hostRerollUndercoverWords()" title="Change the word pair (roles stay the same)"><svg class="ic"><use href="#i-dice"/></svg> New words</button>
         </div>
         <div class="uc-word-card" id="ucWordCard">
-          <div class="uc-word-label" id="ucRoleLabel">👥 You are a CIVILIAN</div>
+          <div class="uc-word-label" id="ucRoleLabel"><svg class="ic"><use href="#i-users"/></svg> You are a CIVILIAN</div>
           <img id="ucMyWordImg" class="uc-word-img" src="" alt="" style="display: none;">
           <div class="uc-word" id="ucMyWord">---</div>
           <div class="uc-word-hint" id="ucRoleHint">Describe your word without saying it!</div>
@@ -408,13 +477,13 @@
         <div class="uc-event-banner" id="ucEventBanner" style="display: none;"></div>
         <div class="uc-players" id="ucPlayers"></div>
         <div class="uc-clues">
-          <h3>📜 Word history</h3>
+          <h3><svg class="ic"><use href="#i-note"/></svg> Word history</h3>
           <div id="ucClueList"></div>
         </div>
         <div class="uc-action" id="ucActionArea"></div>
         <div class="uc-controls">
-          <button class="secondary" onclick="toggleUcWord()" title="Hide/Show My Word">👁️ <span class="btn-label">Hide/Show My Word</span></button>
-          <button class="danger" onclick="returnToLobbyFromUndercover()" title="Return to Lobby">🚪 <span class="btn-label">Return to Lobby</span></button>
+          <button class="secondary" onclick="toggleUcWord()" title="Hide/Show My Word"><svg class="ic"><use href="#i-eye"/></svg> <span class="btn-label">Hide/Show My Word</span></button>
+          <button class="danger" onclick="returnToLobbyFromUndercover()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Return to Lobby</span></button>
         </div>
       </div>
     </div>
@@ -426,29 +495,29 @@
       <div class="uc-main">
         <div class="uc-header">
           <div class="uc-badge" id="brTurnBadge">—</div>
-          <div class="uc-badge" id="brPhaseBadge">💬 Question time</div>
+          <div class="uc-badge" id="brPhaseBadge"><svg class="ic"><use href="#i-chat"/></svg> Question time</div>
         </div>
         <div class="br-mysecret" id="brMySecret" onclick="this.classList.toggle('br-hide')" title="Tap to hide/show your secret">
           <img id="brMySecretImg" src="" alt="">
           <div class="br-mysecret-info">
-            <div class="br-mysecret-label">🎯 Your secret — tap to hide</div>
+            <div class="br-mysecret-label"><svg class="ic"><use href="#i-target"/></svg> Your secret — tap to hide</div>
             <div class="br-mysecret-name" id="brMySecretName">---</div>
           </div>
           <div class="br-my-points" id="brMyPoints">0 pts</div>
         </div>
         <div class="br-chips" id="brChips"></div>
-        <div class="br-chip-hint">🎨 Tap a color to switch to that player's board — every card glows with their color. Tap a card to ❌ ELIMINATE it (greyed like in 1v1 Guess Who — tap again to undo). Your eliminations and 🎯 guesses are per-board!</div>
+        <div class="br-chip-hint">Tap a color chip to switch to that player's board — every card glows with their color. Tap a card to eliminate it (greyed like in 1v1 Guess Who — tap again to undo). Eliminations and guesses are per-board!</div>
         <div class="question-box" id="brQuestionArea"></div>
         <div class="board-section">
           <h3 id="brBoardTitle">All Characters</h3>
           <div class="board" id="brBoard"></div>
           <div class="game-controls">
-            <button class="secondary" onclick="battleClearMarks()" title="Restore all eliminated cards on this board">🧹 <span class="btn-label">Restore all</span></button>
-            <button class="warning" id="brGuessBtn" onclick="battleToggleGuess()" title="Make a Guess">🎯 <span class="btn-label">Make a Guess</span></button>
-            <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby">🚪 <span class="btn-label">To Lobby</span></button>
+            <button class="secondary" onclick="battleClearMarks()" title="Restore all eliminated cards on this board"><svg class="ic"><use href="#i-restore"/></svg> <span class="btn-label">Restore all</span></button>
+            <button class="warning" id="brGuessBtn" onclick="battleToggleGuess()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span></button>
+            <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
           </div>
         </div>
-        <div class="br-log-wrap"><h3>📜 History</h3><div class="br-log" id="brLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> History</h3><div class="br-log" id="brLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
       </div>
     </div>
   </div>
@@ -458,7 +527,7 @@
       <div class="uc-main">
         <div class="uc-header">
           <div class="uc-badge" id="rcTurnBadge">—</div>
-          <div class="uc-badge" id="rcPhaseBadge">💬 Question time</div>
+          <div class="uc-badge" id="rcPhaseBadge"><svg class="ic"><use href="#i-chat"/></svg> Question time</div>
         </div>
         <div class="rc-hunters" id="rcHuntersBar"></div>
         <div class="br-mysecret" id="rcBanner"></div>
@@ -467,12 +536,12 @@
           <h3>All Characters</h3>
           <div class="board" id="rcBoard"></div>
           <div class="game-controls">
-            <button class="secondary" onclick="raceClearMarks()" title="Restore all eliminated cards">🧹 <span class="btn-label">Restore all</span></button>
-            <button class="warning" id="rcGuessBtn" onclick="raceToggleGuess()" title="Free guess — anytime, even off-turn (wrong = -1 ❤️)">🎯 <span class="btn-label">Make a Guess</span></button>
-            <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby">🚪 <span class="btn-label">To Lobby</span></button>
+            <button class="secondary" onclick="raceClearMarks()" title="Restore all eliminated cards"><svg class="ic"><use href="#i-restore"/></svg> <span class="btn-label">Restore all</span></button>
+            <button class="warning" id="rcGuessBtn" onclick="raceToggleGuess()" title="Free guess — anytime, even off-turn (wrong = -1 life)"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span></button>
+            <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
           </div>
         </div>
-        <div class="br-log-wrap"><h3>📜 History</h3><div class="br-log" id="rcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> History</h3><div class="br-log" id="rcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
       </div>
     </div>
   </div>
@@ -482,12 +551,12 @@
     <div class="uc-container">
       <div class="uc-main">
         <div class="uc-header">
-          <div class="uc-badge" id="bgRoundBadge">🌫️ Round 1/10</div>
+          <div class="uc-badge" id="bgRoundBadge"><svg class="ic"><use href="#i-layers"/></svg> Round 1/10</div>
           <div class="uc-badge" id="bgStageBadge">Blur stage 1/5</div>
-          <div class="uc-badge" id="bgTimerBadge">⏳ 12s</div>
+          <div class="uc-badge" id="bgTimerBadge">12s</div>
         </div>
         <div class="bg-img-wrap" id="bgImgWrap"><img id="bgImage" src="" alt="Mystery character"></div>
-        <div class="bg-status" id="bgStatus">🌫️ Who is this?!</div>
+        <div class="bg-status" id="bgStatus">Who is this?!</div>
         <div class="question-form" id="bgGuessBar">
           <div class="bg-guess-wrap">
             <input type="text" id="bgGuessInput" placeholder="Type the character's name… (any name: Deku, Burdock…)" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
@@ -497,10 +566,10 @@
         </div>
         <div class="bg-chips" id="bgChips"></div>
         <div class="game-controls">
-          <button class="warning" id="bgSkipBtn" onclick="blurSkip()" title="Reveal & skip this round (host)">⏭ <span class="btn-label">Skip round</span></button>
-          <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby">🚪 <span class="btn-label">To Lobby</span></button>
+          <button class="warning" id="bgSkipBtn" onclick="blurSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span></button>
+          <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
         </div>
-        <div class="br-log-wrap"><h3>📜 Rounds</h3><div class="br-log" id="bgLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> Rounds</h3><div class="br-log" id="bgLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
       </div>
     </div>
   </div>
@@ -508,10 +577,10 @@
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
-      <h2>⚙️ Settings</h2>
+      <h2><svg class="ic"><use href="#i-gear"/></svg> Settings</h2>
       <div class="settings-tabs">
-        <button class="settings-tab active" id="settingsTabBtnRoom" onclick="showSettingsTab('room')">🏠 Room</button>
-        <button class="settings-tab" id="settingsTabBtnGame" onclick="showSettingsTab('game')">⚙️ Game</button>
+        <button class="settings-tab active" id="settingsTabBtnRoom" onclick="showSettingsTab('room')"><svg class="ic"><use href="#i-home"/></svg> Room</button>
+        <button class="settings-tab" id="settingsTabBtnGame" onclick="showSettingsTab('game')"><svg class="ic"><use href="#i-gear"/></svg> Game</button>
       </div>
       <!-- 🏠 TAB 1 — room settings: game mode, visibility, player count -->
       <div id="settingsTabRoom">
@@ -519,21 +588,21 @@
           <div class="input-group">
             <label>Switch the game <small style="color: var(--muted);">(everyone stays in the room)</small></label>
             <select id="modalGameSelect" onchange="modalGameChanged()">
-              <option value="guesswho">🎭 Anime Guess Who? (2 players)</option>
-              <option value="battle">🎭👥 Guess Who — Battle Royale (3-8 players)</option>
-              <option value="race">⚡ Guess Who — Race (3-8 players)</option>
-              <option value="blur">🌫️ Blur Guess (solo or up to 8 players)</option>
-              <option value="undercover">🕵️ Undercover (3-8 players)</option>
+              <option value="guesswho">Anime Guess Who? (2 players)</option>
+              <option value="battle">Guess Who — Battle Royale (3-8 players)</option>
+              <option value="race">Guess Who — Race (3-8 players)</option>
+              <option value="blur">Blur Guess (solo or up to 8 players)</option>
+              <option value="undercover">Undercover (3-8 players)</option>
             </select>
           </div>
           <div class="input-group">
             <label>Room Visibility</label>
             <div class="radio-group">
-              <label class="radio-option" id="modalPrivate" onclick="changeVisibility('private')"><div>🔒 Private</div></label>
-              <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div>🌐 Public</div></label>
+              <label class="radio-option" id="modalPrivate" onclick="changeVisibility('private')"><div><svg class="ic"><use href="#i-lock"/></svg> Private</div></label>
+              <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
-          <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">🎭 Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="modalMultiMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="modalMultiMaxValue">6</strong></div>
             <input type="range" id="modalMultiMaxSlider" min="3" max="8" value="6" oninput="updateModalMultiMaxPlayers()">
@@ -547,17 +616,17 @@
       <!-- ⚙️ TAB 2 — game-specific settings -->
       <div id="settingsTabGame" style="display: none;">
         <div class="settings-section" id="modalPoolGroup">
-          <h3>🎴 Character Pool</h3>
+          <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
           <div class="input-group">
             <div class="radio-group">
-              <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div>🎴 Generic</div></label>
-              <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div>⭐ Favorites</div></label>
-              <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div>🎲 Mix</div></label>
+              <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div></label>
+              <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div></label>
+              <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div></label>
             </div>
           </div>
         </div>
         <div class="settings-section" id="modalGwSettings">
-          <h3>⚙️ Game Settings - Guess Who</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Guess Who</h3>
           <div class="slider-container">
             <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
             <input type="range" id="modalCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateModalCharCount()">
@@ -568,42 +637,42 @@
           </div>
         </div>
         <div class="settings-section" id="modalUwSettings" style="display: none;">
-          <h3>⚙️ Game Settings - Undercover</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Undercover</h3>
           <div class="input-group">
             <label>Mr. White <small style="color: var(--muted);">(needs 4+ players)</small></label>
             <div class="radio-group">
-              <label class="radio-option" id="modalUcMwOff" onclick="changeUcMrWhite(false)"><div>🚫 Disabled</div></label>
-              <label class="radio-option" id="modalUcMwOn" onclick="changeUcMrWhite(true)"><div>⚪ Enabled</div></label>
+              <label class="radio-option" id="modalUcMwOff" onclick="changeUcMrWhite(false)"><div><svg class="ic"><use href="#i-slash"/></svg> Disabled</div></label>
+              <label class="radio-option" id="modalUcMwOn" onclick="changeUcMrWhite(true)"><div><svg class="ic"><use href="#i-check"/></svg> Enabled</div></label>
             </div>
           </div>
         </div>
         <div class="settings-section" id="modalRaceSettings" style="display: none;">
-          <h3>⚙️ Game Settings - Race</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Race</h3>
           <div class="slider-container">
-            <div class="slider-label"><span>❤️ Hunter lives <small style="color: var(--muted); font-weight: 400;">(all hunters out = 🎯 target wins)</small></span><strong id="modalRaceLivesValue">3</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-heart"/></svg> Hunter lives <small style="color: var(--muted); font-weight: 400;">(all hunters out = target wins)</small></span><strong id="modalRaceLivesValue">3</strong></div>
             <input type="range" id="modalRaceLivesSlider" min="1" max="5" value="3" oninput="updateModalRaceLives()">
           </div>
           <div class="slider-container">
-            <div class="slider-label"><span>❓ Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="modalRaceQuestionsValue">8</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-help"/></svg> Hunter questions <small style="color: var(--muted); font-weight: 400;">(per hunter)</small></span><strong id="modalRaceQuestionsValue">8</strong></div>
             <input type="range" id="modalRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateModalRaceQuestions()">
           </div>
           <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Applies from the next game.</p>
         </div>
         <div class="settings-section" id="modalBgSettings" style="display: none;">
-          <h3>⚙️ Game Settings - Blur Guess</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Blur Guess</h3>
           <div class="input-group">
             <label>What to guess</label>
             <div class="radio-group">
-              <label class="radio-option selected" id="modalBgModeChars" onclick="changeBgMode('characters')"><div>🧍 Characters</div></label>
-              <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div>🎬 Anime covers</div></label>
+              <label class="radio-option selected" id="modalBgModeChars" onclick="changeBgMode('characters')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div></label>
+              <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div></label>
             </div>
           </div>
           <div class="slider-container">
-            <div class="slider-label"><span>🌫️ Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="modalBgRoundsValue">10</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="modalBgRoundsValue">10</strong></div>
             <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
           </div>
           <div class="slider-container">
-            <div class="slider-label"><span>⏱ Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="modalBgStageSecValue">12s</strong></div>
+            <div class="slider-label"><span><svg class="ic"><use href="#i-clock"/></svg> Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="modalBgStageSecValue">12s</strong></div>
             <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
           </div>
           <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. Blur Guess uses the FULL pool (no character count). Applies from the next game.</p>
@@ -623,8 +692,8 @@
         <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20">
       </div>
       <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
-      <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();">🔑 Log in / Create account</button>
-      <h4 class="profile-section-title">🎵 Music Volume</h4>
+      <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
+      <h4 class="profile-section-title"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
       <input type="range" class="music-volume-slider" min="0" max="100" value="50">
     </div>
   </div>
@@ -634,7 +703,7 @@
       <div class="modal-close" onclick="closeAuthModal()">×</div>
       <!-- Login / register form -->
       <div id="authFormView">
-        <h2>🔑 Account</h2>
+        <h2><svg class="ic"><use href="#i-key"/></svg> Account</h2>
         <p style="color: var(--muted); margin-bottom: 20px;">Log in or create an account — username only, no email needed</p>
         <div class="input-group">
           <label>Username</label>
@@ -652,40 +721,40 @@
       <div id="authProfileView" style="display: none;">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4px 0 10px;">
           <span id="profileAvatar"></span>
-          <button class="secondary" style="width: auto; padding: 6px 18px;" onclick="openAvatarModal()">🖼️ Change picture</button>
+          <button class="secondary" style="width: auto; padding: 6px 18px;" onclick="openAvatarModal()"><svg class="ic"><use href="#i-image"/></svg> Change picture</button>
         </div>
         <h2 style="margin-bottom: 2px;"><span id="profileName">Account</span></h2>
         <p style="color: var(--muted); font-size: 0.85rem;">Logged in — this name & picture are used in your games</p>
 
-        <h4 class="profile-section-title">📊 Stats</h4>
-        <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;">🎭 Anime Guess Who?</p>
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-chart"/></svg> Stats</h4>
+        <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;"><svg class="ic"><use href="#i-mask"/></svg> Anime Guess Who?</p>
         <div style="display: flex; gap: 12px; justify-content: center;">
-          <div class="stat-box"><strong id="profileWins">0</strong>🏆 Wins</div>
-          <div class="stat-box"><strong id="profileLosses">0</strong>💀 Losses</div>
+          <div class="stat-box"><strong id="profileWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
+          <div class="stat-box"><strong id="profileLosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
         </div>
-        <p style="color: var(--muted); font-size: 0.78rem; margin: 10px 0 4px;">🕵️ Undercover</p>
+        <p style="color: var(--muted); font-size: 0.78rem; margin: 10px 0 4px;"><svg class="ic"><use href="#i-spy"/></svg> Undercover</p>
         <div style="display: flex; gap: 12px; justify-content: center;">
-          <div class="stat-box"><strong id="profileUWins">0</strong>🏆 Wins</div>
-          <div class="stat-box"><strong id="profileULosses">0</strong>💀 Losses</div>
+          <div class="stat-box"><strong id="profileUWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
+          <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
         </div>
 
-        <h4 class="profile-section-title">🎵 Music Volume</h4>
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
         <input type="range" class="music-volume-slider" min="0" max="100" value="50">
 
-        <h4 class="profile-section-title">🎬 AniList Account</h4>
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-andlist"/></svg> AniList Account</h4>
         <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 8px;">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</p>
         <div class="profile-row">
           <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
           <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
         </div>
 
-        <h4 class="profile-section-title">✏️ Change Username</h4>
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-pencil"/></svg> Change Username</h4>
         <div class="profile-row">
           <input type="text" id="profileUsernameInput" placeholder="New username (3-20 chars)" maxlength="20">
           <button class="secondary" id="profileUsernameBtn" onclick="changeAccountUsername()">Save</button>
         </div>
 
-        <h4 class="profile-section-title">🔒 Change Password</h4>
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-lock"/></svg> Change Password</h4>
         <div class="input-group" style="margin-bottom: 8px;">
           <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
         </div>
@@ -702,13 +771,13 @@
   <div class="modal" id="pairsModal">
     <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
       <div class="modal-close" onclick="closePairsModal()">×</div>
-      <h2>📝 Undercover Word Pairs</h2>
-      <p style="color: var(--muted); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Add your own pairs — saved online instantly and used by <strong>every</strong> Undercover room (on top of the built-in pairs). Type a name, click <strong>🔍 Search AniList</strong> and pick the right result to attach the official name &amp; picture. You must be logged in.</p>
+      <h2><svg class="ic"><use href="#i-note"/></svg> Undercover Word Pairs</h2>
+      <p style="color: var(--muted); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Add your own pairs — saved online instantly and used by <strong>every</strong> Undercover room (on top of the built-in pairs). Type a name, click <strong>Search AniList</strong> and pick the right result to attach the official name &amp; picture. You must be logged in.</p>
       <div class="input-group">
         <label>Pair type</label>
         <div class="radio-group">
-          <label class="radio-option selected" id="pairTypeC" onclick="selectPairType('c')"><div>👤 Characters</div></label>
-          <label class="radio-option" id="pairTypeS" onclick="selectPairType('s')"><div>🎬 Anime series</div></label>
+          <label class="radio-option selected" id="pairTypeC" onclick="selectPairType('c')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div></label>
+          <label class="radio-option" id="pairTypeS" onclick="selectPairType('s')"><div><svg class="ic"><use href="#i-film"/></svg> Anime series</div></label>
         </div>
       </div>
       <div class="pair-slots">
@@ -716,18 +785,18 @@
           <div class="pair-slot-title">Word A</div>
           <img id="pairImgA" class="pair-thumb" src="" alt="" style="display: none;">
           <input type="text" id="pairInputA" placeholder="e.g. Luffy" maxlength="60">
-          <button class="secondary small" id="pairSearchABtn" onclick="pairAniListSearch('a')">🔍 Search AniList</button>
+          <button class="secondary small" id="pairSearchABtn" onclick="pairAniListSearch('a')"><svg class="ic"><use href="#i-search"/></svg> Search AniList</button>
         </div>
         <div class="pair-slot-vs">VS</div>
         <div class="pair-slot">
           <div class="pair-slot-title">Word B</div>
           <img id="pairImgB" class="pair-thumb" src="" alt="" style="display: none;">
           <input type="text" id="pairInputB" placeholder="e.g. Zoro" maxlength="60">
-          <button class="secondary small" id="pairSearchBBtn" onclick="pairAniListSearch('b')">🔍 Search AniList</button>
+          <button class="secondary small" id="pairSearchBBtn" onclick="pairAniListSearch('b')"><svg class="ic"><use href="#i-search"/></svg> Search AniList</button>
         </div>
       </div>
       <div id="pairResults"></div>
-      <button class="full success" id="pairAddBtn" onclick="addCustomPair()">✚ Add This Pair</button>
+      <button class="full success" id="pairAddBtn" onclick="addCustomPair()"><svg class="ic"><use href="#i-plus"/></svg> Add This Pair</button>
       <h4 class="profile-section-title">Your custom pairs</h4>
       <div id="pairList"><p style="color: var(--muted); text-align: center; font-size: 0.85rem;">No custom pairs yet.</p></div>
     </div>
@@ -740,8 +809,8 @@
       <p style="margin-bottom: 20px;">Is this your opponent's character?</p>
       <p style="font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 20px;" id="guessCharName">---</p>
       <div style="display: flex; gap: 12px;">
-        <button class="full success" onclick="confirmGuess()">✓ Yes, Confirm Guess</button>
-        <button class="full danger" onclick="cancelGuess()">✕ Cancel</button>
+        <button class="full success" onclick="confirmGuess()"><svg class="ic"><use href="#i-check"/></svg> Yes, Confirm Guess</button>
+        <button class="full danger" onclick="cancelGuess()"><svg class="ic"><use href="#i-x"/></svg> Cancel</button>
       </div>
     </div>
   </div>
@@ -749,11 +818,11 @@
 
   <!-- 💬 Floating chat button + chat window (visible during games). New messages
        from other players show a red unread counter on the button. -->
-  <button id="chatToggleBtn" style="display: none;" onclick="toggleChatOverlay()" title="Chat">💬<span id="chatUnreadBadge"></span></button>
+  <button id="chatToggleBtn" style="display: none;" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg><span id="chatUnreadBadge"></span></button>
   <div class="chat-overlay" id="chatOverlay">
     <div class="chat-overlay-head">
-      <h3>💬 Game Chat</h3>
-      <button class="chat-overlay-close" onclick="toggleChatOverlay()">✕</button>
+      <h3><svg class="ic"><use href="#i-chat"/></svg> Game Chat</h3>
+      <button class="chat-overlay-close" onclick="toggleChatOverlay()"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="chat-messages" id="chatOverlayMessages"><div style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px;">Chat with the other players!</div></div>
     <div class="chat-input-area">
@@ -768,13 +837,13 @@
   <div class="modal" id="avatarModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeAvatarModal()">×</div>
-      <h2>🖼️ Profile Picture</h2>
+      <h2><svg class="ic"><use href="#i-image"/></svg> Profile Picture</h2>
       <p style="color: var(--muted); font-size: 0.85rem;">Pick an anime avatar:</p>
       <div class="avatar-grid" id="avatarGrid"></div>
       <p style="color: var(--muted); font-size: 0.85rem;">…or use your own picture (your browser shrinks it to a tiny 96×96 image — nothing heavy is uploaded).</p>
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-        <button class="secondary" style="width: auto;" onclick="document.getElementById('avatarFileInput').click()">📁 Upload my own</button>
-        <button class="danger" style="width: auto;" onclick="saveAvatar(null)">🗑️ Remove picture</button>
+        <button class="secondary" style="width: auto;" onclick="document.getElementById('avatarFileInput').click()"><svg class="ic"><use href="#i-folder"/></svg> Upload my own</button>
+        <button class="danger" style="width: auto;" onclick="saveAvatar(null)"><svg class="ic"><use href="#i-trash"/></svg> Remove picture</button>
       </div>
       <p id="avatarError" style="color: var(--danger); font-size: 0.82rem; min-height: 1em; margin: 8px 0 0;"></p>
       <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="onAvatarFileSelected(event)">
@@ -785,10 +854,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js"></script>
-  <script src="animes.js"></script>
-  <script src="undercover.js"></script>
-  <script src="music.js"></script>
-  <script src="app.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2bbb3258dd0704e',t:'MTc4NjgzMzYxMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=16"></script>
+  <script src="animes.js?v=16"></script>
+  <script src="undercover.js?v=16"></script>
+  <script src="music.js?v=16"></script>
+  <script src="app.js?v=16"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2fc2d07cd73e28c',t:'MTc4NzUwOTY5NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

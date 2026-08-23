@@ -13,11 +13,53 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+    background: #0c1226; /* deep blue base — the sakura backdrop paints the gradients over it */
     color: var(--text);
     min-height: 100vh;
     padding: 16px 16px 68px; /* extra room at the bottom so nothing hides behind the bottom bar */
     overflow-x: hidden;
+  }
+
+  /* ===== 🌸 Sakura backdrop: layered blue gradients + corner branch + falling petals =====
+     Fixed full-screen layer behind every screen (z-index -1); pure CSS/SVG, no JS. */
+  #sakuraBg {
+    position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+    background:
+      radial-gradient(1000px 620px at 88% -12%, rgba(2, 169, 255, 0.14), transparent 62%),
+      radial-gradient(820px 620px at -12% 108%, rgba(67, 96, 159, 0.22), transparent 60%),
+      linear-gradient(158deg, #0a0e24 0%, #101b3f 48%, #162653 100%);
+  }
+  #sakuraBranch { position: absolute; top: -6px; right: -14px; width: min(47vw, 660px); height: auto; }
+  #sakuraBg .petal {
+    position: absolute; top: -7vh; left: var(--x);
+    width: var(--s); height: var(--s); color: var(--c, #bfe0ff); opacity: 0;
+    animation: sakuraFall var(--d) linear var(--dl) infinite;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 0 3px rgba(213, 234, 255, 0.35)); /* soft moonlit glow */
+  }
+  /* Big out-of-focus foreground petals — the bokeh look (kept out of the phone budget) */
+  #sakuraBg .petal.big { filter: blur(3px); }
+  /* Petals spawn in the top-right corner by the branch and get blown diagonally
+     down-left across the whole page -- as if the wind pushes them off the branch.
+     --fx = total sideways travel (negative = leftward), --sw = small flutter wobble. */
+  @keyframes sakuraFall {
+    0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+    8%   { opacity: var(--o, .85); }
+    25%  { transform: translate3d(calc(var(--fx, -35vw) * 0.25 + var(--sw, 3vw)), 25vh, 0) rotate(110deg); }
+    50%  { transform: translate3d(calc(var(--fx, -35vw) * 0.5 - var(--sw, 3vw)), 52vh, 0) rotate(225deg); }
+    75%  { transform: translate3d(calc(var(--fx, -35vw) * 0.75 + var(--sw, 3vw)), 80vh, 0) rotate(345deg); }
+    93%  { opacity: var(--o, .85); }
+    100% { transform: translate3d(var(--fx, -35vw), 114vh, 0) rotate(470deg); opacity: 0; }
+  }
+  @media (max-width: 640px) {
+    #sakuraBranch { width: 72vw; right: -3vw; top: 0; }
+    #sakuraBg .petal:nth-of-type(n+16) { display: none; } /* 14 petals on phones (skips the 2 big bokeh) */
+  }
+  /* Reduced motion: keep the falling petals (site owner's choice) but make them fewer,
+     slower and gentler — no fast spinning. */
+  @media (prefers-reduced-motion: reduce) {
+    #sakuraBg .petal { animation-duration: calc(var(--d) * 2.5); }
+    #sakuraBg .petal:nth-of-type(n+8) { display: none; } /* only 6 slow petals */
   }
   .site-header { text-align: center; margin-bottom: 40px; }
   .site-logo {
@@ -98,6 +140,29 @@
   button.danger { background: var(--danger); }
   button.small { padding: 8px 14px; font-size: 0.85rem; }
   .back-btn { background: var(--accent2); margin-bottom: 20px; }
+
+  /* ===== SVG UI ICONS (replace emojis) — inherit text color via currentColor ===== */
+  .ic { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+  .ic.ic-off { opacity: 0.22; } /* spent life heart in the Race hunter bar */
+  .rc-hunter-res .ic, .chip-state .ic, .rc-hunter-turn .ic { vertical-align: -0.14em; }
+  .ready-badge .ic, .uc-hint-line .ic, .pub-title .ic, .pub-players .ic { vertical-align: -0.16em; margin-right: 0.25em; }
+  .ready-badge .ic { margin-right: 0.15em; }
+  button .ic { margin-right: 0.35em; }
+  button .ic:only-child, #lobbySettingsIcon .ic, .pub-refresh .ic { margin-right: 0; }
+  h2 > .ic, h3 > .ic, .panel h2 .ic { color: var(--accent); margin-right: 0.3em; }
+  .settings-tab .ic { margin-right: 0.4em; color: inherit; }
+  .radio-option .ic { color: var(--accent); margin-right: 0.35em; }
+  .slider-label .ic { color: var(--accent); margin-right: 0.3em; }
+  .homepage-btn .icon .ic { width: 3.6rem; height: 3.6rem; color: var(--accent); }
+  .play-option .icon .ic { width: 2.6rem; height: 2.6rem; color: var(--accent); }
+  .game-card-img .ic { width: 5rem; height: 5rem; color: rgba(255, 255, 255, 0.95); filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35)); }
+  .uc-badge .ic { color: var(--accent); margin-right: 0.3em; }
+  .site-logo .ic { width: 1.6rem; height: 1.6rem; vertical-align: -0.25em; margin-right: 0.3em; color: var(--accent); }
+  .br-mysecret-label .ic, .br-mysecret-name .ic { margin-right: 0.3em; vertical-align: -0.2em; }
+  #lobbySettingsIcon .ic { width: 1.55rem; height: 1.55rem; }
+  .stat-box .ic { color: var(--accent); margin-right: 0.25em; }
+  .uc-hint-line .ic, .br-chip-hint .ic { opacity: 0.85; margin-right: 0.2em; }
+  .winner-card h2 .ic { color: var(--warning); }
   .slider-container { margin: 16px 0; }
   .slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
   input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: #2a2a4a; outline: none; -webkit-appearance: none; }
@@ -281,6 +346,7 @@
   .uc-main { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
   .uc-header { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
   .uc-badge { background: #0f0f1a; color: var(--accent); font-weight: 900; padding: 8px 18px; border-radius: 25px; font-size: 1rem; }
+  .uc-badge .ic { vertical-align: -0.16em; margin-right: 0.3em; }
   .uc-word-card { text-align: center; background: #0f0f1a; border: 2px solid var(--accent2); padding: 18px; border-radius: 14px; margin-bottom: 16px; }
   .uc-word-card.undercover { border-color: var(--warning); }
   .uc-word-card.mrwhite { border-color: var(--danger); }
@@ -346,7 +412,7 @@
   /* ===== Profile pictures (avatars) ===== */
   .ava { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; background: #14142e; border: 2px solid #2a2a4a; flex-shrink: 0; vertical-align: middle; font-size: 1rem; }
   .ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .ava.ava-empty { color: #8a8aa8; }
+  .ava.ava-empty { color: #8a8aa8; background: #14142e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8aa8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'/%3E%3C/svg%3E") center / 62% no-repeat; }
   .ava-btn { width: 22px; height: 22px; border-width: 1px; margin: 0 2px 2px 0; }
   .ava-lobby { width: 42px; height: 42px; }
   .ava-profile { width: 74px; height: 74px; border-width: 3px; border-color: var(--accent); font-size: 1.8rem; }
@@ -438,7 +504,7 @@
   .br-chip .chip-pts { color: var(--warning); font-size: 0.72rem; font-weight: 900; }
   .br-chip .chip-state { font-size: 0.75rem; }
   .br-chip.sel { box-shadow: 0 0 14px var(--c); background: #16163a; transform: translateY(-2px); }
-  .br-chip.sel .chip-name::before { content: '👁 '; }
+  .br-chip.sel .chip-name::before { content: ''; display: inline-block; width: 0.95em; height: 0.95em; margin-right: 4px; vertical-align: -0.15em; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2302a9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E") center / contain no-repeat; }
   .br-chip-hint { color: var(--muted); font-size: 0.72rem; text-align: center; margin: -2px 0 8px; }
   /* 🎨 Per-player boards: every card wears the active board's color + glow,
      so you instantly see whose tracking board you're on */
@@ -446,7 +512,7 @@
   .board.br-fenced .card:hover:not(.guessing) { border-color: var(--boardc, #2a2a4a); box-shadow: 0 0 12px var(--boardc, #2a2a4a), 0 4px 12px rgba(0, 0, 0, 0.55); }
   /* ❌ Eliminated cards (1v1 Guess Who look): greyed + big ✕, glow toned down */
   .board.br-fenced .card.eliminated { box-shadow: 0 0 2px var(--boardc, #2a2a4a); }
-  .card.br-found::after { content: '🔍'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(15, 15, 26, 0.55); z-index: 2; }
+  .card.br-found::after { content: ''; position: absolute; inset: 0; z-index: 2; background: rgba(15, 15, 26, 0.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300c853' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E") center / 45% no-repeat; }
   .board.guessing { outline: 3px dashed var(--warning); outline-offset: 3px; border-radius: 12px; }
   .board.guessing .card { animation: none; box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.25); }
   .board.br-fenced.guessing .card { box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.35), 0 0 10px var(--boardc, #2a2a4a); }

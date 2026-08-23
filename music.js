@@ -138,7 +138,7 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
       audio.src = currentSrc();
       audio.load();
       if (playing) {
-        label.textContent = '🎵 ' + trackNameOf(currentSrc());
+        label.innerHTML = '<svg class="ic" aria-hidden="true" style="width:.95em;height:.95em;display:inline-block;vertical-align:-0.15em;flex-shrink:0"><use href="#i-music"/></svg> ' + trackNameOf(currentSrc()).replace(/&/g, '&amp;').replace(/</g, '&lt;');
         label.style.display = 'flex';
         audio.play().catch(() => {});
       }
@@ -163,7 +163,7 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
       if (playing) return;
       audio.play().then(() => {
         playing = true;
-        label.textContent = '🎵 ' + trackNameOf(currentSrc());
+        label.innerHTML = '<svg class="ic" aria-hidden="true" style="width:.95em;height:.95em;display:inline-block;vertical-align:-0.15em;flex-shrink:0"><use href="#i-music"/></svg> ' + trackNameOf(currentSrc()).replace(/&/g, '&amp;').replace(/</g, '&lt;');
         label.style.display = 'flex';
         ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.removeEventListener(ev, tryStart));
       }).catch(() => {});
