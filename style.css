@@ -53,7 +53,7 @@
   }
   @media (max-width: 640px) {
     #sakuraBranch { width: 72vw; right: -3vw; top: 0; }
-    #sakuraBg .petal:nth-of-type(n+16) { display: none; } /* 14 petals on phones (skips the 2 big bokeh) */
+    #sakuraBg .petal:nth-of-type(n+10) { display: none; } /* 8 petals on phones — keeps the game smooth */
   }
   /* Reduced motion: keep the falling petals (site owner's choice) but make them fewer,
      slower and gentler — no fast spinning. */
