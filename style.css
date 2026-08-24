@@ -61,19 +61,19 @@
     #sakuraBg .petal { animation-duration: calc(var(--d) * 2.5); }
     #sakuraBg .petal:nth-of-type(n+8) { display: none; } /* only 6 slow petals */
   }
-  .site-header { text-align: center; margin-bottom: 40px; }
+  .site-header { text-align: center; margin-bottom: 40px; padding-top: 8px; }
+  /* Brand mark: simple, just "SAKUGAME" — no tagline */
   .site-logo {
-    font-size: 3rem;
-    font-weight: 900;
-    background: linear-gradient(90deg, #02a9ff, #0abde3, #48dbfb, #ff6b6b);
-    -webkit-background-clip: text;
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 900; letter-spacing: 0.06em; line-height: 1;
+    background: linear-gradient(90deg, #02a9ff, #4fb9fb, #a5d2ff, #e6f3ff);
+    -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(2,169,255,0.3);
-    margin-bottom: 10px;
+    text-shadow: 0 0 34px rgba(2,169,255,0.35);
     cursor: pointer;
-    display: inline-block;
   }
-  .site-tagline { color: var(--muted); font-size: 1.1rem; font-weight: 600; }
+  .site-logo .ic { width: 2.5rem; height: 2.5rem; flex: none; filter: drop-shadow(0 0 10px rgba(2,169,255,0.45)); }
   .screen { display: none; max-width: 1600px; margin: 0 auto; }
   .screen.active { display: block; }
   .username-change-btn {
@@ -117,6 +117,86 @@
   .game-card-content { padding: 25px; }
   .game-card h3 { font-size: 1.5rem; color: var(--accent); margin-bottom: 10px; }
   .game-card p { color: var(--muted); line-height: 1.6; }
+  .game-card-content::after { content: "How to play →"; display: inline-block; margin-top: 12px; font-size: 0.78rem; font-weight: 700; color: var(--accent); opacity: 0.85; }
+
+  /* ===== 🎓 How to Play modal (Games menu slideshow) ===== */
+  .howto-modal { position: fixed; inset: 0; z-index: 400; background: rgba(5, 8, 20, 0.82); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 14px; }
+  .howto-panel { background: var(--card); border: 1px solid #2a2a4a; border-radius: 16px; width: 100%; max-width: 880px; max-height: 92vh; overflow-y: auto; padding: 16px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
+  .howto-head { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #26264a; }
+  .howto-gameicon .ic { width: 2rem; height: 2rem; }
+  .howto-head h3 { margin: 0; color: var(--accent); font-size: 1.25rem; }
+  .howto-players { margin-left: auto; font-size: 0.75rem; font-weight: 700; color: #99aacd; background: #1b1b35; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+  .howto-close { background: none; border: none; color: #aab; cursor: pointer; padding: 6px; border-radius: 8px; }
+  .howto-close:hover { color: #fff; background: #26264a; }
+  .howto-close .ic { width: 1.3rem; height: 1.3rem; }
+  .howto-body { display: flex; align-items: stretch; gap: 10px; margin: 16px 0; }
+  .howto-arrow { flex: none; align-self: center; width: 38px; height: 60px; background: #20203c; border: none; border-radius: 10px; color: #bbcdf0; font-size: 1.5rem; cursor: pointer; }
+  .howto-arrow:hover:not(:disabled) { background: #2a2a50; }
+  .howto-arrow:disabled { opacity: 0.25; cursor: default; }
+  .howto-slide { flex: 1; display: flex; gap: 18px; align-items: center; min-height: 240px; }
+  .ht-scene { flex: 1.25; min-width: 0; }
+  .ht-text { flex: 1; min-width: 210px; }
+  .ht-text h4 { margin: 0 0 10px; color: #eaf4ff; font-size: 1.1rem; }
+  .ht-text p { margin: 0; color: #9fb2cc; font-size: 0.9rem; line-height: 1.6; }
+  .ht-step { margin-top: 14px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; color: #66779a; text-transform: uppercase; }
+  .howto-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .howto-dots { display: flex; gap: 7px; }
+  .howto-dot { width: 9px; height: 9px; border-radius: 50%; background: #333a5a; cursor: pointer; transition: background 0.2s; }
+  .howto-dot.on { background: var(--accent); }
+  .howto-cta { max-width: 230px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0; }
+  .howto-cta .ic { width: 1rem; height: 1rem; }
+
+  /* Mock gameplay scenes (stylized demo screenshots) */
+  .mock { background: #12122a; border: 1px solid #2a2a4a; border-radius: 12px; padding: 12px; }
+  .mk-label, .mk-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; color: #7f92b8; text-transform: uppercase; margin-bottom: 8px; }
+  .mk-note { margin-top: 10px; font-size: 0.78rem; color: #7f92b8; font-style: italic; }
+  .mk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .mk-char { position: relative; background: #1e1e38; border-radius: 8px; padding: 6px; text-align: center; font-size: 0.7rem; color: #cdd8ee; overflow: hidden; }
+  .mk-face { width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 5px; background: linear-gradient(135deg, #2c4a80, #4368b8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #eaf4ff; font-size: 0.85rem; }
+  .mk-photo-wrap { width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
+  .mk-photo-wrap .mk-face { width: 100%; height: 100%; border-radius: 6px; margin: 0; font-size: 1.1rem; }
+  .mk-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mk-name { display: block; font-size: 0.66rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-grid3 { grid-template-columns: repeat(3, 1fr); }
+  .mk-mini { background: #171731; border: 1px solid #2a2a4a; border-radius: 10px; padding: 8px; }
+  .mk-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mk-badge2 { display: block; margin-top: 4px; text-align: center; font-size: 0.66rem; font-weight: 800; color: var(--accent); background: #1b1b35; border-radius: 999px; padding: 2px 0; }
+  .mk-char.secret { outline: 2px solid var(--warning); }
+  .mk-char.out { opacity: 0.3; filter: grayscale(1); }
+  .mk-char.out::after { content: "✕"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--danger); font-weight: 900; }
+  .mk-badge { position: absolute; top: 3px; right: 5px; font-size: 0.75rem; color: var(--warning); font-weight: 900; }
+  .mk-q { display: flex; gap: 6px; margin-top: 10px; align-items: stretch; }
+  .mk-in { flex: 1; background: #0f0f1a; border: 1px solid #333a5a; border-radius: 8px; padding: 8px 10px; color: #9db8dd; font-size: 0.78rem; font-style: italic; display: flex; align-items: center; }
+  .mk-btn { background: var(--accent); color: #04121f; border-radius: 8px; padding: 8px 12px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; white-space: nowrap; }
+  .mk-chips, .mk-chipwrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .mk-chip { background: #1b1b35; border: 1px solid #2f3a63; color: #cdd8ee; border-radius: 999px; padding: 4px 11px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+  .mk-chip.ok { border-color: var(--success); color: #7ce8a4; }
+  .mk-chip.no { border-color: var(--danger); color: #ff8ba0; }
+  .mk-chip.dim { border-color: #3a3a5a; color: #8b9bc0; }
+  .mk-chip .ic { width: 0.85rem; height: 0.85rem; }
+  .mk-roles3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mk-role { background: #1e1e38; border-radius: 10px; padding: 9px; }
+  .mk-word { margin-top: 7px; background: #0f0f1a; border: 1px dashed #3a4a80; border-radius: 8px; padding: 8px 4px; text-align: center; color: #eaf4ff; font-size: 0.72rem; letter-spacing: 0.06em; }
+  .mk-log p { margin: 0 0 6px; font-size: 0.8rem; color: #b9c6e2; }
+  .mk-log .mk-odd { background: rgba(255, 23, 68, 0.12); border-radius: 6px; padding: 3px 6px; }
+  .mk-board-list p { margin: 0 0 8px; font-size: 0.82rem; color: #b9c6e2; }
+  .mk-lives { display: flex; gap: 5px; margin-bottom: 4px; }
+  .mk-lives .ic { width: 1.3rem; height: 1.3rem; }
+  .mk-dead { opacity: 0.25; filter: grayscale(1); }
+  .mk-img { width: 100%; border-radius: 8px; display: block; margin-top: 8px; }
+  .mk-stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .mk-stages .mk-img { margin-top: 0; aspect-ratio: 3/4; object-fit: cover; }
+  .mk-img.b3 { filter: blur(10px) saturate(1.2); }
+  .mk-img.b2 { filter: blur(4px); }
+  .mk-img.b1 { filter: blur(0.5px); }
+
+  @media (max-width: 640px) {
+    .howto-slide { flex-direction: column; align-items: stretch; min-height: 0; }
+    .ht-text { min-width: 0; }
+    .howto-arrow { height: 44px; width: 34px; }
+    .howto-cta { max-width: none; flex: 1; }
+    .howto-foot { flex-wrap: wrap; justify-content: center; }
+  }
   .panel { max-width: 700px; margin: 40px auto; background: var(--card); padding: 35px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
   .panel h2 { color: var(--accent); margin-bottom: 10px; text-align: center; font-size: 2rem; }
   .panel > p { color: var(--muted); margin-bottom: 30px; line-height: 1.6; text-align: center; font-size: 1rem; }
@@ -157,7 +237,7 @@
   .play-option .icon .ic { width: 2.6rem; height: 2.6rem; color: var(--accent); }
   .game-card-img .ic { width: 5rem; height: 5rem; color: rgba(255, 255, 255, 0.95); filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35)); }
   .uc-badge .ic { color: var(--accent); margin-right: 0.3em; }
-  .site-logo .ic { width: 1.6rem; height: 1.6rem; vertical-align: -0.25em; margin-right: 0.3em; color: var(--accent); }
+  /* (old small logo-icon rule — superseded by the .site-logo block above) */
   .br-mysecret-label .ic, .br-mysecret-name .ic { margin-right: 0.3em; vertical-align: -0.2em; }
   #lobbySettingsIcon .ic { width: 1.55rem; height: 1.55rem; }
   .stat-box .ic { color: var(--accent); margin-right: 0.25em; }
@@ -374,6 +454,9 @@
   .uc-action-form input { flex: 1; min-width: 0; padding: 12px; border: 2px solid #2a2a4a; border-radius: 10px; background: #1a1a2e; color: white; font-family: inherit; font-size: 0.95rem; }
   .uc-action-form input:focus { outline: none; border-color: var(--accent); }
   .uc-action-form button { flex-shrink: 0; }
+  .uc-action-form .mw-wrap { position: relative; flex: 1; min-width: 0; }
+  .uc-action-form .mw-wrap input { width: 100%; }
+  .bg-sug-row.sel { background: rgba(2, 169, 255, 0.18); }
   .uc-waiting { color: var(--muted); font-weight: 700; padding: 14px; text-align: center; }
   .uc-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
   .uc-words-line { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
@@ -582,7 +665,6 @@
   @media (max-width: 600px) {
     body { padding: 10px 10px 62px; }
     .site-header { margin-bottom: 20px; }
-    .site-tagline { font-size: 0.95rem; }
 
     /* Font ≥16px in inputs = no more unwanted auto-zoom on iPhone */
     input[type="text"], input[type="password"], input[type="number"], textarea, select { font-size: 16px !important; }

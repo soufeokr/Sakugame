@@ -15,14 +15,14 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=19">
+<link rel="stylesheet" href="style.css?v=23">
 </head>
 <body>
 
 <!-- ══════ SVG ICON SPRITE — all UI icons (stroke = currentColor, inherits text color) ══════ -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-play" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" fill="#f4f9ff"/><path d="M8.6 7.6v8.8l7.6-4.4z" fill="#02a9ff" stroke="#02a9ff" stroke-width="0.9" stroke-linejoin="round"/></symbol>
-  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="8.5" width="13" height="12.5" rx="2" fill="#0f0f1a" stroke="currentColor" stroke-width="2"/><path d="M14.5 11.5l.8 1.6 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="#ffca3a"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="8.5" width="13" height="12.5" rx="2" fill="#0f0f1a" stroke="currentColor" stroke-width="2"/><path d="M14.5 11.5l.8 1.6 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="#bfe4ff"/></symbol>
   <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.9"/><circle cx="9.2" cy="9.2" r="1.6" fill="#16335f"/><circle cx="14.8" cy="9.2" r="1.6" fill="#16335f"/><circle cx="12" cy="12" r="1.6" fill="#16335f"/><circle cx="9.2" cy="14.8" r="1.6" fill="#16335f"/><circle cx="14.8" cy="14.8" r="1.6" fill="#16335f"/></symbol>
   <symbol id="i-gamepad" viewBox="0 0 24 24"><rect x="2.6" y="7.8" width="18.8" height="9.6" rx="4.8" fill="#16335f" stroke="#dfe9ff" stroke-width="1.5"/><rect x="6.3" y="11.8" width="3.6" height="1.6" rx="0.8" fill="#dfe9ff"/><rect x="7.3" y="10.8" width="1.6" height="3.6" rx="0.8" fill="#dfe9ff"/><circle cx="16.6" cy="10.9" r="1.05" fill="#ff5252"/><circle cx="18.35" cy="12.65" r="1.05" fill="#00c853"/><circle cx="16.6" cy="14.4" r="1.05" fill="#ffca3a"/><circle cx="14.85" cy="12.65" r="1.05" fill="#29b6f6"/></symbol>
   <symbol id="i-mask" viewBox="0 0 24 24"><g transform="rotate(-10 9.5 12)"><rect x="4.5" y="4.5" width="10.5" height="14.5" rx="2" fill="#16335f" stroke="#7fa8e8" stroke-width="1.3"/></g><g transform="rotate(6 14 12)"><rect x="8.8" y="5" width="10.7" height="14.8" rx="2" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.8"/></g><g transform="translate(14.15 12.3) rotate(6)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#02a9ff" stroke-width="1.8" stroke-linecap="round" transform="scale(1.15)"/><circle cx="0" cy="3.8524999999999996" r="1.15" fill="#02a9ff"/></g></symbol>
@@ -157,8 +157,7 @@
     <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
   </div>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><svg class="ic"><use href="#i-logo"/></svg> SAKUGAME</div>
-    <p class="site-tagline">Online Anime Gaming Platform</p>
+    <div class="site-logo" onclick="goHome()"><svg class="ic"><use href="#i-logo"/></svg><span>SAKUGAME</span></div>
   </div>
 
   <div class="screen active" id="homepageScreen">
@@ -201,35 +200,35 @@
     <div style="max-width: 1200px; margin: 0 auto;">
       <h2 style="text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;">Available Games</h2>
       <div class="games-grid">
-        <div class="game-card">
+        <div class="game-card" onclick="openHowTo('guesswho')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('guesswho')">
           <div class="game-card-img"><svg class="ic"><use href="#i-mask"/></svg></div>
           <div class="game-card-content">
             <h3>Anime Guess Who?</h3>
             <p>Classic guessing game with your favorite anime characters from AniList. Eliminate characters and guess your opponent's secret!</p>
           </div>
         </div>
-        <div class="game-card">
+        <div class="game-card" onclick="openHowTo('undercover')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('undercover')">
           <div class="game-card-img"><svg class="ic"><use href="#i-spy"/></svg></div>
           <div class="game-card-content">
             <h3>Undercover</h3>
             <p>3-8 players! Everyone secretly gets an anime word — except the Undercover (a similar word) and Mr. White (no word at all). Give a clue each round, discuss, and vote out the impostor!</p>
           </div>
         </div>
-        <div class="game-card">
+        <div class="game-card" onclick="openHowTo('battle')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('battle')">
           <div class="game-card-img"><svg class="ic"><use href="#i-users"/></svg></div>
           <div class="game-card-content">
             <h3>Guess Who — Battle Royale</h3>
             <p>3-8 players! Everyone has a secret character. Ask questions to the whole table, track each opponent on their own glowing board, guess their secrets, and climb the points ranking!</p>
           </div>
         </div>
-        <div class="game-card">
+        <div class="game-card" onclick="openHowTo('race')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('race')">
           <div class="game-card-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
           <div class="game-card-content">
             <h3>Guess Who — Race</h3>
             <p>3-8 players! One player is the TARGET with a mystery character. Hunters take turns ASKING questions — but everyone can GUESS at any moment (wrong guess = -1 life)! First to find the mystery character wins!</p>
           </div>
         </div>
-        <div class="game-card">
+        <div class="game-card" onclick="openHowTo('blur')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('blur')">
           <div class="game-card-img"><svg class="ic"><use href="#i-layers"/></svg></div>
           <div class="game-card-content">
             <h3>Blur Guess</h3>
@@ -239,6 +238,27 @@
       </div>
       <div style="text-align: center; margin-top: 40px;">
         <button class="full back-btn" style="max-width: 300px;" onclick="goHome()">← Back to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY — game presentation slideshow -->
+  <div id="howtoModal" class="howto-modal" style="display:none" onclick="if(event.target===this)closeHowTo()">
+    <div class="howto-panel">
+      <div class="howto-head">
+        <span class="howto-gameicon" id="howtoIcon"></span>
+        <h3 id="howtoTitle"></h3>
+        <span class="howto-players" id="howtoPlayers"></span>
+        <button class="howto-close" onclick="closeHowTo()" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="howto-body">
+        <button class="howto-arrow" id="howtoPrev" onclick="howtoNav(-1)" aria-label="Previous step">‹</button>
+        <div class="howto-slide" id="howtoSlide"></div>
+        <button class="howto-arrow" id="howtoNext" onclick="howtoNav(1)" aria-label="Next step">›</button>
+      </div>
+      <div class="howto-foot">
+        <div class="howto-dots" id="howtoDots"></div>
+        <button class="full success howto-cta" id="howtoCta" onclick="howtoPlayNow()"></button>
       </div>
     </div>
   </div>
@@ -854,10 +874,10 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=16"></script>
-  <script src="animes.js?v=16"></script>
-  <script src="undercover.js?v=16"></script>
-  <script src="music.js?v=16"></script>
-  <script src="app.js?v=16"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2fc973d4a10e1c1',t:'MTc4NzUxNDA0NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=23"></script>
+  <script src="animes.js?v=23"></script>
+  <script src="undercover.js?v=23"></script>
+  <script src="music.js?v=23"></script>
+  <script src="app.js?v=23"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3034e565fe02e37',t:'MTc4NzU4NDQ1OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

@@ -19,6 +19,147 @@
     }
     const GAME_ICONS = { guesswho: 'mask', undercover: 'spy', battle: 'users', race: 'bolt', blur: 'layers' };
 
+    // ===== HOW TO PLAY — slideshow guides on the Games menu =====
+    // Each game has a short step-by-step presentation with demo scenes (mock gameplay).
+    var HT = { game: null, idx: 0 };
+    const HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
+    const HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
+    const HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+
+    function htChip(txt, cls) { return '<span class="mk-chip' + (cls ? ' ' + cls : '') + '">' + txt + '</span>'; }
+    function htQ(text, btn) {
+      return '<div class="mk-q"><div class="mk-in">' + text + '</div><div class="mk-btn">' + (btn || 'Send') + '</div></div>';
+    }
+    function htScene(html) { return '<div class="mock">' + html + '</div>'; }
+
+    // Real character photos straight from the game pool (characters.js)
+    const HT_NAMES = ['Levi', 'Naruto Uzumaki', 'Eren Yeager', 'Mikasa Ackerman', 'Rem', 'Saitama', 'Light Yagami', 'Usagi Tsukino'];
+    function htImgFail(img) { // fallback if a character photo ever fails to load
+      const d = document.createElement('div');
+      d.className = 'mk-face'; d.textContent = img.dataset.l || '?';
+      img.replaceWith(d);
+    }
+    function htCharReal(name, extra) {
+      const c = HT_POOL.find(function (x) { return x.name === name; }) || {};
+      const face = c.image
+        ? '<img class="mk-photo" src="' + c.image + '" alt="" loading="lazy" data-l="' + name[0] + '" onerror="htImgFail(this)">'
+        : '<div class="mk-face">' + escapeHtml(name[0]) + '</div>';
+      return '<div class="mk-char' + (extra ? ' ' + extra : '') + '"><div class="mk-photo-wrap">' + face + '</div><span class="mk-name">' + escapeHtml(name) + '</span>' + (extra === 'secret' ? '<span class="mk-badge">?</span>' : '') + '</div>';
+    }
+    const HT_BOARD = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, i === 3 ? 'secret' : ''); }).join('') + '</div>';
+    const HT_BOARD_OUT = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, [0, 2, 6].indexOf(i) >= 0 ? 'out' : (i === 3 ? 'secret' : '')); }).join('') + '</div>';
+    function htMiniBoard(who, outIdx) {
+      const items = HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, outIdx.indexOf(i) >= 0 ? 'out' : ''); }).join('');
+      return '<div class="mk-mini"><div class="mk-label">' + who + '</div><div class="mk-grid mk-grid3">' + items + '</div></div>';
+    }
+
+    const HOWTO = {
+      guesswho: { title: 'Anime Guess Who?', icon: 'mask', players: '2 players', slides: [
+        { t: 'Two players, two secrets', d: 'You each receive a secret anime character from a shared AniList board. Take turns asking yes/no questions — the first player to name the opponent\'s secret wins.',
+          s: htScene('<div class="mk-label">Your shared board (real game characters)</div>' + HT_BOARD + '<div class="mk-note">Every game deals one secret card to each player.</div>') },
+        { t: 'Ask smart questions', d: 'On your turn, type one yes/no question about appearance, powers or series. The answer is public — pick questions that cut your remaining cards in half!',
+          s: htScene(htQ('Does your character use a sword?') + '<div class="mk-chips">' + htChip('YES', 'ok') + htChip('NO', 'no') + '</div>') },
+        { t: 'Eliminate as you go', d: 'Tap the cards on your own board to cross out characters that no longer fit. It is your personal workspace — organize it however you like.',
+          s: htScene(HT_BOARD_OUT + '<div class="mk-note">3 eliminated — 5 suspects left.</div>') },
+        { t: 'Make the final call', d: 'Confident about the secret? Fire your guess! A correct name wins the game instantly — a wrong one gives your opponent free information.',
+          s: htScene(htQ('My guess: Mikasa Ackerman', 'GUESS!') + '<div class="mk-chips">' + htChip('Correct — you win!', 'ok') + '</div>') }
+      ]},
+      undercover: { title: 'Undercover', icon: 'spy', players: '3-8 players', slides: [
+        { t: 'Secret roles', d: 'Everyone receives the same secret word… except one Undercover (a very similar word) and one Mr. White (no word at all). Peek at your card and keep it secret!',
+          s: htScene('<div class="mk-roles3"><div class="mk-role">' + htChip('Citizen', 'ok') + '<div class="mk-word">Blue Lock</div></div><div class="mk-role">' + htChip('Undercover', 'no') + '<div class="mk-word">Ao Ashi</div></div><div class="mk-role">' + htChip('Mr. White', 'dim') + '<div class="mk-word">???</div></div></div><div class="mk-note">A real pair from the game — both are football anime!</div>') },
+        { t: 'One clue each', d: 'Round after round, every player gives a one-word clue about their word. Citizens must prove they know it — without making it obvious for the impostors.',
+          s: htScene('<div class="mk-log"><p><b>SakuraFan:</b> strikers</p><p><b>Kira_42:</b> football</p><p><b>Yuki:</b> ego</p><p><b>Tensa:</b> isagi</p></div>') },
+        { t: 'Listen carefully', d: 'The Undercover bluffs with clues that almost fit, and Mr. White improvises from the other players\' clues. An odd clue is your best lead — remember who said what.',
+          s: htScene('<div class="mk-log"><p><b>SakuraFan:</b> blue prison</p><p class="mk-odd"><b>Kira_42:</b> esperion youth team??</p><p><b>Tensa:</b> bachira</p><div class="mk-note">Esperion is the team in Ao Ashi — not in Blue Lock. Suspicious…</div></div>') },
+        { t: 'Time to vote', d: 'After the clues, everyone votes to eliminate one suspect. The player with the most votes leaves — and their role is revealed to the table.',
+          s: htScene('<div class="mk-chipwrap">' + htChip('SakuraFan') + htChip('Kira_42 (3 votes)', 'no') + htChip('Yuki') + htChip('Tensa') + '</div><div class="mk-note">Kira_42 was… the Undercover! Their word was Ao Ashi.</div>') },
+        { t: 'How it ends', d: 'Citizens win by voting out every impostor. Impostors win once they equal the citizens. And Mr. White can steal everything: when caught, one correct guess of the secret word = instant solo win!',
+          s: htScene('<div class="mk-chips">' + htChip('Citizens win!', 'ok') + htChip('Impostors win!', 'no') + htChip('Mr. White steals it!', 'dim') + '</div>') }
+      ]},
+      battle: { title: 'Guess Who — Battle Royale', icon: 'users', players: '3-8 players', slides: [
+        { t: 'Everyone hides a secret', d: 'Each player secretly receives a character. 3 to 8 detectives sit at one big table — and everyone is both hunter and prey.',
+          s: htScene('<div class="mk-chipwrap">' + htChip('You') + htChip('Aria — secret set') + htChip('Rex — secret set') + htChip('Noa — secret set') + '</div>' + HT_BOARD) },
+        { t: 'One board PER rival', d: 'This is the key to Battle Royale: you do NOT share one big board. Every opponent has their OWN private suspect board on your screen. Cross out cards independently — Aria\'s answers only shrink Aria\'s board!',
+          s: htScene('<div class="mk-duo">' + htMiniBoard("Aria's suspects", []) + htMiniBoard("Rex's suspects", [1, 4]) + '</div><div class="mk-note">Same game, two different boards — eliminate per rival.</div>') },
+        { t: 'One question for the whole table', d: 'On your turn, ask ONE yes/no question — every opponent answers it publicly. Their answers narrow your boards and everyone else\'s at the same time.',
+          s: htScene(htQ('Is your character from a shonen?') + '<div class="mk-chipwrap">' + htChip('Aria: YES', 'ok') + htChip('Rex: NO', 'no') + htChip('Noa: YES', 'ok') + '</div>') },
+        { t: 'Track and strike', d: 'As answers arrive, eliminate on each rival\'s board — then fire a guess at any rival when you feel sure. Each correctly exposed secret scores big points.',
+          s: htScene(HT_BOARD_OUT + htQ('Rex is… Light Yagami!', 'GUESS')) },
+        { t: 'Ranking decides the winner', d: 'Points for exposed secrets, sharp guesses and keeping your own secret alive. When the game ends, the top of the leaderboard takes the crown.',
+          s: htScene('<div class="mk-board-list"><p>' + htChip('1st — Aria', 'ok') + ' 340 pts</p><p>' + htChip('2nd — You', 'dim') + ' 290 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 210 pts</p></div>') }
+      ]},
+      race: { title: 'Guess Who — Race', icon: 'bolt', players: '3-8 players', slides: [
+        { t: 'The Target and the Hunters', d: 'One player is the TARGET — only they know the mystery character. Everyone else is a hunter racing to name it first and win the game.',
+          s: htScene('<div class="mk-chipwrap">' + htChip('Aria — TARGET', 'dim') + htChip('You — hunter') + htChip('Rex — hunter') + htChip('Noa — hunter') + '</div><div class="mk-note">The Target sees the mystery character. Hunters see nothing.</div>') },
+        { t: 'Inside the Target seat', d: 'When YOU are the Target: only your screen shows the mystery character. Answer every question honestly with YES or NO — then sit back and enjoy the hunt. If every hunter burns all their lives on wrong guesses, the win is yours!',
+          s: htScene('<div class="mk-label">Only the Target sees this</div><div class="mk-duo"><div>' + htCharReal('Mikasa Ackerman', 'secret') + '</div><div class="mk-word" style="align-self:center">Mystery: Mikasa Ackerman<br><span style="color:#8b9bc0">Answer honestly, keep a straight face!</span></div></div><div class="mk-chips">' + htChip('YES', 'ok') + htChip('NO', 'no') + '</div>') },
+        { t: 'The mic goes around', d: 'Hunters take turns holding the mic: one yes/no question each, answered publicly by the Target. Each hunter has a limited question budget — spend them wisely!',
+          s: htScene('<div class="mk-chipwrap">' + htChip('Rex ' + ic('mic'), 'ok') + htChip('You') + htChip('Noa') + '</div>' + htQ('Can the character fly?') + '<div class="mk-note">Target answers: YES</div>') },
+        { t: 'Guess at ANY moment', d: 'No turns for guessing — fire it whenever inspiration strikes! But every wrong guess costs 1 of your 3 lives. Lose all three and you watch the rest of the hunt from the bench.',
+          s: htScene('<div class="mk-lives">' + ic('heart') + ic('heart') + '<span class="mk-dead">' + ic('heart') + '</span></div>' + htQ('It\'s Mikasa Ackerman!', 'GUESS') + '<div class="mk-note">High risk, high reward — bold guesses win races.</div>') }
+      ]},
+      blur: { title: 'Blur Guess', icon: 'layers', players: 'solo or up to 8', slides: [
+        { t: 'Pick your mode', d: 'Play solo to train, or with up to 8 players. Two modes: blurred anime characters, or blurred anime covers from 500 classics.',
+          s: htScene('<div class="mk-chips">' + htChip('Characters mode') + htChip('Anime covers mode') + '</div>' + (HT_BLUR_IMG ? '<img class="mk-img" src="' + HT_BLUR_IMG + '" alt="anime cover demo">' : '<div class="mk-note">500 covers in the pool!</div>')) },
+        { t: 'Five stages, five payouts', d: 'The image unblurs over 5 stages, and the payout melts as it clears: stage 1 pays 5 pts… stage 5 pays only 1 pt. Trust your gut early!',
+          s: htScene(HT_BLUR_IMG ? '<div class="mk-stages"><div><img class="mk-img b3" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">5 pts</span></div><div><img class="mk-img b2" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">3 pts</span></div><div><img class="mk-img b1" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">1 pt</span></div></div><div class="mk-note">Stage 1 → 3 of 5 — already nameable?</div>' : '<div class="mk-note">Stage 1 = 5 pts … stage 5 = 1 pt.</div>') },
+        { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1 for the next players). A stage-1 first guess is the jackpot: 5 + 3 = 8 points!',
+          s: htScene(htQ('My answer: ' + HT_BLUR_NAME, 'SUBMIT') + '<div class="mk-chips">' + htChip('Correct! +8 pts', 'ok') + htChip('5 base + 3 speed bonus', 'dim') + '</div>') },
+        { t: 'Build your streak', d: 'Rounds chain and the leaderboard remembers everything. In multiplayer, the most consistent eye wins — learn studios, eras and art styles!',
+          s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 24 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 19 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 14 pts</p></div>') }
+      ]}
+    };
+
+    function openHowTo(g) {
+      if (!HOWTO[g]) return;
+      HT.game = g; HT.idx = 0;
+      renderHowTo();
+      document.getElementById('howtoModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeHowTo() {
+      const m = document.getElementById('howtoModal');
+      if (m) m.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    function howtoNav(d) {
+      const n = HOWTO[HT.game].slides.length;
+      HT.idx = Math.min(n - 1, Math.max(0, HT.idx + d));
+      renderHowTo();
+    }
+    function howtoGo(i) { HT.idx = i; renderHowTo(); }
+    function renderHowTo() {
+      const meta = HOWTO[HT.game]; if (!meta) return;
+      const n = meta.slides.length;
+      document.getElementById('howtoIcon').innerHTML = ic(meta.icon);
+      document.getElementById('howtoTitle').textContent = meta.title;
+      document.getElementById('howtoPlayers').textContent = meta.players;
+      const s = meta.slides[HT.idx];
+      document.getElementById('howtoSlide').innerHTML =
+        '<div class="ht-scene">' + s.s + '</div>' +
+        '<div class="ht-text"><h4>' + s.t + '</h4><p>' + s.d + '</p><div class="ht-step">Step ' + (HT.idx + 1) + ' of ' + n + '</div></div>';
+      document.getElementById('howtoPrev').disabled = HT.idx === 0;
+      document.getElementById('howtoNext').disabled = HT.idx === n - 1;
+      document.getElementById('howtoDots').innerHTML = meta.slides.map(function(_, i) {
+        return '<span class="howto-dot' + (i === HT.idx ? ' on' : '') + '" onclick="howtoGo(' + i + ')"></span>';
+      }).join('');
+      document.getElementById('howtoCta').innerHTML = ic('play') + ' Host a room';
+    }
+    function howtoPlayNow() {
+      const g = HT.game;
+      closeHowTo();
+      showHostRoom();
+      const sel = document.getElementById('gameSelect');
+      if (sel) { sel.value = g; try { onGameSelectChange(); } catch (e) {} }
+    }
+    document.addEventListener('keydown', function (e) {
+      const m = document.getElementById('howtoModal');
+      if (!m || m.style.display !== 'flex') return;
+      if (e.key === 'Escape') closeHowTo();
+      else if (e.key === 'ArrowRight') howtoNav(1);
+      else if (e.key === 'ArrowLeft') howtoNav(-1);
+    });
+
     // ===== CUSTOM NOTIFICATION & INTERACTION SYSTEM =====
     let interactionCallback = null;
     function showNotification(message, duration = 3000) {
@@ -4052,14 +4193,79 @@
       if (updates['uc/phase'] === 'reveal') scheduleNextRound();
     }
 
+    // ===== Mr. White last-chance guess: autocomplete + forgiving match =====
+    let mwSugHits = [], mwSugIndex = -1;
+    function ucNorm(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+    let mwCustomWords = null; // custom pairs from Firebase, loaded once (async)
+    function warmMwPool() {
+      if (mwCustomWords !== null) return;
+      mwCustomWords = [];
+      getAllUndercoverPairs().then(all => {
+        mwCustomWords = [];
+        all.forEach(p => { if (p.a) mwCustomWords.push(p.a); if (p.b) mwCustomWords.push(p.b); });
+      }).catch(function () {});
+    }
+    function ucMwWordPool() { // every word the game can deal (built-in + custom + current round)
+      const pool = new Set();
+      (typeof UNDERCOVER_PAIRS !== 'undefined' ? UNDERCOVER_PAIRS : []).forEach(p => { if (p[0]) pool.add(p[0]); if (p[1]) pool.add(p[1]); });
+      (mwCustomWords || []).forEach(w => pool.add(w));
+      const uc = (currentRoom && currentRoom.uc) || {};
+      if (uc.word) pool.add(uc.word);
+      return [...pool].sort();
+    }
+    function hideMwSuggest() { const b = document.getElementById('ucMwSuggest'); if (b) { b.classList.remove('show'); b.innerHTML = ''; } mwSugHits = []; mwSugIndex = -1; }
+    function ucMwSuggest() {
+      warmMwPool(); // fire-and-forget: next keystrokes will also see custom pairs
+      const inp = document.getElementById('ucMwInput');
+      const box = document.getElementById('ucMwSuggest');
+      if (!inp || !box) return;
+      const q = ucNorm(inp.value);
+      if (q.length < 2) { hideMwSuggest(); return; }
+      const hits = ucMwWordPool().filter(w => {
+        const n = ucNorm(w);
+        return n.indexOf(q) >= 0 || n.split(' ').some(t => t.indexOf(q) === 0);
+      }).slice(0, 8);
+      if (!hits.length) { hideMwSuggest(); return; }
+      mwSugHits = hits; mwSugIndex = -1;
+      box.innerHTML = hits.map((w, i) => '<div class="bg-sug-row" onmousedown="ucMwPick(' + i + ');event.preventDefault()"><span class="bg-sug-name">' + escapeHtml(w) + '</span></div>').join('');
+      box.classList.add('show');
+    }
+    function ucMwPick(i) {
+      const inp = document.getElementById('ucMwInput');
+      if (!inp || !mwSugHits[i]) return;
+      inp.value = mwSugHits[i]; hideMwSuggest(); inp.focus();
+    }
+    function ucMwKey(e) {
+      const box = document.getElementById('ucMwSuggest');
+      if (e.key === 'Enter') { e.preventDefault(); hideMwSuggest(); submitMrWhiteGuess(); return; }
+      if (!box || !box.classList.contains('show') || !mwSugHits.length) { if (e.key === 'Escape') hideMwSuggest(); return; }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        mwSugIndex = e.key === 'ArrowDown' ? (mwSugIndex + 1) % mwSugHits.length : (mwSugIndex - 1 + mwSugHits.length) % mwSugHits.length;
+        box.querySelectorAll('.bg-sug-row').forEach((r, i) => r.classList.toggle('sel', i === mwSugIndex));
+        const inp = document.getElementById('ucMwInput'); if (inp) inp.value = mwSugHits[mwSugIndex];
+      } else if (e.key === 'Escape') hideMwSuggest();
+    }
+    // Forgiving match: exact, token reorder ("Itadori Yuji"), partial name ("Yuji"),
+    // or a 4+ letter token with a small typo ("Mikassa").
+    function ucWordsMatch(guess, secret) {
+      const g = ucNorm(guess), n = ucNorm(secret);
+      if (!g || !n) return false;
+      if (g === n) return true;
+      const gT = g.split(' '), nT = n.split(' ');
+      if ([...gT].sort().join(' ') === [...nT].sort().join(' ')) return true;
+      if (gT.length <= nT.length && gT.every(w => nT.some(t => w === t || (w.length >= 4 && t.length >= 4 && bgWordClose(w, t))))) return true;
+      if ((g.length >= 4 && n.indexOf(g) >= 0) || (n.length >= 4 && g.indexOf(n) >= 0)) return true;
+      return false;
+    }
+
     async function resolveMrWhiteGuess() {
       const uc = currentRoom.uc;
       const players = currentRoom.players || {};
       const guessText = (uc.mwGuess && uc.mwGuess.text) ? String(uc.mwGuess.text) : '';
       const mwPid = Object.keys(uc.roles || {}).find(pid => uc.roles[pid] === 'mrwhite') || null;
       const mwName = (mwPid && players[mwPid]) ? players[mwPid].name : 'Mr. White';
-      const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
-      const correct = guessText.length > 0 && norm(guessText) === norm(uc.word);
+      const correct = guessText.length > 0 && ucWordsMatch(guessText, uc.word);
       const ev = correct
         ? { kind: 'mwguess', name: mwName, guess: guessText, correct: true, word: uc.word }
         : { kind: 'mwguess', name: mwName, guess: guessText, correct: false };
@@ -4447,7 +4653,7 @@
           inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitUndercoverClue(); });
           inp.focus();
         } else if (currentRoom.state === 'playing' && uc.phase === 'mrwhite' && myRole === 'mrwhite') {
-          area.innerHTML = '<div class="uc-action-form"><input type="text" id="ucMwInput" maxlength="60" placeholder="You were caught! Last chance — guess the civilians\' word…"><button class="warning" onclick="submitMrWhiteGuess()">Guess</button></div>';
+          area.innerHTML = '<div class="uc-action-form"><div class="mw-wrap"><input type="text" id="ucMwInput" maxlength="60" autocomplete="off" placeholder="You were caught! Last chance — guess the civilians\' word…" oninput="ucMwSuggest()" onkeydown="ucMwKey(event)"><div class="bg-suggest" id="ucMwSuggest"></div></div><button class="warning" onclick="hideMwSuggest();submitMrWhiteGuess()">Guess</button></div><div class="uc-hint-line">' + ic('search') + ' Start typing and pick a suggestion — partial names like \'Yuji\' also count!</div>';
           const inp2 = document.getElementById('ucMwInput');
           inp2.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitMrWhiteGuess(); });
           inp2.focus();
