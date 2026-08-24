@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=23">
+<link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
 
@@ -713,6 +713,12 @@
       </div>
       <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
       <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
+      <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+      <div class="lang-row" data-noi18n>
+        <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
+        <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
+        <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
+      </div>
       <h4 class="profile-section-title"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
       <input type="range" class="music-volume-slider" min="0" max="100" value="50">
     </div>
@@ -758,6 +764,12 @@
           <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
         </div>
 
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+        <div class="lang-row" data-noi18n>
+          <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
+          <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
+          <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
+        </div>
         <h4 class="profile-section-title"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
         <input type="range" class="music-volume-slider" min="0" max="100" value="50">
 
@@ -874,10 +886,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=23"></script>
-  <script src="animes.js?v=23"></script>
-  <script src="undercover.js?v=23"></script>
-  <script src="music.js?v=23"></script>
-  <script src="app.js?v=23"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3034e565fe02e37',t:'MTc4NzU4NDQ1OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=25"></script>
+  <script src="animes.js?v=25"></script>
+  <script src="undercover.js?v=25"></script>
+  <script src="music.js?v=25"></script>
+  <script src="lang.js?v=25"></script>
+  <script src="app.js?v=25"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a304e1c6bf18406b',t:'MTc4NzYwMDk4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

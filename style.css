@@ -766,3 +766,20 @@
     .selectable-card .char-name { font-size: 0.66rem; }
     .selectable-card.selected::before { width: 26px; height: 26px; font-size: 1rem; top: 6px; right: 6px; }
   }
+
+  /* 🌐 Language switcher (globe, bottom-left) */
+  /* Language picker (settings panels, above Music Volume) */
+  .lang-row { display: flex; gap: 8px; margin: 2px 0 6px; }
+  .lang-opt {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 8px 4px; border-radius: 12px; cursor: pointer;
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(90,150,230,0.35);
+    color: var(--text, #eee); font-family: inherit; font-weight: 700; font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .lang-opt .flg { width: 22px; height: 15px; border-radius: 3px; flex: none; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+  .lang-opt:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .lang-opt.on {
+    border-color: var(--accent); background: rgba(2,169,255,0.14);
+    box-shadow: 0 0 12px rgba(2,169,255,0.28);
+  }

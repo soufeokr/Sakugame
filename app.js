@@ -19,6 +19,31 @@
     }
     const GAME_ICONS = { guesswho: 'mask', undercover: 'spy', battle: 'users', race: 'bolt', blur: 'layers' };
 
+    // 🌐 i18n shims (lang.js). Everything stays English if lang.js fails to load.
+    function tPO(id, vars) { // sentence pattern with a name/word inside
+      if (window.tP) return tP(id, vars);
+      var en = {
+        pos_board: "{n}'s board", switch_board: "Switch to {n}'s board",
+        secret_already: "{n}'s secret is already found — switch board with the color chips!",
+        think_secret: "You think {n}'s secret is {c}?",
+        guess_mode: "Guess mode: click the card you think is {n}'s secret! (you are on their glowing board)",
+        hunt_secret: "Hunt {n}'s secret before the others!",
+        wait_question: "You are the TARGET — wait for {n}'s question…",
+        wait_answer: "Waiting for {n}'s answer…",
+        found_secret: "{a} found {n}'s secret:"
+      }[id] || id;
+      return String(en).replace(/\{(\w+)\}/g, function (m, k) { return (vars && (k in vars)) ? vars[k] : m; });
+    }
+    function bgIsCovers() { // true in Blur 🎬 anime-covers mode (localized titles apply there only)
+      const b = (currentRoom && currentRoom.bg) || {};
+      const s = (currentRoom && currentRoom.settings) || {};
+      return (b.mode || s.bgMode) === 'covers';
+    }
+    // Localized anime DISPLAY title (FR/ES picked from AniList synonyms; EN → unchanged)
+    function dTitle(n) { return (window.SAKU_I18N ? SAKU_I18N.translateAnimeTitle(n) : n); }
+    // Extra accepted guess spellings for a cover (its FR/ES titles)
+    function dAlt(n) { return (window.SAKU_I18N ? SAKU_I18N.animeAltTitles(n) : []); }
+
     // ===== HOW TO PLAY — slideshow guides on the Games menu =====
     // Each game has a short step-by-step presentation with demo scenes (mock gameplay).
     var HT = { game: null, idx: 0 };
@@ -830,11 +855,11 @@
       if (!roomCode) return;
       const url = roomShareLink();
       const game = GAME_LABELS[(currentRoom || {}).game] || 'a game';
-      const text = 'Come play ' + game + ' with me on Sakugame — room ' + roomCode + '!';
+      const text = tPO('share_text', { g: game, c: roomCode });
       // Phones: native share sheet. Computers: straight to the clipboard.
       const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent || '');
       if (navigator.share && isMobile) {
-        try { await navigator.share({ title: 'Sakugame room ' + roomCode, text: text, url: url }); return; }
+        try { await navigator.share({ title: tPO('share_title', { c: roomCode }), text: text, url: url }); return; }
         catch (e) { if (e && e.name === 'AbortError') return; /* cancelled */ }
       }
       try {
@@ -892,7 +917,7 @@
         document.getElementById('hostDistContainer').style.display = 'block';
         const value = parseInt(document.getElementById('hostDistSlider').value);
         const total = parseInt(document.getElementById('hostCharCountSlider').value);
-        document.getElementById('hostDistLabel').textContent = `Distribution: ${value} from ${hostAccounts[0].username} / ${total - value} from ${hostAccounts[1].username}`;
+        document.getElementById('hostDistLabel').textContent = tPO('dist_label', { v: value, a: hostAccounts[0].username, r: total - value, b: hostAccounts[1].username });
       } else {
         document.getElementById('hostDistContainer').style.display = 'none';
       }
@@ -1477,7 +1502,7 @@
       if (!isHost || !currentRoom || !currentRoom.players) return;
       const target = currentRoom.players[pid];
       if (!target) return;
-      showInteraction('Kick Player?', 'Kick <b>' + escapeHtml(String(target.name || 'this player')) + '</b> from the room?', [
+      showInteraction('Kick Player?', tPO('kick_q', { n: '<b>' + escapeHtml(String(target.name || 'this player')) + '</b>' }), [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: ic('x') + ' Kick', onclick: async () => { closeInteraction(); await kickPlayer(pid); }, class: 'danger' }
       ]);
@@ -1515,7 +1540,7 @@
       if (!isHost || !currentRoom || !currentRoom.players) return;
       const target = currentRoom.players[pid];
       if (!target) return;
-      showInteraction('Transfer Host?', 'Make <b>' + escapeHtml(String(target.name || 'this player')) + '</b> the room host? You will lose your host permissions.', [
+      showInteraction('Transfer Host?', tPO('transfer_q', { n: '<b>' + escapeHtml(String(target.name || 'this player')) + '</b>' }), [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: ic('crown') + ' Make Host', onclick: async () => { closeInteraction(); await transferHost(pid); }, class: 'warning' }
       ]);
@@ -1833,7 +1858,7 @@
           const charName = ((currentRoom.characters || []).find(c => c.id === gs.charId) || {}).name || '?';
           const upd = { 'br/guess': null, 'br/phase': 'ask', 'br/question': null, 'br/answers': {} };
           upd['br/log/' + gameLogPushKey('br')] = correct
-            ? { k: 'find', txt: name + ' found ' + tName + '\'s secret: ' + charName + '! (+' + pts + ' pts)' }
+            ? { k: 'find', txt: tPO('found_secret', { a: name, n: tName }) + ' ' + charName + '! (+' + pts + ' pts)' }
             : { k: 'miss', txt: name + ' wrongly guessed ' + charName + ' for ' + tName + '…' };
           const o = brGamePids();
           upd['br/turnIdx'] = ((br.turnIdx || 0) + 1) % Math.max(o.length, 1);
@@ -1873,10 +1898,10 @@
       const players = currentRoom.players || {};
       const target = brEnsureActiveBoard();
       if (!target || !players[target]) { showNotification('No opponent board to guess on!'); return; }
-      if ((br.found || {})[target]) { showNotification((players[target].name || '?') + '\'s secret is already found — switch board with the color chips!'); return; }
+      if ((br.found || {})[target]) { showNotification(tPO('secret_already', { n: (players[target].name || '?') })); return; }
       const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
       const nameOf = escapeHtml(String(players[target].name || '?'));
-      showInteraction(ic('target') + ' Make a guess?', 'You think <b>' + nameOf + '</b>\'s secret is <b>' + escapeHtml(charName) + '</b>?<br><small>This uses your turn — right or wrong.</small>', [
+      showInteraction(ic('target') + ' Make a guess?', tPO('think_secret', { n: '<b>' + nameOf + '</b>', c: '<b>' + escapeHtml(charName) + '</b>' }) + '<br><small>This uses your turn — right or wrong.</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: ic('target') + ' Guess!', onclick: async () => {
           closeInteraction();
@@ -1896,7 +1921,7 @@
         if (!target) { showNotification('No opponent to guess!'); return; }
         if ((br.found || {})[target]) { showNotification('That secret is already found — switch to another board!'); return; }
         brGuessMode = true;
-        showNotification('Guess mode: click the card you think is ' + ((currentRoom.players[target] || {}).name || '?') + '\'s secret! (you are on their glowing board)');
+        showNotification(tPO('guess_mode', { n: ((currentRoom.players[target] || {}).name || '?') }));
       }
       renderBattleBoard();
     }
@@ -1937,7 +1962,7 @@
         const chip = document.createElement('button');
         chip.className = 'br-chip' + (brActiveBoard === pid ? ' sel' : '');
         chip.style.setProperty('--c', col);
-        chip.title = "Switch to " + ((p && p.name) || '?') + "'s board";
+        chip.title = tPO('switch_board', { n: ((p && p.name) || '?') });
         chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="chip-name">${escapeHtml(String(p.name || '?'))}</span><span class="chip-pts">${(br.points || {})[pid] || 0} pts</span>${(br.found || {})[pid] ? '<span class="chip-state">' + ic('search') + ' found</span>' : ''}${(p.dcAt ? '<span class="chip-state">away</span>' : '')}${turnPid === pid && br.phase !== 'over' ? '<span class="chip-state">' + ic('mic') + '</span>' : ''}`;
         chip.addEventListener('click', () => { brActiveBoard = pid; updateBattle(); });
         chips.appendChild(chip);
@@ -1964,7 +1989,7 @@
       board.innerHTML = '';
       const title = document.getElementById('brBoardTitle');
       if (title) title.innerHTML = active
-        ? ic('palette') + ' <span style="color:' + col + '">' + escapeHtml(String((players[active] || {}).name || '?')) + '</span>\'s board' + (brGuessMode ? ' — ' + ic('target') + ' click their secret!' : ' — ' + ic('x') + ' tap cards to eliminate')
+        ? ic('palette') + ' ' + tPO('pos_board', { n: '<span style="color:' + col + '">' + escapeHtml(String((players[active] || {}).name || '?')) + '</span>' }) + (brGuessMode ? ' — ' + ic('target') + ' click their secret!' : ' — ' + ic('x') + ' tap cards to eliminate')
         : 'All Characters';
       const foundSet = {}; // charIds that are someone's revealed secret
       const secrets = br.secrets || {};
@@ -2134,8 +2159,8 @@
       if (rc.targetPid === playerId || !rcHuntersInGame().includes(playerId)) return;
       if (rcLivesOf(currentRoom, playerId) <= 0) { showNotification('You have no lives left!'); return; }
       const charName = ((currentRoom.characters || []).find(c => c.id === charId) || {}).name || '?';
-      const livesTxt = 'You have <b>' + rcLivesOf(currentRoom, playerId) + '</b> lives — a wrong guess costs one!';
-      showInteraction(ic('target') + ' Make a guess?', 'You think the mystery character is <b>' + escapeHtml(charName) + '</b>?<br><small>Free guess — allowed at ANY moment, even off-turn.<br>' + livesTxt + '</small>', [
+      const livesTxt = tPO('lives_left', { x: '<b>' + rcLivesOf(currentRoom, playerId) + '</b>' });
+      showInteraction(ic('target') + ' Make a guess?', tPO('guess_q', { n: '<b>' + escapeHtml(charName) + '</b>' }) + '<br><small>Free guess — allowed at ANY moment, even off-turn.<br>' + livesTxt + '</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: ic('target') + ' Guess!', onclick: async () => {
           closeInteraction();
@@ -2190,7 +2215,7 @@
         banner.innerHTML = `<img src="${myChar ? myChar.image : ''}" alt=""><div class="br-mysecret-info"><div class="br-mysecret-label">${ic('target')} You are the TARGET — answer questions honestly (tap to hide)</div><div class="br-mysecret-name">${myChar ? myChar.name : '—'}</div></div>`;
       } else {
         banner.onclick = null;
-        banner.innerHTML = `<div class="br-mysecret-info"><div class="br-mysecret-label">${ic('bolt')} RACE — mystery character</div><div class="br-mysecret-name">Hunt <b style="color:var(--warning)">${escapeHtml(targetName)}</b>'s secret before the others!</div></div>`;
+        banner.innerHTML = `<div class="br-mysecret-info"><div class="br-mysecret-label">${ic('bolt')} RACE — mystery character</div><div class="br-mysecret-name">${tPO('hunt_secret', { n: '<b style="color:var(--warning)">' + escapeHtml(targetName) + '</b>' })}</div></div>`;
       }
       renderRaceBoard(); renderRaceQA(); renderRaceLog(); renderRcHuntersBar();
       if (rc.phase === 'over') renderMultiEnd('race'); else document.getElementById('multiEndScreen').classList.remove('show');
@@ -2247,7 +2272,7 @@
       if (!rc.question) {
         const myLives = isTarget ? 1 : rcLivesOf(currentRoom, playerId);
         const myQs = isTarget ? 0 : rcQuestionsOf(currentRoom, playerId);
-        if (isTarget) area.innerHTML = `<div class="question-display"><div class="text">${ic('target')} You are the TARGET — wait for <b>${escapeHtml(turnName)}</b>'s question…</div></div>`;
+        if (isTarget) area.innerHTML = `<div class="question-display"><div class="text">${ic('target')} ${tPO('wait_question', { n: '<b>' + escapeHtml(turnName) + '</b>' })}</div></div>`;
         else if (myLives <= 0) area.innerHTML = `<div class="question-display"><div class="label">${ic('skull')} Out of lives</div><div class="text">You guessed wrong too many times — watch the others hunt!</div></div>`;
         else if (turnPid === playerId) {
           if (myQs > 0) area.innerHTML = `<div class="question-form"><input type="text" id="rcQuestionInput" placeholder="Ask the target a yes/no question…" maxlength="200"><button class="success" onclick="raceAsk()">Ask</button></div><div class="uc-hint-line">${ic('help')} ${myQs} questions left · ${ic('heart')} ${myLives} lives · guessing is FREE — anytime, even off-turn (wrong = -1 life).</div>`;
@@ -2262,7 +2287,7 @@
       let bottom = '';
       if (!rc.answer) {
         if (isTarget) bottom = `<div class="answer-buttons"><button class="success" onclick="raceAnswer('YES')">${ic('check')} YES</button><button class="danger" onclick="raceAnswer('NO')">${ic('x')} NO</button></div>`;
-        else bottom = `<div class="uc-hint-line">Waiting for <b>${escapeHtml(targetName)}</b>'s answer…</div>`;
+        else bottom = `<div class="uc-hint-line">${tPO('wait_answer', { n: '<b>' + escapeHtml(targetName) + '</b>' })}</div>`;
       } else {
         bottom = `<div class="uc-hint-line" style="font-size:1rem">Answer: <b>${rc.answer}</b></div>`;
         if (q.by === playerId) bottom += `<button class="success full" onclick="raceNextTurn()" style="margin-top:8px">Next turn</button>`;
@@ -2481,7 +2506,7 @@
       if (typeof ch === 'string') return [ch];
       const key = bgNorm(ch.name);
       const extra = (BG_CHAR_EXTRA[key] || []).concat(BG_ANIME_EXTRA[key] || []);
-      const names = [ch.name || ''].concat(Array.isArray(ch.al) ? ch.al : [], extra);
+      const names = [ch.name || ''].concat(Array.isArray(ch.al) ? ch.al : [], extra, dAlt(ch.name));
       const joined = [];
       names.forEach(nm => { if (nm && nm.indexOf('-') !== -1) joined.push(nm.replace(/-/g, '')); });
       return names.concat(joined);
@@ -2621,7 +2646,7 @@
         const img = document.createElement('img');
         img.className = 'bg-sug-img'; img.src = h.c.image || ''; img.alt = ''; img.loading = 'lazy';
         const nm = document.createElement('span');
-        nm.className = 'bg-sug-name'; nm.textContent = h.c.name;
+        nm.className = 'bg-sug-name'; nm.textContent = bgIsCovers() ? dTitle(h.c.name) : h.c.name;
         row.appendChild(img); row.appendChild(nm);
         if (h.via) {
           const tag = document.createElement('span');
@@ -2709,7 +2734,7 @@
         .sort((a, b) => (found[a].rank || 9) - (found[b].rank || 9))
         .map(pid => ((players[pid] || {}).name || '?') + ' +' + found[pid].pts + ' (stage ' + found[pid].stage + ')');
       const upd = { phase: 'reveal', deadline: Date.now() + 6000 };
-      upd['log/' + gameLogPushKey('bg')] = { k: 'find', txt: 'Round ' + ((bg.roundIdx || 0) + 1) + '/' + (bg.rounds || []).length + ': it was ' + (ch.name || '?') + (ch.series ? ' (' + ch.series + ')' : '') + '!' };
+      upd['log/' + gameLogPushKey('bg')] = { k: 'find', txt: 'Round ' + ((bg.roundIdx || 0) + 1) + '/' + (bg.rounds || []).length + ': it was ' + (bgIsCovers() ? dTitle(ch.name || '?') : (ch.name || '?')) + (ch.series ? ' (' + ch.series + ')' : '') + '!' };
       upd['log/' + gameLogPushKey('bg')] = { k: gains.length ? 'ans' : 'info', txt: gains.length ? gains.join(' · ') : 'Nobody found it that time!' };
       return upd;
     }
@@ -2874,12 +2899,12 @@
         const gains = parts.filter(pid => (bg.found || {})[pid])
           .sort((a, b) => (bg.found[a].rank || 9) - (bg.found[b].rank || 9))
           .map(pid => ((players[pid] || {}).name || '?') + ' +' + bg.found[pid].pts);
-        st.innerHTML = ic('check') + ' It was <b>' + escapeHtml(String(ch.name || '?')) + '</b>' + (ch.series ? ' <span style="color:var(--muted);font-weight:700;">(' + escapeHtml(String(ch.series)) + ')</span>' : '') + '!' + (gains.length ? ' ' + gains.join(' · ') : ' Nobody found it!');
+        st.innerHTML = ic('check') + ' It was <b>' + escapeHtml(String(bgIsCovers() ? dTitle(ch.name) : (ch.name || '?'))) + '</b>' + (ch.series ? ' <span style="color:var(--muted);font-weight:700;">(' + escapeHtml(String(ch.series)) + ')</span>' : '') + '!' + (gains.length ? ' ' + gains.join(' · ') : ' Nobody found it!');
       } else if (myFind) {
         st.innerHTML = ic('check') + ' <b>+' + myFind.pts + ' pts!</b> Still thinking: ' + (thinking.length ? escapeHtml(thinking.join(', ')) : 'nobody — next round!');
       } else {
         st.innerHTML = stage === 1
-          ? (ic(bgModeNow === 'covers' ? 'film' : 'layers') + ' <b>' + (bgModeNow === 'covers' ? 'Which anime is this?!' : 'Who is this?!') + '</b> It clears every ' + stageSec + ' seconds…')
+          ? (ic(bgModeNow === 'covers' ? 'film' : 'layers') + ' <b>' + (bgModeNow === 'covers' ? 'Which anime is this?!' : 'Who is this?!') + '</b> ' + tPO('clears_every', { x: stageSec }))
           : 'Still thinking: ' + escapeHtml(thinking.join(', '));
       }
       // score chips
@@ -3363,7 +3388,7 @@
       const seats = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
       const seatedCount = Object.keys(currentRoom.players || {}).length;
       const overflow = Math.max(0, seatedCount - seats);
-      showInteraction('Change the game?', 'Switch this room to <b>' + (GAME_LABELS[newGame] || newGame) + '</b>?<br><small>Everyone stays in the room — ready states reset.' + (overflow ? '<br>Only ' + seats + ' seats: <b>' + overflow + '</b> player(s) will move to the queue.' : '') + '</small>', [
+      showInteraction('Change the game?', tPO('switch_game_q', { g: '<b>' + (GAME_LABELS[newGame] || newGame) + '</b>' }) + '<br><small>Everyone stays in the room — ready states reset.' + (overflow ? '<br>' + tPO('queue_warn', { s: seats, o: '<b>' + overflow + '</b>' }) : '') + '</small>', [
         { label: 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: ic('gamepad') + ' Switch', onclick: async () => { closeInteraction(); await switchRoomGame(newGame); }, class: 'warning' }
       ]);
@@ -4851,7 +4876,7 @@
       if (item.img) { img.src = item.img; img.style.display = 'block'; } else { img.style.display = 'none'; }
       document.getElementById(slot === 'a' ? 'pairInputA' : 'pairInputB').value = item.name;
       document.getElementById('pairResults').innerHTML = '';
-      showNotification(item.name + ' picked for Word ' + slot.toUpperCase());
+      showNotification(tPO('picked_slot', { n: item.name, s: slot.toUpperCase() }));
     }
 
     async function addCustomPair() {
