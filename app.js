@@ -854,7 +854,7 @@
     }
     function showPlayMenu() { showScreen('playMenuScreen'); }
     function showGamesMenu() { showScreen('gamesMenuScreen'); }
-    function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); }
+    function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); try { loadRoomDefaults(); } catch (e) {} try { onGameSelectChange(); } catch (e) {} }
     function showJoinRoom() { showScreen('joinRoomScreen'); }
 
     function generateRoomCode() { return Math.random().toString(36).substr(2, 4).toUpperCase(); }
@@ -949,25 +949,96 @@
     }
 
     // ===== CREATE-ROOM SCREEN — GAME PICKER =====
-    // 🗂️ Both settings screens (create + lobby) are split in 2 tabs:
-    // 🏠 Room = game mode, visibility, player count · ⚙️ Game = everything else
-    function showCreateTab(name) {
-      const isRoom = name !== 'game';
-      document.getElementById('createTabRoom').style.display = isRoom ? 'block' : 'none';
-      document.getElementById('createTabGame').style.display = isRoom ? 'none' : 'block';
-      document.getElementById('createTabBtnRoom').classList.toggle('active', isRoom);
-      document.getElementById('createTabBtnGame').classList.toggle('active', !isRoom);
+    // 🎮 Single screen: small game cards (no tabs) — clicking a card updates
+    // the hidden <select id="gameSelect"> so all existing logic keeps working.
+    function selectHostGame(game) {
+      const sel = document.getElementById('gameSelect');
+      if (sel) sel.value = game;
+      try { onGameSelectChange(); } catch (e) {}
     }
-    function showSettingsTab(name) {
-      const isRoom = name !== 'game';
-      document.getElementById('settingsTabRoom').style.display = isRoom ? 'block' : 'none';
-      document.getElementById('settingsTabGame').style.display = isRoom ? 'none' : 'block';
-      document.getElementById('settingsTabBtnRoom').classList.toggle('active', isRoom);
-      document.getElementById('settingsTabBtnGame').classList.toggle('active', !isRoom);
+    // ===== LOBBY SETTINGS MODAL — GAME PICKER =====
+    // 🎮 Same mini cards as the create screen — they drive the hidden
+    // <select id="modalGameSelect"> so modalGameChanged() stays untouched.
+    function modalCardGame(g) {
+      const sel = document.getElementById('modalGameSelect');
+      if (sel) sel.value = g;
+      try { modalGameChanged(); } catch (e) {}
+      syncModalGameCards();
+    }
+    function syncModalGameCards() {
+      const sel = document.getElementById('modalGameSelect');
+      if (!sel) return;
+      document.querySelectorAll('#modalGamePick .game-pick-card').forEach(function (c) { c.classList.toggle('selected', c.dataset.game === sel.value); });
+    }
+
+    // ===== 💾 REMEMBER MY SETTINGS (create-room form) =====
+    // Saved on "Save as my default" — and automatically every time a room
+    // is actually created, so the next visit starts from your last setup.
+    const ROOM_CFG_KEY = 'sakugame_room_cfg_v1';
+    function clampN(v, min, max, dflt) {
+      const n = parseInt(v, 10);
+      if (isNaN(n)) return dflt;
+      return Math.min(max, Math.max(min, n));
+    }
+    function collectRoomConfig() {
+      return {
+        game: (document.getElementById('gameSelect') || {}).value || hostGame || 'guesswho',
+        visibility: roomVisibility || 'private', source: hostSource || 'generic',
+        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers,
+        charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
+        dist: clampN(document.getElementById('hostDistSlider').value, 0, 80, 12),
+        raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
+        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec
+      };
+    }
+    function saveRoomDefaults(toast) {
+      try { localStorage.setItem(ROOM_CFG_KEY, JSON.stringify(collectRoomConfig())); } catch (e) {}
+      if (toast) showNotification('Settings saved as your default!');
+    }
+    function saveRoomDefaultsBtn() { saveRoomDefaults(true); }
+    // Restore the last saved setup into the whole form (clamped + guarded)
+    function loadRoomDefaults() {
+      let cfg = null;
+      try { cfg = JSON.parse(localStorage.getItem(ROOM_CFG_KEY) || 'null'); } catch (e) {}
+      if (!cfg || typeof cfg !== 'object') return;
+      const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover'];
+      if (GAMES.indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
+      // 🔒 visibility radios
+      const vis = cfg.visibility === 'public' ? 'public' : 'private';
+      roomVisibility = vis;
+      document.querySelectorAll('#createTabRoom input[name="visibility"]').forEach(function (inp) {
+        inp.checked = inp.value === vis;
+        const lab = inp.closest('.radio-option');
+        if (lab) lab.classList.toggle('selected', inp.value === vis);
+      });
+      // 👥 player counts
+      multiMaxPlayers = clampN(cfg.multiMax, 3, 8, 6);
+      document.getElementById('hostMultiMaxSlider').value = multiMaxPlayers; updateMultiMaxPlayers();
+      ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
+      document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
+      // 🃏 pool + Guess Who board
+      if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) selectHostSource(cfg.source);
+      document.getElementById('hostCharCountSlider').value = clampN(cfg.charCount, 12, 80, 24); updateHostCharCount();
+      document.getElementById('hostDistSlider').value = clampN(cfg.dist, 0, parseInt(document.getElementById('hostDistSlider').max) || 80, 12); updateHostDist();
+      // ⚡ race
+      hostRaceLives = clampN(cfg.raceLives, 1, 5, RACE_DEFAULT_LIVES);
+      document.getElementById('hostRaceLivesSlider').value = hostRaceLives; updateRaceLivesSlider();
+      hostRaceQuestions = clampN(cfg.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS);
+      document.getElementById('hostRaceQuestionsSlider').value = hostRaceQuestions; updateRaceQuestionsSlider();
+      // 🌫️ blur
+      hostBgRounds = clampN(cfg.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT);
+      document.getElementById('hostBgRoundsSlider').value = hostBgRounds; updateBgRoundsSlider();
+      hostBgStageSec = clampN(cfg.bgStageSec, 5, 30, BLUR_STAGE_SEC);
+      document.getElementById('hostBgStageSecSlider').value = hostBgStageSec; updateBgStageSecSlider();
+      selectHostBgMode(cfg.bgMode === 'covers' ? 'covers' : 'characters');
+      // 🕵️ undercover
+      selectUcMrWhite(!!cfg.ucMw);
     }
 
     function onGameSelectChange() {
       hostGame = document.getElementById('gameSelect').value || 'guesswho';
+      // 🎮 highlight the matching mini card
+      document.querySelectorAll('#hostGamePick .game-pick-card').forEach(function (c) { c.classList.toggle('selected', c.dataset.game === hostGame); });
       const isUc = hostGame === 'undercover';
       const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur';
       const isBlur = hostGame === 'blur';
@@ -1057,6 +1128,7 @@
           }
         }
         await database.ref('rooms/' + roomCode).set(roomData);
+        try { saveRoomDefaults(false); } catch (e) {} // 💾 remember this setup for next time
         setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
@@ -3227,6 +3299,7 @@
       const isBlur = game === 'blur';
       const gsel = document.getElementById('modalGameSelect');
       if (gsel) gsel.value = game;
+      syncModalGameCards();
       // 🏠 Room tab: exactly one player-count control per game
       document.getElementById('modalGwPlayersHint').style.display = (!isUc && !isMulti) ? 'block' : 'none';
       const multiBox = document.getElementById('modalMultiMaxBlock');
@@ -3292,8 +3365,6 @@
         document.getElementById('modalPublic').classList.add('selected');
         document.getElementById('modalPrivate').classList.remove('selected');
       }
-      // start on the 🏠 Room tab (switchRoomGame re-opens on ⚙️ after a switch)
-      showSettingsTab(tab === 'game' ? 'game' : 'room');
       document.getElementById('settingsModal').classList.add('show');
     }
 
@@ -3425,10 +3496,11 @@
       const sel = document.getElementById('modalGameSelect');
       if (!sel || !isHost || !currentRoom) return;
       const cur = currentRoom.game || 'guesswho';
-      if (currentRoom.state && currentRoom.state !== 'lobby') { sel.value = cur; showNotification('Finish the current game first — you can switch games from the lobby.'); return; }
+      if (currentRoom.state && currentRoom.state !== 'lobby') { sel.value = cur; syncModalGameCards(); showNotification('Finish the current game first — you can switch games from the lobby.'); return; }
       const newGame = sel.value;
       if (newGame === cur) return;
       sel.value = cur; // revert until confirmed
+      syncModalGameCards();
       const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race' || newGame === 'blur';
       const seats = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
       const seatedCount = Object.keys(currentRoom.players || {}).length;
@@ -3474,9 +3546,8 @@
       touchActivity();
       showNotification('Game switched to ' + (GAME_LABELS[newGame] || newGame) + (demote.length ? ' — ' + demote.map(p => p.name || '?').join(', ') + ' moved to the queue' : '') + '!');
       // The lobby ⚙️ modal triggered this — refresh it INSTANTLY: the new
-      // game's options appear (and we jump to the ⚙️ Game tab) without
-      // closing/reopening. Local echo of the write; the listener's full
-      // snapshot lands right after.
+      // game's options appear without closing/reopening. Local echo of the
+      // write; the listener's full snapshot lands right after.
       try {
         currentRoom.game = newGame;
         if (document.getElementById('settingsModal').classList.contains('show')) openRoomSettings('game');

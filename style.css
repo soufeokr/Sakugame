@@ -119,6 +119,18 @@
   .game-card p { color: var(--muted); line-height: 1.6; }
   .game-card-content::after { content: "How to play →"; display: inline-block; margin-top: 12px; font-size: 0.78rem; font-weight: 700; color: var(--accent); opacity: 0.85; }
 
+  /* ===== 🎮 Create-room game picker — mini cards (no descriptions) ===== */
+  .game-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+  .game-pick-card { background: #14142a; border: 2px solid rgba(255, 255, 255, 0.07); border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .game-pick-card:hover { transform: translateY(-4px); border-color: rgba(2, 169, 255, 0.6); box-shadow: 0 10px 24px rgba(2, 169, 255, 0.25); }
+  .game-pick-card.selected { border-color: var(--accent); background: rgba(2, 169, 255, 0.1); box-shadow: 0 10px 26px rgba(2, 169, 255, 0.35); }
+  .game-pick-card.selected .game-pick-content h4 { color: var(--accent); }
+  .game-pick-img { height: 62px; background: linear-gradient(135deg, #02a9ff, #0f3460); display: flex; align-items: center; justify-content: center; }
+  .game-pick-img .ic { width: 2rem; height: 2rem; color: rgba(255, 255, 255, 0.95); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35)); }
+  .game-pick-content { padding: 10px 6px 11px; }
+  .game-pick-content h4 { font-size: 0.8rem; color: var(--text); line-height: 1.25; transition: color 0.2s; }
+  .game-pick-content small { display: block; margin-top: 4px; font-size: 0.68rem; color: var(--muted); font-weight: 700; }
+
   /* ===== 🎓 How to Play modal (Games menu slideshow) ===== */
   .howto-modal { position: fixed; inset: 0; z-index: 400; background: rgba(5, 8, 20, 0.82); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 14px; }
   .howto-panel { background: var(--card); border: 1px solid #2a2a4a; border-radius: 16px; width: 100%; max-width: 880px; max-height: 92vh; overflow-y: auto; padding: 16px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }

@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=27">
+<link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
 
@@ -268,14 +268,35 @@
     <div class="panel">
       <h2>Create Game Room</h2>
       <p>Configure your room settings</p>
-      <div class="settings-tabs">
-        <button class="settings-tab active" id="createTabBtnRoom" onclick="showCreateTab('room')"><svg class="ic"><use href="#i-home"/></svg> Room</button>
-        <button class="settings-tab" id="createTabBtnGame" onclick="showCreateTab('game')"><svg class="ic"><use href="#i-gear"/></svg> Game</button>
-      </div>
-      <!-- 🏠 TAB 1 — room settings: game mode, visibility, player count -->
+      <!-- 🎮 One single screen — no tabs: pick a game card, tune below -->
       <div id="createTabRoom">
         <div class="settings-section">
-          <div class="input-group"><label>Game Mode</label><select id="gameSelect" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option></select></div>
+          <div class="input-group">
+            <label>Choose a Game</label>
+            <div class="game-pick-grid" id="hostGamePick">
+              <div class="game-pick-card selected" data-game="guesswho" onclick="selectHostGame('guesswho')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+                <div class="game-pick-content"><h4>Anime Guess Who?</h4><small>2 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="battle" onclick="selectHostGame('battle')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
+                <div class="game-pick-content"><h4>Guess Who — Battle Royale</h4><small>3-8 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="race" onclick="selectHostGame('race')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+                <div class="game-pick-content"><h4>Guess Who — Race</h4><small>3-8 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="blur" onclick="selectHostGame('blur')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+                <div class="game-pick-content"><h4>Blur Guess</h4><small>1-8 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="undercover" onclick="selectHostGame('undercover')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+                <div class="game-pick-content"><h4>Undercover</h4><small>3-8 players</small></div>
+              </div>
+            </div>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option></select>
+          </div>
           <div class="input-group">
             <label>Room Visibility</label>
             <div class="radio-group">
@@ -294,8 +315,8 @@
           </div>
         </div>
       </div>
-      <!-- ⚙️ TAB 2 — game-specific settings -->
-      <div id="createTabGame" style="display: none;">
+      <!-- ⚙️ Game-specific settings — same screen, shown/hidden per picked game -->
+      <div id="createTabGame">
         <div class="settings-section" id="hostPoolGroup">
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
           <div class="input-group">
@@ -358,6 +379,7 @@
         </div>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
+      <button class="full secondary" style="margin-top: 10px;" onclick="saveRoomDefaultsBtn()"><svg class="ic"><use href="#i-check"/></svg> Save as my default</button>
       <button class="full back-btn" onclick="showPlayMenu()">← Back</button>
     </div>
   </div>
@@ -599,16 +621,34 @@
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
       <h2><svg class="ic"><use href="#i-gear"/></svg> Settings</h2>
-      <div class="settings-tabs">
-        <button class="settings-tab active" id="settingsTabBtnRoom" onclick="showSettingsTab('room')"><svg class="ic"><use href="#i-home"/></svg> Room</button>
-        <button class="settings-tab" id="settingsTabBtnGame" onclick="showSettingsTab('game')"><svg class="ic"><use href="#i-gear"/></svg> Game</button>
-      </div>
-      <!-- 🏠 TAB 1 — room settings: game mode, visibility, player count -->
+      <!-- 🎮 One single view — no tabs: pick a game card, tune below -->
       <div id="settingsTabRoom">
         <div class="settings-section">
           <div class="input-group">
             <label>Switch the game <small style="color: var(--muted);">(everyone stays in the room)</small></label>
-            <select id="modalGameSelect" onchange="modalGameChanged()">
+            <div class="game-pick-grid" id="modalGamePick">
+              <div class="game-pick-card selected" data-game="guesswho" onclick="modalCardGame('guesswho')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+                <div class="game-pick-content"><h4>Anime Guess Who?</h4><small>2 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="battle" onclick="modalCardGame('battle')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
+                <div class="game-pick-content"><h4>Guess Who — Battle Royale</h4><small>3-8 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="race" onclick="modalCardGame('race')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+                <div class="game-pick-content"><h4>Guess Who — Race</h4><small>3-8 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="blur" onclick="modalCardGame('blur')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+                <div class="game-pick-content"><h4>Blur Guess</h4><small>1-8 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="undercover" onclick="modalCardGame('undercover')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+                <div class="game-pick-content"><h4>Undercover</h4><small>3-8 players</small></div>
+              </div>
+            </div>
+            <select id="modalGameSelect" style="display: none;" onchange="modalGameChanged()">
               <option value="guesswho">Anime Guess Who? (2 players)</option>
               <option value="battle">Guess Who — Battle Royale (3-8 players)</option>
               <option value="race">Guess Who — Race (3-8 players)</option>
@@ -634,8 +674,8 @@
           </div>
         </div>
       </div>
-      <!-- ⚙️ TAB 2 — game-specific settings -->
-      <div id="settingsTabGame" style="display: none;">
+      <!-- ⚙️ Game-specific settings — same view, shown/hidden per picked game -->
+      <div id="settingsTabGame">
         <div class="settings-section" id="modalPoolGroup">
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
           <div class="input-group">
@@ -918,11 +958,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=27"></script>
-  <script src="animes.js?v=27"></script>
-  <script src="undercover.js?v=27"></script>
-  <script src="music.js?v=27"></script>
-  <script src="lang.js?v=27"></script>
-  <script src="app.js?v=27"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a30c86259d5397b3',t:'MTc4NzY4MTExNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=29"></script>
+  <script src="animes.js?v=29"></script>
+  <script src="undercover.js?v=29"></script>
+  <script src="music.js?v=29"></script>
+  <script src="lang.js?v=29"></script>
+  <script src="app.js?v=29"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a30d468eaf208a1c',t:'MTc4NzY4ODk5OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
