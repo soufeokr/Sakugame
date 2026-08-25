@@ -890,6 +890,39 @@ function skipped(node) {
   var el = node.nodeType === 3 ? node.parentElement : node;
   return el && el.closest && el.closest(SKIP_PARENT);
 }
+function restoreNode(node) {
+  var st = node.__i18n;
+  if (!st) return;
+  delete node.__i18n;
+  // only restore if the app hasn't rewritten the node since we translated it
+  var core = (node.nodeValue || '').replace(/\s+/g, ' ').trim();
+  if (core === st.out) node.nodeValue = (st.lead || '') + st.en + (st.trail || '');
+}
+function restoreAttrs(el) {
+  var st = el.__i18nA;
+  if (!st) return;
+  delete el.__i18nA;
+  for (var a in st) {
+    if (a.slice(-6) === '__out_') continue;                     // skip trackers
+    var out = st[a + '__out_'];
+    if (out == null) continue;                                  // never translated
+    if (el.getAttribute(a) === out) el.setAttribute(a, st[a]);  // restore original
+  }
+}
+function restoreAll(root) {
+  if (!root) return;
+  translating = true;
+  try {
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+    var n, pending = [];
+    while ((n = walker.nextNode())) pending.push(n);
+    for (var i = 0; i < pending.length; i++) {
+      var nd = pending[i];
+      if (nd.nodeType === 3) restoreNode(nd);
+      else if (nd.__i18nA) restoreAttrs(nd);
+    }
+  } finally { translating = false; }
+}
 function trTextNode(node) {
   var v = node.nodeValue;
   if (!v || !/[A-Za-zÀ-ÿ]/.test(v)) return;
@@ -904,7 +937,7 @@ function trTextNode(node) {
   if (out == null) out = trSubstring(source);
   if (out == null || out === source) { if (state) delete node.__i18n; return; }
   if (node.nodeValue !== lead + out + trail) node.nodeValue = lead + out + trail;
-  node.__i18n = { en: source, out: out };
+  node.__i18n = { en: source, out: out, lead: lead, trail: trail };
 }
 var ATTRS = ['placeholder', 'title', 'aria-label', 'alt'];
 function trAttrEl(el) {
@@ -919,7 +952,9 @@ function trAttrEl(el) {
     var out = trExact(t);
     if (out) {
       var lead = src.match(/^\s*/)[0], trail = src.match(/\s*$/)[0];
-      el.setAttribute(a, lead + out + trail);
+      var val = lead + out + trail;
+      el.setAttribute(a, val);
+      st[a + '__out_'] = val;                                 // translated value (for restore)
     }
   }
 }
@@ -963,14 +998,19 @@ function startObserver() {
 }
 function setLang(l) {
   if (LANGS.indexOf(l) === -1) l = 'en';
+  if (l === LANG) { syncSwitcher(); return; }
   var prev = LANG;
   LANG = l;
   try { localStorage.setItem('sakugame_lang', l); } catch (e) { }
   document.documentElement.lang = l;
   applyCssLang();
   buildDictRe();
-  if (prev === 'en' && l !== 'en') startObserver();
-  if (l !== 'en') walkTranslate(document.body);
+  // 1) put back every string the observer translated (verified English originals)
+  restoreAll(document.body);
+  // 2) translate the whole page into the new language
+  if (l !== 'en') { startObserver(); walkTranslate(document.body); }
+  // 3) let the app re-render strings it builds itself (t()/tP() runtime text)
+  try { window.dispatchEvent(new CustomEvent('saku-lang-change', { detail: { lang: l, prev: prev } })); } catch (e) { }
   syncSwitcher();
 }
 

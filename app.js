@@ -1095,6 +1095,26 @@
       updateLobby();
     }
 
+    // 🌐 Re-render runtime-built strings (t()/tPO() labels) after a language
+    // switch — the DOM observer can only retranslate dictionary text nodes.
+    window.addEventListener('saku-lang-change', function () {
+      try {
+        if (!currentRoom) return;
+        if (document.getElementById('lobbyScreen').classList.contains('active')) updateLobby();
+        const g = currentRoom.game;
+        if (currentRoom.state === 'selection' && document.getElementById('selectionScreen').classList.contains('active')) {
+          if (g === 'battle' || g === 'race') { showMultiSelection(); multiSelectionTick(); }
+          else if (g === 'guesswho') showCharacterSelection();
+          return;
+        }
+        if (g === 'undercover' && document.getElementById('undercoverScreen').classList.contains('active')) updateUndercover();
+        else if (g === 'battle' && document.getElementById('battleScreen').classList.contains('active')) updateBattle();
+        else if (g === 'race' && document.getElementById('raceScreen').classList.contains('active')) updateRace();
+        else if (g === 'blur' && document.getElementById('blurScreen').classList.contains('active')) updateBlur();
+        else if (g === 'guesswho' && document.getElementById('gameScreen').classList.contains('active')) updateGame();
+      } catch (e) { /* best effort — the observer already covered static text */ }
+    });
+
     function setupRoomListener() {
       if (roomRef) { roomRef.off(); }
       roomRef = database.ref('rooms/' + roomCode);
