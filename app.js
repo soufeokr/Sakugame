@@ -382,11 +382,36 @@
       if (firebase.auth().currentUser) openAuthModal(); else changeUsername();
     }
 
+    // 🗂️ Account menu tabs (Game / Account / Support) + Discord copy
+    function switchAcctTab(tab) {
+      ['game', 'account', 'support'].forEach(t => {
+        const pane = document.getElementById('acctPane' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (pane) pane.style.display = (t === tab) ? 'block' : 'none';
+      });
+      document.querySelectorAll('.acct-tab').forEach(b => {
+        const on = b.getAttribute('data-tab') === tab;
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      try { localStorage.setItem('sakugame_acct_tab', tab); } catch (e) { }
+    }
+    function copyDiscord() {
+      const h = '@soufiane_jv';
+      try {
+        navigator.clipboard.writeText(h).then(
+          () => showNotification(window.t ? t('Discord username copied!') : 'Discord username copied!'),
+          () => showNotification('Discord: ' + h));
+      } catch (e) { showNotification('Discord: ' + h); }
+    }
+
     async function openAuthModal() {
       const user = firebase.auth().currentUser;
       document.getElementById('authFormView').style.display = user ? 'none' : 'block';
       document.getElementById('authProfileView').style.display = user ? 'block' : 'none';
       if (user) {
+        let lastTab = 'game';
+        try { lastTab = localStorage.getItem('sakugame_acct_tab') || 'game'; } catch (e) { }
+        switchAcctTab(lastTab);
         const snap = await database.ref('users/' + user.uid).once('value');
         const p = snap.val() || {};
         document.getElementById('profileName').textContent = p.username || 'Account';

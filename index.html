@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=26">
+<link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
 
@@ -43,6 +43,7 @@
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5c2 0 3.7.7 5.2 1.5M22 12s-3.6 6.5-10 6.5c-2 0-3.7-.7-5.2-1.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 4l16 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m5.7 5.7 12.6 12.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
@@ -745,57 +746,88 @@
       </div>
       <!-- Logged-in profile menu -->
       <div id="authProfileView" style="display: none;">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4px 0 10px;">
-          <span id="profileAvatar"></span>
-          <button class="secondary" style="width: auto; padding: 6px 18px;" onclick="openAvatarModal()"><svg class="ic"><use href="#i-image"/></svg> Change picture</button>
-        </div>
-        <h2 style="margin-bottom: 2px;"><span id="profileName">Account</span></h2>
-        <p style="color: var(--muted); font-size: 0.85rem;">Logged in — this name & picture are used in your games</p>
-
-        <h4 class="profile-section-title"><svg class="ic"><use href="#i-chart"/></svg> Stats</h4>
-        <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;"><svg class="ic"><use href="#i-mask"/></svg> Anime Guess Who?</p>
-        <div style="display: flex; gap: 12px; justify-content: center;">
-          <div class="stat-box"><strong id="profileWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
-          <div class="stat-box"><strong id="profileLosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
-        </div>
-        <p style="color: var(--muted); font-size: 0.78rem; margin: 10px 0 4px;"><svg class="ic"><use href="#i-spy"/></svg> Undercover</p>
-        <div style="display: flex; gap: 12px; justify-content: center;">
-          <div class="stat-box"><strong id="profileUWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
-          <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
+        <!-- Header: avatar + little edit badge -->
+        <div class="profile-head">
+          <div class="profile-ava-wrap" onclick="openAvatarModal()" title="Change picture">
+            <span id="profileAvatar"></span>
+            <button type="button" class="ava-edit" aria-label="Change picture" title="Change picture"><svg class="ic"><use href="#i-pencil"/></svg></button>
+          </div>
+          <h2 style="margin: 8px 0 2px;"><span id="profileName">Account</span></h2>
+          <p style="color: var(--muted); font-size: 0.85rem; margin: 0;">Logged in — this name & picture are used in your games</p>
         </div>
 
-        <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
-        <div class="lang-row" data-noi18n>
-          <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
-          <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
-          <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
-        </div>
-        <h4 class="profile-section-title"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
-        <input type="range" class="music-volume-slider" min="0" max="100" value="50">
-
-        <h4 class="profile-section-title"><svg class="ic"><use href="#i-andlist"/></svg> AniList Account</h4>
-        <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 8px;">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</p>
-        <div class="profile-row">
-          <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
-          <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
+        <!-- Tabs -->
+        <div class="acct-tabs" role="tablist">
+          <button type="button" class="acct-tab on" role="tab" aria-selected="true" data-tab="game" onclick="switchAcctTab('game')"><svg class="ic"><use href="#i-gamepad"/></svg> Game</button>
+          <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="account" onclick="switchAcctTab('account')"><svg class="ic"><use href="#i-user"/></svg> Account</button>
+          <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="support" onclick="switchAcctTab('support')"><svg class="ic"><use href="#i-chat"/></svg> Support</button>
         </div>
 
-        <h4 class="profile-section-title"><svg class="ic"><use href="#i-pencil"/></svg> Change Username</h4>
-        <div class="profile-row">
-          <input type="text" id="profileUsernameInput" placeholder="New username (3-20 chars)" maxlength="20">
-          <button class="secondary" id="profileUsernameBtn" onclick="changeAccountUsername()">Save</button>
+        <!-- 🎮 GAME tab: stats · language · volume -->
+        <div id="acctPaneGame" class="acct-pane" role="tabpanel">
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-chart"/></svg> Stats</h4>
+          <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;"><svg class="ic"><use href="#i-mask"/></svg> Anime Guess Who?</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <div class="stat-box"><strong id="profileWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
+            <div class="stat-box"><strong id="profileLosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
+          </div>
+          <p style="color: var(--muted); font-size: 0.78rem; margin: 10px 0 4px;"><svg class="ic"><use href="#i-spy"/></svg> Undercover</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <div class="stat-box"><strong id="profileUWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
+            <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
+          </div>
+
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+          <div class="lang-row" data-noi18n>
+            <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
+            <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
+            <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
+          </div>
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+          <input type="range" class="music-volume-slider" min="0" max="100" value="50">
         </div>
 
-        <h4 class="profile-section-title"><svg class="ic"><use href="#i-lock"/></svg> Change Password</h4>
-        <div class="input-group" style="margin-bottom: 8px;">
-          <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
-        </div>
-        <div class="profile-row">
-          <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
-          <button class="secondary" id="profilePasswordBtn" onclick="changeAccountPassword()">Update</button>
+        <!-- 👤 ACCOUNT tab: AniList · username · password · logout -->
+        <div id="acctPaneAccount" class="acct-pane" role="tabpanel" style="display: none;">
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-andlist"/></svg> AniList Account</h4>
+          <p style="color: var(--muted); font-size: 0.82rem; margin-bottom: 8px;">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</p>
+          <div class="profile-row">
+            <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
+            <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
+          </div>
+
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-pencil"/></svg> Change Username</h4>
+          <div class="profile-row">
+            <input type="text" id="profileUsernameInput" placeholder="New username (3-20 chars)" maxlength="20">
+            <button class="secondary" id="profileUsernameBtn" onclick="changeAccountUsername()">Save</button>
+          </div>
+
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-lock"/></svg> Change Password</h4>
+          <div class="input-group" style="margin-bottom: 8px;">
+            <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
+          </div>
+          <div class="profile-row">
+            <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
+            <button class="secondary" id="profilePasswordBtn" onclick="changeAccountPassword()">Update</button>
+          </div>
+
+          <button class="full danger" style="margin-top: 22px;" onclick="logoutAccount()">Log Out</button>
         </div>
 
-        <button class="full danger" style="margin-top: 22px;" onclick="logoutAccount()">Log Out</button>
+        <!-- 💬 SUPPORT tab: Discord contact -->
+        <div id="acctPaneSupport" class="acct-pane" role="tabpanel" style="display: none;">
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-chat"/></svg> Contact & Support</h4>
+          <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!</p>
+          <div class="discord-card">
+            <span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Z"/></svg></span>
+            <div style="text-align: left; flex: 1; min-width: 0;">
+              <div class="dc-label">Discord</div>
+              <div class="dc-handle">@soufiane_jv</div>
+            </div>
+            <button type="button" class="dc-copy" onclick="copyDiscord()"><svg class="ic"><use href="#i-copy"/></svg> Copy</button>
+          </div>
+          <p style="color: var(--muted); font-size: 0.78rem; margin-top: 10px; line-height: 1.5;">Discord → Add Friend → paste my username — I usually answer within a day.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -886,11 +918,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=26"></script>
-  <script src="animes.js?v=26"></script>
-  <script src="undercover.js?v=26"></script>
-  <script src="music.js?v=26"></script>
-  <script src="lang.js?v=26"></script>
-  <script src="app.js?v=26"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a30a56236bfbe1c4',t:'MTc4NzY1ODE3OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=27"></script>
+  <script src="animes.js?v=27"></script>
+  <script src="undercover.js?v=27"></script>
+  <script src="music.js?v=27"></script>
+  <script src="lang.js?v=27"></script>
+  <script src="app.js?v=27"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a30c86259d5397b3',t:'MTc4NzY4MTExNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

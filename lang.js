@@ -733,6 +733,13 @@ var I18N = {
   "Winner Character": { fr: "Personnage du gagnant", es: "Personaje del ganador" },
   "Winner Secret": { fr: "Secret du gagnant", es: "Secreto del ganador" },
   "Opponent Secret": { fr: "Secret de l'adversaire", es: "Secreto del rival" },
+  // ---- v27 additions (account menu tabs + support) ----
+  "Support": { fr: "Support", es: "Soporte" },
+  "Contact & Support": { fr: "Contact & Support", es: "Contacto y soporte" },
+  "A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!": { fr: "Une question, un bug à signaler ou une idée pour améliorer les jeux ? Écrivez-moi sur Discord — je lis tout !", es: "¿Una pregunta, un bug que reportar o una idea para mejorar los juegos? ¡Escríbeme por Discord — lo leo todo!" },
+  "Discord → Add Friend → paste my username — I usually answer within a day.": { fr: "Discord → Ajouter un ami → collez mon pseudo — je réponds généralement sous 24 h.", es: "Discord → Añadir amigo → pega mi usuario — normalmente respondo en un día." },
+  "Copy": { fr: "Copier", es: "Copiar" },
+  "Discord username copied!": { fr: "Pseudo Discord copié !", es: "¡Usuario de Discord copiado!" },
 };
 
 // ---- Assembled-sentence patterns (names inside sentences) ----------------

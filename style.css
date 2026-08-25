@@ -783,3 +783,49 @@
     border-color: var(--accent); background: rgba(2,169,255,0.14);
     box-shadow: 0 0 12px rgba(2,169,255,0.28);
   }
+
+  /* Profile head: avatar + little edit badge */
+  .profile-head { display: flex; flex-direction: column; align-items: center; margin: 4px 0 2px; }
+  .profile-ava-wrap { position: relative; width: 74px; height: 74px; border-radius: 50%; cursor: pointer; }
+  .profile-ava-wrap .ava { display: block; }
+  .ava-edit {
+    position: absolute; top: -3px; right: -3px; width: 26px; height: 26px; padding: 0;
+    border-radius: 50%; border: 2px solid #0d1630; background: var(--accent); color: #04101e;
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5); transition: transform 0.15s, background 0.15s;
+  }
+  .ava-edit .ic { width: 13px; height: 13px; }
+  .ava-edit:hover { transform: scale(1.1); background: #4fb9fb; }
+
+  /* Account menu tabs */
+  .acct-tabs {
+    display: flex; gap: 6px; margin: 14px 0 14px; padding: 4px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(90,150,230,0.22); border-radius: 14px;
+  }
+  .acct-tab {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 4px; border-radius: 10px; border: none; background: transparent; color: var(--muted);
+    font-family: inherit; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+  }
+  .acct-tab .ic { width: 0.95rem; height: 0.95rem; }
+  .acct-tab:hover { color: var(--text, #eee); }
+  .acct-tab.on { background: rgba(2,169,255,0.16); color: var(--accent); box-shadow: 0 0 10px rgba(2,169,255,0.2); }
+  .acct-pane { animation: acctFade 0.25s ease; }
+  @keyframes acctFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* Support tab: Discord card */
+  .discord-card {
+    display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 10px;
+    background: rgba(88,101,242,0.10); border: 1.5px solid rgba(88,101,242,0.45); border-radius: 14px;
+  }
+  .dc-icon { width: 42px; height: 42px; border-radius: 12px; background: #5865F2; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .dc-icon svg { width: 26px; height: 20px; fill: #ffffff; }
+  .dc-label { color: var(--muted); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+  .dc-handle { font-weight: 800; font-size: 1.02rem; color: var(--text, #eee); overflow-wrap: anywhere; }
+  .dc-copy {
+    width: auto; display: inline-flex; align-items: center; gap: 6px; flex: none;
+    background: #5865F2; border: none; color: #ffffff; border-radius: 10px; padding: 8px 12px;
+    font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: background 0.2s, transform 0.15s;
+  }
+  .dc-copy:hover { background: #4752c4; transform: translateY(-1px); }
+  .dc-copy .ic { width: 0.85rem; height: 0.85rem; }
