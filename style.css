@@ -131,6 +131,13 @@
   .game-pick-content h4 { font-size: 0.8rem; color: var(--text); line-height: 1.25; transition: color 0.2s; }
   .game-pick-content small { display: block; margin-top: 4px; font-size: 0.68rem; color: var(--muted); font-weight: 700; }
 
+  /* ===== 💾📂 Config save/load (create room) ===== */
+  .cfg-quick { display: flex; gap: 8px; justify-content: flex-start; margin: 2px 0 16px; }
+  .cfg-quick button { width: auto; }
+  .cfg-row { display: flex; align-items: center; gap: 8px; background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+  .cfg-row .cfg-name { flex: 1; min-width: 0; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cfg-row .cfg-name small { display: block; color: var(--muted); font-weight: 600; font-size: 0.74rem; overflow: hidden; text-overflow: ellipsis; }
+
   /* ===== 🎓 How to Play modal (Games menu slideshow) ===== */
   .howto-modal { position: fixed; inset: 0; z-index: 400; background: rgba(5, 8, 20, 0.82); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 14px; }
   .howto-panel { background: var(--card); border: 1px solid #2a2a4a; border-radius: 16px; width: 100%; max-width: 880px; max-height: 92vh; overflow-y: auto; padding: 16px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }

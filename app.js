@@ -854,7 +854,7 @@
     }
     function showPlayMenu() { showScreen('playMenuScreen'); }
     function showGamesMenu() { showScreen('gamesMenuScreen'); }
-    function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); try { loadRoomDefaults(); } catch (e) {} try { onGameSelectChange(); } catch (e) {} }
+    function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} }
     function showJoinRoom() { showScreen('joinRoomScreen'); }
 
     function generateRoomCode() { return Math.random().toString(36).substr(2, 4).toUpperCase(); }
@@ -953,6 +953,8 @@
     // the hidden <select id="gameSelect"> so all existing logic keeps working.
     function selectHostGame(game) {
       const sel = document.getElementById('gameSelect');
+      // keep your live edits when flipping between game cards
+      if (sel && sel.value && sel.value !== game) { try { cfgSession[sel.value] = collectRoomConfig(); } catch (e) {} }
       if (sel) sel.value = game;
       try { onGameSelectChange(); } catch (e) {}
     }
@@ -971,10 +973,14 @@
       document.querySelectorAll('#modalGamePick .game-pick-card').forEach(function (c) { c.classList.toggle('selected', c.dataset.game === sel.value); });
     }
 
-    // ===== 💾 REMEMBER MY SETTINGS (create-room form) =====
-    // Saved on "Save as my default" — and automatically every time a room
-    // is actually created, so the next visit starts from your last setup.
-    const ROOM_CFG_KEY = 'sakugame_room_cfg_v1';
+    // ===== 💾 SETTINGS MEMORY =====
+    // ① AUTO per game: creating a room stores the whole form under that game —
+    //    picking that game card again restores exactly what you last played.
+    // ② NAMED configs: 💾 Save (top-left) snapshots the CURRENT game's setup
+    //    under a name you choose; 📂 Load lists them to reload anytime.
+    const LAST_GAME_CFG_KEY = 'sakugame_last_games_v2';
+    const NAMED_CFG_KEY = 'sakugame_configs_v1';
+    let cfgSession = {}; // live edits per game while the form is open (memory only)
     function clampN(v, min, max, dflt) {
       const n = parseInt(v, 10);
       if (isNaN(n)) return dflt;
@@ -991,15 +997,8 @@
         bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec
       };
     }
-    function saveRoomDefaults(toast) {
-      try { localStorage.setItem(ROOM_CFG_KEY, JSON.stringify(collectRoomConfig())); } catch (e) {}
-      if (toast) showNotification('Settings saved as your default!');
-    }
-    function saveRoomDefaultsBtn() { saveRoomDefaults(true); }
-    // Restore the last saved setup into the whole form (clamped + guarded)
-    function loadRoomDefaults() {
-      let cfg = null;
-      try { cfg = JSON.parse(localStorage.getItem(ROOM_CFG_KEY) || 'null'); } catch (e) {}
+    // Restore a snapshot into the whole form (clamped + guarded)
+    function applyRoomConfig(cfg) {
       if (!cfg || typeof cfg !== 'object') return;
       const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover'];
       if (GAMES.indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
@@ -1034,9 +1033,175 @@
       // 🕵️ undercover
       selectUcMrWhite(!!cfg.ucMw);
     }
+    // map { game → last played snapshot }  (+ one-time migration of the old global default)
+    function loadLastMap() {
+      let map = null;
+      try { map = JSON.parse(localStorage.getItem(LAST_GAME_CFG_KEY) || 'null'); } catch (e) {}
+      if (!map || typeof map !== 'object') {
+        map = {};
+        try {
+          const old = JSON.parse(localStorage.getItem('sakugame_room_cfg_v1') || 'null');
+          if (old && old.game) {
+            map[old.game] = old;
+            try { localStorage.setItem(LAST_GAME_CFG_KEY, JSON.stringify(map)); } catch (e) {}
+            try { localStorage.removeItem('sakugame_room_cfg_v1'); } catch (e) {}
+          }
+        } catch (e) {}
+      }
+      return map;
+    }
+    function rememberLastFor(game) {
+      try {
+        const map = loadLastMap();
+        map[game] = collectRoomConfig();
+        localStorage.setItem(LAST_GAME_CFG_KEY, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    // ===== 🗂️ NAMED CONFIGS (Save / Load buttons, top-left of create room) =====
+    let cfgSaveContext = 'form'; // 'form' = create screen · 'room' = lobby ⚙️ settings
+    let cfgLoadContext = 'form';
+    function loadNamedCfgs() {
+      try { const l = JSON.parse(localStorage.getItem(NAMED_CFG_KEY) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; }
+    }
+    function storeNamedCfgs(l) { try { localStorage.setItem(NAMED_CFG_KEY, JSON.stringify(l)); } catch (e) {} }
+    function openConfigSave(context) {
+      cfgSaveContext = context === 'room' && isHost && currentRoom ? 'room' : 'form';
+      const g = cfgSaveContext === 'room' ? (currentRoom.game || 'guesswho') : ((document.getElementById('gameSelect') || {}).value || 'guesswho');
+      const inp = document.getElementById('cfgNameInput');
+      if (inp) inp.value = (GAME_LABELS[g] || g) + ' config';
+      document.getElementById('configSaveModal').classList.add('show');
+      setTimeout(function () { try { inp.focus(); inp.select(); } catch (e) {} }, 60);
+    }
+    function closeConfigSave() { document.getElementById('configSaveModal').classList.remove('show'); }
+    function confirmConfigSave() {
+      const fromRoom = cfgSaveContext === 'room' && isHost && currentRoom;
+      const g = fromRoom ? (currentRoom.game || 'guesswho') : ((document.getElementById('gameSelect') || {}).value || 'guesswho');
+      const snap = fromRoom ? collectModalConfig() : collectRoomConfig();
+      const inp = document.getElementById('cfgNameInput');
+      const name = ((inp && inp.value) || '').trim().slice(0, 30) || ((GAME_LABELS[g] || g) + ' config');
+      const list = loadNamedCfgs();
+      list.unshift({ id: Date.now(), name: name, game: g, snapshot: snap, createdAt: Date.now() });
+      storeNamedCfgs(list);
+      closeConfigSave();
+      showNotification('Config saved!');
+    }
+    function openConfigLoad(context) {
+      cfgLoadContext = context === 'room' && isHost && currentRoom ? 'room' : 'form';
+      renderCfgLoadList();
+      document.getElementById('configLoadModal').classList.add('show');
+    }
+    function closeConfigLoad() { document.getElementById('configLoadModal').classList.remove('show'); }
+    function renderCfgLoadList() {
+      const box = document.getElementById('cfgLoadList');
+      if (!box) return;
+      const list = loadNamedCfgs();
+      if (!list.length) {
+        box.innerHTML = '<p style="color: var(--muted); text-align: center;">No saved configs yet — press Save to keep your setup!</p>';
+        return;
+      }
+      box.innerHTML = list.map(function (c) {
+        const gl = GAME_LABELS[c.game] || c.game || '?';
+        return '<div class="cfg-row">' +
+          '<div class="cfg-name">' + escapeHtml(String(c.name)) + '<small>' + escapeHtml(gl) + '</small></div>' +
+          '<button class="secondary small" onclick="onCfgRowLoadClick(' + c.id + ')">Load</button>' +
+          '<button class="danger small" aria-label="Delete" title="Delete" onclick="deleteNamedCfg(' + c.id + ')"><svg class="ic"><use href="#i-trash"/></svg></button>' +
+          '</div>';
+      }).join('');
+    }
+    function onCfgRowLoadClick(id) {
+      if (cfgLoadContext === 'room') loadNamedCfgToRoom(id); else loadNamedCfg(id);
+    }
+    function loadNamedCfg(id) {
+      const c = loadNamedCfgs().find(function (x) { return x.id === id; });
+      if (!c || !c.snapshot) { showNotification('Could not load this config.'); return; }
+      try {
+        applyRoomConfig(c.snapshot);
+        // make it the session truth too, so onGameSelectChange() won't overwrite it
+        cfgSession[(document.getElementById('gameSelect') || {}).value] = c.snapshot;
+        onGameSelectChange();
+        closeConfigLoad();
+        showNotification('Config loaded!');
+      } catch (e) { showNotification('Could not load this config.'); }
+    }
+    // 🏠 Room context: snapshot = the room's LIVE settings (same field names as the form)
+    function collectModalConfig() {
+      const g = (currentRoom || {}).game || 'guesswho';
+      const s = (currentRoom || {}).settings || {};
+      const maxP = clampN((currentRoom || {}).maxPlayers, 3, 8, g === 'undercover' ? 5 : 6);
+      return {
+        game: g, visibility: (currentRoom || {}).visibility === 'public' ? 'public' : 'private',
+        source: currentSource() || 'generic',
+        ucMax: maxP, ucMw: !!s.mrWhite, multiMax: maxP,
+        charCount: clampN(s.characterCount, 12, 80, 24),
+        dist: clampN(s.distribution, 0, 80, 12),
+        raceLives: clampN(s.raceLives, 1, 5, RACE_DEFAULT_LIVES),
+        raceQuestions: clampN(s.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS),
+        bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
+        bgRounds: clampN(s.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT),
+        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC)
+      };
+    }
+    // …and loading writes the saved settings straight into the current room
+    async function loadNamedCfgToRoom(id) {
+      const c = loadNamedCfgs().find(function (x) { return x.id === id; });
+      if (!c || !c.snapshot) { showNotification('Could not load this config.'); return; }
+      const g = (currentRoom || {}).game || 'guesswho';
+      if (c.game && c.game !== g) { showNotification('That config is for another game — switch games first!'); return; }
+      closeConfigLoad();
+      await applyConfigToRoom(c.snapshot);
+    }
+    async function applyConfigToRoom(cfg) {
+      if (!isHost || !currentRoom || !roomCode) { showNotification('Could not load this config.'); return; }
+      const g = currentRoom.game || 'guesswho';
+      const playerCount = Object.keys(currentRoom.players || {}).length;
+      const updates = { visibility: cfg.visibility === 'public' ? 'public' : 'private' };
+      if (g === 'undercover') {
+        updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.ucMax, 3, 8, 5)));
+        updates['settings/mrWhite'] = !!cfg.ucMw;
+      } else {
+        if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) updates['settings/source'] = cfg.source;
+        if (g !== 'blur') {
+          updates['settings/characterCount'] = clampN(cfg.charCount, 12, 80, 24);
+          updates['settings/distribution'] = clampN(cfg.dist, 0, 80, 12);
+        }
+        if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
+        if (g === 'race') {
+          updates['settings/raceLives'] = clampN(cfg.raceLives, 1, 5, RACE_DEFAULT_LIVES);
+          updates['settings/raceQuestions'] = clampN(cfg.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS);
+        }
+        if (g === 'blur') {
+          updates['settings/bgRounds'] = clampN(cfg.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT);
+          updates['settings/bgStageSec'] = clampN(cfg.bgStageSec, 5, 30, BLUR_STAGE_SEC);
+          updates['settings/bgMode'] = cfg.bgMode === 'covers' ? 'covers' : 'characters';
+        }
+      }
+      try {
+        await database.ref('rooms/' + roomCode).update(updates);
+        touchActivity();
+        // 🪞 local echo → the modal refreshes instantly (listener confirms after)
+        Object.keys(updates).forEach(function (k) {
+          if (k === 'visibility') currentRoom.visibility = updates[k];
+          else if (k === 'maxPlayers') currentRoom.maxPlayers = updates[k];
+          else if (k.indexOf('settings/') === 0) { currentRoom.settings = currentRoom.settings || {}; currentRoom.settings[k.slice(9)] = updates[k]; }
+        });
+        try { openRoomSettings(); } catch (e) {}
+        showNotification('Config loaded!');
+      } catch (e) { showNotification('Could not load this config.'); }
+    }
+    function deleteNamedCfg(id) {
+      storeNamedCfgs(loadNamedCfgs().filter(function (x) { return x.id !== id; }));
+      renderCfgLoadList();
+    }
 
     function onGameSelectChange() {
       hostGame = document.getElementById('gameSelect').value || 'guesswho';
+      // 💾 auto-restore this game's last played (or in-session) settings
+      try {
+        let snap = cfgSession[hostGame];
+        if (!snap) { const m = loadLastMap(); snap = m[hostGame] || null; }
+        if (snap) applyRoomConfig(snap);
+      } catch (e) {}
       // 🎮 highlight the matching mini card
       document.querySelectorAll('#hostGamePick .game-pick-card').forEach(function (c) { c.classList.toggle('selected', c.dataset.game === hostGame); });
       const isUc = hostGame === 'undercover';
@@ -1128,7 +1293,7 @@
           }
         }
         await database.ref('rooms/' + roomCode).set(roomData);
-        try { saveRoomDefaults(false); } catch (e) {} // 💾 remember this setup for next time
+        try { rememberLastFor(game); } catch (e) {} // 💾 auto-remember this game's setup
         setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;

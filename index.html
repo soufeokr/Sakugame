@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=29">
+<link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
 
@@ -267,6 +267,11 @@
   <div class="screen" id="hostRoomScreen">
     <div class="panel">
       <h2>Create Game Room</h2>
+      <!-- 💾📂 named configs — save the current game's settings, reload anytime -->
+      <div class="cfg-quick">
+        <button class="secondary small" onclick="openConfigSave()"><svg class="ic"><use href="#i-check"/></svg> Save</button>
+        <button class="secondary small" onclick="openConfigLoad()"><svg class="ic"><use href="#i-folder"/></svg> Load</button>
+      </div>
       <p>Configure your room settings</p>
       <!-- 🎮 One single screen — no tabs: pick a game card, tune below -->
       <div id="createTabRoom">
@@ -379,7 +384,6 @@
         </div>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
-      <button class="full secondary" style="margin-top: 10px;" onclick="saveRoomDefaultsBtn()"><svg class="ic"><use href="#i-check"/></svg> Save as my default</button>
       <button class="full back-btn" onclick="showPlayMenu()">← Back</button>
     </div>
   </div>
@@ -621,6 +625,11 @@
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
       <h2><svg class="ic"><use href="#i-gear"/></svg> Settings</h2>
+      <!-- 💾📂 named configs — save the room's current settings, reload anytime -->
+      <div class="cfg-quick">
+        <button class="secondary small" onclick="openConfigSave('room')"><svg class="ic"><use href="#i-check"/></svg> Save</button>
+        <button class="secondary small" onclick="openConfigLoad('room')"><svg class="ic"><use href="#i-folder"/></svg> Load</button>
+      </div>
       <!-- 🎮 One single view — no tabs: pick a game card, tune below -->
       <div id="settingsTabRoom">
         <div class="settings-section">
@@ -906,6 +915,29 @@
     </div>
   </div>
 
+  <!-- 💾 Save current settings — name it, keep it -->
+  <div class="modal" id="configSaveModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeConfigSave()">×</div>
+      <h2><svg class="ic"><use href="#i-check"/></svg> Save this config</h2>
+      <p style="color: var(--muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 18px;">Save the current settings for the selected game. Reload them later in one tap!</p>
+      <div class="input-group">
+        <label>Name</label>
+        <input type="text" id="cfgNameInput" placeholder="e.g. Race 5Q 2L" maxlength="30">
+      </div>
+      <button class="full success" onclick="confirmConfigSave()">Save</button>
+    </div>
+  </div>
+
+  <!-- 📂 Load a saved config -->
+  <div class="modal" id="configLoadModal">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+      <div class="modal-close" onclick="closeConfigLoad()">×</div>
+      <h2><svg class="ic"><use href="#i-folder"/></svg> Load a config</h2>
+      <div id="cfgLoadList" style="margin-top: 6px;"></div>
+    </div>
+  </div>
+
   <div class="modal" id="guessModal">
     <div class="modal-content">
       <h2>Confirm Your Guess</h2>
@@ -958,11 +990,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=29"></script>
-  <script src="animes.js?v=29"></script>
-  <script src="undercover.js?v=29"></script>
-  <script src="music.js?v=29"></script>
-  <script src="lang.js?v=29"></script>
-  <script src="app.js?v=29"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a30d468eaf208a1c',t:'MTc4NzY4ODk5OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=31"></script>
+  <script src="animes.js?v=31"></script>
+  <script src="undercover.js?v=31"></script>
+  <script src="music.js?v=31"></script>
+  <script src="lang.js?v=31"></script>
+  <script src="app.js?v=31"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a31d3b5229f0e19a',t:'MTc4Nzg1NjMxMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
