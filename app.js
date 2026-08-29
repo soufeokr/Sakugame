@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '35';
+    const SAKU_BUILD = '37';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -48,7 +48,27 @@
         found_secret: "{a} found {n}'s secret:",
         hc_direct: "🎯 DIRECT HIT! {n} WAS the secret — no scoring needed!",
         hc_round_word: "{c} guesses",
-        hc_top_plural: "{c} guesses logged"
+        hc_rescore: "0 = nothing alike · 100 = that's exactly it! If they're proposing <b>{s}</b>, just send 100 — otherwise answer honestly, it decides the round.",
+        hc_hide_you: "You <b>HIDE</b> this round — pick any character from the pool!",
+        hc_track: "Track down the secret — this is guess <b>#{c}</b>! Every score lands in your cumulative total.",
+        hc_wait_hide: "<b>{n}</b> is choosing the secret character…",
+        hc_wait_score: "<b>{n}</b> is scoring your proposal…",
+        hc_found: "<b>{n}</b> found the secret in <b>{c}</b> guesses!",
+        hc_reveal: "The secret was <b>{s}</b>.",
+        hc_continue_wait: "Waiting for <b>{n}</b> to start the next round…",
+        hc_done_found: "You found it in <b>{c}</b> guesses — <b>{t}</b> pts banked! Waiting for the others…",
+        hc_done_bust: "You're out of guesses — <b>{t}</b> pts banked. Waiting for the others…",
+        hc_ans_by: "<b>{n}</b>'s guess",
+        hc_win_total: "<b>{n}</b> tops the classement with <b>{t}</b> pts!",
+        hc_win_you_total: "Biggest cumulative total (<b>{t}</b> pts) — <b>you win the Hot & Cold!</b>",
+        hc_hidden_by: "hidden by {n}",
+        hc_start_round: "Start round {r} — you hide!",
+        hc_pts_found: "found it in {c}",
+        hc_pts_bust: "busted at {c}",
+        hc_pts_left: "dropped out",
+        hc_draw: "Dead even on totals — <b>it's a draw!</b>",
+        hc_wins_name: "<b>{n}</b> wins!",
+        hc_by_forfeit: "by forfeit — too many players left"
       }[id] || id;
       return String(en).replace(/\{(\w+)\}/g, function (m, k) { return (vars && (k in vars)) ? vars[k] : m; });
     }
@@ -151,13 +171,13 @@
         { t: 'Build your streak', d: 'Rounds chain and the leaderboard remembers everything. In multiplayer, the most consistent eye wins — learn studios, eras and art styles!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 24 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 19 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 14 pts</p></div>') }
       ]},
-      hotcold: { title: 'Guess Who — Hot & Cold', icon: 'target', players: '2 players', slides: [
-        { t: 'One hides, one hunts', d: 'The HIDER picks any character from the whole pool — the GUESSER sees nothing. Unlimited guesses… but every single one is counted!',
+      hotcold: { title: 'Guess Who — Hot & Cold', icon: 'target', players: '2-6 players', slides: [
+        { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
           s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
-        { t: 'Hot or cold, 0 to 100', d: 'After each guess, the hider scores how close it is: 0 = nothing alike (wrong series, wrong vibe)… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Be honest, the score decides the round!',
+        { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 10 tries).',
           s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
-        { t: 'Fewer guesses wins', d: 'Both of you hide once. Whoever finds the secret with the FEWEST guesses takes the duel — and a tiebreak round settles a draw. Aim precisely, every guess counts!',
-          s: htScene('<div class="mk-board-list"><p>' + htChip('You', 'ok') + ' found in 5 guesses</p><p>' + htChip('Aria', 'dim') + ' found in 7 guesses → You win!</p></div>') }
+        { t: 'Every guess grows your total', d: 'Everyone hides once! Your classement score is the SUM of all your scored guesses — smart guesses pay big, random stabs add crumbs. At the end of the rotation, the biggest cumulative total takes the match!',
+          s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 512 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 486 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 431 pts</p></div>') }
       ]}
     };
 
@@ -808,6 +828,7 @@
     //   & answers questions); the hunters race to find it first.
     const GAME_LABELS = { guesswho: 'Anime Guess Who?', undercover: 'Undercover', battle: 'Guess Who — Battle Royale', race: 'Guess Who — Race', blur: 'Blur Guess', hotcold: 'Guess Who — Hot & Cold' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
+    let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
     const RACE_DEFAULT_LIVES = 3;     // hunter wrong guesses before they're out (race)
     const RACE_DEFAULT_QUESTIONS = 8; // max questions each hunter may ask (race)
     let hostRaceLives = RACE_DEFAULT_LIVES;         // race option on the create-room screen
@@ -1017,7 +1038,7 @@
       return {
         game: (document.getElementById('gameSelect') || {}).value || hostGame || 'guesswho',
         visibility: roomVisibility || 'private', source: hostSource || 'generic',
-        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers,
+        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers,
         charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
         dist: clampN(document.getElementById('hostDistSlider').value, 0, 80, 12),
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
@@ -1040,6 +1061,8 @@
       // 👥 player counts
       multiMaxPlayers = clampN(cfg.multiMax, 3, 8, 6);
       document.getElementById('hostMultiMaxSlider').value = multiMaxPlayers; updateMultiMaxPlayers();
+      hcMaxPlayers = clampN(cfg.hcMax, 2, 6, 4);
+      document.getElementById('hostHcMaxSlider').value = hcMaxPlayers; updateHcMaxPlayers();
       ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
       document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
       // 🃏 pool + Guess Who board
@@ -1159,7 +1182,7 @@
       return {
         game: g, visibility: (currentRoom || {}).visibility === 'public' ? 'public' : 'private',
         source: currentSource() || 'generic',
-        ucMax: maxP, ucMw: !!s.mrWhite, multiMax: maxP,
+        ucMax: maxP, ucMw: !!s.mrWhite, multiMax: maxP, hcMax: clampN((currentRoom || {}).maxPlayers, 2, 6, 4),
         charCount: clampN(s.characterCount, 12, 80, 24),
         dist: clampN(s.distribution, 0, 80, 12),
         raceLives: clampN(s.raceLives, 1, 5, RACE_DEFAULT_LIVES),
@@ -1193,6 +1216,7 @@
           updates['settings/distribution'] = clampN(cfg.dist, 0, 80, 12);
         }
         if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
+        if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
         if (g === 'race') {
           updates['settings/raceLives'] = clampN(cfg.raceLives, 1, 5, RACE_DEFAULT_LIVES);
           updates['settings/raceQuestions'] = clampN(cfg.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS);
@@ -1236,7 +1260,7 @@
       const isBlur = hostGame === 'blur';
       // 🏠 Room tab: only ONE player-count control matches the game
       document.getElementById('hostGwPlayersHint').style.display = hostGame === 'guesswho' ? 'block' : 'none';
-      document.getElementById('hostHcPlayersHint').style.display = hostGame === 'hotcold' ? 'block' : 'none';
+      document.getElementById('hostHcMaxBlock').style.display = hostGame === 'hotcold' ? 'block' : 'none';
       document.getElementById('hostMultiMaxBlock').style.display = isMulti ? 'block' : 'none';
       document.getElementById('hostUcMaxBlock').style.display = isUc ? 'block' : 'none';
       // ⚙️ Game tab: pool for all but Undercover; Guess Who board settings for
@@ -1264,6 +1288,21 @@
     function updateMultiMaxPlayers() {
       multiMaxPlayers = parseInt(document.getElementById('hostMultiMaxSlider').value);
       document.getElementById('hostMultiMaxValue').textContent = multiMaxPlayers;
+    }
+    function updateHcMaxPlayers() {
+      hcMaxPlayers = parseInt(document.getElementById('hostHcMaxSlider').value, 10) || 4;
+      document.getElementById('hostHcMaxValue').textContent = hcMaxPlayers;
+    }
+    // 🌡️ Hot & Cold seat count (lobby settings modal): 2-6, never below the
+    // number of players already seated
+    async function updateModalHcMaxPlayers() {
+      const v = clampN(parseInt(document.getElementById('modalHcMaxSlider').value, 10), 2, 6, 4);
+      document.getElementById('modalHcMaxValue').textContent = v;
+      if (isHost && currentRoom && currentRoom.game === 'hotcold') {
+        const pc = Object.keys(currentRoom.players || {}).length;
+        await database.ref('rooms/' + roomCode + '/maxPlayers').set(Math.min(6, Math.max(Math.max(2, pc), v)));
+        touchActivity();
+      }
     }
     function updateRaceLivesSlider() {
       hostRaceLives = parseInt(document.getElementById('hostRaceLivesSlider').value);
@@ -1310,6 +1349,7 @@
           roomData.maxPlayers = ucMaxPlayers;
           roomData.settings = { mrWhite: ucMrWhite };
         } else {
+          if (game === 'hotcold') roomData.maxPlayers = Math.min(6, Math.max(2, hcMaxPlayers));
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
@@ -3506,7 +3546,15 @@
       syncModalGameCards();
       // 🏠 Room tab: exactly one player-count control per game
       document.getElementById('modalGwPlayersHint').style.display = game === 'guesswho' ? 'block' : 'none';
-      document.getElementById('modalHcPlayersHint').style.display = game === 'hotcold' ? 'block' : 'none';
+      const hcBox = document.getElementById('modalHcMaxBlock');
+      if (hcBox) {
+        hcBox.style.display = game === 'hotcold' ? 'block' : 'none';
+        if (game === 'hotcold') {
+          const hm = Math.min(6, Math.max(2, currentRoom.maxPlayers || 4));
+          document.getElementById('modalHcMaxSlider').value = hm;
+          document.getElementById('modalHcMaxValue').textContent = hm;
+        }
+      }
       const multiBox = document.getElementById('modalMultiMaxBlock');
       if (multiBox) {
         multiBox.style.display = isMulti ? 'block' : 'none';
@@ -3696,6 +3744,14 @@
       if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgMode').set(m); touchActivity(); }
     }
 
+    // Seats for a game given the room's current size: duels stay 2, Hot &
+    // Cold keeps 2-6, the real multi games keep 3-8 (defaults 6 / 2 when unset).
+    function seatsForGame(g) {
+      if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur') return ((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6;
+      if (g === 'hotcold') return Math.min(6, Math.max(2, currentRoom.maxPlayers || 2));
+      return 2;
+    }
+
     // ===== 🎮 CHANGE THE GAME FROM THE LOBBY (host) =====
     function modalGameChanged() {
       const sel = document.getElementById('modalGameSelect');
@@ -3706,8 +3762,7 @@
       if (newGame === cur) return;
       sel.value = cur; // revert until confirmed
       syncModalGameCards();
-      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race' || newGame === 'blur';
-      const seats = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
+      const seats = seatsForGame(newGame);
       const seatedCount = Object.keys(currentRoom.players || {}).length;
       const overflow = Math.max(0, seatedCount - seats);
       showInteraction('Change the game?', tPO('switch_game_q', { g: '<b>' + (GAME_LABELS[newGame] || newGame) + '</b>' }) + '<br><small>Everyone stays in the room — ready states reset.' + (overflow ? '<br>' + tPO('queue_warn', { s: seats, o: '<b>' + overflow + '</b>' }) : '') + '</small>', [
@@ -3719,8 +3774,7 @@
       if (!isHost || !currentRoom || !roomCode) return;
       const oldGame = currentRoom.game || 'guesswho';
       if (newGame === oldGame) return;
-      const isMultiNew = newGame === 'undercover' || newGame === 'battle' || newGame === 'race' || newGame === 'blur';
-      const newMax = isMultiNew ? (((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6) : 2;
+      const newMax = seatsForGame(newGame);
       const s = currentRoom.settings || {};
       const updates = { game: newGame, maxPlayers: newMax, restarts: null };
       // Per-game settings defaults (Undercover rooms have no pool settings…)
@@ -3760,18 +3814,40 @@
     }
 
     // ============================================================
-    // ===== 🌡️ GUESS WHO — HOT & COLD (2 players) ================
+    // ===== 🌡️ GUESS WHO — HOT & COLD (multiplayer, 2-6) ==========
     // ============================================================
-    // A duel: player A HIDES any character from the FULL pool; player B
-    // proposes characters and the hider scores each proposal 0-100 (how
-    // close it is to the secret). 100 = found → round over. Unlimited
-    // guesses, but every guess is COUNTED. Both hide once — whoever found
-    // the secret with the FEWER guesses wins the match; a tie triggers ONE
-    // tiebreak round (tie again = draw). Roles swap every round. In round
-    // 2+, the moment the guesser can no longer beat round 1's count (count
-    // reaches the target without finding), the match ends instantly
-    // ("busted") and the round's HIDER wins.
-    const hcPids = (room) => { const r = room || currentRoom; const hc = (r && r.hc) || {}; return [hc.hider, hc.guesser].filter(pid => pid && ((r.players || {})[pid])); };
+    // One player HIDES any character from the FULL pool; every other
+    // player hunts SIMULTANEOUSLY, each in their own lane — proposing
+    // characters one at a time while the hider scores each proposal
+    // 0-100 from a queue (exact hits auto-score 100, no manual pass).
+    // Each seeker stops when THEY find it (or bust at the attempt
+    // cap); the round closes when every active lane is done. Everyone
+    // hides once (full rotation); the classement score is the SUM of
+    // ALL your scored guesses — biggest cumulative total wins, a
+    // shared top total is a draw.
+    const HC_ATTEMPT_CAP = 10;
+    // Rotation seats (deal order — everyone hides once, in this order)
+    function hcOrderOf(room) {
+      const r = room || currentRoom; const hc = (r && r.hc) || {};
+      return Array.isArray(hc.order) && hc.order.length ? hc.order : Object.keys((r && r.players) || {});
+    }
+    // Seats still in the match (not returned to the lobby mid-game)
+    function hcActiveSeats(room) {
+      const r = room || currentRoom; const hc = (r && r.hc) || {}; const players = (r && r.players) || {};
+      return hcOrderOf(r).filter(pid => players[pid] && players[pid].outInGame !== hc.gameId);
+    }
+    const hcPids = (room) => hcActiveSeats(room); // seats eligible for Play-Again votes
+    // Classement winner: biggest cumulative total among the ACTIVE seats
+    function hcArgmax(seats, totals) {
+      let best = null; let tied = false;
+      (seats || []).forEach(pid => {
+        const t = (totals || {})[pid] || 0;
+        if (best == null || t > best.t) { best = { pid: pid, t: t }; tied = false; }
+        else if (t === best.t) tied = true;
+      });
+      if (!best) return 'draw';
+      return tied ? 'draw' : best.pid;
+    }
 
     // 🔎 Full searchable pool — same sources as Blur Guess (generic /
     // favorites / mix from the room settings + synced AniList accounts),
@@ -3943,8 +4019,9 @@
       if (box) box.style.display = 'none';
     }
 
-    // ----- the DEAL: 2 seated players, roles from the previous match's
-    // nextStarter (rematches alternate who hides first) or random ----------
+    // ----- the DEAL: every seated player plays (2-6). The hiding rotation
+    // is the shuffled seat order; a rematch keeps rotating (the old match's
+    // "next up" seat hides first). Everyone hides exactly once.
     let hcLaunching = false;
     async function hotcoldDeal() {
       if (hcLaunching) return;
@@ -3952,66 +4029,75 @@
       try {
         const snap = await database.ref('rooms/' + roomCode).once('value');
         const fresh = snap.val() || currentRoom || {};
-        const pids = Object.keys(fresh.players || {}).slice(0, 2);
-        if (pids.length !== 2) { showNotification('Hot & Cold needs exactly 2 players!'); return; }
+        const pids = Object.keys(fresh.players || {});
+        if (pids.length < 2) { showNotification('Hot & Cold needs at least 2 players!'); return; }
+        const order = pids.slice();
+        for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = order[i]; order[i] = order[j]; order[j] = t; }
         const prev = fresh.hc || {};
-        const starter = (prev.nextStarter && pids.indexOf(prev.nextStarter) !== -1) ? prev.nextStarter : pids[Math.floor(Math.random() * 2)];
+        const startIdx = prev.nextStarter ? order.indexOf(prev.nextStarter) : -1;
+        if (startIdx > 0) { const s0 = order.splice(startIdx, 1)[0]; order.unshift(s0); }
+        const sk = {}; order.forEach(pid => { if (pid !== order[0]) sk[pid] = { a: 0, s: 'on' }; });
+        const totals = {}; order.forEach(pid => { totals[pid] = 0; });
         const gameId = Date.now();
         await database.ref('rooms/' + roomCode).update({
           state: 'playing', characters: null, selections: null, restarts: null, winner: null,
           hc: {
-            gameId: gameId, round: 1, phase: 'select', starter: starter,
-            hider: starter, guesser: pids[0] === starter ? pids[1] : pids[0],
-            secret: null, pending: null, count: 0, guesses: null, rounds: null,
-            winner: null, forfeit: null, nextStarter: null
+            gameId: gameId, round: 1, phase: 'select', order: order, hider: order[0],
+            secret: null, queue: null, guesses: null, sk: sk, totals: totals,
+            rounds: null, winner: null, forfeit: null, nextStarter: null
           }
         });
         touchActivity();
       } finally { hcLaunching = false; }
     }
 
-    // 👁️ HIDER: stage a random secret from the whole pool (the 🎲 button)
     function hcRandomPick() {
-      const hc = (currentRoom && currentRoom.hc) || {};
-      if (hc.phase !== 'select' || playerId !== hc.hider) return;
       const pool = hcPoolChars();
-      if (!pool.length) return;
-      const c = pool[Math.floor(Math.random() * pool.length)];
-      const inp = document.getElementById('hcPickInput');
-      if (inp) inp.value = c.name || '';
-      hcStage('pick', c);
+      if (!pool.length) { showNotification('Character pool is empty!'); return; }
+      hcPickSug('pick', pool[Math.floor(Math.random() * pool.length)]);
     }
 
-    // 👁️ HIDER: confirm the staged secret → the hunt begins
+    // 👁️ HIDER: hide the staged character → every seeker's lane opens
     async function hcConfirmHide() {
       const hc = (currentRoom && currentRoom.hc) || {};
       if (!hcStagedPick) return;
       if (hc.phase !== 'select' || playerId !== hc.hider) { showNotification('Wait for your hiding turn!'); return; }
-      const entry = hcStagedPick;
-      await database.ref('rooms/' + roomCode + '/hc').update({ secret: entry, phase: 'waitguess', count: 0 });
+      await database.ref('rooms/' + roomCode + '/hc').update({ secret: hcStagedPick, phase: 'play' });
       touchActivity();
       showNotification('Secret hidden — the hunt begins!');
     }
 
-    // 🔍 GUESSER: propose the staged character → the hider must score it…
-    // …UNLESS the proposal IS the secret: that auto-scores 100 instantly,
-    // no manual scoring needed (the hider can't botch or stall a sure hit).
+    // 🔍 SEEKER: propose the staged character — one proposal in flight per
+    // seeker. A DIRECT HIT (exact character) auto-scores 100 instantly, no
+    // queue, no slider — the hider can't botch or stall a sure hit.
     async function hcConfirmGuess() {
       const hc = (currentRoom && currentRoom.hc) || {};
       if (!hcStagedGuess) return;
-      if (hc.phase !== 'waitguess' || playerId !== hc.guesser) return;
+      if (hc.phase !== 'play' || playerId === hc.hider) return;
+      const mySk = (hc.sk || {})[playerId];
+      if (!mySk || (mySk.s || 'on') !== 'on') { showNotification('Your lane is already closed for this secret!'); return; }
+      const queue = hc.queue || {};
+      const mine = Object.keys(queue).find(k => queue[k] && queue[k].by === playerId);
+      if (mine) { showNotification('One proposal at a time — yours is still waiting for a score!'); return; }
       const entry = hcStagedGuess;
       const sec = hc.secret || {};
       const directHit = (entry.id != null && sec.id != null && entry.id === sec.id)
         || (!!bgNorm(entry.name || '') && bgNorm(entry.name || '') === bgNorm(sec.name || ''));
       if (directHit) { // 🎯 auto-win: skip the scoring slider entirely
-        await hcResolveScore(100, entry);
+        await hcAwardScore(playerId, entry, 100, null);
         showNotification(tPO('hc_direct', { n: sec.name || entry.name || '?' }), 5000);
         return;
       }
-      await database.ref('rooms/' + roomCode + '/hc').update({ pending: entry, phase: 'answer' });
+      await database.ref('rooms/' + roomCode + '/hc/queue').push({
+        by: playerId, id: (entry.id != null ? entry.id : null),
+        name: entry.name || '?', image: entry.image || '', at: Date.now()
+      });
       touchActivity();
     }
+
+    // 📥 HIDER: the proposals queue — tap a card to load it into the slider
+    let hcQueueSel = null;
+    function hcQueueClick(k) { hcQueueSel = k; updateHotcold(); }
 
     // 🎚️ live slider label + color (ice blue → warm yellow → burning red)
     function hcScoreChanged() {
@@ -4024,65 +4110,108 @@
       if (box) box.style.setProperty('--hc-col', val >= 75 ? '#ff5252' : val >= 40 ? '#ffca3a' : '#29b6f6');
     }
 
-    // Shared resolution: log the scored guess + advance the round/match
-    // state machine. Called by the hider (manual slider score) AND directly
-    // by the guesser on a direct hit (auto-100 — see hcConfirmGuess).
-    // 100 = found (round/match logic); <100 logs the guess and hands the mic
-    // back to the guesser — unless they just BUSTED (round 2+: count reached
-    // round 1's count without finding → the hider wins the match).
-    async function hcResolveScore(score, entry) {
+    // 👁️ HIDER: send the manual 0-100 score for the selected proposal
+    async function hcSubmitScore() {
       const hc = (currentRoom && currentRoom.hc) || {};
-      const round = hc.round || 1;
-      const count = (hc.count || 0) + 1;
-      const target = (((hc.rounds || {}).r1) || {}).count || 0; // score to beat (rounds 2+)
-      const gk = 'g' + ('00' + count).slice(-3);
-      const upd = {
-        'hc/pending': null, 'hc/count': count,
-        ['hc/guesses/' + gk]: { name: (entry && entry.name) || '?', image: (entry && entry.image) || '', score: score, at: Date.now() }
+      if (hc.phase !== 'play' || playerId !== hc.hider || !hcQueueSel) return;
+      const q = (hc.queue || {})[hcQueueSel];
+      if (!q) return;
+      const s = document.getElementById('hcScoreSlider');
+      const score = Math.max(0, Math.min(100, s ? (parseInt(s.value, 10) || 0) : 50));
+      const key = hcQueueSel;
+      hcQueueSel = null;
+      await hcAwardScore(q.by, q, score, key);
+    }
+
+    // Round recap payload: who found it (in how many guesses), who busted,
+    // who dropped out — computed from that round's chronological guesses.
+    function hcRoundRecap(round, hc, guesses, sk) {
+      const keys = Object.keys(guesses || {}).filter(k => guesses[k] && guesses[k].r === round).sort();
+      const found = {}; const cnts = {};
+      keys.forEach(k => {
+        const g = guesses[k]; if (!g || !g.by) return;
+        cnts[g.by] = (cnts[g.by] || 0) + 1;
+        if (g.score >= 100 && found[g.by] == null) found[g.by] = cnts[g.by];
+      });
+      const bust = Object.keys(sk || {}).filter(pid => ((sk[pid] || {}).s === 'busted'));
+      const leftOut = Object.keys(sk || {}).filter(pid => ((sk[pid] || {}).s === 'left'));
+      return {
+        hider: hc.hider || null,
+        secretName: ((hc.secret || {}).name) || '', secretImg: ((hc.secret || {}).image) || '',
+        found: Object.keys(found).length ? found : null,
+        bust: bust.length ? bust : null,
+        leftOut: leftOut.length ? leftOut : null
       };
-      const roundsWon = { r1guesser: (((hc.rounds || {}).r1) || {}).guesser };
-      if (score >= 100) {
-        // 🎯 FOUND — record the round, then decide what happens next
-        upd['hc/rounds/r' + round] = { count: count, hider: hc.hider, guesser: hc.guesser, secret: hc.secret, found: true };
-        if (round === 1) { upd['hc/phase'] = 'roundEnd'; }
-        else if (round === 2) {
-          if (count < target) { upd['hc/phase'] = 'matchEnd'; upd['hc/winner'] = hc.guesser; upd['hc/nextStarter'] = roundsWon.r1guesser || hc.guesser; }
-          else { upd['hc/phase'] = 'roundEnd'; } // count === target → tiebreak round 3
+    }
+
+    // Shared score resolution: logs the scored guess, feeds the seeker's
+    // cumulative total, closes their lane on 100 (found) or at the attempt
+    // cap (busted) — and closes the ROUND when every active seeker's lane
+    // is done (last rotation round → matchEnd, winner = biggest total).
+    // Called by the hider (manual slider) and by a seeker (direct hit, 100).
+    async function hcAwardScore(seeker, entry, score, queueKey) {
+      score = Math.max(0, Math.min(100, parseInt(score, 10) || 0));
+      // fresh read — parallel resolvers (another seeker's auto-hit, the
+      // hider's late send) must never act on a stale snapshot
+      const fresh = ((await database.ref('rooms/' + roomCode).once('value')).val()) || currentRoom || {};
+      const hc = fresh.hc || {};
+      if (hc.phase !== 'play') { // stale score — just clear the queue item
+        if (queueKey) await database.ref('rooms/' + roomCode + '/hc/queue/' + queueKey).set(null);
+        return;
+      }
+      const sk0 = (hc.sk || {})[seeker] || { a: 0, s: 'on' };
+      if ((sk0.s || 'on') !== 'on') { // lane already closed (their auto-hit landed first)
+        if (queueKey) await database.ref('rooms/' + roomCode + '/hc/queue/' + queueKey).set(null);
+        return;
+      }
+      const round = hc.round || 1;
+      const attempts = (sk0.a || 0) + 1;
+      const status = score >= 100 ? 'found' : (attempts >= HC_ATTEMPT_CAP ? 'busted' : 'on');
+      const total = ((hc.totals || {})[seeker] || 0) + score;
+      const gKey = database.ref('rooms/' + roomCode + '/hc/guesses').push().key;
+      const gEntry = { by: seeker, name: (entry && entry.name) || '?', image: (entry && entry.image) || '', score: score, r: round, at: Date.now() };
+      const upd = {};
+      upd['hc/guesses/' + gKey] = gEntry;
+      upd['hc/sk/' + seeker + '/a'] = attempts;
+      upd['hc/sk/' + seeker + '/s'] = status;
+      upd['hc/totals/' + seeker] = total;
+      if (queueKey) upd['hc/queue/' + queueKey] = null;
+      // closure: every ACTIVE lane (minus the hider) done?
+      const skNext = Object.assign({}, hc.sk); skNext[seeker] = { a: attempts, s: status };
+      const active = hcActiveSeats(fresh);
+      const allDone = active.every(pid => pid === hc.hider || (((skNext[pid] || {}).s || 'on') !== 'on'));
+      if (allDone) {
+        const gAll = Object.assign({}, hc.guesses); gAll[gKey] = gEntry;
+        upd['hc/rounds/r' + round] = hcRoundRecap(round, hc, gAll, skNext);
+        const order = hcOrderOf(fresh);
+        if (round < order.length) {
+          upd['hc/phase'] = 'roundEnd';
         } else {
-          // round 3 (tiebreak): fewer wins, equal = draw
+          const tNext = Object.assign({}, hc.totals); tNext[seeker] = total;
           upd['hc/phase'] = 'matchEnd';
-          upd['hc/winner'] = count < target ? hc.guesser : 'draw';
-          upd['hc/nextStarter'] = roundsWon.r1guesser || hc.hider;
+          upd['hc/winner'] = hcArgmax(active, tNext);
+          upd['hc/nextStarter'] = order.length > 1 ? order[1] : null; // rematch: 2nd hider starts
         }
-      } else if (round > 1 && target && count >= target) {
-        // 💨 BUSTED — every further guess loses; the round's hider takes the match
-        upd['hc/rounds/r' + round] = { count: count, hider: hc.hider, guesser: hc.guesser, secret: hc.secret, found: false, busted: true };
-        upd['hc/phase'] = 'matchEnd'; upd['hc/winner'] = hc.hider; upd['hc/nextStarter'] = roundsWon.r1guesser || hc.hider;
-      } else {
-        upd['hc/phase'] = 'waitguess';
       }
       await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
     }
 
-    // 👁️ HIDER: send the manual 0-100 score (slider) — resolves via hcResolveScore.
-    async function hcSubmitScore() {
-      const hc = (currentRoom && currentRoom.hc) || {};
-      if (hc.phase !== 'answer' || playerId !== hc.hider || !hc.pending) return;
-      const s = document.getElementById('hcScoreSlider');
-      const score = Math.max(0, Math.min(100, s ? (parseInt(s.value, 10) || 0) : 50));
-      await hcResolveScore(score, hc.pending);
-    }
-
-    // ▶️ between rounds (only the NEXT hider — the round's guesser — can
-    // click, so no double-launch race): swap roles, wipe the round state
+    // ▶️ between rounds: only the NEXT hider in the rotation can launch
+    // their round (no double-launch race)
     async function hcContinue() {
       const hc = (currentRoom && currentRoom.hc) || {};
-      if (hc.phase !== 'roundEnd' || playerId !== hc.guesser) return;
+      if (hc.phase !== 'roundEnd') return;
+      const order = hcOrderOf();
+      const nextIdx = hc.round || 1; // next hider's seat in the rotation
+      const nextHider = order[nextIdx];
+      if (!nextHider || playerId !== nextHider) return;
+      const sk = {};
+      hcActiveSeats().forEach(pid => { if (pid !== nextHider) sk[pid] = { a: 0, s: 'on' }; });
+      if (!Object.keys(sk).length) return;
       await database.ref('rooms/' + roomCode + '/hc').update({
-        round: (hc.round || 1) + 1, phase: 'select',
-        hider: hc.guesser, guesser: hc.hider,
-        secret: null, pending: null, count: 0, guesses: null
+        round: nextIdx + 1, phase: 'select', hider: nextHider,
+        secret: null, queue: null, sk: sk
       });
       touchActivity();
     }
@@ -4099,27 +4228,92 @@
     async function launchHcRematch() {
       const end = document.getElementById('hcEndScreen');
       if (end) end.classList.remove('show');
-      await hotcoldDeal(); // hotcoldDeal clears restarts & alternates the first hider
+      await hotcoldDeal(); // hotcoldDeal clears restarts & rotates the first hider
     }
 
     function hcHeat(score) { return score >= 75 ? 'hc-hot' : score >= 40 ? 'hc-warm' : 'hc-cold'; }
     const hcNameOf = (players, pid) => ((players[pid] || {}).name) || '…';
 
-    // 🛡️ host backstop: a duel with fewer than 2 participants can't go on
+    // 🛡️ host backstop: departures mid-match. A seeker leaving just closes
+    // their lane ('left' = done; banked points stay in the classement); the
+    // hider leaving voids the current secret and rolls the rotation forward;
+    // under 2 active seats the match ends on the current totals (forfeit).
     let hcGuardFor = 0;
     function hcAbandonGuard(hc, players) {
-      if (!isHost || !hc.gameId || hc.phase === 'matchEnd' || hcGuardFor === hc.gameId) return;
-      const active = [hc.hider, hc.guesser].filter(pid => players[pid] && ((players[pid].outInGame || null) !== hc.gameId));
-      if (active.length >= 2) return;
-      hcGuardFor = hc.gameId;
-      const winPid = active[0] || null;
-      database.ref('rooms/' + roomCode + '/hc').update({
-        phase: 'matchEnd', winner: winPid || 'draw', forfeit: true, nextStarter: winPid || hc.hider
-      });
-      showNotification('Your opponent left the duel — you win by forfeit!');
+      if (!isHost || !hc.gameId || hc.phase === 'matchEnd' || hcGuardFor === hc.gameId || !Array.isArray(hc.order)) return;
+      const gameId = hc.gameId;
+      const order = hc.order;
+      const active = order.filter(pid => players[pid] && players[pid].outInGame !== gameId);
+      const left = order.filter(pid => players[pid] && players[pid].outInGame === gameId);
+      if (!left.length) return;
+      const upd = {};
+      let note = '';
+      // a seeker who left: close their open lane so the round can end
+      if (hc.phase === 'play') {
+        left.forEach(pid => {
+          const st = (hc.sk || {})[pid];
+          if (pid !== hc.hider && st && (st.s || 'on') === 'on') upd['hc/sk/' + pid + '/s'] = 'left';
+        });
+      }
+      if (active.length < 2) {
+        upd['hc/phase'] = 'matchEnd';
+        upd['hc/winner'] = hcArgmax(active, hc.totals || {});
+        upd['hc/forfeit'] = true;
+        upd['hc/nextStarter'] = null;
+        note = 'Too many players left — the match ends here.';
+      } else {
+        // the seat that must act next: the current hider (select/play) or
+        // the upcoming hider (roundEnd). If they bailed → roll forward.
+        const slot = hc.phase === 'roundEnd' ? (hc.round || 1) : (hc.round || 1) - 1;
+        const slotPid = order[slot];
+        if (slotPid != null && active.indexOf(slotPid) === -1) {
+          if (hc.phase === 'play') upd['hc/rounds/r' + (hc.round || 1)] = hcRoundRecap(hc.round || 1, hc, hc.guesses || {}, hc.sk || {}); // 'select' | 'roundEnd': nothing to recap / recap exists
+          let idx = slot + 1;
+          while (idx < order.length && active.indexOf(order[idx]) === -1) idx++;
+          if (idx >= order.length) {
+            upd['hc/phase'] = 'matchEnd';
+            upd['hc/winner'] = hcArgmax(active, hc.totals || {});
+            upd['hc/forfeit'] = true;
+            upd['hc/nextStarter'] = null;
+            note = 'The last hider left — the match ends on the current totals.';
+          } else {
+            const sk = {};
+            active.forEach(pid => { if (pid !== order[idx]) sk[pid] = { a: 0, s: 'on' }; });
+            upd['hc/round'] = idx + 1;
+            upd['hc/phase'] = 'select';
+            upd['hc/hider'] = order[idx];
+            upd['hc/secret'] = null;
+            upd['hc/queue'] = null;
+            upd['hc/sk'] = sk;
+            note = 'The hider left — the rotation moves on!';
+          }
+        } else if (hc.phase === 'play') {
+          // every open lane closed by departures? the round is over
+          const skNext = Object.assign({}, hc.sk);
+          left.forEach(pid => {
+            if (pid !== hc.hider && skNext[pid] && (skNext[pid].s || 'on') === 'on') skNext[pid] = Object.assign({}, skNext[pid], { s: 'left' });
+          });
+          const allDone = active.every(pid => pid === hc.hider || (((skNext[pid] || {}).s || 'on') !== 'on'));
+          if (allDone) {
+            upd['hc/rounds/r' + (hc.round || 1)] = hcRoundRecap(hc.round || 1, hc, hc.guesses || {}, skNext);
+            if ((hc.round || 1) < order.length) {
+              upd['hc/phase'] = 'roundEnd';
+            } else {
+              upd['hc/phase'] = 'matchEnd';
+              upd['hc/winner'] = hcArgmax(active, hc.totals || {});
+              upd['hc/nextStarter'] = order.length > 1 ? order[1] : null;
+            }
+            note = 'Round over — moving on!';
+          }
+        }
+      }
+      if (!Object.keys(upd).length) return;
+      hcGuardFor = gameId;
+      if (note) showNotification(note);
+      database.ref('rooms/' + roomCode).update(upd);
     }
 
-    // ----- main render: everything keys off hc.phase + my role ------------
+    // ----- main render: everything keys off hc.phase + my seat/role ------
     function updateHotcold() {
       const hc = (currentRoom && currentRoom.hc) || {};
       const players = (currentRoom && currentRoom.players) || {};
@@ -4127,145 +4321,201 @@
       if (!hc.gameId || meP.outInGame === hc.gameId) return;
       try { hcWireOnce(); } catch (e) {}
       const phase = hc.phase || 'select';
+      const order = hcOrderOf();
       const round = hc.round || 1;
       const iHider = playerId === hc.hider;
-      const iGuesser = playerId === hc.guesser;
-      const count = hc.count || 0;
+      const mySk = (hc.sk || {})[playerId] || null;
+      const myStatus = mySk ? (mySk.s || 'on') : null;
+      const myAttempts = (mySk && mySk.a) || 0;
+      const totals = hc.totals || {};
       hcAbandonGuard(hc, players);
 
-      // a phase hop (or a fresh deal) wipes local typing leftovers
-      const pk = hc.gameId + ':' + phase + ':' + round;
+      // a phase hop / new round / fresh deal wipes local typing leftovers
+      const pk = hc.gameId + ':' + phase + ':' + round + ':' + (hc.hider || '');
       if (pk !== hcLastPhaseKey) {
         hcLastPhaseKey = pk;
         ['pick', 'guess'].forEach(k => { hcClearStage(k); hcHideSug(k); const inp = document.getElementById(hcSug[k].inp); if (inp) inp.value = ''; });
+        hcQueueSel = null;
       }
 
       // badges
       const rBadge = document.getElementById('hcRoundBadge');
-      if (rBadge) rBadge.innerHTML = ic('target') + ' ' + (round >= 3 ? 'Tiebreak!' : 'Round ' + round + '/2');
+      if (rBadge) rBadge.innerHTML = ic('target') + ' Round ' + round + '/' + order.length;
       const roleBadge = document.getElementById('hcRoleBadge');
-      if (roleBadge) roleBadge.innerHTML = iHider ? (ic('eye') + ' You are the HIDER') : (ic('search') + ' You are the GUESSER');
+      if (roleBadge) roleBadge.innerHTML = iHider ? (ic('eye') + ' You are the HIDER') : (ic('search') + ' You are a SEEKER');
 
-      // the hider's secret strip (guesser never sees it)
+      // the hider's secret strip (seekers never see it)
       const strip = document.getElementById('hcSecretStrip');
       const showStrip = iHider && !!hc.secret;
       if (strip) strip.style.display = showStrip ? '' : 'none';
       if (showStrip) {
         const si = document.getElementById('hcSecretImg'); if (si) si.src = hc.secret.image || '';
         const sn = document.getElementById('hcSecretName'); if (sn) sn.textContent = hc.secret.name || '---';
-        const cc = document.getElementById('hcCountChip'); if (cc) cc.textContent = count;
+        const cc = document.getElementById('hcCountChip'); if (cc) cc.textContent = totals[playerId] || 0;
       }
+
+      // proposals queue (chrono via push keys) + my in-flight proposal
+      const queue = hc.queue || {};
+      const qKeys = Object.keys(queue).filter(k => queue[k]).sort();
+      const myQueueKey = qKeys.find(k => queue[k] && queue[k].by === playerId) || null;
 
       // action / waiting areas
       const showEl = (id, on) => { const el = document.getElementById(id); if (el) el.style.display = on ? '' : 'none'; };
       const doPick = phase === 'select' && iHider;
-      const doGuess = phase === 'waitguess' && iGuesser;
-      const doAnswer = phase === 'answer' && iHider;
+      const doGuess = phase === 'play' && !iHider && myStatus === 'on';
+      const doInflight = phase === 'play' && !iHider && myStatus === 'on' && !!myQueueKey;
+      const doQueue = phase === 'play' && iHider;
+      if (doQueue && (!hcQueueSel || !queue[hcQueueSel])) hcQueueSel = qKeys[0] || null;
+      if (!doQueue) hcQueueSel = null;
+      const selQ = (doQueue && hcQueueSel) ? queue[hcQueueSel] : null;
       showEl('hcPickArea', doPick);
-      showEl('hcGuessArea', doGuess);
-      showEl('hcAnswerArea', doAnswer);
-      if (doAnswer && hc.pending) {
-        const ak = (hc.pending.id != null ? hc.pending.id : hc.pending.name) + ':' + count;
-        if (ak !== hcAnsKey) { // a NEW proposal arrived → recentre the slider
-          hcAnsKey = ak;
-          const s = document.getElementById('hcScoreSlider'); if (s) s.value = 50;
-          hcScoreChanged();
-        }
-        const ai = document.getElementById('hcAnsImg'); if (ai) ai.src = hc.pending.image || '';
-        const an = document.getElementById('hcAnsName'); if (an) an.textContent = hc.pending.name || '---';
+      showEl('hcGuessArea', doGuess && !doInflight);
+      showEl('hcInflightArea', doInflight);
+      showEl('hcQueueArea', doQueue);
+      showEl('hcAnswerArea', !!selQ);
+      if (doInflight) {
+        const it = document.getElementById('hcInflightText');
+        if (it) it.innerHTML = tPO('hc_wait_score', { n: escapeHtml(hcNameOf(players, hc.hider)) });
       }
 
-      // banner (instructions / round results) + the generic waiting line
+      // the hider's queue cards (proposer + character), selected one loads
+      // into the scoring box
+      const qBox = document.getElementById('hcQueue');
+      if (doQueue && qBox) {
+        qBox.innerHTML = '';
+        if (!qKeys.length) {
+          const p = document.createElement('p');
+          p.style.cssText = 'text-align:center;color:var(--muted);margin:6px 0 0;';
+          p.textContent = window.t ? t('No proposals yet — the seekers are warming up…') : 'No proposals yet — the seekers are warming up…';
+          qBox.appendChild(p);
+        }
+        qKeys.forEach(k => {
+          const q = queue[k] || {};
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'hc-qcard' + (k === hcQueueSel ? ' sel' : '');
+          b.onclick = () => hcQueueClick(k);
+          const img = document.createElement('img');
+          img.src = q.image || ''; img.alt = ''; img.loading = 'lazy';
+          const info = document.createElement('div');
+          info.className = 'hc-qinfo';
+          const by = document.createElement('div');
+          by.className = 'hc-qby'; by.textContent = hcNameOf(players, q.by);
+          const nm = document.createElement('div');
+          nm.className = 'hc-qname'; nm.textContent = q.name || '?';
+          info.appendChild(by); info.appendChild(nm);
+          b.appendChild(img); b.appendChild(info);
+          qBox.appendChild(b);
+        });
+      }
+      if (selQ) { // scoring box mirrors the selected proposal
+        if (hcQueueSel !== hcAnsKey) { // new selection → recentre the slider
+          hcAnsKey = hcQueueSel;
+          const sEl = document.getElementById('hcScoreSlider'); if (sEl) sEl.value = 50;
+          hcScoreChanged();
+        }
+        const ai = document.getElementById('hcAnsImg'); if (ai) ai.src = selQ.image || '';
+        const an = document.getElementById('hcAnsName'); if (an) an.textContent = selQ.name || '---';
+        const al = document.getElementById('hcAnsLabel'); if (al) al.innerHTML = tPO('hc_ans_by', { n: escapeHtml(hcNameOf(players, selQ.by)) });
+        const ah = document.getElementById('hcAnswerHint');
+        if (ah) ah.innerHTML = tPO('hc_rescore', { s: escapeHtml(String((hc.secret && hc.secret.name) || '?')) });
+      }
+
+      // banner (instructions / round recap) + the generic waiting line
       const banner = document.getElementById('hcBanner');
       let bHtml = '';
       let wText = '';
       if (phase === 'select') {
         if (iHider) bHtml = tPO('hc_hide_you');
-        else wText = tPO('hc_wait_hide', { n: hcNameOf(players, hc.hider) });
-      } else if (phase === 'waitguess') {
-        if (iGuesser) bHtml = tPO('hc_track', { c: count + 1 });
-        else wText = tPO('hc_wait_guess', { n: hcNameOf(players, hc.guesser), c: count });
-      } else if (phase === 'answer') {
-        if (iGuesser) wText = tPO('hc_wait_score', { n: hcNameOf(players, hc.hider) });
+        else wText = tPO('hc_wait_hide', { n: escapeHtml(hcNameOf(players, hc.hider)) });
+      } else if (phase === 'play') {
+        if (doGuess) bHtml = tPO('hc_track', { c: myAttempts + 1 });
+        else if (myStatus === 'found') wText = tPO('hc_done_found', { c: myAttempts, t: totals[playerId] || 0 });
+        else if (myStatus === 'busted') wText = tPO('hc_done_bust', { t: totals[playerId] || 0 });
       } else if (phase === 'roundEnd') {
         const rr = (hc.rounds || {})['r' + round] || {};
-        if (round >= 2) bHtml = tPO('hc_tie', { c: rr.count || count });
-        else bHtml = tPO('hc_found', { n: hcNameOf(players, rr.guesser || hc.guesser), c: rr.count || count }) +
-          (rr.secret ? ' ' + tPO('hc_reveal', { s: escapeHtml(String(rr.secret.name || '')) }) : '');
-        if (iGuesser) { // roles swap → the round's guesser HIDES next and launches it
-          bHtml += '<br><button class="success" style="margin-top:10px;" onclick="hcContinue()">' +
-            (round >= 2 ? 'Start the tiebreak — you hide!' : 'Start round 2 — you hide!') + '</button>';
-        } else {
-          bHtml += '<br><small>' + tPO('hc_continue_wait', { n: hcNameOf(players, hc.guesser) }) + '</small>';
+        const bits = [];
+        if (rr.secretName) bits.push(tPO('hc_reveal', { s: escapeHtml(String(rr.secretName)) }));
+        const fMap = rr.found || {};
+        Object.keys(fMap).sort((a, b) => (fMap[a] || 0) - (fMap[b] || 0)).forEach(pid => {
+          bits.push(tPO('hc_found', { n: escapeHtml(hcNameOf(players, pid)), c: fMap[pid] }));
+        });
+        (rr.bust || []).forEach(pid => {
+          bits.push('<b>' + escapeHtml(hcNameOf(players, pid)) + '</b> ' + tPO('hc_pts_bust', { c: HC_ATTEMPT_CAP }));
+        });
+        (rr.leftOut || []).forEach(pid => {
+          bits.push('<b>' + escapeHtml(hcNameOf(players, pid)) + '</b> ' + tPO('hc_pts_left'));
+        });
+        bHtml = bits.join('<br>');
+        const nextHider = order[round]; // rotation seat for the next round
+        if (nextHider) {
+          if (playerId === nextHider) {
+            bHtml += '<br><button class="success" style="margin-top:10px;" onclick="hcContinue()">' +
+              tPO('hc_start_round', { r: round + 1 }) + '</button>';
+          } else {
+            bHtml += '<br><small>' + tPO('hc_continue_wait', { n: escapeHtml(hcNameOf(players, nextHider)) }) + '</small>';
+          }
         }
       }
       if (banner) { banner.innerHTML = bHtml; banner.style.display = bHtml ? '' : 'none'; }
       const wait = document.getElementById('hcWaitArea');
       const wEl = document.getElementById('hcWaitText');
-      if (wait) wait.style.display = wText && !doPick && !doGuess && !doAnswer && phase !== 'matchEnd' ? '' : 'none';
-      if (wEl && wText) wEl.textContent = wText;
+      if (wait) wait.style.display = wText && phase !== 'matchEnd' ? '' : 'none';
+      if (wEl && wText) wEl.innerHTML = wText;
 
-      // guesses log (current round, chronological)
+      // guesses log (current round, chronological across all seekers)
       const guesses = hc.guesses || {};
-      const keys = Object.keys(guesses).sort((a, b) => (parseInt(a.slice(1), 10) || 0) - (parseInt(b.slice(1), 10) || 0));
+      const gKeys = Object.keys(guesses).filter(k => guesses[k] && guesses[k].r === round).sort();
       const log = document.getElementById('hcLog');
       if (log) {
-        if (!keys.length) {
+        if (!gKeys.length) {
           log.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>';
         } else {
           log.innerHTML = '';
-          keys.forEach((k, i) => {
+          gKeys.forEach((k, i) => {
             const g = guesses[k] || {};
             const row = document.createElement('div');
             row.className = 'hc-row';
             const num = document.createElement('span'); num.className = 'hc-gnum'; num.textContent = '#' + (i + 1);
             const img = document.createElement('img'); img.className = 'hc-gimg'; img.src = g.image || ''; img.alt = ''; img.loading = 'lazy';
+            const texts = document.createElement('span'); texts.className = 'hc-gtexts';
+            const who = document.createElement('span'); who.className = 'hc-gwho'; who.textContent = hcNameOf(players, g.by);
             const nm = document.createElement('span'); nm.className = 'hc-gname'; nm.textContent = g.name || '?';
+            texts.appendChild(who); texts.appendChild(nm);
             const sc = document.createElement('span'); sc.className = 'hc-gnum ' + hcHeat(g.score || 0);
             sc.innerHTML = (g.score >= 100 ? ic('check') + ' ' : '') + (g.score != null ? g.score : '?');
-            row.appendChild(num); row.appendChild(img); row.appendChild(nm); row.appendChild(sc);
+            row.appendChild(num); row.appendChild(img); row.appendChild(texts); row.appendChild(sc);
             log.appendChild(row);
           });
         }
       }
-      // log titles (live count + language-aware re-render)
       const logTitle = document.getElementById('hcLogTitle');
-      if (logTitle) logTitle.innerHTML = ic('note') + ' ' + tPO('hc_round_word', { c: keys.length });
+      if (logTitle) logTitle.innerHTML = ic('note') + ' ' + tPO('hc_round_word', { c: gKeys.length });
 
-      // 🏆 BEST-GUESS RANKING — the round's guesses re-sorted by score
-      // (highest first, ties keep the earlier guess). Deduplicated by name,
-      // top 5, shown live as scores come in so players see their best shots.
-      const topTitle = document.getElementById('hcTopTitle');
-      if (topTitle) topTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Best guesses') : 'Best guesses');
-      const topWrap = document.getElementById('hcTopWrap');
-      const top = document.getElementById('hcTop');
-      if (top && topWrap) {
-        if (!keys.length) { topWrap.style.display = 'none'; top.innerHTML = ''; }
-        else {
-          const byScore = keys.map(k => guesses[k] || {}).filter(g => g.name)
-            .sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((a.at || 0) - (b.at || 0)));
-          const seenNm = {};
-          const unique = [];
-          for (let i = 0; i < byScore.length && unique.length < 5; i++) {
-            const nk = bgNorm(byScore[i].name || '');
-            if (!nk || seenNm[nk]) continue;
-            seenNm[nk] = 1; unique.push(byScore[i]);
-          }
-          top.innerHTML = '';
-          unique.forEach((g, i) => {
-            const row = document.createElement('div');
-            row.className = 'hc-row';
-            const rk = document.createElement('span'); rk.className = 'hc-rank'; rk.textContent = (i + 1) + '.';
-            const img = document.createElement('img'); img.className = 'hc-gimg'; img.src = g.image || ''; img.alt = ''; img.loading = 'lazy';
-            const nm = document.createElement('span'); nm.className = 'hc-gname'; nm.textContent = g.name || '?';
-            const sc = document.createElement('span'); sc.className = 'hc-gnum ' + hcHeat(g.score || 0);
-            sc.innerHTML = (g.score >= 100 ? ic('check') + ' ' : '') + (g.score != null ? g.score : '?');
-            row.appendChild(rk); row.appendChild(img); row.appendChild(nm); row.appendChild(sc);
-            top.appendChild(row);
-          });
-          top.title = tPO('hc_top_plural', { c: keys.length });
-          topWrap.style.display = '';
-        }
+      // 🏆 CLASSEMENT — Σ of every scored guess, biggest first; lane status
+      // chips show who's still hunting this round
+      const rankTitle = document.getElementById('hcRankTitle');
+      if (rankTitle) rankTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Ranking') : 'Ranking');
+      const rank = document.getElementById('hcRank');
+      if (rank) {
+        const seats = order.filter(pid => players[pid]);
+        const sorted = seats.slice().sort((a, b) => ((totals[b] || 0) - (totals[a] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
+        rank.innerHTML = '';
+        sorted.forEach((pid, i) => {
+          const p = players[pid] || {};
+          const out = p.outInGame === hc.gameId;
+          const st = ((hc.sk || {})[pid] || {}).s;
+          const row = document.createElement('div');
+          row.className = 'hc-row' + (pid === playerId ? ' hc-me' : '');
+          let tag = '';
+          if (out) tag = '<span class="hc-done-tag no">(' + (window.t ? t('(left)') : '(left)') + ')</span>';
+          else if (pid !== hc.hider && st === 'found') tag = '<span class="hc-done-tag ok">' + ic('check') + '</span>';
+          else if (pid !== hc.hider && st === 'busted') tag = '<span class="hc-done-tag no">×</span>';
+          row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'hc-av') +
+            '<span class="hc-gname">' + escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? ' (You)' : '') + tag + '</span>' +
+            '<span class="hc-gnum">' + (totals[pid] || 0) + '</span>';
+          rank.appendChild(row);
+        });
       }
 
       // end screen — only on top of the game screen, like the multi games
@@ -4276,43 +4526,62 @@
       hcRenderEnd(hc, players);
     }
 
-    // ----- end screen: title, per-round recap, Play Again counting --------
+    // ----- end screen: classement on cumulative totals + per-round recap --
     function hcRenderEnd(hc, players) {
       const end = document.getElementById('hcEndScreen');
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
+      const totals = hc.totals || {};
       const title = document.getElementById('hcWinTitle');
       const sub = document.getElementById('hcWinSub');
-      if (hc.forfeit) {
-        if (title) title.innerHTML = ic('trophy') + ' ' + 'Winner!';
-        const wName = hcNameOf(players, winner);
-        if (sub) sub.innerHTML = winner === playerId ? tPO('hc_forfeit_you') : tPO('hc_wins_name', { n: wName });
-      } else if (winner === 'draw') {
+      if (winner === 'draw') {
         if (title) title.innerHTML = ic('target') + ' ' + 'Draw!';
         if (sub) sub.innerHTML = tPO('hc_draw');
       } else {
         if (title) title.innerHTML = ic('trophy') + ' ' + 'Winner!';
-        if (sub) sub.innerHTML = winner === playerId ? tPO('hc_win_you') : tPO('hc_win_them', { n: hcNameOf(players, winner) });
+        if (sub) sub.innerHTML = winner === playerId ? tPO('hc_win_you_total', { t: totals[winner] || 0 })
+          : tPO('hc_win_total', { n: escapeHtml(hcNameOf(players, winner)), t: totals[winner] || 0 }) +
+            (hc.forfeit ? ' <small>(' + tPO('hc_by_forfeit') + ')</small>' : '');
       }
       const list = document.getElementById('hcEndList');
       if (list) {
         list.innerHTML = '';
-        const rKeys = Object.keys(hc.rounds || {}).sort((a, b) => (parseInt(a.slice(1), 10) || 0) - (parseInt(b.slice(1), 10) || 0));
-        rKeys.forEach(rk => {
-          const rr = (hc.rounds || {})[rk] || {};
-          const p = players[rr.guesser] || {};
+        const order = hcOrderOf();
+        const sorted = order.filter(pid => players[pid]).slice()
+          .sort((a, b) => ((totals[b] || 0) - (totals[a] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
+        sorted.forEach((pid, i) => {
+          const p = players[pid] || {};
+          const out = p.outInGame === hc.gameId;
           const row = document.createElement('div');
-          row.className = 'me-row' + (rr.guesser === playerId ? ' me' : '');
-          const tag = hcNameOf(players, rr.guesser) + (rr.guesser === playerId ? ' (You)' : '');
-          const pts = rr.found ? tPO('hc_pts_found', { c: rr.count }) : tPO('hc_pts_bust', { c: rr.count });
-          row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(tag)}</span><span class="me-pts">${pts}</span>`;
+          row.className = 'me-row' + (pid === playerId ? ' me' : '');
+          const crown = (winner !== 'draw' && pid === winner) ? ic('trophy') + ' ' : '';
+          const tag = escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? ' (You)' : '') + (out ? ' <small style="color:var(--muted);">(' + tPO('hc_pts_left') + ')</small>' : '');
+          row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + crown + tag + '</span><span class="me-pts">' + (totals[pid] || 0) + '</span>';
           list.appendChild(row);
+        });
+      }
+      const recap = document.getElementById('hcRoundsRecap');
+      if (recap) {
+        recap.innerHTML = '';
+        const rks = Object.keys(hc.rounds || {}).sort((a, b) => (parseInt(a.slice(1), 10) || 0) - (parseInt(b.slice(1), 10) || 0));
+        rks.forEach(rk => {
+          const rr = (hc.rounds || {})[rk] || {};
+          const num = parseInt(rk.slice(1), 10) || 0;
+          const names = (pids) => (pids || []).map(pid => escapeHtml(hcNameOf(players, pid))).join(', ');
+          let line = '<div><b>R' + num + '</b> — ';
+          line += rr.secretName ? '<b>' + escapeHtml(rr.secretName) + '</b> ' : '';
+          line += rr.hider ? '(' + tPO('hc_hidden_by', { n: escapeHtml(hcNameOf(players, rr.hider)) }) + ')' : '';
+          const founds = Object.keys(rr.found || {}).sort((a, b) => ((rr.found[a] || 0) - (rr.found[b] || 0)));
+          if (founds.length) line += ' · ✓ ' + names(founds);
+          if (rr.bust && rr.bust.length) line += ' · ✗ ' + names(rr.bust);
+          if (rr.leftOut && rr.leftOut.length) line += ' · ✗ ' + names(rr.leftOut) + ' (' + tPO('hc_pts_left') + ')';
+          recap.innerHTML += line + '</div>';
         });
       }
       // replay counting (same pattern as the multi games)
       const restarts = currentRoom.restarts || {};
       if (restarts[playerId]) end.classList.remove('show'); else end.classList.add('show');
-      const eligible = hcPids().filter(pid => (((players[pid] || {}).outInGame || null) !== hc.gameId));
+      const eligible = hcPids();
       const clicked = eligible.filter(pid => restarts[pid]).length;
       const statusEl = document.getElementById('hcRestartStatus');
       const btn = document.getElementById('hcRestartBtn');
@@ -4326,34 +4595,27 @@
       }
     }
 
-    // 🚪 leave the duel (To Lobby button): mid-game = forfeit, after the
-    // match = everyone goes back to a real lobby (queue can fill seats)
+    // 🚪 leave the match (To Lobby button): mid-game you keep your banked
+    // points but drop out of the classement race — after the match, the
+    // usual "everyone back to the lobby" flow
     async function returnToLobbyFromHotcold() {
       const hc = (currentRoom && currentRoom.hc) || {};
       const meP = ((currentRoom && currentRoom.players) || {})[playerId] || {};
       const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && hc.gameId && meP.outInGame !== hc.gameId;
       if (!inGame) { document.getElementById('hcEndScreen').classList.remove('show'); showScreen('lobbyScreen'); return; }
       if (hc.phase === 'matchEnd') {
-        showInteraction('Return to Lobby?', 'The duel is over — everyone goes back to the lobby.', [
+        showInteraction('Return to Lobby?', 'The match is over — everyone goes back to the lobby.', [
           { label: 'Stay here', onclick: () => { closeInteraction(); }, class: 'secondary' },
           { label: 'To Lobby', onclick: async () => { closeInteraction(); try { await returnToLobby(); } catch (e) {} }, class: 'danger' }
         ]);
         return;
       }
-      showInteraction('Leave the duel?', 'A duel needs both players — leaving now gives your opponent the win by forfeit.', [
-        { label: 'Stay in the duel', onclick: () => { closeInteraction(); }, class: 'secondary' },
+      showInteraction('Leave the match?', 'Your banked points stay, but you stop playing — you cannot win the classement anymore.', [
+        { label: 'Stay in the match', onclick: () => { closeInteraction(); }, class: 'secondary' },
         { label: 'To Lobby', onclick: async () => {
           closeInteraction();
           try {
-            const other = [hc.hider, hc.guesser].find(pid => pid && pid !== playerId);
-            const updates = {};
-            updates['rooms/' + roomCode + '/players/' + playerId + '/outInGame'] = hc.gameId;
-            updates['rooms/' + roomCode + '/players/' + playerId + '/ready'] = false;
-            updates['rooms/' + roomCode + '/hc/phase'] = 'matchEnd';
-            updates['rooms/' + roomCode + '/hc/winner'] = other || 'draw';
-            updates['rooms/' + roomCode + '/hc/forfeit'] = true;
-            updates['rooms/' + roomCode + '/hc/nextStarter'] = other || null;
-            await database.ref().update(updates);
+            await database.ref('rooms/' + roomCode + '/players/' + playerId).update({ outInGame: hc.gameId, ready: false });
           } catch (e) {}
           document.getElementById('hcEndScreen').classList.remove('show');
           showScreen('lobbyScreen');
