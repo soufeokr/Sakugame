@@ -773,6 +773,7 @@ var I18N = {
   "0 = nothing alike · 100 = exactly the one! Answer honestly — it decides the round.": { fr: "0 = rien à voir · 100 = exactement lui ! Répondez honnêtement — cela décide de la manche.", es: "0 = nada parecido · 100 = ¡exactamente ese! Responde con honestidad — decide la ronda." },
   "Send the score": { fr: "Envoyer la note", es: "Enviar la puntuación" },
   "Guesses": { fr: "Essais", es: "Intentos" },
+  "Best guesses": { fr: "Meilleurs essais", es: "Mejores intentos" },
   "Start round 2 — you hide!": { fr: "Manche 2 — à vous de cacher !", es: "Ronda 2 — ¡te toca esconder!" },
   "Start the tiebreak — you hide!": { fr: "Manche décisive — à vous de cacher !", es: "Desempate — ¡te toca esconder!" },
   "Secret hidden — the hunt begins!": { fr: "Secret caché — la chasse commence !", es: "¡Secreto escondido — empieza la caza!" },
@@ -788,7 +789,7 @@ var I18N = {
   "One hides, one hunts": { fr: "L'un cache, l'autre cherche", es: "Uno esconde, otro busca" },
   "The HIDER picks any character from the whole pool — the GUESSER sees nothing. Unlimited guesses… but every single one is counted!": { fr: "Le CACHEUR choisit n'importe quel personnage du pool entier — le CHERCHEUR ne voit rien. Essais illimités… mais chacun est compté !", es: "El ESCONDEDOR elige cualquier personaje de todo el pool — el ADIVINADOR no ve nada. ¡Intentos ilimitados… pero todos cuentan!" },
   "Hot or cold, 0 to 100": { fr: "Chaud ou froid, de 0 à 100", es: "Frío o caliente, de 0 a 100" },
-  "After each guess, the hider scores how close it is: 0 = nothing alike (wrong series, wrong vibe)… 90+ = so close it burns. Be honest, the score decides the round!": { fr: "Après chaque essai, le cacheur note la proximité : 0 = rien à voir (mauvaise série, mauvais style)… 90+ = si proche que ça brûle. Soyez honnête, la note décide de la manche !", es: "Tras cada intento, el escondedor puntúa la cercanía: 0 = nada parecido (serie equivocada, rollo equivocado)… 90+ = tan cerca que quema. ¡Sé honesto, la nota decide la ronda!" },
+  "After each guess, the hider scores how close it is: 0 = nothing alike (wrong series, wrong vibe)… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Be honest, the score decides the round!": { fr: "Après chaque essai, le cacheur note la proximité : 0 = rien à voir (mauvaise série, mauvais style)… 90+ = si proche que ça brûle. Un essai exact est trouvé instantanément — pas besoin de note ! Soyez honnête, la note décide de la manche !", es: "Tras cada intento, el escondedor puntúa la cercanía: 0 = nada parecido (serie equivocada, rollo equivocado)… 90+ = tan cerca que quema. ¡Un acierto exacto se detecta al instante — sin puntuación! Sé honesto, la nota decide la ronda!" },
   "Fewer guesses wins": { fr: "Le moins d'essais gagne", es: "Gana quien use menos intentos" },
   "Both of you hide once. Whoever finds the secret with the FEWEST guesses takes the duel — and a tiebreak round settles a draw. Aim precisely, every guess counts!": { fr: "Vous cachez chacun une fois. Celui qui trouve le secret avec le MOINS d'essais remporte le duel — et une manche décisive départage une égalité. Visez juste, chaque essai compte !", es: "Ambos esconden una vez. Quien encuentre el secreto con MENOS intentos gana el duelo — y una ronda de desempate rompe el empate. ¡Apunta bien, cada intento cuenta!" },
   "The hider's view (secret!)": { fr: "La vue du cacheur (secret !)", es: "La vista del escondedor (¡secreto!)" },
@@ -842,7 +843,10 @@ var I18N_PAT = {
   hc_forfeit_you:  { en: "Your opponent left the duel — <b>you win by forfeit!</b>", fr: "Votre adversaire a quitté le duel — <b>vous gagnez par forfait !</b>", es: "Tu rival abandonó el duelo — ¡<b>ganas por abandono!</b>" },
   hc_wins_name:    { en: "<b>{n}</b> wins!", fr: "<b>{n}</b> gagne !", es: "¡<b>{n}</b> gana!" },
   hc_pts_found:    { en: "found it in {c}", fr: "trouvé en {c}", es: "lo encontró en {c}" },
-  hc_pts_bust:     { en: "busted at {c}", fr: "bloqué à {c}", es: "se atascó en {c}" }
+  hc_pts_bust:     { en: "busted at {c}", fr: "bloqué à {c}", es: "se atascó en {c}" },
+  hc_direct:       { en: "🎯 DIRECT HIT! {n} WAS the secret — no scoring needed!", fr: "🎯 PLEIN DANS LE MILLE ! {n} ÉTAIT le secret — pas besoin de note !", es: "🎯 ¡DE LLENO! ¡{n} ERA el secreto — no hace falta puntuar!" },
+  hc_round_word:   { en: "{c} guesses", fr: "Essais ({c})", es: "Intentos ({c})" },
+  hc_top_plural:   { en: "{c} guesses logged", fr: "{c} essais enregistrés", es: "{c} intentos registrados" }
 };
 
 // Dynamic counter patterns: [regex, fr, es] with $1/$2 capture refs.
@@ -852,7 +856,9 @@ var I18N_RX = [
   [/^Blur stage (\d+)\/(\d+)$/, 'Niveau de flou $1/$2', 'Nivel de desenfoque $1/$2'],
   [/^\(stage (\d+)\)$/, '(niveau $1)', '(nivel $1)'],
   [/^\((\d+) remaining\)$/, '($1 restant(s))', '($1 restantes)'],
-  [/^\((\d+) votes\)$/, '($1 voix)', '($1 votos)']
+  [/^\((\d+) votes\)$/, '($1 voix)', '($1 votos)'],
+  [/^1 guess$/, '1 essai', '1 intento'],
+  [/^(\d+) guesses$/, 'Essais ($1)', 'Intentos ($1)']
 ];
 function rxTranslate(s) {
   if (LANG === 'en') return null;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="34">
+<meta name="saku-build" content="35">
 <title>Sakugame - Online Anime Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=35">
 </head>
 <body>
 
@@ -640,8 +640,10 @@
           <div class="uc-badge" id="hcRoundBadge"><svg class="ic"><use href="#i-target"/></svg> Round 1/2</div>
           <div class="uc-badge" id="hcRoleBadge"><svg class="ic"><use href="#i-search"/></svg> You are the GUESSER</div>
         </div>
-        <!-- hider's secret strip (guesser never sees it — the panel itself is hidden) -->
-        <div class="br-mysecret" id="hcSecretStrip" style="display: none;" onclick="this.classList.toggle('br-hide')" title="Tap to hide/show your secret">
+        <div class="hc-cols">
+          <div class="hc-play">
+            <!-- hider's secret strip (guesser never sees it — the panel itself is hidden) -->
+            <div class="br-mysecret" id="hcSecretStrip" style="display: none;" onclick="this.classList.toggle('br-hide')" title="Tap to hide/show your secret">
           <img id="hcSecretImg" src="" alt="">
           <div class="br-mysecret-info">
             <div class="br-mysecret-label"><svg class="ic"><use href="#i-eye"/></svg> Your secret — tap to hide</div>
@@ -703,9 +705,14 @@
           <p class="hc-hint" id="hcWaitText">Waiting…</p>
         </div>
 
-        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> Guesses</h3><div class="br-log hc-log" id="hcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
-        <div class="game-controls">
-          <button class="danger" onclick="returnToLobbyFromHotcold()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+            <div class="game-controls">
+              <button class="danger" onclick="returnToLobbyFromHotcold()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+            </div>
+          </div>
+          <div class="hc-side">
+            <div class="br-log-wrap" id="hcLogWrap"><h3 id="hcLogTitle"><svg class="ic"><use href="#i-note"/></svg> Guesses</h3><div class="br-log hc-log" id="hcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+            <div class="br-log-wrap" id="hcTopWrap" style="display: none;"><h3 id="hcTopTitle"><svg class="ic"><use href="#i-trophy"/></svg> Best guesses</h3><div class="br-log hc-log hc-top" id="hcTop"></div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1100,11 +1107,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=34"></script>
-  <script src="animes.js?v=34"></script>
-  <script src="undercover.js?v=34"></script>
-  <script src="music.js?v=34"></script>
-  <script src="lang.js?v=34"></script>
-  <script src="app.js?v=34"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a32cc96dbd08df75',t:'MTc4ODAxOTQxNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=35"></script>
+  <script src="animes.js?v=35"></script>
+  <script src="undercover.js?v=35"></script>
+  <script src="music.js?v=35"></script>
+  <script src="lang.js?v=35"></script>
+  <script src="app.js?v=35"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a32cec94bc68e288',t:'MTc4ODAyMDg1Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

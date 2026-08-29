@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '34';
+    const SAKU_BUILD = '35';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -45,7 +45,10 @@
         hunt_secret: "Hunt {n}'s secret before the others!",
         wait_question: "You are the TARGET — wait for {n}'s question…",
         wait_answer: "Waiting for {n}'s answer…",
-        found_secret: "{a} found {n}'s secret:"
+        found_secret: "{a} found {n}'s secret:",
+        hc_direct: "🎯 DIRECT HIT! {n} WAS the secret — no scoring needed!",
+        hc_round_word: "{c} guesses",
+        hc_top_plural: "{c} guesses logged"
       }[id] || id;
       return String(en).replace(/\{(\w+)\}/g, function (m, k) { return (vars && (k in vars)) ? vars[k] : m; });
     }
@@ -151,7 +154,7 @@
       hotcold: { title: 'Guess Who — Hot & Cold', icon: 'target', players: '2 players', slides: [
         { t: 'One hides, one hunts', d: 'The HIDER picks any character from the whole pool — the GUESSER sees nothing. Unlimited guesses… but every single one is counted!',
           s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
-        { t: 'Hot or cold, 0 to 100', d: 'After each guess, the hider scores how close it is: 0 = nothing alike (wrong series, wrong vibe)… 90+ = so close it burns. Be honest, the score decides the round!',
+        { t: 'Hot or cold, 0 to 100', d: 'After each guess, the hider scores how close it is: 0 = nothing alike (wrong series, wrong vibe)… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Be honest, the score decides the round!',
           s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
         { t: 'Fewer guesses wins', d: 'Both of you hide once. Whoever finds the secret with the FEWEST guesses takes the duel — and a tiebreak round settles a draw. Aim precisely, every guess counts!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('You', 'ok') + ' found in 5 guesses</p><p>' + htChip('Aria', 'dim') + ' found in 7 guesses → You win!</p></div>') }
@@ -3990,12 +3993,22 @@
       showNotification('Secret hidden — the hunt begins!');
     }
 
-    // 🔍 GUESSER: propose the staged character → the hider must score it
+    // 🔍 GUESSER: propose the staged character → the hider must score it…
+    // …UNLESS the proposal IS the secret: that auto-scores 100 instantly,
+    // no manual scoring needed (the hider can't botch or stall a sure hit).
     async function hcConfirmGuess() {
       const hc = (currentRoom && currentRoom.hc) || {};
       if (!hcStagedGuess) return;
       if (hc.phase !== 'waitguess' || playerId !== hc.guesser) return;
       const entry = hcStagedGuess;
+      const sec = hc.secret || {};
+      const directHit = (entry.id != null && sec.id != null && entry.id === sec.id)
+        || (!!bgNorm(entry.name || '') && bgNorm(entry.name || '') === bgNorm(sec.name || ''));
+      if (directHit) { // 🎯 auto-win: skip the scoring slider entirely
+        await hcResolveScore(100, entry);
+        showNotification(tPO('hc_direct', { n: sec.name || entry.name || '?' }), 5000);
+        return;
+      }
       await database.ref('rooms/' + roomCode + '/hc').update({ pending: entry, phase: 'answer' });
       touchActivity();
     }
@@ -4011,22 +4024,21 @@
       if (box) box.style.setProperty('--hc-col', val >= 75 ? '#ff5252' : val >= 40 ? '#ffca3a' : '#29b6f6');
     }
 
-    // 👁️ HIDER: send the 0-100 score. 100 = found (round/match logic),
-    // <100 logs the guess and hands the mic back to the guesser — unless
-    // the guesser just BUSTED (round 2+: count reached round 1's count
-    // without finding → can't win or tie → the hider wins the match).
-    async function hcSubmitScore() {
+    // Shared resolution: log the scored guess + advance the round/match
+    // state machine. Called by the hider (manual slider score) AND directly
+    // by the guesser on a direct hit (auto-100 — see hcConfirmGuess).
+    // 100 = found (round/match logic); <100 logs the guess and hands the mic
+    // back to the guesser — unless they just BUSTED (round 2+: count reached
+    // round 1's count without finding → the hider wins the match).
+    async function hcResolveScore(score, entry) {
       const hc = (currentRoom && currentRoom.hc) || {};
-      if (hc.phase !== 'answer' || playerId !== hc.hider || !hc.pending) return;
-      const s = document.getElementById('hcScoreSlider');
-      const score = Math.max(0, Math.min(100, s ? (parseInt(s.value, 10) || 0) : 50));
       const round = hc.round || 1;
       const count = (hc.count || 0) + 1;
       const target = (((hc.rounds || {}).r1) || {}).count || 0; // score to beat (rounds 2+)
       const gk = 'g' + ('00' + count).slice(-3);
       const upd = {
         'hc/pending': null, 'hc/count': count,
-        ['hc/guesses/' + gk]: { name: hc.pending.name || '?', image: hc.pending.image || '', score: score, at: Date.now() }
+        ['hc/guesses/' + gk]: { name: (entry && entry.name) || '?', image: (entry && entry.image) || '', score: score, at: Date.now() }
       };
       const roundsWon = { r1guesser: (((hc.rounds || {}).r1) || {}).guesser };
       if (score >= 100) {
@@ -4051,6 +4063,15 @@
       }
       await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
+    }
+
+    // 👁️ HIDER: send the manual 0-100 score (slider) — resolves via hcResolveScore.
+    async function hcSubmitScore() {
+      const hc = (currentRoom && currentRoom.hc) || {};
+      if (hc.phase !== 'answer' || playerId !== hc.hider || !hc.pending) return;
+      const s = document.getElementById('hcScoreSlider');
+      const score = Math.max(0, Math.min(100, s ? (parseInt(s.value, 10) || 0) : 50));
+      await hcResolveScore(score, hc.pending);
     }
 
     // ▶️ between rounds (only the NEXT hider — the round's guesser — can
@@ -4185,10 +4206,10 @@
       if (wEl && wText) wEl.textContent = wText;
 
       // guesses log (current round, chronological)
+      const guesses = hc.guesses || {};
+      const keys = Object.keys(guesses).sort((a, b) => (parseInt(a.slice(1), 10) || 0) - (parseInt(b.slice(1), 10) || 0));
       const log = document.getElementById('hcLog');
       if (log) {
-        const guesses = hc.guesses || {};
-        const keys = Object.keys(guesses).sort((a, b) => (parseInt(a.slice(1), 10) || 0) - (parseInt(b.slice(1), 10) || 0));
         if (!keys.length) {
           log.innerHTML = '<p style="text-align:center;color:var(--muted);">Nothing yet</p>';
         } else {
@@ -4205,6 +4226,45 @@
             row.appendChild(num); row.appendChild(img); row.appendChild(nm); row.appendChild(sc);
             log.appendChild(row);
           });
+        }
+      }
+      // log titles (live count + language-aware re-render)
+      const logTitle = document.getElementById('hcLogTitle');
+      if (logTitle) logTitle.innerHTML = ic('note') + ' ' + tPO('hc_round_word', { c: keys.length });
+
+      // 🏆 BEST-GUESS RANKING — the round's guesses re-sorted by score
+      // (highest first, ties keep the earlier guess). Deduplicated by name,
+      // top 5, shown live as scores come in so players see their best shots.
+      const topTitle = document.getElementById('hcTopTitle');
+      if (topTitle) topTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Best guesses') : 'Best guesses');
+      const topWrap = document.getElementById('hcTopWrap');
+      const top = document.getElementById('hcTop');
+      if (top && topWrap) {
+        if (!keys.length) { topWrap.style.display = 'none'; top.innerHTML = ''; }
+        else {
+          const byScore = keys.map(k => guesses[k] || {}).filter(g => g.name)
+            .sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((a.at || 0) - (b.at || 0)));
+          const seenNm = {};
+          const unique = [];
+          for (let i = 0; i < byScore.length && unique.length < 5; i++) {
+            const nk = bgNorm(byScore[i].name || '');
+            if (!nk || seenNm[nk]) continue;
+            seenNm[nk] = 1; unique.push(byScore[i]);
+          }
+          top.innerHTML = '';
+          unique.forEach((g, i) => {
+            const row = document.createElement('div');
+            row.className = 'hc-row';
+            const rk = document.createElement('span'); rk.className = 'hc-rank'; rk.textContent = (i + 1) + '.';
+            const img = document.createElement('img'); img.className = 'hc-gimg'; img.src = g.image || ''; img.alt = ''; img.loading = 'lazy';
+            const nm = document.createElement('span'); nm.className = 'hc-gname'; nm.textContent = g.name || '?';
+            const sc = document.createElement('span'); sc.className = 'hc-gnum ' + hcHeat(g.score || 0);
+            sc.innerHTML = (g.score >= 100 ? ic('check') + ' ' : '') + (g.score != null ? g.score : '?');
+            row.appendChild(rk); row.appendChild(img); row.appendChild(nm); row.appendChild(sc);
+            top.appendChild(row);
+          });
+          top.title = tPO('hc_top_plural', { c: keys.length });
+          topWrap.style.display = '';
         }
       }
 
