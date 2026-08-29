@@ -11,6 +11,21 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    // 🔢 BUILD STAMP — must match <meta saku-build> in index.html.
+    // If a stale index.html pairs with a fresh app.js (browser/Pages cache
+    // mix after an update), the new code would crash on missing elements —
+    // so we shout a loud "hard refresh!" warning instead of failing quietly.
+    const SAKU_BUILD = '33';
+    document.addEventListener('DOMContentLoaded', () => {
+      const m = document.querySelector('meta[name="saku-build"]');
+      const htmlBuild = m ? m.getAttribute('content') : null;
+      if (htmlBuild !== SAKU_BUILD) {
+        const msg = 'Cache mix detected (page build ' + (htmlBuild || '?') + ' ≠ app build ' + SAKU_BUILD + ') — please HARD REFRESH: Ctrl+Shift+R (phone: close the tab fully and reopen)!';
+        console.error('[Sakugame] ' + msg);
+        setTimeout(() => { try { showNotification(msg, 9000); } catch (e) { alert(msg); } }, 800);
+      }
+    });
+
     // ===== SVG ICON HELPER — inline UI icons from the sprite in index.html =====
     // Usage: ic('target') → <svg class="ic"><use href="#i-target"/></svg>
     // Icons inherit the text color (currentColor), so they always match.
