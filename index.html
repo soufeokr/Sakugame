@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=31">
+<link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
 
@@ -236,6 +236,13 @@
             <p>Solo or up to 8 players! A blurred character or anime cover slowly clears over 5 stages — name it as early as you can for big points. The fastest correct guesses score a speed bonus!</p>
           </div>
         </div>
+        <div class="game-card" onclick="openHowTo('hotcold')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('hotcold')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-target"/></svg></div>
+          <div class="game-card-content">
+            <h3>Guess Who — Hot & Cold</h3>
+            <p>2 players! One hides a character, the other names characters and after each guess gets a 0-100 closeness score. Find it in fewer guesses than your opponent!</p>
+          </div>
+        </div>
       </div>
       <div style="text-align: center; margin-top: 40px;">
         <button class="full back-btn" style="max-width: 300px;" onclick="goHome()">← Back to Home</button>
@@ -299,8 +306,12 @@
                 <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
                 <div class="game-pick-content"><h4>Undercover</h4><small>3-8 players</small></div>
               </div>
+              <div class="game-pick-card" data-game="hotcold" onclick="selectHostGame('hotcold')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
+                <div class="game-pick-content"><h4>Guess Who — Hot & Cold</h4><small>2 players</small></div>
+              </div>
             </div>
-            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option></select>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Guess Who — Hot & Cold (2 players)</option></select>
           </div>
           <div class="input-group">
             <label>Room Visibility</label>
@@ -310,6 +321,7 @@
             </div>
           </div>
           <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <p id="hostHcPlayersHint" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Guess Who — Hot & Cold is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="hostMultiMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
             <input type="range" id="hostMultiMaxSlider" min="3" max="8" value="6" oninput="updateMultiMaxPlayers()">
@@ -621,6 +633,99 @@
     </div>
   </div>
 
+  <!-- 🌡️ GUESS WHO — HOT & COLD (2 players): name characters, get a 0-100 closeness score -->
+  <div class="screen" id="hotcoldScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="uc-badge" id="hcRoundBadge"><svg class="ic"><use href="#i-target"/></svg> Round 1/2</div>
+          <div class="uc-badge" id="hcRoleBadge"><svg class="ic"><use href="#i-search"/></svg> You are the GUESSER</div>
+        </div>
+        <!-- hider's secret strip (guesser never sees it — the panel itself is hidden) -->
+        <div class="br-mysecret" id="hcSecretStrip" style="display: none;" onclick="this.classList.toggle('br-hide')" title="Tap to hide/show your secret">
+          <img id="hcSecretImg" src="" alt="">
+          <div class="br-mysecret-info">
+            <div class="br-mysecret-label"><svg class="ic"><use href="#i-eye"/></svg> Your secret — tap to hide</div>
+            <div class="br-mysecret-name" id="hcSecretName">---</div>
+          </div>
+          <div class="br-my-points" id="hcCountChip">0</div>
+        </div>
+        <div id="hcBanner" class="hc-banner" style="display: none;"></div>
+
+        <!-- 👁️ HIDER: pick the secret -->
+        <div class="question-box" id="hcPickArea" style="display: none;">
+          <p class="hc-hint">Pick any character from the pool and hide it — your opponent will feel their way to it!</p>
+          <div class="question-form">
+            <div class="bg-guess-wrap">
+              <input type="text" id="hcPickInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <div class="bg-suggest" id="hcPickSuggest"></div>
+            </div>
+            <button class="secondary" onclick="hcRandomPick()"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random</span></button>
+          </div>
+          <div class="hc-staged" id="hcPickStaged" style="display: none;">
+            <img id="hcPickStagedImg" src="" alt="">
+            <div class="hc-staged-info"><div class="hc-staged-label">Hide this one?</div><div class="hc-staged-name" id="hcPickStagedName">---</div></div>
+            <button class="success" onclick="hcConfirmHide()"><svg class="ic"><use href="#i-check"/></svg> <span class="btn-label">Hide it!</span></button>
+          </div>
+        </div>
+
+        <!-- 🔍 GUESSER: propose characters -->
+        <div class="question-box" id="hcGuessArea" style="display: none;">
+          <p class="hc-hint" id="hcGuessHint">Name a character — every answer earns a 0-100 closeness score!</p>
+          <div class="question-form">
+            <div class="bg-guess-wrap">
+              <input type="text" id="hcGuessInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <div class="bg-suggest" id="hcGuessSuggest"></div>
+            </div>
+          </div>
+          <div class="hc-staged" id="hcGuessStaged" style="display: none;">
+            <img id="hcGuessStagedImg" src="" alt="">
+            <div class="hc-staged-info"><div class="hc-staged-label">Your guess?</div><div class="hc-staged-name" id="hcGuessStagedName">---</div></div>
+            <button class="success" onclick="hcConfirmGuess()"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Propose it!</span></button>
+          </div>
+        </div>
+
+        <!-- 👁️ HIDER: score the guessed character -->
+        <div class="question-box" id="hcAnswerArea" style="display: none;">
+          <p class="hc-hint">Your opponent guessed:</p>
+          <div class="hc-staged"><img id="hcAnsImg" src="" alt="">
+            <div class="hc-staged-info"><div class="hc-staged-label">Their guess</div><div class="hc-staged-name" id="hcAnsName">---</div></div>
+          </div>
+          <div class="slider-container" id="hcScoreBox">
+            <div class="slider-label"><span>How close is it?</span><strong id="hcScoreValue">50</strong></div>
+            <input type="range" id="hcScoreSlider" min="0" max="100" value="50" oninput="hcScoreChanged()">
+          </div>
+          <p class="hc-hint" style="margin-top: -4px;">0 = nothing alike · 100 = exactly the one! Answer honestly — it decides the round.</p>
+          <button class="full success" onclick="hcSubmitScore()"><svg class="ic"><use href="#i-send"/></svg> Send the score</button>
+        </div>
+
+        <!-- ⏳ generic waiting banner -->
+        <div class="question-box" id="hcWaitArea" style="display: none;">
+          <p class="hc-hint" id="hcWaitText">Waiting…</p>
+        </div>
+
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> Guesses</h3><div class="br-log hc-log" id="hcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+        <div class="game-controls">
+          <button class="danger" onclick="returnToLobbyFromHotcold()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌡️ Hot & Cold end screen -->
+  <div class="winning-screen" id="hcEndScreen">
+    <div class="winner-card">
+      <h2 id="hcWinTitle"><svg class="ic"><use href="#i-trophy"/></svg> Winner!</h2>
+      <p id="hcWinSub" style="font-size: 1.05rem; font-weight: 800; margin-bottom: 10px;">---</p>
+    </div>
+    <div class="me-list" id="hcEndList"></div>
+    <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center;">
+      <button class="success" onclick="hcPlayAgain()" id="hcRestartBtn" style="padding: 14px 28px; font-size: 1rem;">Play Again</button>
+      <button class="danger" onclick="returnToLobbyFromWin()" style="padding: 14px 28px; font-size: 1rem;">Return to Lobby</button>
+    </div>
+    <p id="hcRestartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;"></p>
+  </div>
+
   <div class="modal" id="settingsModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
@@ -656,6 +761,10 @@
                 <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
                 <div class="game-pick-content"><h4>Undercover</h4><small>3-8 players</small></div>
               </div>
+              <div class="game-pick-card" data-game="hotcold" onclick="modalCardGame('hotcold')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
+                <div class="game-pick-content"><h4>Guess Who — Hot & Cold</h4><small>2 players</small></div>
+              </div>
             </div>
             <select id="modalGameSelect" style="display: none;" onchange="modalGameChanged()">
               <option value="guesswho">Anime Guess Who? (2 players)</option>
@@ -663,6 +772,7 @@
               <option value="race">Guess Who — Race (3-8 players)</option>
               <option value="blur">Blur Guess (solo or up to 8 players)</option>
               <option value="undercover">Undercover (3-8 players)</option>
+              <option value="hotcold">Guess Who — Hot & Cold (2 players)</option>
             </select>
           </div>
           <div class="input-group">
@@ -673,6 +783,7 @@
             </div>
           </div>
           <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <p id="modalHcPlayersHint" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Guess Who — Hot & Cold is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="modalMultiMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="modalMultiMaxValue">6</strong></div>
             <input type="range" id="modalMultiMaxSlider" min="3" max="8" value="6" oninput="updateModalMultiMaxPlayers()">
@@ -990,11 +1101,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=31"></script>
-  <script src="animes.js?v=31"></script>
-  <script src="undercover.js?v=31"></script>
-  <script src="music.js?v=31"></script>
-  <script src="lang.js?v=31"></script>
-  <script src="app.js?v=31"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a31d3b5229f0e19a',t:'MTc4Nzg1NjMxMA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=33"></script>
+  <script src="animes.js?v=33"></script>
+  <script src="undercover.js?v=33"></script>
+  <script src="music.js?v=33"></script>
+  <script src="lang.js?v=33"></script>
+  <script src="app.js?v=33"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a327a22a19d1ef9a',t:'MTc4Nzk2NTM4MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
