@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="39">
+<meta name="saku-build" content="40">
 <title>Sakugame - Online Anime Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=39">
+<link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 
@@ -340,7 +340,7 @@
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
           <div class="input-group">
             <div class="radio-group">
-              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div><small style="color: var(--muted);">1000 famous characters — no AniList needed</small></label>
+              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div><small style="color: var(--muted);">5000 famous characters — no AniList needed</small></label>
               <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
               <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
             </div>
@@ -619,8 +619,9 @@
         <div class="bg-img-wrap" id="bgImgWrap"><img id="bgImage" src="" alt="Mystery character"></div>
         <div class="bg-status" id="bgStatus">Who is this?!</div>
         <div class="question-form" id="bgGuessBar">
-          <div class="bg-guess-wrap">
+          <div class="bg-guess-wrap hc-has-rnd">
             <input type="text" id="bgGuessInput" placeholder="Type the character's name… (any name: Deku, Burdock…)" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <button class="hc-clr" type="button" onclick="bgClearGuessInput()" title="Clear"><svg class="ic"><use href="#i-x"/></svg></button>
             <div class="bg-suggest" id="bgSuggest"></div>
           </div>
           <button class="success" onclick="blurGuess()">Guess!</button>
@@ -665,6 +666,7 @@
               <button class="hc-rnd" onclick="hcRandomPick()" title="Random"><svg class="ic"><use href="#i-dice"/></svg></button>
               <div class="bg-suggest" id="hcPickSuggest"></div>
             </div>
+            <button class="secondary hc-rnd-big" onclick="hcRandomPick()"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random</span></button>
           </div>
           <div class="hc-staged" id="hcPickStaged" style="display: none;">
             <img id="hcPickStagedImg" src="" alt="">
@@ -677,8 +679,9 @@
         <div class="question-box" id="hcGuessArea" style="display: none;">
           <p class="hc-hint" id="hcGuessHint">Name a character — every answer earns a 0-100 closeness score!</p>
           <div class="question-form">
-            <div class="bg-guess-wrap">
+            <div class="bg-guess-wrap hc-has-rnd">
               <input type="text" id="hcGuessInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="hc-clr" type="button" onclick="hcClearGuessInput()" title="Clear"><svg class="ic"><use href="#i-x"/></svg></button>
               <div class="bg-suggest" id="hcGuessSuggest"></div>
             </div>
           </div>
@@ -1128,11 +1131,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=39"></script>
-  <script src="animes.js?v=39"></script>
-  <script src="undercover.js?v=39"></script>
-  <script src="music.js?v=39"></script>
-  <script src="lang.js?v=39"></script>
-  <script src="app.js?v=39"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a32fd7953ec1e18b',t:'MTc4ODA1MTQ1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=40"></script>
+  <script src="animes.js?v=40"></script>
+  <script src="undercover.js?v=40"></script>
+  <script src="music.js?v=40"></script>
+  <script src="lang.js?v=40"></script>
+  <script src="app.js?v=40"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a33448f72f0ae5bf',t:'MTc4ODA5ODA0MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

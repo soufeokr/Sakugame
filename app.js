@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '39';
+    const SAKU_BUILD = '40';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -2989,6 +2989,15 @@
       blurGuess();
     }
 
+    // ✕ Clear the Blur Guess input (little cross at the end of the typing space)
+    function bgClearGuessInput() {
+      const inp = document.getElementById('bgGuessInput');
+      if (!inp) return;
+      inp.value = '';
+      hideBgSuggest();
+      try { inp.focus(); } catch (_e) {}
+    }
+
     function updateBgSuggest() {
       const inp = document.getElementById('bgGuessInput');
       const box = document.getElementById('bgSuggest');
@@ -3942,10 +3951,20 @@
       hcWired = true;
     }
     function hcHideSug(kind) {
+
       const conf = hcSug[kind];
       const box = document.getElementById(conf.box);
       if (box) { box.classList.remove('show'); box.innerHTML = ''; }
       conf.hits = []; conf.idx = -1;
+    }
+    // ✕ Clear the seeker's guess input (little cross at the end of the typing space)
+    function hcClearGuessInput() {
+      const inp = document.getElementById('hcGuessInput');
+      if (!inp) return;
+      inp.value = '';
+      hcClearStage('guess');
+      hcHideSug('guess');
+      try { inp.focus(); } catch (_e) {}
     }
     function hcRenderSug(kind) {
       const conf = hcSug[kind];
