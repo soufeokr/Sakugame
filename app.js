@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '40';
+    const SAKU_BUILD = '41';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -175,7 +175,7 @@
       hotcold: { title: 'Guess Who — Hot & Cold', icon: 'target', players: '2-6 players', slides: [
         { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
           s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
-        { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 10 tries).',
+        { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 30 tries).',
           s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
@@ -3832,10 +3832,10 @@
     // 0-100 from a queue (exact hits auto-score 100, no manual pass).
     // Each seeker stops when THEY find it (or bust at the attempt
     // cap); the round closes when every active lane is done. Everyone
-    // hides once (full rotation); the classement score is the SUM of
-    // ALL your scored guesses — biggest cumulative total wins, a
-    // shared top total is a draw.
-    const HC_ATTEMPT_CAP = 10;
+    // hides once (full rotation); your score = the TOTAL NUMBER of
+    // guesses you made — the LOWEST count wins, a tie at the bottom is
+    // a draw (golf scoring).
+    const HC_ATTEMPT_CAP = 30; // a lane allows up to 30 proposals
     // Rotation seats (deal order — everyone hides once, in this order)
     function hcOrderOf(room) {
       const r = room || currentRoom; const hc = (r && r.hc) || {};
@@ -3929,6 +3929,7 @@
     let hcStagedPick = null;   // character the HIDER is about to hide
     let hcStagedGuess = null;  // character the GUESSER is about to propose
     let hcLastPhaseKey = '';   // phase watcher: clears stale local UI on changes
+    let hcLastLaneKey = '';    // my-lane watcher: wipes the guess box when the lane advances
     let hcAnsKey = '';         // pending-guess watcher: recentres the slider
 
     function hcWireOnce() {
@@ -4388,6 +4389,18 @@
       const doQueue = phase === 'play' && iHider;
       if (doQueue && (!hcQueueSel || !queue[hcQueueSel])) hcQueueSel = qKeys[0] || null;
       if (!doQueue) hcQueueSel = null;
+      // 🧹 seeker convenience: when MY lane advances (the hider scored my
+      // proposal, or my lane closed), wipe the typing space + staged card —
+      // don't resurrect the previous character in the box
+      {
+        const laneKey = round + '|' + myAttempts + '|' + (myStatus || '');
+        if (hcLastLaneKey && hcLastLaneKey !== laneKey && !iHider) {
+          const gi = document.getElementById('hcGuessInput');
+          if (gi) gi.value = '';
+          hcClearStage('guess'); hcHideSug('guess');
+        }
+        hcLastLaneKey = laneKey;
+      }
       const selQ = (doQueue && hcQueueSel) ? queue[hcQueueSel] : null;
       showEl('hcPickArea', doPick);
       showEl('hcGuessArea', doGuess && !doInflight);
@@ -4456,6 +4469,7 @@
       } else if (phase === 'roundEnd') {
         const rr = (hc.rounds || {})['r' + round] || {};
         const bits = [];
+        if (rr.secretImg) bits.push('<img class="hc-reveal-img" src="' + String(rr.secretImg) + '" alt="secret" loading="eager">');
         if (rr.secretName) bits.push(tPO('hc_reveal', { s: escapeHtml(String(rr.secretName)) }));
         const fMap = rr.found || {};
         Object.keys(fMap).sort((a, b) => (fMap[a] || 0) - (fMap[b] || 0)).forEach(pid => {
@@ -4630,6 +4644,7 @@
           const num = parseInt(rk.slice(1), 10) || 0;
           const names = (pids) => (pids || []).map(pid => escapeHtml(hcNameOf(players, pid))).join(', ');
           let line = '<div><b>R' + num + '</b> — ';
+          if (rr.secretImg) line += '<img class="hc-recap-img" src="' + String(rr.secretImg) + '" alt=""> ';
           line += rr.secretName ? '<b>' + escapeHtml(rr.secretName) + '</b> ' : '';
           line += rr.hider ? '(' + tPO('hc_hidden_by', { n: escapeHtml(hcNameOf(players, rr.hider)) }) + ')' : '';
           const founds = Object.keys(rr.found || {}).sort((a, b) => ((rr.found[a] || 0) - (rr.found[b] || 0)));

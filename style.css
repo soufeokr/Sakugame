@@ -693,11 +693,17 @@
      it can never sit under the suggestion dropdown — tap-through-proof) —
      the big labeled Random below is a PC-only convenience */
   .bg-guess-wrap.hc-has-rnd input { padding-right: 48px; }
-  .hc-rnd, .hc-clr { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 10px; border: 2px solid #2a2a4a; background: #1a1a2e; color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  /* pinned with FIXED offsets (no 50%/translateY) so the button can never
+     drift or jump — it stays glued to the end of the input row */
+  .hc-rnd, .hc-clr { position: absolute; right: 4px; top: 4px; width: 38px; height: 38px; border-radius: 10px; border: 2px solid #2a2a4a; background: #1a1a2e; color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex-shrink: 0; }
   .hc-rnd:hover, .hc-clr:hover { border-color: var(--accent); }
   @media (max-width: 700px) {
     .hc-rnd-big { display: none; }
   }
+  /* 🔓 revealed secret portraits: big card in the round banner, thumbnail
+     inside the match-end rounds recap */
+  .hc-reveal-img { display: block; width: 72px; height: 96px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); margin: 10px auto 4px; background: #0f0f1a; }
+  .hc-recap-img { width: 28px; height: 38px; object-fit: cover; border-radius: 5px; vertical-align: middle; background: #0f0f1a; }
   .hc-done-tag { font-weight: 900; font-size: 0.72rem; margin-left: 5px; }
   .hc-done-tag.ok { color: #00c853; }
   .hc-done-tag.no { color: #ff5252; }
