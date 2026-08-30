@@ -1,0 +1,6 @@
+# 🤖 SAKUGAME — crawler rules
+# Everyone welcome: this page is meant to be indexed.
+User-agent: *
+Allow: /
+
+Sitemap: https://soufeokr.github.io/Sakugame/sitemap.xml

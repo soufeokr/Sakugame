@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 🗺️ SAKUGAME sitemap — single-page app: the whole site lives on this URL.
+     Keep lastmod fresh whenever a new build ships (helps Google re-crawl). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://soufeokr.github.io/Sakugame/</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
