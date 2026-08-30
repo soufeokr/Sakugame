@@ -776,7 +776,9 @@ var I18N = {
   "Guesses": { fr: "Essais", es: "Intentos" },
   "Ranking": { fr: "Classement", es: "Clasificación" },
   "(left)": { fr: "(parti)", es: "(se fue)" },
-  "Nobody scored yet": { fr: "Personne n'a encore marqué", es: "Nadie ha puntuado todavía" },
+  "No guesses yet": { fr: "Aucun essai pour l'instant", es: "Sin intentos todavía" },
+  "Every guess counts — fewest wins!": { fr: "Chaque essai compte — le moins gagne !", es: "¡Cada intento cuenta — gana el menor!" },
+  "Best guesses": { fr: "Meilleurs essais", es: "Mejores intentos" },
   "No proposals yet — the seekers are warming up…": { fr: "Aucune proposition pour l'instant — les chercheurs s'échauffent…", es: "Sin propuestas todavía — los buscadores se están calentando…" },
   "Secret hidden — the hunt begins!": { fr: "Secret caché — la chasse commence !", es: "¡Secreto escondido — empieza la caza!" },
   "Wait for your hiding turn!": { fr: "Attendez votre tour de cacheur !", es: "¡Espera tu turno de esconder!" },
@@ -791,13 +793,13 @@ var I18N = {
   "The hider left — the rotation moves on!": { fr: "Le cacheur est parti — la rotation continue !", es: "El escondedor se fue — ¡la rotación continúa!" },
   "The last hider left — the match ends on the current totals.": { fr: "Le dernier cacheur est parti — la partie se termine sur les totaux actuels.", es: "El último escondedor se fue — la partida termina con los totales actuales." },
   "Round over — moving on!": { fr: "Manche terminée — on continue !", es: "¡Ronda terminada — seguimos!" },
-  "2-6 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess feeds your cumulative total — biggest total wins!": { fr: "2-6 joueurs ! L'un cache un personnage, tous les autres proposent des personnages à leur rythme et le cacheur note chacun de 0 à 100. Chaque essai alimente votre total cumulé — le plus gros total gagne !", es: "¡2-6 jugadores! Uno esconde un personaje, los demás proponen personajes a su ritmo y el escondedor puntúa cada uno de 0 a 100. ¡Cada intento alimenta tu total acumulado — gana el mayor total!" },
+  "2-6 players! One hides a character, everyone else proposes at their own pace and the hider scores each 0-100. Every guess counts — find each secret in the fewest total guesses to win!": { fr: "2-6 joueurs ! L'un cache un personnage, tous les autres proposent à leur rythme et le cacheur note chacun de 0 à 100. Chaque essai compte — trouvez chaque secret en le moins d'essais total pour gagner !", es: "¡2-6 jugadores! Uno esconde un personaje, los demás proponen a su ritmo y el escondedor puntúa cada uno de 0 a 100. ¡Cada intento cuenta — encuentra cada secreto en el menor total de intentos para ganar!" },
   "One hides, everyone hunts": { fr: "L'un cache, tous les autres cherchent", es: "Uno esconde, todos los demás buscan" },
   "The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.": { fr: "Le CACHEUR choisit n'importe quel personnage du pool entier. Tous les autres joueurs cherchent en même temps, chacun dans sa voie — en proposant des personnages à leur rythme, une proposition à la fois.", es: "El ESCONDEDOR elige cualquier personaje de todo el pool. Todos los demás jugadores cazan a la vez, cada uno en su vía — proponiendo personajes a su ritmo, una propuesta cada vez." },
   "Hot or cold, 0 to 100": { fr: "Chaud ou froid, de 0 à 100", es: "Frío o caliente, de 0 a 100" },
   "The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 10 tries).": { fr: "Le cacheur note chaque proposition : 0 = rien à voir… 90+ = si proche que ça brûle. Un essai exact est trouvé instantanément — pas besoin de note ! Chaque chercheur s'arrête quand IL trouve (ou après 10 essais).", es: "El escondedor puntúa cada propuesta: 0 = nada parecido… 90+ = tan cerca que quema. ¡Un acierto exacto se detecta al instante — sin puntuación! Cada buscador para cuando ÉL lo encuentra (o tras 10 intentos)." },
-  "Every guess grows your total": { fr: "Chaque essai fait grandir votre total", es: "Cada intento hace crecer tu total" },
-  "Everyone hides once! Your classement score is the SUM of all your scored guesses — smart guesses pay big, random stabs add crumbs. At the end of the rotation, the biggest cumulative total takes the match!": { fr: "Tout le monde cache une fois ! Votre score au classement est la SOMME de tous vos essais notés — les bons essais rapportent gros, les coups au hasard des miettes. À la fin de la rotation, le plus gros total cumulé remporte la partie !", es: "¡Todos esconden una vez! Tu puntuación en la clasificación es la SUMA de todos tus intentos puntuados — los buenos intentos pagan mucho, los golpes al azar suman migajas. ¡Al final de la rotación, el mayor total acumulado gana la partida!" },
+  "Fewer guesses wins": { fr: "Le moins d'essais gagne", es: "Gana quien adivina en menos intentos" },
+  "Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!": { fr: "Tout le monde cache une fois ! Votre score au classement = le NOMBRE TOTAL d'essais utilisés sur tous les secrets (16 + 14 essais = 30). Les notes ne font que guider — le plus PETIT nombre d'essais remporte la partie !", es: "¡Todos esconden una vez! Tu puntuación en la clasificación = el TOTAL de intentos usados en todos los secretos (16 + 14 intentos = 30). Las puntuaciones solo guían — ¡el total MÁS BAJO gana la partida!" },
   "The hider's view (secret!)": { fr: "La vue du cacheur (secret !)", es: "La vista del escondedor (¡secreto!)" },
   "They guessed: \"Naruto Uzumaki\"": { fr: "Ils ont proposé : \"Naruto Uzumaki\"", es: "Propusieron: \"Naruto Uzumaki\"" },
   "SCORE": { fr: "NOTE", es: "NOTA" },
@@ -805,6 +807,9 @@ var I18N = {
   "41 — lukewarm": { fr: "41 — tiède", es: "41 — tibio" },
   "5 — ice cold": { fr: "5 — glacial", es: "5 — helado" },
 
+  "with 30 guesses": { fr: "en 30 essais", es: "con 30 intentos" },
+  "with 34 guesses": { fr: "en 34 essais", es: "con 34 intentos" },
+  "with 41 guesses": { fr: "en 41 essais", es: "con 41 intentos" },
 };
 
 // ---- Assembled-sentence patterns (names inside sentences) ----------------
@@ -834,18 +839,18 @@ var I18N_PAT = {
   come_play:       { en: "a game", fr: "un jeu", es: "un juego" },
   // ---- v37 additions (Guess Who — Hot & Cold, multiplayer 2-6) ----
   hc_hide_you:     { en: "You <b>HIDE</b> this round — pick any character from the pool!", fr: "Vous <b>CACHEZ</b> dans cette manche — choisissez n'importe quel personnage du pool !", es: "Tú <b>ESCONDES</b> esta ronda — ¡elige cualquier personaje del pool!" },
-  hc_track:        { en: "Track down the secret — this is guess <b>#{c}</b>! Every score lands in your cumulative total.", fr: "Trouvez le secret — ceci est la proposition <b>n°{c}</b> ! Chaque note s'ajoute à votre total cumulé.", es: "Encuentra el secreto — esta es la suposición <b>n.º {c}</b>. ¡Cada puntuación se suma a tu total acumulado!" },
+  hc_track:        { en: "Track down the secret — this is guess <b>#{c}</b>! Scores only guide you — every guess counts 1, so find it in as few as possible!", fr: "Trouvez le secret — ceci est la proposition <b>n°{c}</b> ! Les notes ne font que guider — chaque essai compte 1, trouvez-le en le moins possible !", es: "Encuentra el secreto — esta es la suposición <b>n.º {c}</b>. ¡Las puntuaciones solo guían — cada intento cuenta 1, encuéntralo en los menos posibles!" },
   hc_wait_hide:    { en: "<b>{n}</b> is choosing the secret character…", fr: "<b>{n}</b> choisit le personnage secret…", es: "<b>{n}</b> está eligiendo el personaje secreto…" },
   hc_wait_score:   { en: "<b>{n}</b> is scoring your proposal…", fr: "<b>{n}</b> note votre proposition…", es: "<b>{n}</b> está puntuando tu propuesta…" },
   hc_found:        { en: "<b>{n}</b> found the secret in <b>{c}</b> guesses!", fr: "<b>{n}</b> a trouvé le secret en <b>{c}</b> essais !", es: "¡<b>{n}</b> encontró el secreto en <b>{c}</b> intentos!" },
   hc_reveal:       { en: "The secret was <b>{s}</b>.", fr: "Le secret était <b>{s}</b>.", es: "El secreto era <b>{s}</b>." },
   hc_continue_wait:{ en: "Waiting for <b>{n}</b> to start the next round…", fr: "En attente de <b>{n}</b> pour lancer la manche suivante…", es: "Esperando a que <b>{n}</b> empiece la siguiente ronda…" },
-  hc_done_found:   { en: "You found it in <b>{c}</b> guesses — <b>{t}</b> pts banked! Waiting for the others…", fr: "Vous l'avez trouvé en <b>{c}</b> essais — <b>{t}</b> pts en banque ! En attente des autres…", es: "Lo encontraste en <b>{c}</b> intentos — ¡<b>{t}</b> pts acumulados! Esperando a los demás…" },
-  hc_done_bust:    { en: "You're out of guesses — <b>{t}</b> pts banked. Waiting for the others…", fr: "Plus d'essais disponibles — <b>{t}</b> pts en banque. En attente des autres…", es: "Sin intentos — <b>{t}</b> pts acumulados. Esperando a los demás…" },
+  hc_done_found:   { en: "You found it in <b>{c}</b> guesses — <b>{t}</b> total so far! Waiting for the others…", fr: "Vous l'avez trouvé en <b>{c}</b> essais — <b>{t}</b> au total pour l'instant ! En attente des autres…", es: "¡Lo encontraste en <b>{c}</b> intentos — <b>{t}</b> en total hasta ahora! Esperando a los demás…" },
+  hc_done_bust:    { en: "Cap reached — <b>{t}</b> guesses on your total. Waiting for the others…", fr: "Limite atteinte — <b>{t}</b> essais sur votre total. En attente des autres…", es: "Límite alcanzado — <b>{t}</b> intentos en tu total. Esperando a los demás…" },
   hc_ans_by:       { en: "<b>{n}</b>'s guess", fr: "Proposition de <b>{n}</b>", es: "Propuesta de <b>{n}</b>" },
-  hc_win_you_total:{ en: "Biggest cumulative total (<b>{t}</b> pts) — <b>you win the Hot & Cold!</b>", fr: "Plus gros total cumulé (<b>{t}</b> pts) — <b>vous remportez le Hot & Cold !</b>", es: "Mayor total acumulado (<b>{t}</b> pts) — ¡<b>ganas el Hot & Cold!</b>" },
-  hc_win_total:    { en: "<b>{n}</b> tops the classement with <b>{t}</b> pts!", fr: "<b>{n}</b> domine le classement avec <b>{t}</b> pts !", es: "¡<b>{n}</b> encabeza la clasificación con <b>{t}</b> pts!" },
-  hc_draw:         { en: "Dead even on totals — <b>it's a draw!</b>", fr: "Égalité parfaite aux totaux — <b>match nul !</b>", es: "Empate total en puntos — ¡<b>es un empate!</b>" },
+  hc_win_you_total:{ en: "Fewest guesses (<b>{t}</b> total) — <b>you win the Hot & Cold!</b>", fr: "Le moins d'essais (<b>{t}</b> au total) — <b>vous remportez le Hot & Cold !</b>", es: "Menos intentos (<b>{t}</b> en total) — ¡<b>ganas el Hot & Cold!</b>" },
+  hc_win_total:    { en: "<b>{n}</b> wins with the fewest guesses — <b>{t}</b> total!", fr: "<b>{n}</b> gagne avec le moins d'essais — <b>{t}</b> au total !", es: "¡<b>{n}</b> gana con menos intentos — <b>{t}</b> en total!" },
+  hc_draw:         { en: "Dead even on guesses — <b>it's a draw!</b>", fr: "Égalité parfaite aux essais — <b>match nul !</b>", es: "Empate total en intentos — ¡<b>es un empate!</b>" },
   hc_wins_name:    { en: "<b>{n}</b> wins!", fr: "<b>{n}</b> gagne !", es: "¡<b>{n}</b> gana!" },
   hc_by_forfeit:   { en: "by forfeit — too many players left", fr: "par forfait — trop de joueurs sont partis", es: "por abandono — demasiados jugadores se fueron" },
   hc_pts_found:    { en: "found it in {c}", fr: "trouvé en {c}", es: "lo encontró en {c}" },
@@ -855,7 +860,8 @@ var I18N_PAT = {
   hc_rescore:      { en: "0 = nothing alike · 100 = that's exactly it! If they're proposing <b>{s}</b>, just send 100 — otherwise answer honestly, it decides the round.", fr: "0 = rien à voir · 100 = c'est exactement ça ! S'ils proposent <b>{s}</b>, envoyez 100 — sinon répondez honnêtement, cela décide de la manche.", es: "0 = nada parecido · 100 = ¡ese exacto! Si proponen <b>{s}</b>, envía 100 — si no, responde con honestidad, decide la ronda." },
   hc_round_word:   { en: "{c} guesses", fr: "Essais ({c})", es: "Intentos ({c})" },
   hc_hidden_by:    { en: "hidden by {n}", fr: "caché par {n}", es: "escondido por {n}" },
-  hc_start_round:  { en: "Start round {r} — you hide!", fr: "Manche {r} — à vous de cacher !", es: "Ronda {r} — ¡te toca esconder!" }
+  hc_start_round:  { en: "Start round {r} — you hide!", fr: "Manche {r} — à vous de cacher !", es: "Ronda {r} — ¡te toca esconder!" },
+  hc_top_plural:   { en: "{c} guesses logged", fr: "{c} essais enregistrés", es: "{c} intentos registrados" }
 
 };
 

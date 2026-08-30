@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '37';
+    const SAKU_BUILD = '38';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -50,25 +50,26 @@
         hc_round_word: "{c} guesses",
         hc_rescore: "0 = nothing alike · 100 = that's exactly it! If they're proposing <b>{s}</b>, just send 100 — otherwise answer honestly, it decides the round.",
         hc_hide_you: "You <b>HIDE</b> this round — pick any character from the pool!",
-        hc_track: "Track down the secret — this is guess <b>#{c}</b>! Every score lands in your cumulative total.",
+        hc_track: "Track down the secret — this is guess <b>#{c}</b>! Scores only guide you — every guess counts 1, so find it in as few as possible!",
         hc_wait_hide: "<b>{n}</b> is choosing the secret character…",
         hc_wait_score: "<b>{n}</b> is scoring your proposal…",
         hc_found: "<b>{n}</b> found the secret in <b>{c}</b> guesses!",
         hc_reveal: "The secret was <b>{s}</b>.",
         hc_continue_wait: "Waiting for <b>{n}</b> to start the next round…",
-        hc_done_found: "You found it in <b>{c}</b> guesses — <b>{t}</b> pts banked! Waiting for the others…",
-        hc_done_bust: "You're out of guesses — <b>{t}</b> pts banked. Waiting for the others…",
+        hc_done_found: "You found it in <b>{c}</b> guesses — <b>{t}</b> total so far! Waiting for the others…",
+        hc_done_bust: "Cap reached — <b>{t}</b> guesses on your total. Waiting for the others…",
         hc_ans_by: "<b>{n}</b>'s guess",
-        hc_win_total: "<b>{n}</b> tops the classement with <b>{t}</b> pts!",
-        hc_win_you_total: "Biggest cumulative total (<b>{t}</b> pts) — <b>you win the Hot & Cold!</b>",
+        hc_win_total: "<b>{n}</b> wins with the fewest guesses — <b>{t}</b> total!",
+        hc_win_you_total: "Fewest guesses (<b>{t}</b> total) — <b>you win the Hot & Cold!</b>",
         hc_hidden_by: "hidden by {n}",
         hc_start_round: "Start round {r} — you hide!",
         hc_pts_found: "found it in {c}",
         hc_pts_bust: "busted at {c}",
         hc_pts_left: "dropped out",
-        hc_draw: "Dead even on totals — <b>it's a draw!</b>",
+        hc_draw: "Dead even on guesses — <b>it's a draw!</b>",
         hc_wins_name: "<b>{n}</b> wins!",
-        hc_by_forfeit: "by forfeit — too many players left"
+        hc_by_forfeit: "by forfeit — too many players left",
+        hc_top_plural: "{c} guesses logged"
       }[id] || id;
       return String(en).replace(/\{(\w+)\}/g, function (m, k) { return (vars && (k in vars)) ? vars[k] : m; });
     }
@@ -176,8 +177,8 @@
           s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
         { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 10 tries).',
           s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
-        { t: 'Every guess grows your total', d: 'Everyone hides once! Your classement score is the SUM of all your scored guesses — smart guesses pay big, random stabs add crumbs. At the end of the rotation, the biggest cumulative total takes the match!',
-          s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 512 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 486 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 431 pts</p></div>') }
+        { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
+          s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]}
     };
 
@@ -3018,7 +3019,7 @@
         // CAN scroll the list with their finger. A row is picked only when the
         // finger LIFTS within 12px of where it landed (a real tap, not a swipe).
         // The 150ms blur-hide in the keydown wiring gives the tap time to land.
-        row.addEventListener('pointerdown', (e) => { row._psY = e.clientY; row._psX = e.clientX; });
+        row.addEventListener('pointerdown', (e) => { e.preventDefault(); row._psY = e.clientY; row._psX = e.clientX; }); // preventDefault: no ghost click through the closing dropdown
         row.addEventListener('pointerup', (e) => {
           if (row._psY == null) return;
           const moved = Math.abs(e.clientY - row._psY) + Math.abs(e.clientX - row._psX);
@@ -3837,12 +3838,13 @@
       return hcOrderOf(r).filter(pid => players[pid] && players[pid].outInGame !== hc.gameId);
     }
     const hcPids = (room) => hcActiveSeats(room); // seats eligible for Play-Again votes
-    // Classement winner: biggest cumulative total among the ACTIVE seats
-    function hcArgmax(seats, totals) {
+    // Classement winner: LOWEST cumulative guess count among the ACTIVE
+    // seats (golf scoring — every guess adds 1, fewest total takes it)
+    function hcLowestWinner(seats, totals) {
       let best = null; let tied = false;
       (seats || []).forEach(pid => {
         const t = (totals || {})[pid] || 0;
-        if (best == null || t > best.t) { best = { pid: pid, t: t }; tied = false; }
+        if (best == null || t < best.t) { best = { pid: pid, t: t }; tied = false; }
         else if (t === best.t) tied = true;
       });
       if (!best) return 'draw';
@@ -3965,7 +3967,7 @@
         row.appendChild(img); row.appendChild(nm);
         // 📱 Tap-guard (scroll-friendly): a row is picked only when the finger
         // LIFTS within 12px of where it landed (a real tap, not a swipe).
-        row.addEventListener('pointerdown', (e) => { row._psY = e.clientY; row._psX = e.clientX; });
+        row.addEventListener('pointerdown', (e) => { e.preventDefault(); row._psY = e.clientY; row._psX = e.clientX; }); // preventDefault: no ghost click through the closing dropdown
         row.addEventListener('pointerup', (e) => {
           if (row._psY == null) return;
           const moved = Math.abs(e.clientY - row._psY) + Math.abs(e.clientX - row._psX);
@@ -4167,7 +4169,7 @@
       const round = hc.round || 1;
       const attempts = (sk0.a || 0) + 1;
       const status = score >= 100 ? 'found' : (attempts >= HC_ATTEMPT_CAP ? 'busted' : 'on');
-      const total = ((hc.totals || {})[seeker] || 0) + score;
+      const total = ((hc.totals || {})[seeker] || 0) + 1;
       const gKey = database.ref('rooms/' + roomCode + '/hc/guesses').push().key;
       const gEntry = { by: seeker, name: (entry && entry.name) || '?', image: (entry && entry.image) || '', score: score, r: round, at: Date.now() };
       const upd = {};
@@ -4189,7 +4191,7 @@
         } else {
           const tNext = Object.assign({}, hc.totals); tNext[seeker] = total;
           upd['hc/phase'] = 'matchEnd';
-          upd['hc/winner'] = hcArgmax(active, tNext);
+          upd['hc/winner'] = hcLowestWinner(active, tNext);
           upd['hc/nextStarter'] = order.length > 1 ? order[1] : null; // rematch: 2nd hider starts
         }
       }
@@ -4257,7 +4259,7 @@
       }
       if (active.length < 2) {
         upd['hc/phase'] = 'matchEnd';
-        upd['hc/winner'] = hcArgmax(active, hc.totals || {});
+        upd['hc/winner'] = hcLowestWinner(active, hc.totals || {});
         upd['hc/forfeit'] = true;
         upd['hc/nextStarter'] = null;
         note = 'Too many players left — the match ends here.';
@@ -4272,7 +4274,7 @@
           while (idx < order.length && active.indexOf(order[idx]) === -1) idx++;
           if (idx >= order.length) {
             upd['hc/phase'] = 'matchEnd';
-            upd['hc/winner'] = hcArgmax(active, hc.totals || {});
+            upd['hc/winner'] = hcLowestWinner(active, hc.totals || {});
             upd['hc/forfeit'] = true;
             upd['hc/nextStarter'] = null;
             note = 'The last hider left — the match ends on the current totals.';
@@ -4300,7 +4302,7 @@
               upd['hc/phase'] = 'roundEnd';
             } else {
               upd['hc/phase'] = 'matchEnd';
-              upd['hc/winner'] = hcArgmax(active, hc.totals || {});
+              upd['hc/winner'] = hcLowestWinner(active, hc.totals || {});
               upd['hc/nextStarter'] = order.length > 1 ? order[1] : null;
             }
             note = 'Round over — moving on!';
@@ -4499,7 +4501,7 @@
       const rank = document.getElementById('hcRank');
       if (rank) {
         const seats = order.filter(pid => players[pid]);
-        const sorted = seats.slice().sort((a, b) => ((totals[b] || 0) - (totals[a] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
+        const sorted = seats.slice().sort((a, b) => ((totals[a] || 0) - (totals[b] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b)))); // golf: fewest guesses first
         rank.innerHTML = '';
         sorted.forEach((pid, i) => {
           const p = players[pid] || {};
@@ -4516,6 +4518,46 @@
             '<span class="hc-gnum">' + (totals[pid] || 0) + '</span>';
           rank.appendChild(row);
         });
+      }
+
+      // 🔥 BEST GUESSES of the round — everyone's shots re-sorted by the
+      // hider's 0-100 scores (highest first, ties keep the earlier one),
+      // name-deduped, top 5 with the proposer named — which proposals
+      // actually burned the closest
+      const topTitle = document.getElementById('hcTopTitle');
+      if (topTitle) topTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Best guesses') : 'Best guesses');
+      const topWrap = document.getElementById('hcTopWrap');
+      const top = document.getElementById('hcTop');
+      if (top && topWrap) {
+        if (!gKeys.length) { topWrap.style.display = 'none'; top.innerHTML = ''; }
+        else {
+          const byScore = gKeys.map(k => guesses[k] || {}).filter(g => g.name)
+            .sort((a, b) => ((b.score || 0) - (a.score || 0)) || ((a.at || 0) - (b.at || 0)));
+          const seenNm = {};
+          const unique = [];
+          for (let i = 0; i < byScore.length && unique.length < 5; i++) {
+            const nk = bgNorm(byScore[i].name || '');
+            if (!nk || seenNm[nk]) continue;
+            seenNm[nk] = 1; unique.push(byScore[i]);
+          }
+          top.innerHTML = '';
+          unique.forEach((g, i) => {
+            const row = document.createElement('div');
+            row.className = 'hc-row';
+            const rk = document.createElement('span'); rk.className = 'hc-rank'; rk.textContent = (i + 1) + '.';
+            const img = document.createElement('img'); img.className = 'hc-gimg'; img.src = g.image || ''; img.alt = ''; img.loading = 'lazy';
+            const texts = document.createElement('span'); texts.className = 'hc-gtexts';
+            const who = document.createElement('span'); who.className = 'hc-gwho'; who.textContent = hcNameOf(players, g.by);
+            const nm = document.createElement('span'); nm.className = 'hc-gname'; nm.textContent = g.name || '?';
+            texts.appendChild(who); texts.appendChild(nm);
+            const sc = document.createElement('span'); sc.className = 'hc-gnum ' + hcHeat(g.score || 0);
+            sc.innerHTML = (g.score >= 100 ? ic('check') + ' ' : '') + (g.score != null ? g.score : '?');
+            row.appendChild(rk); row.appendChild(img); row.appendChild(texts); row.appendChild(sc);
+            top.appendChild(row);
+          });
+          top.title = tPO('hc_top_plural', { c: gKeys.length });
+          topWrap.style.display = '';
+        }
       }
 
       // end screen — only on top of the game screen, like the multi games
@@ -4548,7 +4590,7 @@
         list.innerHTML = '';
         const order = hcOrderOf();
         const sorted = order.filter(pid => players[pid]).slice()
-          .sort((a, b) => ((totals[b] || 0) - (totals[a] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
+          .sort((a, b) => ((totals[a] || 0) - (totals[b] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
         sorted.forEach((pid, i) => {
           const p = players[pid] || {};
           const out = p.outInGame === hc.gameId;
@@ -4556,7 +4598,7 @@
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
           const crown = (winner !== 'draw' && pid === winner) ? ic('trophy') + ' ' : '';
           const tag = escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? ' (You)' : '') + (out ? ' <small style="color:var(--muted);">(' + tPO('hc_pts_left') + ')</small>' : '');
-          row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + crown + tag + '</span><span class="me-pts">' + (totals[pid] || 0) + '</span>';
+          row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + crown + tag + '</span><span class="me-pts">' + tPO('hc_round_word', { c: totals[pid] || 0 }) + '</span>';
           list.appendChild(row);
         });
       }
