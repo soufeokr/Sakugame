@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="38">
+<meta name="saku-build" content="39">
 <title>Sakugame - Online Anime Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=39">
 </head>
 <body>
 
@@ -660,11 +660,11 @@
         <div class="question-box" id="hcPickArea" style="display: none;">
           <p class="hc-hint">Pick any character from the pool and hide it — the seekers will feel their way to it!</p>
           <div class="question-form">
-            <div class="bg-guess-wrap">
+            <div class="bg-guess-wrap hc-has-rnd">
               <input type="text" id="hcPickInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="hc-rnd" onclick="hcRandomPick()" title="Random"><svg class="ic"><use href="#i-dice"/></svg></button>
               <div class="bg-suggest" id="hcPickSuggest"></div>
             </div>
-            <button class="secondary" onclick="hcRandomPick()"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random</span></button>
           </div>
           <div class="hc-staged" id="hcPickStaged" style="display: none;">
             <img id="hcPickStagedImg" src="" alt="">
@@ -717,6 +717,9 @@
         <div class="question-box" id="hcWaitArea" style="display: none;">
           <p class="hc-hint" id="hcWaitText">Waiting…</p>
         </div>
+
+            <!-- 🔥 horizontal BEST-GUESSES bar (this round, by 0-100 score) -->
+            <div id="hcTopWrap" style="display: none;"><h3 id="hcTopTitle"><svg class="ic"><use href="#i-trophy"/></svg> Best guesses</h3><div class="hc-topbar" id="hcTop"></div></div>
 
             <div class="game-controls">
               <button class="danger" onclick="returnToLobbyFromHotcold()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
@@ -1125,11 +1128,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=38"></script>
-  <script src="animes.js?v=38"></script>
-  <script src="undercover.js?v=38"></script>
-  <script src="music.js?v=38"></script>
-  <script src="lang.js?v=38"></script>
-  <script src="app.js?v=38"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a32fa56bcb943805',t:'MTc4ODA0OTM5OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=39"></script>
+  <script src="animes.js?v=39"></script>
+  <script src="undercover.js?v=39"></script>
+  <script src="music.js?v=39"></script>
+  <script src="lang.js?v=39"></script>
+  <script src="app.js?v=39"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a32fd7953ec1e18b',t:'MTc4ODA1MTQ1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

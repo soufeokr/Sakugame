@@ -666,10 +666,23 @@
   .hc-cls .hc-gnum { min-width: 2.6em; font-size: 1rem; }
   .hc-cls .hc-av { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; }
   .hc-rank-hint { display: block; color: var(--muted); font-size: 0.72rem; margin: -4px 0 8px; }
-  /* 🔥 best guesses of the round (the hider's 0-100 scores, best first) */
-  .hc-side .hc-log.hc-top { max-height: 26vh; }
-  .hc-top .hc-rank { width: 26px; text-align: right; font-weight: 900; font-size: 1rem; color: var(--muted); flex-shrink: 0; }
-  .hc-top .hc-row:nth-child(1) .hc-rank { color: #ff5252; font-size: 1.15rem; } /* hottest shot pops red */
+  /* 🔥 best-guesses HORIZONTAL bar — spans the play column width between the
+     action areas and the To Lobby button (frees the right column for the
+     classement + guess history) */
+  #hcTopWrap { margin-top: 16px; background: #0f0f1a; border-radius: 14px; padding: 12px 14px; }
+  #hcTopWrap h3 { color: var(--accent); font-size: 0.9rem; margin-bottom: 8px; }
+  .hc-topbar { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; }
+  .hc-tcard { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 12px; padding: 7px 10px; min-width: 160px; }
+  .hc-tcard .hc-rank { font-weight: 900; font-size: 1rem; color: var(--muted); flex-shrink: 0; }
+  .hc-tcard:nth-child(1) { border-color: rgba(255, 82, 82, 0.55); } /* hottest shot pops */
+  .hc-tcard:nth-child(1) .hc-rank { color: #ff5252; font-size: 1.15rem; }
+  .hc-tcard img { width: 34px; height: 44px; object-fit: cover; border-radius: 6px; background: #0f0f1a; flex-shrink: 0; }
+  .hc-tcard .hc-gnum { min-width: 2.4em; font-size: 1rem; }
+  /* 🎲 small Random button docked at the end of the hider's input —
+     it can never sit under the suggestion dropdown (phone tap-through fix) */
+  .bg-guess-wrap.hc-has-rnd input { padding-right: 48px; }
+  .hc-rnd { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 10px; border: 2px solid #2a2a4a; background: #1a1a2e; color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .hc-rnd:hover { border-color: var(--accent); }
   .hc-done-tag { font-weight: 900; font-size: 0.72rem; margin-left: 5px; }
   .hc-done-tag.ok { color: #00c853; }
   .hc-done-tag.no { color: #ff5252; }

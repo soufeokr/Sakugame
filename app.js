@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '38';
+    const SAKU_BUILD = '39';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4543,7 +4543,7 @@
           top.innerHTML = '';
           unique.forEach((g, i) => {
             const row = document.createElement('div');
-            row.className = 'hc-row';
+            row.className = 'hc-tcard';
             const rk = document.createElement('span'); rk.className = 'hc-rank'; rk.textContent = (i + 1) + '.';
             const img = document.createElement('img'); img.className = 'hc-gimg'; img.src = g.image || ''; img.alt = ''; img.loading = 'lazy';
             const texts = document.createElement('span'); texts.className = 'hc-gtexts';
