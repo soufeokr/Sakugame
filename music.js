@@ -104,6 +104,28 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
     } catch (e) {}
     audio.volume = volume;
 
+    // 📱 iOS Safari silently IGNORES audio.volume (Apple reserves output volume
+    // for the hardware buttons) — route the audio through a Web Audio GainNode
+    // so the volume bar actually changes the loudness on iPhone/iPad.
+    // The music files are same-origin, so MediaElementSource stays audible.
+    const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && (navigator.maxTouchPoints || 0) > 1);
+    let audioCtx = null, gainNode = null, gainReady = false;
+    function ensureGain() {
+      if (!IS_IOS || gainReady) return gainReady;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      try {
+        audioCtx = audioCtx || new AC();
+        const src = audioCtx.createMediaElementSource(audio); // one-shot per element
+        gainNode = audioCtx.createGain();
+        gainNode.gain.value = volume;
+        src.connect(gainNode); gainNode.connect(audioCtx.destination);
+        gainReady = true;
+      } catch (e) {}
+      return gainReady;
+    }
+
     // ----- play order (sequential with loop, or shuffled) -----
     let order = TRACKS.map((_, i) => i);
     let cursor = 0;
@@ -161,6 +183,8 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
     let playing = false;
     function tryStart() {
       if (playing) return;
+      ensureGain(); // gesture-time (autoplay policy): unlock/attach the iOS gain path
+      if (audioCtx && audioCtx.state === 'suspended') { try { audioCtx.resume().catch(() => {}); } catch (e) {} }
       audio.play().then(() => {
         playing = true;
         label.innerHTML = '<svg class="ic" aria-hidden="true" style="width:.95em;height:.95em;display:inline-block;vertical-align:-0.15em;flex-shrink:0"><use href="#i-music"/></svg> ' + trackNameOf(currentSrc()).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -173,7 +197,8 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
     function setVolume(v) {
       v = Math.max(0, Math.min(100, parseFloat(v) || 0));
       volume = v / 100;
-      audio.volume = volume;
+      if (gainReady && gainNode) gainNode.gain.value = volume; // 📱 iOS path
+      else audio.volume = volume;
       try { localStorage.setItem(VOLUME_KEY, String(volume)); } catch (e) {}
       document.querySelectorAll('.music-volume-slider').forEach(s => { s.value = String(v); });
     }

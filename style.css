@@ -704,6 +704,12 @@
      inside the match-end rounds recap */
   .hc-reveal-img { display: block; width: 72px; height: 96px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); margin: 10px auto 4px; background: #0f0f1a; }
   .hc-recap-img { width: 28px; height: 38px; object-fit: cover; border-radius: 5px; vertical-align: middle; background: #0f0f1a; }
+  /* 👁 password peek — the wrap keeps the eye glued to the end of the box
+     (wrap lives OUTSIDE the game forms, so it carries its own positioning;
+     the eye button itself reuses the pinned .hc-clr dock style) */
+  .pw-wrap { position: relative; flex: 1; min-width: 0; }
+  .pw-wrap input { padding-right: 48px !important; }
+  .pw-eye.pw-on { border-color: var(--accent); color: var(--accent); }
   .hc-done-tag { font-weight: 900; font-size: 0.72rem; margin-left: 5px; }
   .hc-done-tag.ok { color: #00c853; }
   .hc-done-tag.no { color: #ff5252; }

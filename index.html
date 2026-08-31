@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="41">
+<meta name="saku-build" content="42">
 <title>Sakugame — Free Online Anime Guessing Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -56,7 +56,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=41">
+<link rel="stylesheet" href="style.css?v=42">
 </head>
 <body>
 
@@ -968,7 +968,10 @@
         </div>
         <div class="input-group">
           <label>Password</label>
-          <input type="password" id="authPasswordInput" placeholder="At least 6 characters" maxlength="50" autocomplete="current-password">
+          <div class="pw-wrap">
+            <input type="password" id="authPasswordInput" placeholder="At least 6 characters" maxlength="50" autocomplete="current-password">
+            <button class="hc-clr pw-eye" type="button" onclick="togglePassword('authPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
+          </div>
         </div>
         <p id="authError"></p>
         <button class="full success" id="authLoginBtn" onclick="loginAccount()">Log In</button>
@@ -1034,10 +1037,16 @@
 
           <h4 class="profile-section-title"><svg class="ic"><use href="#i-lock"/></svg> Change Password</h4>
           <div class="input-group" style="margin-bottom: 8px;">
-            <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
+            <div class="pw-wrap">
+              <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
+              <button class="hc-clr pw-eye" type="button" onclick="togglePassword('currentPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
+            </div>
           </div>
           <div class="profile-row">
-            <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
+            <div class="pw-wrap">
+              <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
+              <button class="hc-clr pw-eye" type="button" onclick="togglePassword('newPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
+            </div>
             <button class="secondary" id="profilePasswordBtn" onclick="changeAccountPassword()">Update</button>
           </div>
 
@@ -1171,11 +1180,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=41"></script>
-  <script src="animes.js?v=41"></script>
-  <script src="undercover.js?v=41"></script>
-  <script src="music.js?v=41"></script>
-  <script src="lang.js?v=41"></script>
-  <script src="app.js?v=41"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a337b32b3f1a0109',t:'MTc4ODEzMzg0OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=42"></script>
+  <script src="animes.js?v=42"></script>
+  <script src="undercover.js?v=42"></script>
+  <script src="music.js?v=42"></script>
+  <script src="lang.js?v=42"></script>
+  <script src="app.js?v=42"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a33d4a497b6d6488',t:'MTc4ODE5MjQ2Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

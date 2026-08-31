@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '41';
+    const SAKU_BUILD = '42';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -175,7 +175,7 @@
       hotcold: { title: 'Guess Who — Hot & Cold', icon: 'target', players: '2-6 players', slides: [
         { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
           s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
-        { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 30 tries).',
+        { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 100 tries).',
           s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
@@ -625,6 +625,21 @@
         else showNotification(friendlyAuthError(e));
       }
       btn.disabled = false;
+    }
+
+    // 👁 Peek button next to password boxes: tap to reveal what's typed,
+    // tap again to mask — stays readable on every auth form (login/register
+    // + change password) without leaving the modal
+    function togglePassword(inputId, btn) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      if (btn) {
+        btn.classList.toggle('pw-on', show);
+        btn.title = show ? 'Hide password' : 'Show password';
+        btn.setAttribute('aria-label', btn.title);
+      }
     }
 
     // Lightweight AniList check (user exists + enough favorites) without full download
@@ -1670,7 +1685,8 @@
       if (gameNameEl) gameNameEl.innerHTML = ic(GAME_ICONS[currentRoom.game] || 'gamepad') + ' ' + (GAME_LABELS[currentRoom.game] || 'Anime Guess Who?');
       const isMultiGame = currentRoom.game === 'undercover' || currentRoom.game === 'battle' || currentRoom.game === 'race';
       const isBlurGame = currentRoom.game === 'blur';
-      const canStart = isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
+      const isHcGame = currentRoom.game === 'hotcold'; // 🔥 2-6 seats (multiplayer rework)
+      const canStart = isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
       // My own "you're waiting" banner + hide Ready while queued
       const qBanner = document.getElementById('queueBanner');
@@ -3835,7 +3851,7 @@
     // hides once (full rotation); your score = the TOTAL NUMBER of
     // guesses you made — the LOWEST count wins, a tie at the bottom is
     // a draw (golf scoring).
-    const HC_ATTEMPT_CAP = 30; // a lane allows up to 30 proposals
+    const HC_ATTEMPT_CAP = 100; // a lane allows up to 100 proposals (effectively unlimited — golf scoring charges 1 per guess)
     // Rotation seats (deal order — everyone hides once, in this order)
     function hcOrderOf(room) {
       const r = room || currentRoom; const hc = (r && r.hc) || {};
