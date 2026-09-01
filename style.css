@@ -704,6 +704,10 @@
      inside the match-end rounds recap */
   .hc-reveal-img { display: block; width: 72px; height: 96px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); margin: 10px auto 4px; background: #0f0f1a; }
   .hc-recap-img { width: 28px; height: 38px; object-fit: cover; border-radius: 5px; vertical-align: middle; background: #0f0f1a; }
+  /* 🔀 Hot & Cold guess-mode toggle (shared vs individual) in the host menu */
+  .hc-mode-row { display: flex; gap: 8px; }
+  .hc-mode-row .radio-option { flex: 1; margin-bottom: 0; padding: 12px 8px; }
+  .hc-mode-row .radio-option small { display: block; margin-top: 4px; }
   /* 👁 password peek — the wrap keeps the eye glued to the end of the box
      (wrap lives OUTSIDE the game forms, so it carries its own positioning;
      the eye button itself reuses the pinned .hc-clr dock style) */

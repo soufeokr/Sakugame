@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '42';
+    const SAKU_BUILD = '43';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -48,6 +48,8 @@
         found_secret: "{a} found {n}'s secret:",
         hc_direct: "🎯 DIRECT HIT! {n} WAS the secret — no scoring needed!",
         hc_round_word: "{c} guesses",
+        hc_log_mine: "My guesses ({c})",
+        hc_top_mine_tip: "{c} of your guesses logged",
         hc_rescore: "0 = nothing alike · 100 = that's exactly it! If they're proposing <b>{s}</b>, just send 100 — otherwise answer honestly, it decides the round.",
         hc_hide_you: "You <b>HIDE</b> this round — pick any character from the pool!",
         hc_track: "Track down the secret — this is guess <b>#{c}</b>! Scores only guide you — every guess counts 1, so find it in as few as possible!",
@@ -845,6 +847,12 @@
     const GAME_LABELS = { guesswho: 'Anime Guess Who?', undercover: 'Undercover', battle: 'Guess Who — Battle Royale', race: 'Guess Who — Race', blur: 'Blur Guess', hotcold: 'Guess Who — Hot & Cold' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
     let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
+    let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
+    function setHostHcMode(m) {
+      hostHcMode = m === 'individual' ? 'individual' : 'shared';
+      document.getElementById('hostHcModeShared').classList.toggle('selected', hostHcMode === 'shared');
+      document.getElementById('hostHcModeIndividual').classList.toggle('selected', hostHcMode === 'individual');
+    }
     const RACE_DEFAULT_LIVES = 3;     // hunter wrong guesses before they're out (race)
     const RACE_DEFAULT_QUESTIONS = 8; // max questions each hunter may ask (race)
     let hostRaceLives = RACE_DEFAULT_LIVES;         // race option on the create-room screen
@@ -1054,7 +1062,7 @@
       return {
         game: (document.getElementById('gameSelect') || {}).value || hostGame || 'guesswho',
         visibility: roomVisibility || 'private', source: hostSource || 'generic',
-        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers,
+        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode,
         charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
         dist: clampN(document.getElementById('hostDistSlider').value, 0, 80, 12),
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
@@ -1079,6 +1087,7 @@
       document.getElementById('hostMultiMaxSlider').value = multiMaxPlayers; updateMultiMaxPlayers();
       hcMaxPlayers = clampN(cfg.hcMax, 2, 6, 4);
       document.getElementById('hostHcMaxSlider').value = hcMaxPlayers; updateHcMaxPlayers();
+      if (cfg.hcMode) setHostHcMode(cfg.hcMode === 'individual' ? 'individual' : 'shared');
       ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
       document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
       // 🃏 pool + Guess Who board
@@ -1233,6 +1242,7 @@
         }
         if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
         if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
+        if (g === 'hotcold' && cfg.hcMode) updates['settings/hcMode'] = cfg.hcMode === 'individual' ? 'individual' : 'shared'; // legacy presets keep the room's current mode
         if (g === 'race') {
           updates['settings/raceLives'] = clampN(cfg.raceLives, 1, 5, RACE_DEFAULT_LIVES);
           updates['settings/raceQuestions'] = clampN(cfg.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS);
@@ -1368,6 +1378,7 @@
           if (game === 'hotcold') roomData.maxPlayers = Math.min(6, Math.max(2, hcMaxPlayers));
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
+          if (game === 'hotcold') roomData.settings.hcMode = hostHcMode; // 🔀 shared | individual guesses
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
           if (game === 'blur') {
@@ -4272,6 +4283,23 @@
     function hcHeat(score) { return score >= 75 ? 'hc-hot' : score >= 40 ? 'hc-warm' : 'hc-cold'; }
     const hcNameOf = (players, pid) => ((players[pid] || {}).name) || '…';
 
+    // 🔀 guess visibility — room setting settings/hcMode: 'shared' (default,
+    // everyone sees every scored proposal) | 'individual' (a seeker only ever
+    // sees THEIR OWN scored guesses; the hider keeps the full picture).
+    // NOTE: data-wise the whole room syncs to every client; privacy here is
+    // render-level. Round/match recaps never list other players' proposals,
+    // and the proposals queue has always been hider-only.
+    function hcGuessMode() { return (((currentRoom || {}).settings || {}).hcMode === 'individual') ? 'individual' : 'shared'; }
+    function hcVisibleGuesses(hc) {
+      const all = (hc || {}).guesses || {};
+      if (hcGuessMode() !== 'individual') return all;
+      if (playerId === (hc || {}).hider) return all;
+      if (!playerId) return {};
+      const own = {};
+      Object.keys(all).forEach(k => { const g = all[k]; if (g && g.by === playerId) own[k] = g; });
+      return own;
+    }
+
     // 🛡️ host backstop: departures mid-match. A seeker leaving just closes
     // their lane ('left' = done; banked points stay in the classement); the
     // hider leaving voids the current secret and rolls the rotation forward;
@@ -4514,8 +4542,9 @@
       if (wait) wait.style.display = wText && phase !== 'matchEnd' ? '' : 'none';
       if (wEl && wText) wEl.innerHTML = wText;
 
-      // guesses log (current round, chronological across all seekers)
-      const guesses = hc.guesses || {};
+      // guesses log (current round, chronological; 🔀 individual mode → seekers see ONLY their own)
+      const guesses = hcVisibleGuesses(hc);
+      const mineOnly = hcGuessMode() === 'individual' && playerId !== hc.hider && playerId && hc.phase !== 'select';
       const gKeys = Object.keys(guesses).filter(k => guesses[k] && guesses[k].r === round).sort();
       const log = document.getElementById('hcLog');
       if (log) {
@@ -4541,7 +4570,7 @@
         }
       }
       const logTitle = document.getElementById('hcLogTitle');
-      if (logTitle) logTitle.innerHTML = ic('note') + ' ' + tPO('hc_round_word', { c: gKeys.length });
+      if (logTitle) logTitle.innerHTML = ic('note') + ' ' + tPO(mineOnly ? 'hc_log_mine' : 'hc_round_word', { c: gKeys.length });
 
       // 🏆 CLASSEMENT — Σ of every scored guess, biggest first; lane status
       // chips show who's still hunting this round
@@ -4574,7 +4603,7 @@
       // name-deduped, top 5 with the proposer named — which proposals
       // actually burned the closest
       const topTitle = document.getElementById('hcTopTitle');
-      if (topTitle) topTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Best guesses') : 'Best guesses');
+      if (topTitle) topTitle.innerHTML = ic('trophy') + ' ' + (mineOnly ? (window.t ? t('My best guesses') : 'My best guesses') : (window.t ? t('Best guesses') : 'Best guesses'));
       const topWrap = document.getElementById('hcTopWrap');
       const top = document.getElementById('hcTop');
       if (top && topWrap) {
@@ -4604,7 +4633,7 @@
             row.appendChild(rk); row.appendChild(img); row.appendChild(texts); row.appendChild(sc);
             top.appendChild(row);
           });
-          top.title = tPO('hc_top_plural', { c: gKeys.length });
+          top.title = tPO(mineOnly ? 'hc_top_mine_tip' : 'hc_top_plural', { c: gKeys.length });
           topWrap.style.display = '';
         }
       }
