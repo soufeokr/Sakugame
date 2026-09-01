@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="43">
+<meta name="saku-build" content="44">
 <title>Sakugame — Free Online Anime Guessing Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -56,7 +56,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=43">
+<link rel="stylesheet" href="style.css?v=44">
 </head>
 <body>
 
@@ -383,11 +383,18 @@
       <div id="createTabGame">
         <div class="settings-section" id="hostPoolGroup">
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
-          <div class="input-group">
+          <div class="input-group" id="hostPoolSrcGwGroup">
             <div class="radio-group">
               <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div><small style="color: var(--muted);">5000 famous characters — no AniList needed</small></label>
               <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
               <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
+            </div>
+          </div>
+          <!-- 👀🎲 Hot & Cold + Blur Guess: simplified pool — Random (full website pool) vs Watched (only anime the synced AniList accounts have seen) -->
+          <div class="input-group" id="hostPoolSrcWatchGroup" style="display: none;">
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostPoolRandom" onclick="selectHostPool('random')"><input type="radio" name="pool" value="random" checked><div><svg class="ic"><use href="#i-dice"/></svg> Random</div><small style="color: var(--muted);">Every character &amp; cover on Sakugame</small></label>
+              <label class="radio-option" id="hostPoolWatched" onclick="selectHostPool('watched')"><input type="radio" name="pool" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div><small style="color: var(--muted);">Only from anime the synced accounts have watched</small></label>
             </div>
           </div>
         </div>
@@ -397,9 +404,10 @@
             <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
             <input type="range" id="hostCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateHostCharCount()">
           </div>
-          <div class="slider-container" id="hostDistContainer" style="display: none;">
-            <div class="slider-label"><span id="hostDistLabel">Distribution</span></div>
-            <input type="range" id="hostDistSlider" min="0" max="24" value="12" oninput="updateHostDist()">
+          <!-- 🔀 Mix split bar (was the distribution bar): only meaningful when the pool is Mix -->
+          <div class="slider-container" id="hostMixBlock" style="display: none;">
+            <div class="slider-label"><span id="hostMixLabel">Mix</span></div>
+            <input type="range" id="hostMixSlider" min="0" max="24" value="12" oninput="updateHostMix()">
           </div>
         </div>
         <div class="settings-section" id="hostUcSettings" style="display: none;">
@@ -873,11 +881,18 @@
       <div id="settingsTabGame">
         <div class="settings-section" id="modalPoolGroup">
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
-          <div class="input-group">
+          <div class="input-group" id="modalPoolSrcGwGroup">
             <div class="radio-group">
               <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div></label>
               <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div></label>
               <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div></label>
+            </div>
+          </div>
+          <!-- 👀🎲 Hot & Cold + Blur Guess: Random vs Watched pool -->
+          <div class="input-group" id="modalPoolSrcWatchGroup" style="display: none;">
+            <div class="radio-group">
+              <label class="radio-option" id="modalPoolRandom" onclick="changePool('random')"><div><svg class="ic"><use href="#i-dice"/></svg> Random</div></label>
+              <label class="radio-option" id="modalPoolWatched" onclick="changePool('watched')"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
             </div>
           </div>
         </div>
@@ -887,9 +902,10 @@
             <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
             <input type="range" id="modalCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateModalCharCount()">
           </div>
-          <div class="slider-container" id="modalDistContainer" style="display: none;">
-            <div class="slider-label"><span id="modalDistLabel">Distribution</span></div>
-            <input type="range" id="modalDistSlider" min="0" max="24" value="12" oninput="updateModalDist()">
+          <!-- 🔀 Mix split bar (Guess Who games only, when pool = Mix) -->
+          <div class="slider-container" id="modalMixBlock" style="display: none;">
+            <div class="slider-label"><span id="modalMixLabel">Mix</span></div>
+            <input type="range" id="modalMixSlider" min="0" max="24" value="12" oninput="updateModalMix()">
           </div>
         </div>
         <div class="settings-section" id="modalUwSettings" style="display: none;">
@@ -931,7 +947,7 @@
             <div class="slider-label"><span><svg class="ic"><use href="#i-clock"/></svg> Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="modalBgStageSecValue">12s</strong></div>
             <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
           </div>
-          <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. Blur Guess uses the FULL pool (no character count). Applies from the next game.</p>
+          <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. No character count: the pool is Random (everything) or Watched (only anime seen by synced accounts). Applies from the next game.</p>
         </div>
         <button class="full success" onclick="closeSettings()">Save & Close</button>
       </div>
@@ -1032,6 +1048,15 @@
           <div class="profile-row">
             <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
             <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
+          </div>
+          <!-- 👀 Which AniList list-statuses count as "watched" for the HC/Blur Watched pools -->
+          <div class="ws-row" id="watchStatusRow">
+            <span class="ws-lead">Count as watched:</span>
+            <label><input type="checkbox" id="wsWatching" checked onchange="saveWatchStatuses()"> Watching</label>
+            <label><input type="checkbox" id="wsCompleted" checked onchange="saveWatchStatuses()"> Completed</label>
+            <label><input type="checkbox" id="wsPaused" checked onchange="saveWatchStatuses()"> Paused</label>
+            <label><input type="checkbox" id="wsDropped" onchange="saveWatchStatuses()"> Dropped</label>
+            <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
           </div>
 
           <h4 class="profile-section-title"><svg class="ic"><use href="#i-pencil"/></svg> Change Username</h4>
@@ -1185,11 +1210,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=43"></script>
-  <script src="animes.js?v=43"></script>
-  <script src="undercover.js?v=43"></script>
-  <script src="music.js?v=43"></script>
-  <script src="lang.js?v=43"></script>
-  <script src="app.js?v=43"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3463ca8ec58a8f0',t:'MTc4ODI4NjI4MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=44"></script>
+  <script src="animes.js?v=44"></script>
+  <script src="undercover.js?v=44"></script>
+  <script src="music.js?v=44"></script>
+  <script src="lang.js?v=44"></script>
+  <script src="app.js?v=44"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a346af7f9b08cc66',t:'MTc4ODI5MDk4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

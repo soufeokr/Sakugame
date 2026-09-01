@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '43';
+    const SAKU_BUILD = '44';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -50,6 +50,7 @@
         hc_round_word: "{c} guesses",
         hc_log_mine: "My guesses ({c})",
         hc_top_mine_tip: "{c} of your guesses logged",
+        mix_label: "Mix: {v} generic · {r} favorites",
         hc_rescore: "0 = nothing alike · 100 = that's exactly it! If they're proposing <b>{s}</b>, just send 100 — otherwise answer honestly, it decides the round.",
         hc_hide_you: "You <b>HIDE</b> this round — pick any character from the pool!",
         hc_track: "Track down the secret — this is guess <b>#{c}</b>! Scores only guide you — every guess counts 1, so find it in as few as possible!",
@@ -477,6 +478,8 @@
         document.getElementById('currentPasswordInput').value = '';
         document.getElementById('newPasswordInput').value = '';
         if (currentAccount) currentAccount.anilist = p.anilist || null;
+        if (currentAccount) currentAccount.watchStatuses = Array.isArray(p.watchStatuses) ? p.watchStatuses : null;
+        try { loadWatchStatusesIntoUI(); } catch (e) {}
       } else {
         showAuthError('');
       }
@@ -696,11 +699,9 @@
       anilistAutoSyncDone = true;
       try {
         showNotification('Loading synced AniList account (' + name + ')...');
-        const userData = await fetchAniListFavorites(name);
-        const favs = userData.characters;
-        if (favs.length < 6) { showNotification(name + ' has only ' + favs.length + ' favorites. Need at least 6.'); return; }
-        const mappedChars = mapAniListChars(favs);
-        hostAccounts.push({ username: name, characters: mappedChars, count: mappedChars.length });
+        const built = await buildRoomAccount(name);
+        if (built.favCount < 6) { showNotification(name + ' has only ' + built.favCount + ' favorites. Need at least 6.'); return; }
+        hostAccounts.push(built.entry);
       } catch (e) { showNotification('Could not load synced AniList: ' + e.message); }
     }
 
@@ -714,11 +715,9 @@
       if (existing.some(k => k.toLowerCase() === lower)) return; // already in the room
       try {
         showNotification('Loading your synced AniList account (' + name + ')...');
-        const userData = await fetchAniListFavorites(name);
-        const favs = userData.characters;
-        if (favs.length < 6) { showNotification(name + ' has only ' + favs.length + ' favorites. Need at least 6.'); return; }
-        const mappedChars = mapAniListChars(favs);
-        await database.ref('rooms/' + roomCode + '/accounts/' + name).set({ username: name, characters: mappedChars, count: mappedChars.length });
+        const built = await buildRoomAccount(name);
+        if (built.favCount < 6) { showNotification(name + ' has only ' + built.favCount + ' favorites. Need at least 6.'); return; }
+        await database.ref('rooms/' + roomCode + '/accounts/' + name).set(built.entry);
         touchActivity();
         showNotification('Your AniList account (' + name + ') was added to the room.');
       } catch (e) { showNotification('Could not load synced AniList: ' + e.message); }
@@ -780,6 +779,66 @@
       return { name: username, characters: allCharacters };
     }
 
+    // 🗃️ WATCHED LIST — every anime on the account, ALL list-statuses, so the
+    // HC/Blur "Watched" pools can filter live by the account owner's own
+    // checkboxes (account pane). Chunked 500-per-request via MediaListCollection.
+    async function fetchAniListWatched(username) {
+      const entries = [];
+      let chunk = 1; let hasNext = true;
+      while (hasNext && chunk <= 20) { // 20×500 hard cap — paranoid loop guard
+        const query = `
+          query ($username: String, $chunk: Int) {
+            MediaListCollection(userName: $username, type: ANIME, chunk: $chunk) {
+              hasNextChunk
+              lists { entries { status media { id title { romaji english } } } }
+            }
+          }
+        `;
+        const response = await fetch(ANILIST_API, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ query, variables: { username, chunk } })
+        });
+        const data = await response.json();
+        if (data.errors) throw new Error(data.errors[0].message);
+        const col = data.data && data.data.MediaListCollection;
+        if (!col) break;
+        (col.lists || []).forEach(l => { (l.entries || []).forEach(e => { if (e && e.media && e.media.id != null) entries.push(e); }); });
+        hasNext = !!col.hasNextChunk;
+        chunk++;
+      }
+      return entries;
+    }
+
+    // Compact watched entries for the room: {i: AniList media id, t: romaji
+    // title, e?: english (if it adds a new spelling), s: list status}.
+    function mapAniListWatched(entries) {
+      const out = []; const seen = new Set();
+      (entries || []).forEach(e => {
+        const m = e && e.media;
+        if (!m || m.id == null || seen.has(m.id)) return;
+        seen.add(m.id);
+        const t = (m.title && m.title.romaji) || '';
+        if (!t) return;
+        const en = (m.title && m.title.english) || '';
+        const w = { i: m.id, t: t, s: String(e.status || 'COMPLETED').toLowerCase() };
+        if (en && bgNorm(en) !== bgNorm(t)) w.e = en;
+        out.push(w);
+      });
+      return out;
+    }
+
+    // Fetch favorites + watched list and build the room account entry. The
+    // watched fetch is best-effort: a failure must never block the favorites.
+    async function buildRoomAccount(name) {
+      const userData = await fetchAniListFavorites(name);
+      const favs = userData.characters;
+      const mappedChars = mapAniListChars(favs);
+      let watched = [];
+      try { watched = mapAniListWatched(await fetchAniListWatched(name)); } catch (e) { watched = []; }
+      const ws = (currentAccount && Array.isArray(currentAccount.watchStatuses) && currentAccount.watchStatuses.length) ? currentAccount.watchStatuses.slice() : WATCH_STATUS_DEFAULT.slice();
+      return { entry: { username: name, characters: mappedChars, count: mappedChars.length, watched: watched, ws: ws }, favCount: favs.length };
+    }
+
     // Map raw AniList favorite nodes to compact room entries. Keeps the
     // alternative names ("Deku", "Goku Son", "Burdock"…) in `al` so the
     // Blur Guess matcher/autocomplete can find characters by any of their
@@ -825,7 +884,58 @@
     let guessMode = false;
     let guessingCharacter = null;
     let roomVisibility = 'private';
-    let hostSource = 'generic'; // character pool for the next room: 'generic' | 'favorites' | 'mix'
+    let hostSource = 'generic'; // character pool for the next room: 'generic' | 'favorites' | 'mix' (Guess Who games)
+    let hostPool = 'random';    // 🎲 Hot & Cold + Blur Guess pool: 'random' (full website pool) | 'watched' (only anime the synced accounts have seen)
+    let hostMixCount = 12;      // 🔀 Guess Who Mix split: how many board slots come from the generic pool
+    // 👀 AniList list-statuses that count as "watched" (account-pane checkboxes)
+    const WATCH_STATUS_DEFAULT = ['watching', 'completed', 'paused'];
+    const WATCH_STATUS_MAP = { current: 'watching', repeating: 'watching', completed: 'completed', paused: 'paused', dropped: 'dropped', planning: 'planning' };
+    function watchStatusOk(s, ws) {
+      const g = WATCH_STATUS_MAP[String(s || '').toLowerCase()] || 'watching';
+      return (Array.isArray(ws) && ws.length ? ws : WATCH_STATUS_DEFAULT).indexOf(g) >= 0;
+    }
+    function selectHostPool(p) {
+      hostPool = p === 'watched' ? 'watched' : 'random';
+      const e1 = document.getElementById('hostPoolRandom');
+      const e2 = document.getElementById('hostPoolWatched');
+      if (e1) e1.classList.toggle('selected', hostPool === 'random');
+      if (e2) e2.classList.toggle('selected', hostPool === 'watched');
+    }
+    function updateHostMix() {
+      const block = document.getElementById('hostMixBlock');
+      const show = hostSource === 'mix';
+      if (block) block.style.display = show ? 'block' : 'none';
+      if (!show) return;
+      const total = parseInt(document.getElementById('hostCharCountSlider').value, 10) || 24;
+      const slider = document.getElementById('hostMixSlider');
+      slider.max = total;
+      hostMixCount = clampN(slider.value, 0, total, Math.floor(total / 2));
+      const lab = document.getElementById('hostMixLabel');
+      if (lab) lab.textContent = tPO('mix_label', { v: hostMixCount, r: total - hostMixCount });
+    }
+    // ✅ Account-pane checkboxes: which list-statuses YOUR watched pool counts
+    function currentWatchStatuses() {
+      const map = [['wsWatching', 'watching'], ['wsCompleted', 'completed'], ['wsPaused', 'paused'], ['wsDropped', 'dropped'], ['wsPlanning', 'planning']];
+      const out = [];
+      map.forEach(p => { const el = document.getElementById(p[0]); if (el && el.checked) out.push(p[1]); });
+      return out.length ? out : WATCH_STATUS_DEFAULT.slice();
+    }
+    async function saveWatchStatuses() {
+      const sel = currentWatchStatuses();
+      if (currentAccount) currentAccount.watchStatuses = sel;
+      const user = firebase.auth().currentUser;
+      if (user) { try { await database.ref('users/' + user.uid + '/watchStatuses').set(sel); } catch (e) {} }
+      // refresh my entry inside the room too (the raw watched list is unchanged)
+      if (roomCode && currentAccount && currentAccount.anilist) {
+        try { await database.ref('rooms/' + roomCode + '/accounts/' + currentAccount.anilist + '/ws').set(sel); } catch (e) {}
+      }
+      showNotification('Watched statuses updated.');
+    }
+    function loadWatchStatusesIntoUI() {
+      const sel = (currentAccount && Array.isArray(currentAccount.watchStatuses) && currentAccount.watchStatuses.length) ? currentAccount.watchStatuses : WATCH_STATUS_DEFAULT;
+      const map = { watching: 'wsWatching', completed: 'wsCompleted', paused: 'wsPaused', dropped: 'wsDropped', planning: 'wsPlanning' };
+      Object.keys(map).forEach(k => { const el = document.getElementById(map[k]); if (el) el.checked = sel.indexOf(k) >= 0; });
+    }
     let codeBlurred = false;
     let myCharacterHidden = false;
 
@@ -990,6 +1100,7 @@
         const el = document.getElementById(id);
         if (el) el.classList.toggle('selected', id === map[type]);
       });
+      try { updateHostMix(); } catch (e) {} // 🔀 the Mix split bar only shows in Mix mode
     }
 
     function selectVisibility(type) {
@@ -1003,21 +1114,10 @@
     function updateHostCharCount() {
       const value = document.getElementById('hostCharCountSlider').value;
       document.getElementById('hostCharCountValue').textContent = value;
-      const distSlider = document.getElementById('hostDistSlider');
-      distSlider.max = value;
-      if (parseInt(distSlider.value) > parseInt(value)) { distSlider.value = Math.floor(value / 2); }
-      updateHostDist();
-    }
-
-    function updateHostDist() {
-      if (hostAccounts.length >= 2) {
-        document.getElementById('hostDistContainer').style.display = 'block';
-        const value = parseInt(document.getElementById('hostDistSlider').value);
-        const total = parseInt(document.getElementById('hostCharCountSlider').value);
-        document.getElementById('hostDistLabel').textContent = tPO('dist_label', { v: value, a: hostAccounts[0].username, r: total - value, b: hostAccounts[1].username });
-      } else {
-        document.getElementById('hostDistContainer').style.display = 'none';
-      }
+      const mixSlider = document.getElementById('hostMixSlider');
+      mixSlider.max = value;
+      if (parseInt(mixSlider.value) > parseInt(value)) { mixSlider.value = Math.floor(value / 2); }
+      updateHostMix();
     }
 
     // ===== CREATE-ROOM SCREEN — GAME PICKER =====
@@ -1064,7 +1164,8 @@
         visibility: roomVisibility || 'private', source: hostSource || 'generic',
         ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode,
         charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
-        dist: clampN(document.getElementById('hostDistSlider').value, 0, 80, 12),
+        mix: clampN(document.getElementById('hostMixSlider').value, 0, 80, 12),
+        pool: hostPool,
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
         bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec
       };
@@ -1093,7 +1194,8 @@
       // 🃏 pool + Guess Who board
       if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) selectHostSource(cfg.source);
       document.getElementById('hostCharCountSlider').value = clampN(cfg.charCount, 12, 80, 24); updateHostCharCount();
-      document.getElementById('hostDistSlider').value = clampN(cfg.dist, 0, parseInt(document.getElementById('hostDistSlider').max) || 80, 12); updateHostDist();
+      document.getElementById('hostMixSlider').value = clampN(cfg.mix, 0, parseInt(document.getElementById('hostMixSlider').max) || 80, 12); updateHostMix();
+      if (cfg.pool) selectHostPool(cfg.pool === 'watched' ? 'watched' : 'random');
       // ⚡ race
       hostRaceLives = clampN(cfg.raceLives, 1, 5, RACE_DEFAULT_LIVES);
       document.getElementById('hostRaceLivesSlider').value = hostRaceLives; updateRaceLivesSlider();
@@ -1209,7 +1311,8 @@
         source: currentSource() || 'generic',
         ucMax: maxP, ucMw: !!s.mrWhite, multiMax: maxP, hcMax: clampN((currentRoom || {}).maxPlayers, 2, 6, 4),
         charCount: clampN(s.characterCount, 12, 80, 24),
-        dist: clampN(s.distribution, 0, 80, 12),
+        mix: clampN(s.mixCount, 0, 80, Math.floor(clampN(s.characterCount, 12, 80, 24) / 2)),
+        pool: currentPoolMode(),
         raceLives: clampN(s.raceLives, 1, 5, RACE_DEFAULT_LIVES),
         raceQuestions: clampN(s.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS),
         bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
@@ -1235,10 +1338,12 @@
         updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.ucMax, 3, 8, 5)));
         updates['settings/mrWhite'] = !!cfg.ucMw;
       } else {
-        if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) updates['settings/source'] = cfg.source;
-        if (g !== 'blur') {
+        if (g === 'hotcold' || g === 'blur') {
+          if (cfg.pool) updates['settings/pool'] = cfg.pool === 'watched' ? 'watched' : 'random';
+        } else if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) updates['settings/source'] = cfg.source;
+        if (g === 'guesswho' || g === 'battle' || g === 'race') {
           updates['settings/characterCount'] = clampN(cfg.charCount, 12, 80, 24);
-          updates['settings/distribution'] = clampN(cfg.dist, 0, 80, 12);
+          updates['settings/mixCount'] = clampN(cfg.mix, 0, 80, Math.floor(clampN(cfg.charCount, 12, 80, 24) / 2));
         }
         if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
         if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
@@ -1292,6 +1397,10 @@
       // ⚙️ Game tab: pool for all but Undercover; Guess Who board settings for
       // guesswho/battle/race (Blur & Hot & Cold draw from the FULL pool — no count)
       document.getElementById('hostPoolGroup').style.display = isUc ? 'none' : 'block';
+      // 👀🎲 HC/Blur get the simplified Random/Watched pair; Guess Who games keep Generic/Favorites/Mix
+      const watchUi = isBlur || hostGame === 'hotcold';
+      document.getElementById('hostPoolSrcGwGroup').style.display = watchUi ? 'none' : 'block';
+      document.getElementById('hostPoolSrcWatchGroup').style.display = watchUi ? 'block' : 'none';
       document.getElementById('hostGwSettings').style.display = (isUc || isBlur || hostGame === 'hotcold') ? 'none' : 'block';
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
@@ -1361,10 +1470,11 @@
       const game = document.getElementById('gameSelect').value || 'guesswho';
         const isUc = game === 'undercover';
         const isMulti = game === 'battle' || game === 'race' || game === 'blur';
-      if (!isUc && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Favorites needs a synced AniList account (profile menu) — or switch the pool to Generic!'); return; }
+        const isWatchGame = game === 'blur' || game === 'hotcold';
+      if (!isUc && !isWatchGame && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Favorites needs a synced AniList account (profile menu) — or switch the pool to Generic!'); return; }
+      if (isWatchGame && hostPool === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs synced AniList accounts — friends auto-sync when they join with a linked account (or switch the pool to Random).'); }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
-      const distribution = parseInt(document.getElementById('hostDistSlider').value);
       try {
         const roomData = {
           host: playerId, game: game, visibility: roomVisibility,
@@ -1377,8 +1487,9 @@
         } else {
           if (game === 'hotcold') roomData.maxPlayers = Math.min(6, Math.max(2, hcMaxPlayers));
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
-          roomData.settings = { characterCount: charCount, distribution: distribution, source: hostSource };
+          roomData.settings = { characterCount: charCount, mixCount: clampN(hostMixCount, 0, charCount, Math.floor(charCount / 2)), source: hostSource };
           if (game === 'hotcold') roomData.settings.hcMode = hostHcMode; // 🔀 shared | individual guesses
+          if (isWatchGame) roomData.settings.pool = hostPool; // 🎲 random (full pool) | watched (synced accounts' seen anime)
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
           if (game === 'blur') {
@@ -2710,27 +2821,24 @@
     }
 
     // Blur Guess has NO "character count" board: the candidate list is the
-    // FULL source pool — every generic character / every synced favorite /
-    // the mix, or the 500 anime covers in 🎬 covers mode.
+    // FULL source pool — every generic character, or the 500 anime covers in
+    // 🎬 covers mode. settings/pool 'watched' narrows BOTH variants to anime
+    // the synced accounts have seen (characters: by series, covers: by id).
     function bgCandidateChars() {
       const r = currentRoom || {};
       const s = r.settings || {};
       const bg = r.bg || {};
       const mode = bg.mode || s.bgMode || 'characters';
       if (mode === 'covers') {
-        return (typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : [];
+        const covers = (typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : [];
+        if (s.pool !== 'watched') return covers;
+        const wset = roomWatchSet(r);
+        return covers.filter(c => c && c.id != null && c.name && wset.ids[c.id]);
       }
-      const accountData = Object.values(r.accounts || {});
       const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
-      let source = s.source || (accountData.length > 0 ? 'favorites' : 'generic');
-      if (source !== 'generic' && accountData.length === 0) source = 'generic'; // favorites asked but nobody synced
-      let all = [];
-      if (source === 'generic' || source === 'mix') all = all.concat(generic);
-      if ((source === 'favorites' || source === 'mix') && accountData.length > 0) {
-        accountData.forEach(a => all.push(...((a && a.characters) || [])));
-      }
+      if (s.pool === 'watched') return watchedPoolChars(r);
       const seen = new Set();
-      return all.filter(c => { if (!c || c.id == null || !c.name || seen.has(c.id)) return false; seen.add(c.id); return true; });
+      return generic.filter(c => { if (!c || c.id == null || !c.name || seen.has(c.id)) return false; seen.add(c.id); return true; });
     }
 
     // Compact the rounds entry we store in Firebase: everything the clients
@@ -2757,7 +2865,7 @@
       const rounds = shuffleArray(cand.slice()).slice(0, Math.min(totalRounds, cand.length)).map(bgRoundEntry);
       if (!rounds.length) {
         await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, bg: null });
-        showNotification('Not enough pictures for Blur Guess! Check the pool source settings.');
+        showNotification('Not enough pictures for Blur Guess! Check the pool settings — Watched needs synced AniList accounts with watched anime.');
         return;
       }
       const scores = {};
@@ -3644,9 +3752,13 @@
         document.getElementById('modalUcMwOn').classList.toggle('selected', mwOn);
       } else {
         document.getElementById('modalCharCountSlider').value = currentRoom.settings ? currentRoom.settings.characterCount : 24;
-        document.getElementById('modalDistSlider').value = currentRoom.settings ? currentRoom.settings.distribution : 12;
+        const s0 = currentRoom.settings || {};
+        const mx0 = document.getElementById('modalMixSlider');
+        if (mx0) { mx0.max = s0.characterCount || 24; mx0.value = s0.mixCount != null ? s0.mixCount : Math.floor((s0.characterCount || 24) / 2); }
         updateModalCharCount();
         syncSourceUI();
+        syncPoolUI();
+        syncMixUI();
       }
       if (currentRoom.visibility === 'private') {
         document.getElementById('modalPrivate').classList.add('selected');
@@ -3686,6 +3798,62 @@
         const el = document.getElementById(id);
         if (el) el.classList.toggle('selected', id === map[src]);
       });
+      syncMixUI();
+    }
+
+    // 👀🎲 HC/Blur rooms swap the pool section to the Random/Watched pair
+    function currentPoolMode() {
+      const s = (currentRoom && currentRoom.settings) || {};
+      return s.pool === 'watched' ? 'watched' : 'random';
+    }
+    function syncPoolUI() {
+      const g = (currentRoom && currentRoom.game) || 'guesswho';
+      const watchUi = g === 'hotcold' || g === 'blur';
+      const gw = document.getElementById('modalPoolSrcGwGroup');
+      const wg = document.getElementById('modalPoolSrcWatchGroup');
+      if (gw) gw.style.display = watchUi ? 'none' : 'block';
+      if (wg) wg.style.display = watchUi ? 'block' : 'none';
+      const p = currentPoolMode();
+      const e1 = document.getElementById('modalPoolRandom');
+      const e2 = document.getElementById('modalPoolWatched');
+      if (e1) e1.classList.toggle('selected', p === 'random');
+      if (e2) e2.classList.toggle('selected', p === 'watched');
+    }
+    async function changePool(p) {
+      if (!isHost || !currentRoom) return;
+      await database.ref('rooms/' + roomCode + '/settings/pool').set(p === 'watched' ? 'watched' : 'random');
+      touchActivity();
+      syncPoolUI();
+    }
+
+    // 🔀 Mix split bar (Guess Who games, pool = Mix) — reads/writes settings/mixCount
+    function syncMixUI() {
+      const g = (currentRoom && currentRoom.game) || 'guesswho';
+      const gwFam = g === 'guesswho' || g === 'battle' || g === 'race';
+      const s = (currentRoom && currentRoom.settings) || {};
+      const block = document.getElementById('modalMixBlock');
+      const show = gwFam && currentSource() === 'mix';
+      if (block) block.style.display = show ? 'block' : 'none';
+      if (!show) return;
+      const total = s.characterCount || 24;
+      const slider = document.getElementById('modalMixSlider');
+      if (slider) {
+        slider.max = total;
+        const v = clampN(s.mixCount != null ? s.mixCount : Math.floor(total / 2), 0, total, Math.floor(total / 2));
+        if (parseInt(slider.value, 10) !== v) slider.value = v;
+      }
+      const lab = document.getElementById('modalMixLabel');
+      if (lab) lab.textContent = tPO('mix_label', { v: slider ? parseInt(slider.value, 10) || 0 : 0, r: total - (slider ? parseInt(slider.value, 10) || 0 : 0) });
+    }
+    async function updateModalMix() {
+      if (!currentRoom) return;
+      const s = currentRoom.settings || {};
+      const total = s.characterCount || 24;
+      const v = clampN(document.getElementById('modalMixSlider').value, 0, total, Math.floor(total / 2));
+      const lab = document.getElementById('modalMixLabel');
+      if (lab) lab.textContent = tPO('mix_label', { v: v, r: total - v });
+      if (currentRoom.settings) await database.ref('rooms/' + roomCode + '/settings/mixCount').set(v);
+      touchActivity();
     }
 
     async function changeSource(type) {
@@ -3713,23 +3881,12 @@
       if (currentRoom && currentRoom.settings) {
         database.ref('rooms/' + roomCode + '/settings/characterCount').set(parseInt(value));
       }
-      const distSlider = document.getElementById('modalDistSlider');
-      distSlider.max = value;
-      if (parseInt(distSlider.value) > parseInt(value)) { distSlider.value = Math.floor(value / 2); }
-      updateModalDist();
-    }
-
-    function updateModalDist() {
-      const accountNames = currentRoom ? Object.keys(currentRoom.accounts || {}) : [];
-      if (accountNames.length >= 2) {
-        document.getElementById('modalDistContainer').style.display = 'block';
-        const value = parseInt(document.getElementById('modalDistSlider').value);
-        const total = currentRoom && currentRoom.settings ? currentRoom.settings.characterCount : 24;
-        document.getElementById('modalDistLabel').textContent = `Distribution: ${value} from ${accountNames[0]} / ${total - value} from ${accountNames[1]}`;
-        database.ref('rooms/' + roomCode + '/settings/distribution').set(value);
-      } else {
-        document.getElementById('modalDistContainer').style.display = 'none';
+      const mixSlider = document.getElementById('modalMixSlider');
+      if (mixSlider) {
+        mixSlider.max = value;
+        if (parseInt(mixSlider.value, 10) > parseInt(value, 10)) mixSlider.value = Math.floor(value / 2);
       }
+      syncMixUI();
     }
 
     // Undercover room settings (lobby modal)
@@ -3816,8 +3973,9 @@
       const updates = { game: newGame, maxPlayers: newMax, restarts: null };
       // Per-game settings defaults (Undercover rooms have no pool settings…)
       updates['settings/characterCount'] = s.characterCount || 24;
-      updates['settings/distribution'] = s.distribution || 12;
+      if (s.mixCount == null) updates['settings/mixCount'] = Math.floor((s.characterCount || 24) / 2);
       if (!s.source) updates['settings/source'] = Object.keys(currentRoom.accounts || {}).length ? 'favorites' : 'generic';
+      if (!s.pool) updates['settings/pool'] = 'random'; // 🎲 HC/Blur default: full website pool
       if (newGame === 'undercover' && s.mrWhite == null) updates['settings/mrWhite'] = false;
       if (newGame === 'race') {
         updates['settings/raceLives'] = s.raceLives || RACE_DEFAULT_LIVES;
@@ -3890,21 +4048,36 @@
     // 🔎 Full searchable pool — same sources as Blur Guess (generic /
     // favorites / mix from the room settings + synced AniList accounts),
     // CHARACTERS only, deduped by id AND by name so ties look clean.
-    function hcPoolChars() {
-      const r = currentRoom || {};
-      const s = r.settings || {};
-      const accountData = Object.values(r.accounts || {});
-      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
-      let source = s.source || (accountData.length > 0 ? 'favorites' : 'generic');
-      if (source !== 'generic' && accountData.length === 0) source = 'generic'; // favorites asked but nobody synced
-      let all = [];
-      if (source === 'generic' || source === 'mix') all = all.concat(generic);
-      if ((source === 'favorites' || source === 'mix') && accountData.length > 0) {
-        accountData.forEach(a => all.push(...((a && a.characters) || [])));
-      }
-      const seenId = {}, seenName = {};
-      const out = [];
-      all.forEach(c => {
+    // 👀 Union of every synced account's watched list, honoring each owner's
+    // own status checkboxes (ws). Memoized — the HC autocomplete re-reads the
+    // pool on every keystroke, so we only rebuild when accounts actually change.
+    let watchSetCacheKey = ''; let watchSetCache = null;
+    function roomWatchSet(room) {
+      const accounts = (room && room.accounts) || {};
+      const key = Object.keys(accounts).map(k => {
+        const a = accounts[k] || {};
+        return k + ':' + ((a.watched || []).length) + ':' + ((Array.isArray(a.ws) && a.ws.length ? a.ws : WATCH_STATUS_DEFAULT).join(','));
+      }).join('|');
+      if (watchSetCache && watchSetCacheKey === key) return watchSetCache;
+      const ids = {}; const titles = {};
+      Object.keys(accounts).forEach(k => {
+        const a = accounts[k] || {};
+        const ws = Array.isArray(a.ws) && a.ws.length ? a.ws : WATCH_STATUS_DEFAULT;
+        (a.watched || []).forEach(w => {
+          if (!w || w.i == null || !watchStatusOk(w.s, ws)) return;
+          ids[w.i] = 1;
+          const tn = bgNorm(w.t); if (tn) titles[tn] = 1;
+          const en = bgNorm(w.e); if (en) titles[en] = 1;
+        });
+      });
+      watchSetCacheKey = key;
+      watchSetCache = { ids: ids, titles: titles, size: Object.keys(ids).length };
+      return watchSetCache;
+    }
+
+    function dedupPoolChars(list) {
+      const seenId = {}, seenName = {}; const out = [];
+      (list || []).forEach(c => {
         if (!c || c.id == null || !c.name) return;
         const nk = bgNorm(c.name);
         if (seenId[c.id] || (nk && seenName[nk])) return;
@@ -3912,6 +4085,24 @@
         out.push(bgRoundEntry(c));
       });
       return out;
+    }
+
+    // 🔍 "Watched" character pool: the generic characters whose anime is on at
+    // least one synced account's watched list (checked statuses only).
+    function watchedPoolChars(room) {
+      const wset = roomWatchSet(room);
+      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      return dedupPoolChars(generic.filter(c => c && wset.titles[bgNorm(c.series || '')]));
+    }
+
+    // 🧺 shared pool for every Hot & Cold tool (hider secret pick + seekers'
+    // autocomplete): settings/pool 'watched' → only watched-anime characters;
+    // 'random' (default) → the full website pool.
+    function hcPoolChars() {
+      const r = currentRoom || {};
+      const s = r.settings || {};
+      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      return s.pool === 'watched' ? watchedPoolChars(r) : dedupPoolChars(generic);
     }
 
     // Ranked autocomplete over the whole pool: exact name 0/1 → starts-with
@@ -4305,6 +4496,7 @@
     // hider leaving voids the current secret and rolls the rotation forward;
     // under 2 active seats the match ends on the current totals (forfeit).
     let hcGuardFor = 0;
+    let hcEmptyPoolFor = 0;     // 👀 watched-pool-empty warning latch (once per match)
     function hcAbandonGuard(hc, players) {
       if (!isHost || !hc.gameId || hc.phase === 'matchEnd' || hcGuardFor === hc.gameId || !Array.isArray(hc.order)) return;
       const gameId = hc.gameId;
@@ -4390,6 +4582,11 @@
       const order = hcOrderOf();
       const round = hc.round || 1;
       const iHider = playerId === hc.hider;
+      // 👀 watched pool empty? warn the hider once per match (block with a hint)
+      if (iHider && hc.phase === 'select' && (((currentRoom.settings) || {}).pool === 'watched') && hcEmptyPoolFor !== hc.gameId && !hcPoolChars().length) {
+        hcEmptyPoolFor = hc.gameId;
+        showNotification('The Watched pool is empty — widen the AniList status checkboxes or switch the pool to Random (host ⚙️).');
+      }
       const mySk = (hc.sk || {})[playerId] || null;
       const myStatus = mySk ? (mySk.s || 'on') : null;
       const myAttempts = (mySk && mySk.a) || 0;
@@ -4790,7 +4987,7 @@
 
     async function generateCharacterPool(extraUpdates = {}) {
       const accountData = currentRoom ? Object.values(currentRoom.accounts || {}) : [];
-      const settings = currentRoom ? currentRoom.settings : { characterCount: 24, distribution: 12 };
+      const settings = currentRoom ? currentRoom.settings : { characterCount: 24 };
       const totalChars = settings.characterCount || 24;
       const source = (settings && settings.source) || (accountData.length > 0 ? 'favorites' : 'generic');
       const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
@@ -4808,25 +5005,21 @@
 
       let selectedChars = [];
       if (source === 'favorites' && accountData.length > 0) {
-        if (accountData.length === 1) {
-          selectedChars = pickUnique(allChars, totalChars);
-        } else if (accountData.length === 2) {
-          const count1 = settings.distribution || Math.floor(totalChars / 2);
-          const count2 = totalChars - count1;
-          const chars1 = pickUnique(shuffleArray((accountData[0].characters || []).slice()), count1);
-          const chars2 = pickUnique(shuffleArray((accountData[1].characters || []).slice()), count2);
-          selectedChars = shuffleArray([...chars1, ...chars2]);
-        } else {
-          // 3+ synced accounts (multiplayer rooms): every account shares the board equally
-          const per = Math.floor(totalChars / accountData.length);
-          accountData.forEach(acc => selectedChars.push(...pickUnique(shuffleArray((acc.characters || []).slice()), per)));
-          if (selectedChars.length < totalChars) selectedChars = shuffleArray([...selectedChars, ...pickUnique(shuffleArray(allChars.slice()), totalChars - selectedChars.length)]);
-          selectedChars = shuffleArray(selectedChars);
-        }
+        // ⚖️ every synced account shares the board EQUALLY (extra cards on the
+        // odd remainder go to the first accounts). Short accounts are topped
+        // up from the union of everyone's favorites.
+        const n = accountData.length;
+        const per = Math.floor(totalChars / n);
+        let rem = totalChars - per * n;
+        accountData.forEach((acc, i) => selectedChars.push(...pickUnique(shuffleArray(((acc && acc.characters) || []).slice()), per + (i < rem ? 1 : 0))));
+        if (selectedChars.length < totalChars) selectedChars.push(...pickUnique(shuffleArray(allChars.slice()), totalChars - selectedChars.length));
+        selectedChars = shuffleArray(selectedChars);
       } else if (source === 'mix' && accountData.length > 0) {
-        // Half generic, half favorites (deduped by AniList id); if one side
-        // runs short, the other fills in so the board stays full.
-        const fromGeneric = pickUnique(generic.slice(), Math.ceil(totalChars / 2));
+        // 🔀 generic/favorites split driven by the Mix bar (settings.mixCount,
+        // default 50/50); if one side runs short, the other fills in so the
+        // board stays full.
+        const wantG = Math.max(0, Math.min(totalChars, (settings.mixCount != null ? settings.mixCount : Math.ceil(totalChars / 2))));
+        const fromGeneric = pickUnique(generic.slice(), wantG);
         const fromFavs = pickUnique(allChars, totalChars - fromGeneric.length);
         selectedChars = shuffleArray([...fromGeneric, ...fromFavs]);
         if (selectedChars.length < totalChars) {
@@ -5242,7 +5435,7 @@
       try {
         document.getElementById('winningScreen').classList.remove('show');
         // Skip the lobby: deal a brand new character pool with the SAME rules
-        // (accounts, characterCount and distribution are kept in the room) and
+        // (accounts, characterCount and the Mix split are kept in the room) and
         // send everyone straight to the character selection screen. Leftover
         // game data is cleared in the same atomic write to avoid UI flicker.
         await generateCharacterPool({

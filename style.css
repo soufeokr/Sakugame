@@ -708,6 +708,15 @@
   .hc-mode-row { display: flex; gap: 8px; }
   .hc-mode-row .radio-option { flex: 1; margin-bottom: 0; padding: 12px 8px; }
   .hc-mode-row .radio-option small { display: block; margin-top: 4px; }
+  /* 📏 Uniform settings windows — the create-room card and the lobby ⚙️ modal
+     keep ONE size whatever options get picked (inner scroll for short content) */
+  #hostRoomScreen .panel { height: min(88vh, 900px); overflow-y: auto; }
+  #settingsModal .modal-content { height: min(88vh, 820px); }
+  /* 👀 AniList "count as watched" status checkboxes (profile → Account tab) */
+  .ws-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
+  .ws-row .ws-lead { font-weight: 600; }
+  .ws-row label { display: flex; align-items: center; gap: 5px; cursor: pointer; white-space: nowrap; }
+  .ws-row input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
   /* 👁 password peek — the wrap keeps the eye glued to the end of the box
      (wrap lives OUTSIDE the game forms, so it carries its own positioning;
      the eye button itself reuses the pinned .hc-clr dock style) */
