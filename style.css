@@ -712,11 +712,19 @@
      keep ONE size whatever options get picked (inner scroll for short content) */
   #hostRoomScreen .panel { height: min(88vh, 900px); overflow-y: auto; }
   #settingsModal .modal-content { height: min(88vh, 820px); }
-  /* 👀 AniList "count as watched" status checkboxes (profile → Account tab) */
-  .ws-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
-  .ws-row .ws-lead { font-weight: 600; }
-  .ws-row label { display: flex; align-items: center; gap: 5px; cursor: pointer; white-space: nowrap; }
-  .ws-row input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+  /* 👀 AniList "count as watched" status checkboxes (profile → Account tab) — ALL on one line */
+  .ws-row { display: flex; gap: 10px; flex-wrap: nowrap; overflow-x: auto; align-items: center; margin-top: 8px; padding-bottom: 3px; font-size: 0.8rem; color: var(--muted); }
+  .ws-row .ws-lead { font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+  .ws-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .ws-row input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+  /* 👀 Spectator mode: the live public view queued visitors watch */
+  .spec-panel { max-width: 560px; }
+  .spec-panel h2 { font-size: 1.35rem; }
+  .spec-board { text-align: center; margin: 10px 0 14px; }
+  .spec-blur-img { width: 210px; height: 292px; object-fit: cover; border-radius: 12px; background: #0f0f1a; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.55); }
+  #specScore .player-card { cursor: default; }
+  #specFeed { max-height: 220px; }
+  .afk-tag { color: var(--warn, #ffca3a); font-weight: 600; }
   /* 👁 password peek — the wrap keeps the eye glued to the end of the box
      (wrap lives OUTSIDE the game forms, so it carries its own positioning;
      the eye button itself reuses the pinned .hc-clr dock style) */

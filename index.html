@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="44">
+<meta name="saku-build" content="45">
 <title>Sakugame — Free Online Anime Guessing Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -56,7 +56,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=44">
+<link rel="stylesheet" href="style.css?v=45">
 </head>
 <body>
 
@@ -368,6 +368,11 @@
               <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div><small style="color: var(--muted);">Everyone sees every proposal &amp; its score</small></label>
               <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div><small style="color: var(--muted);">Each seeker sees ONLY their own — no peeking!</small></label>
             </div>
+            <div class="slider-label" style="margin-top: 12px;"><span>Ranking</span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div><small style="color: var(--muted);">Players see the live points ranking</small></label>
+              <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div><small style="color: var(--muted);">Revealed only at match end</small></label>
+            </div>
           </div>
           <div class="slider-container" id="hostMultiMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
@@ -499,8 +504,24 @@
         </div>
         <button class="full success" id="readyBtn" onclick="toggleReady()">Ready</button>
         <button class="full success" id="startGameBtn" onclick="hostStartGame()" style="display: none;"><svg class="ic"><use href="#i-gamepad"/></svg> START GAME</button>
+        <button class="full secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Go AFK (spectate)</span></button>
         <button class="full danger" onclick="leaveRoom()">Leave Room</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 👀 SPECTATOR view — queued visitors follow the game live (public info only, read-only) -->
+  <div class="screen" id="spectateScreen">
+    <div class="panel spec-panel">
+      <h2><svg class="ic"><use href="#i-eye"/></svg> Spectating — <span id="specGameName">Game</span></h2>
+      <p id="specPhase" style="text-align:center;color:var(--muted);"></p>
+      <div id="specBoard" class="spec-board" style="display:none;"></div>
+      <div class="players-list" id="specScore"></div>
+      <div class="settings-section" style="margin-top:14px;">
+        <h3><svg class="ic"><use href="#i-note"/></svg> Live feed</h3>
+        <div id="specFeed" class="hc-log"></div>
+      </div>
+      <button class="full secondary" style="margin-top:14px;" onclick="specWaitInLobby()"><svg class="ic"><use href="#i-home"/></svg> Wait in the lobby instead</button>
     </div>
   </div>
 
@@ -716,7 +737,7 @@
           <div class="question-form">
             <div class="bg-guess-wrap hc-has-rnd">
               <input type="text" id="hcPickInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
-              <button class="hc-rnd" onclick="hcRandomPick()" title="Random"><svg class="ic"><use href="#i-dice"/></svg></button>
+              <button class="hc-clr" onclick="hcClearPick()" title="Eraser"><svg class="ic"><use href="#i-x"/></svg></button>
               <div class="bg-suggest" id="hcPickSuggest"></div>
             </div>
             <button class="secondary hc-rnd-big" onclick="hcRandomPick()"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random</span></button>
@@ -1210,11 +1231,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=44"></script>
-  <script src="animes.js?v=44"></script>
-  <script src="undercover.js?v=44"></script>
-  <script src="music.js?v=44"></script>
-  <script src="lang.js?v=44"></script>
-  <script src="app.js?v=44"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a346af7f9b08cc66',t:'MTc4ODI5MDk4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=45"></script>
+  <script src="animes.js?v=45"></script>
+  <script src="undercover.js?v=45"></script>
+  <script src="music.js?v=45"></script>
+  <script src="lang.js?v=45"></script>
+  <script src="app.js?v=45"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a34e44aba8214348',t:'MTc4ODM3MDQ5NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

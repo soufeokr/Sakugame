@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '44';
+    const SAKU_BUILD = '45';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -70,6 +70,10 @@
         hc_pts_bust: "busted at {c}",
         hc_pts_left: "dropped out",
         hc_draw: "Dead even on guesses — <b>it's a draw!</b>",
+        hc_draw_pts: "Dead even on points — <b>it's a draw!</b>",
+        hc_win_you_total_pts: "Most points (<b>{t}</b> total) — <b>you win the Hot & Cold!</b>",
+        hc_win_total_pts: "<b>{n}</b> wins with the most points — <b>{t}</b> total!",
+        hc_pts_word: "{c} pts",
         hc_wins_name: "<b>{n}</b> wins!",
         hc_by_forfeit: "by forfeit — too many players left",
         hc_top_plural: "{c} guesses logged"
@@ -958,10 +962,16 @@
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
     let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
+    let hostHcHideRank = false;   // 📊 Hot & Cold: hide the live points ranking until match end
     function setHostHcMode(m) {
       hostHcMode = m === 'individual' ? 'individual' : 'shared';
       document.getElementById('hostHcModeShared').classList.toggle('selected', hostHcMode === 'shared');
       document.getElementById('hostHcModeIndividual').classList.toggle('selected', hostHcMode === 'individual');
+    }
+    function setHostHcRank(h) {
+      hostHcHideRank = !!h;
+      document.getElementById('hostHcRankShow').classList.toggle('selected', !hostHcHideRank);
+      document.getElementById('hostHcRankHide').classList.toggle('selected', hostHcHideRank);
     }
     const RACE_DEFAULT_LIVES = 3;     // hunter wrong guesses before they're out (race)
     const RACE_DEFAULT_QUESTIONS = 8; // max questions each hunter may ask (race)
@@ -1162,7 +1172,7 @@
       return {
         game: (document.getElementById('gameSelect') || {}).value || hostGame || 'guesswho',
         visibility: roomVisibility || 'private', source: hostSource || 'generic',
-        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode,
+        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode, hcHideRank: !!hostHcHideRank,
         charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
         mix: clampN(document.getElementById('hostMixSlider').value, 0, 80, 12),
         pool: hostPool,
@@ -1189,6 +1199,7 @@
       hcMaxPlayers = clampN(cfg.hcMax, 2, 6, 4);
       document.getElementById('hostHcMaxSlider').value = hcMaxPlayers; updateHcMaxPlayers();
       if (cfg.hcMode) setHostHcMode(cfg.hcMode === 'individual' ? 'individual' : 'shared');
+      setHostHcRank(!!cfg.hcHideRank);
       ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
       document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
       // 🃏 pool + Guess Who board
@@ -1312,7 +1323,7 @@
         ucMax: maxP, ucMw: !!s.mrWhite, multiMax: maxP, hcMax: clampN((currentRoom || {}).maxPlayers, 2, 6, 4),
         charCount: clampN(s.characterCount, 12, 80, 24),
         mix: clampN(s.mixCount, 0, 80, Math.floor(clampN(s.characterCount, 12, 80, 24) / 2)),
-        pool: currentPoolMode(),
+        pool: currentPoolMode(), hcHideRank: !!s.hcHideRank,
         raceLives: clampN(s.raceLives, 1, 5, RACE_DEFAULT_LIVES),
         raceQuestions: clampN(s.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS),
         bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
@@ -1348,6 +1359,7 @@
         if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
         if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
         if (g === 'hotcold' && cfg.hcMode) updates['settings/hcMode'] = cfg.hcMode === 'individual' ? 'individual' : 'shared'; // legacy presets keep the room's current mode
+        if (g === 'hotcold' && cfg.hcHideRank != null) updates['settings/hcHideRank'] = !!cfg.hcHideRank;
         if (g === 'race') {
           updates['settings/raceLives'] = clampN(cfg.raceLives, 1, 5, RACE_DEFAULT_LIVES);
           updates['settings/raceQuestions'] = clampN(cfg.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS);
@@ -1489,6 +1501,7 @@
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, mixCount: clampN(hostMixCount, 0, charCount, Math.floor(charCount / 2)), source: hostSource };
           if (game === 'hotcold') roomData.settings.hcMode = hostHcMode; // 🔀 shared | individual guesses
+          if (game === 'hotcold') roomData.settings.hcHideRank = !!hostHcHideRank; // 📊 hide the live ranking until match end
           if (isWatchGame) roomData.settings.pool = hostPool; // 🎲 random (full pool) | watched (synced accounts' seen anime)
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
@@ -1626,8 +1639,20 @@
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         const isUcRoom = currentRoom.game === 'undercover';
         if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('hcEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
-        // Queued visitors never leave the lobby — no game screen routing for them
-        if (!meSeated) return;
+        // 👀 Queued visitors auto-SPECTATE the live game (public info only);
+        // an `away` queue entry parks in the lobby instead (never promoted).
+        if (!meSeated) {
+          const meQ = (currentRoom.queue || {})[playerId] || null;
+          const inGameNow = !!(currentRoom.state && currentRoom.state !== 'lobby');
+          const specEl = document.getElementById('spectateScreen');
+          if (meWaiting && meQ && !meQ.away && inGameNow) {
+            if (specEl && !specEl.classList.contains('active')) showScreen('spectateScreen');
+            try { renderSpectate(); } catch (e) {}
+          } else if (specEl && specEl.classList.contains('active')) {
+            showScreen('lobbyScreen');
+          }
+          return;
+        }
         if (isUcRoom) {
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             // Players who chose "Return to Lobby" mid-game are NOT dragged back
@@ -1816,12 +1841,28 @@
       const myQ = queueList.findIndex(q => q.id === playerId);
       if (imQueued && myQ !== -1) {
         qBanner.style.display = 'block';
-        const why = currentRoom.state === 'lobby' ? 'the room is full — waiting for a free seat' : 'a game is in progress';
-        qBanner.innerHTML = ic('hourglass') + ' <b>You are #' + (myQ + 1) + ' in the queue</b> — ' + why + '. You\'ll jump in automatically for the next game!';
+        const myAway = !!(queueList[myQ] && queueList[myQ].away);
+        if (myAway) qBanner.innerHTML = ic('eye') + ' <b>You are parked AFK</b> — spectating only, you will NOT auto-join the next seat.';
+        else {
+          const why = currentRoom.state === 'lobby' ? 'the room is full — waiting for a free seat' : 'a game is in progress';
+          qBanner.innerHTML = ic('hourglass') + ' <b>You are #' + (myQ + 1) + ' in the queue</b> — ' + why + '. You\'ll jump in automatically for the next game!';
+        }
         if (readyBtn) readyBtn.style.display = 'none';
       } else {
         qBanner.style.display = 'none';
         if (readyBtn) readyBtn.style.display = 'block';
+      }
+      // 👀 AFK/spectate toggle: seated → park AFK (from the lobby only);
+      // queued → "I'm back" (away) or "park AFK" (auto-join on)
+      const afkBtn = document.getElementById('afkBtn');
+      const afkLabel = document.getElementById('afkBtnLabel');
+      if (afkBtn) {
+        const myEntry = queueList.find(q => q.id === playerId);
+        const inLobbyNow = !currentRoom.state || currentRoom.state === 'lobby';
+        if (!imQueued && inLobbyNow) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('Go AFK (spectate)') : 'Go AFK (spectate)'; }
+        else if (imQueued && myEntry && myEntry.away) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('I\'m back!') : 'I\'m back!'; }
+        else if (imQueued && inLobbyNow) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('Stay AFK (no auto-join)') : 'Stay AFK (no auto-join)'; }
+        else afkBtn.style.display = 'none';
       }
       // Queue section (visible to everyone, host can kick from the queue)
       const qSection = document.getElementById('queueSection');
@@ -1835,7 +1876,7 @@
           card.className = 'player-card queue-card';
           const head = document.createElement('div');
           head.className = 'player-head';
-          head.innerHTML = `<span class="queue-pos">#${i + 1}</span>${avatarCircle(qp.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${escapeHtml(String(qp.name || ''))}</div><div class="status">${qp.id === playerId ? '(You) — ' : ''}waiting for a seat</div></div>`;
+          head.innerHTML = `<span class="queue-pos">#${i + 1}</span>${avatarCircle(qp.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${escapeHtml(String(qp.name || ''))}</div><div class="status">${qp.id === playerId ? '(You) — ' : ''}${qp.away ? '<span class="afk-tag">AFK — spectating</span>' : 'waiting for a seat'}</div></div>`;
           card.appendChild(head);
           if (isHost && qp.id !== playerId) {
             const actions = document.createElement('div');
@@ -1914,7 +1955,7 @@
       if (!isHost || (!inLobby && !force)) return;
       const slots = maxP - seatedCount;
       if (slots <= 0) return;
-      const promote = sorted.slice(0, slots);
+      const promote = sorted.filter(q => !q.away).slice(0, slots); // 👀 AFK spectators never get seated
       if (promote.length === 0) return;
       queuePromoting = true;
       try {
@@ -4045,6 +4086,24 @@
       return tied ? 'draw' : best.pid;
     }
 
+    // 🎯 SHARED guesses score by POINTS (the seeker banks the hider's score),
+    // so the winner is the BIGGEST total; individual mode keeps golf scoring
+    // (fewest guesses wins).
+    function hcPointsWinner(seats, totals) {
+      let best = null; let tied = false;
+      (seats || []).forEach(pid => {
+        const t = (totals || {})[pid] || 0;
+        if (best == null || t > best.t) { best = { pid: pid, t: t }; tied = false; }
+        else if (t === best.t) tied = true;
+      });
+      if (!best) return 'draw';
+      return tied ? 'draw' : best.pid;
+    }
+    const hcModeOfRoom = (r) => ((((r || {}).settings) || {}).hcMode === 'individual') ? 'individual' : 'shared';
+    function hcWinnerOf(seats, totals, mode) {
+      return mode === 'individual' ? hcLowestWinner(seats, totals) : hcPointsWinner(seats, totals);
+    }
+
     // 🔎 Full searchable pool — same sources as Blur Guess (generic /
     // favorites / mix from the room settings + synced AniList accounts),
     // CHARACTERS only, deduped by id AND by name so ties look clean.
@@ -4297,6 +4356,144 @@
       hcPickSug('pick', pool[Math.floor(Math.random() * pool.length)]);
     }
 
+    // 🧽 small input-side eraser: wipe the typing box + close the suggestions
+    function hcClearPick() {
+      const inp = document.getElementById('hcPickInput');
+      if (inp) { inp.value = ''; inp.focus(); }
+      const sug = document.getElementById('hcPickSuggest');
+      if (sug) { sug.innerHTML = ''; sug.classList.remove('show'); }
+    }
+
+    // ===== 👀 SPECTATOR MODE =====
+    // Queued visitors (no free seat / game running) auto-spectate the live
+    // game: a read-only screen built from PUBLIC info only. Flagging the
+    // queue entry `away=true` parks you in the lobby instead (never promoted).
+    async function specSetAway(on) {
+      if (!roomCode) return;
+      await database.ref('rooms/' + roomCode + '/queue/' + playerId + '/away').set(on ? true : null);
+      touchActivity();
+    }
+    async function specWaitInLobby() {
+      try { await specSetAway(true); } catch (e) {}
+      showScreen('lobbyScreen');
+    }
+    // Lobby toggle: seated → park AFK in the queue; queued → flip away on/off
+    async function toggleAfk() {
+      if (!currentRoom || !roomCode) return;
+      const me = (currentRoom.players || {})[playerId];
+      const meQ = (currentRoom.queue || {})[playerId];
+      if (me && !meQ) {
+        if (currentRoom.state && currentRoom.state !== 'lobby') { showNotification('Finish your game first — AFK parks you from the lobby.'); return; }
+        if (me.isHost && Object.keys(currentRoom.players || {}).length < 2) { showNotification('You are the last player — leave the room instead.'); return; }
+        const upd = {};
+        upd['queue/' + playerId] = { id: playerId, name: me.name || playerName, avatar: me.avatar || '', joinedAt: Date.now(), away: true };
+        upd['players/' + playerId] = null;
+        await database.ref('rooms/' + roomCode).update(upd);
+        touchActivity();
+        showNotification('You are parked AFK — watching only, no seat reserved.');
+      } else if (meQ) {
+        if (meQ.away) { await specSetAway(false); showNotification('Back in the queue — you\'ll auto-join the next free seat!'); }
+        else { await specSetAway(true); showNotification('Parked AFK — you will NOT auto-join the next seat.'); }
+      }
+    }
+
+    // Public, read-only snapshot of the running game (never a secret in sight)
+    function renderSpectate() {
+      const r = currentRoom || {};
+      const players = r.players || {};
+      const s = r.settings || {};
+      const g = r.game || 'guesswho';
+      const nameEl = document.getElementById('specGameName');
+      const phaseEl = document.getElementById('specPhase');
+      const boardEl = document.getElementById('specBoard');
+      const scoreEl = document.getElementById('specScore');
+      const feedEl = document.getElementById('specFeed');
+      if (!nameEl || !scoreEl || !feedEl) return;
+      nameEl.innerHTML = ic(GAME_ICONS[g] || 'gamepad') + ' ' + (GAME_LABELS[g] || g);
+      const nameOf = pid => escapeHtml(((players[pid] || {}).name) || '…');
+      const av = pid => avatarCircle(((players[pid] || {}).avatar) || '', 'hc-av');
+      const rows = [];
+      const feedRows = [];
+      let phaseTxt = '';
+      if (boardEl) { boardEl.style.display = 'none'; boardEl.innerHTML = ''; }
+
+      if (g === 'blur') {
+        const bg = r.bg || {};
+        const rounds = bg.rounds || [];
+        const idx = Math.min(bg.roundIdx || 0, Math.max(0, rounds.length - 1));
+        if (bg.phase === 'playing' && rounds.length) phaseTxt = (window.t ? t('Round') : 'Round') + ' ' + (idx + 1) + '/' + rounds.length + ' — ' + (window.t ? t('stage') : 'stage') + ' ' + (bg.stage || 1) + '/5';
+        else phaseTxt = window.t ? t('Waiting for the next deal…') : 'Waiting for the next deal…';
+        // 👁️ the blurred picture is public to every player — show it live too
+        if (bg.phase === 'playing' && boardEl && rounds[idx] && rounds[idx].image) {
+          const st = Math.max(1, Math.min(5, bg.stage || 1));
+          const blurPx = [22, 16, 10, 5, 1.5][st - 1];
+          boardEl.style.display = 'block';
+          boardEl.innerHTML = '';
+          const img = document.createElement('img');
+          img.className = 'spec-blur-img'; img.src = rounds[idx].image; img.alt = ''; img.loading = 'lazy';
+          img.style.filter = 'blur(' + blurPx + 'px)';
+          boardEl.appendChild(img);
+        }
+        const sc = bg.scores || {};
+        Object.keys(sc).filter(pid => players[pid]).sort((a, b) => ((sc[b] || 0) - (sc[a] || 0)) || nameOf(a).localeCompare(nameOf(b)))
+          .forEach((pid, i) => rows.push('<div class="player-card"><div class="player-head"><span class="queue-pos">' + (i + 1) + '.</span>' + av(pid) + '<div class="player-info"><div class="name">' + nameOf(pid) + '</div></div></div><span class="me-pts">' + (sc[pid] || 0) + '</span></div>'));
+        const log = bg.log || {};
+        Object.keys(log).sort().slice(-8).forEach(k => { const e = log[k] || {}; if (e.txt) feedRows.push(String(e.txt)); });
+      } else if (g === 'hotcold') {
+        const hc = r.hc || {};
+        const order = Array.isArray(hc.order) ? hc.order : [];
+        phaseTxt = 'R' + (hc.round || 1) + '/' + order.length + ' — ' + tPO('hc_hidden_by', { n: nameOf(hc.hider) }) + (hc.phase === 'matchEnd' ? ' · ' + (window.t ? t('Match over') : 'Match over') : '');
+        if (!s.hcHideRank) {
+          const totals = hc.totals || {};
+          const dir = s.hcMode === 'individual' ? 1 : -1;
+          order.filter(pid => players[pid]).sort((a, b) => (((totals[a] || 0) - (totals[b] || 0)) * dir) || nameOf(a).localeCompare(nameOf(b)))
+            .forEach((pid, i) => rows.push('<div class="player-card"><div class="player-head"><span class="queue-pos">' + (i + 1) + '.</span>' + av(pid) + '<div class="player-info"><div class="name">' + nameOf(pid) + '</div></div></div><span class="me-pts">' + (totals[pid] || 0) + '</span></div>'));
+        } else {
+          rows.push('<div class="player-card"><div class="player-info"><div class="status">' + (window.t ? t('Ranking hidden until match end') : 'Ranking hidden until match end') + '</div></div></div>');
+        }
+        if (hcModeOfRoom(r) === 'individual') {
+          feedRows.push(window.t ? t('Individual guesses this match — proposals stay private.') : 'Individual guesses this match — proposals stay private.');
+        } else {
+          const gs = hc.guesses || {};
+          Object.keys(gs).filter(k => gs[k] && gs[k].r === hc.round).sort().slice(-8)
+            .forEach(k => { const gg = gs[k] || {}; feedRows.push(nameOf(gg.by) + ' → ' + escapeHtml(gg.name || '?') + ' · ' + (gg.score != null ? gg.score : '?')); });
+          if (!feedRows.length) feedRows.push(window.t ? t('Nothing yet') : 'Nothing yet');
+        }
+      } else if (g === 'battle') {
+        const br = r.br || {};
+        phaseTxt = br.phase ? String(br.phase) : '';
+        const pts = br.points || {};
+        Object.keys(pts).filter(pid => players[pid]).sort((a, b) => ((pts[b] || 0) - (pts[a] || 0)) || nameOf(a).localeCompare(nameOf(b)))
+          .forEach((pid, i) => rows.push('<div class="player-card"><div class="player-head"><span class="queue-pos">' + (i + 1) + '.</span>' + av(pid) + '<div class="player-info"><div class="name">' + nameOf(pid) + '</div></div></div><span class="me-pts">' + (pts[pid] || 0) + '</span></div>'));
+      } else if (g === 'race') {
+        const rc = r.rc || {};
+        phaseTxt = (rc.phase ? String(rc.phase) : '') + ' — ' + tPO('hc_hidden_by', { n: nameOf(rc.targetPid) });
+        const lives = rc.livesLeft || {};
+        Object.keys(lives).filter(pid => players[pid]).sort((a, b) => nameOf(a).localeCompare(nameOf(b)))
+          .forEach(pid => rows.push('<div class="player-card"><div class="player-head">' + av(pid) + '<div class="player-info"><div class="name">' + nameOf(pid) + '</div></div></div><span class="me-pts">' + '❤ ' + (lives[pid] != null ? lives[pid] : '?') + '</span></div>'));
+      } else if (g === 'undercover') {
+        const uc = r.uc || {};
+        phaseTxt = String(uc.phase || '');
+        const alive = ucAlivePids(r);
+        alive.forEach(pid => { if (players[pid]) rows.push('<div class="player-card"><div class="player-head">' + av(pid) + '<div class="player-info"><div class="name">' + nameOf(pid) + '</div><div class="status">' + (window.t ? t('in play') : 'in play') + '</div></div></div></div>'); });
+        const clues = uc.clues || {};
+        Object.keys(clues).forEach(pid => { if (players[pid] && clues[pid]) feedRows.push(nameOf(pid) + ': ' + escapeHtml(String(clues[pid]))); });
+      } else { // guesswho — public question history only
+        phaseTxt = String(r.state || '');
+        (r.questionHistory || []).slice(-8).forEach(item => { if (item) feedRows.push('Q: ' + escapeHtml(String(item.question || '')) + ' → ' + escapeHtml(String(item.answer || ''))); });
+        if (!feedRows.length) feedRows.push(window.t ? t('Nothing yet') : 'Nothing yet');
+      }
+      if (rows.length === 0) rows.push('<p style="text-align:center;color:var(--muted);">' + (window.t ? t('Waiting for the next deal…') : 'Waiting for the next deal…') + '</p>');
+      if (phaseEl) phaseEl.textContent = phaseTxt;
+      scoreEl.innerHTML = rows.join('');
+      feedEl.innerHTML = '';
+      feedRows.reverse().forEach(txt => {
+        const d = document.createElement('div'); d.className = 'hc-row';
+        d.innerHTML = '<span class="hc-gname">' + txt + '</span>';
+        feedEl.appendChild(d);
+      });
+    }
+
     // 👁️ HIDER: hide the staged character → every seeker's lane opens
     async function hcConfirmHide() {
       const hc = (currentRoom && currentRoom.hc) || {};
@@ -4407,7 +4604,10 @@
       const round = hc.round || 1;
       const attempts = (sk0.a || 0) + 1;
       const status = score >= 100 ? 'found' : (attempts >= HC_ATTEMPT_CAP ? 'busted' : 'on');
-      const total = ((hc.totals || {})[seeker] || 0) + 1;
+      const mode0 = hcModeOfRoom(fresh);
+      // 🎯 shared guesses: every guess scores points (the hider's 0-100);
+      // individual mode keeps counting attempts (fewest guesses wins)
+      const total = ((hc.totals || {})[seeker] || 0) + (mode0 === 'individual' ? 1 : score);
       const gKey = database.ref('rooms/' + roomCode + '/hc/guesses').push().key;
       const gEntry = { by: seeker, name: (entry && entry.name) || '?', image: (entry && entry.image) || '', score: score, r: round, at: Date.now() };
       const upd = {};
@@ -4429,7 +4629,7 @@
         } else {
           const tNext = Object.assign({}, hc.totals); tNext[seeker] = total;
           upd['hc/phase'] = 'matchEnd';
-          upd['hc/winner'] = hcLowestWinner(active, tNext);
+          upd['hc/winner'] = hcWinnerOf(active, tNext, mode0);
           upd['hc/nextStarter'] = order.length > 1 ? order[1] : null; // rematch: 2nd hider starts
         }
       }
@@ -4480,7 +4680,7 @@
     // NOTE: data-wise the whole room syncs to every client; privacy here is
     // render-level. Round/match recaps never list other players' proposals,
     // and the proposals queue has always been hider-only.
-    function hcGuessMode() { return (((currentRoom || {}).settings || {}).hcMode === 'individual') ? 'individual' : 'shared'; }
+    function hcGuessMode() { return hcModeOfRoom(currentRoom); }
     function hcVisibleGuesses(hc) {
       const all = (hc || {}).guesses || {};
       if (hcGuessMode() !== 'individual') return all;
@@ -4515,7 +4715,7 @@
       }
       if (active.length < 2) {
         upd['hc/phase'] = 'matchEnd';
-        upd['hc/winner'] = hcLowestWinner(active, hc.totals || {});
+        upd['hc/winner'] = hcWinnerOf(active, hc.totals || {}, hcModeOfRoom(currentRoom));
         upd['hc/forfeit'] = true;
         upd['hc/nextStarter'] = null;
         note = 'Too many players left — the match ends here.';
@@ -4530,7 +4730,7 @@
           while (idx < order.length && active.indexOf(order[idx]) === -1) idx++;
           if (idx >= order.length) {
             upd['hc/phase'] = 'matchEnd';
-            upd['hc/winner'] = hcLowestWinner(active, hc.totals || {});
+            upd['hc/winner'] = hcWinnerOf(active, hc.totals || {}, hcModeOfRoom(currentRoom));
             upd['hc/forfeit'] = true;
             upd['hc/nextStarter'] = null;
             note = 'The last hider left — the match ends on the current totals.';
@@ -4558,7 +4758,7 @@
               upd['hc/phase'] = 'roundEnd';
             } else {
               upd['hc/phase'] = 'matchEnd';
-              upd['hc/winner'] = hcLowestWinner(active, hc.totals || {});
+              upd['hc/winner'] = hcWinnerOf(active, hc.totals || {}, hcModeOfRoom(currentRoom));
               upd['hc/nextStarter'] = order.length > 1 ? order[1] : null;
             }
             note = 'Round over — moving on!';
@@ -4769,14 +4969,19 @@
       const logTitle = document.getElementById('hcLogTitle');
       if (logTitle) logTitle.innerHTML = ic('note') + ' ' + tPO(mineOnly ? 'hc_log_mine' : 'hc_round_word', { c: gKeys.length });
 
-      // 🏆 CLASSEMENT — Σ of every scored guess, biggest first; lane status
-      // chips show who's still hunting this round
+      // 🏆 CLASSEMENT — Σ of every scored guess (shared: most POINTS first;
+      // individual: golf, fewest guesses). Lane chips show who's still hunting.
+      // 📊 settings/hcHideRank parks the panel until the match ends.
+      const hideRank = !!(((currentRoom || {}).settings || {}).hcHideRank) && hc.phase !== 'matchEnd';
+      const sharedPts = hcGuessMode() !== 'individual';
       const rankTitle = document.getElementById('hcRankTitle');
-      if (rankTitle) rankTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Ranking') : 'Ranking');
+      if (rankTitle) { rankTitle.innerHTML = ic('trophy') + ' ' + (window.t ? t('Ranking') : 'Ranking'); rankTitle.style.display = hideRank ? 'none' : ''; }
       const rank = document.getElementById('hcRank');
-      if (rank) {
+      if (rank) rank.style.display = hideRank ? 'none' : '';
+      if (rank && !hideRank) {
         const seats = order.filter(pid => players[pid]);
-        const sorted = seats.slice().sort((a, b) => ((totals[a] || 0) - (totals[b] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b)))); // golf: fewest guesses first
+        const dir = sharedPts ? -1 : 1; // shared: biggest points first · individual: golf
+        const sorted = seats.slice().sort((a, b) => (((totals[a] || 0) - (totals[b] || 0)) * dir) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
         rank.innerHTML = '';
         sorted.forEach((pid, i) => {
           const p = players[pid] || {};
@@ -4849,23 +5054,25 @@
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
       const totals = hc.totals || {};
+      const ptsMode = hcGuessMode() !== 'individual'; // 🎯 shared guesses score POINTS
       const title = document.getElementById('hcWinTitle');
       const sub = document.getElementById('hcWinSub');
       if (winner === 'draw') {
         if (title) title.innerHTML = ic('target') + ' ' + 'Draw!';
-        if (sub) sub.innerHTML = tPO('hc_draw');
+        if (sub) sub.innerHTML = tPO(ptsMode ? 'hc_draw_pts' : 'hc_draw');
       } else {
         if (title) title.innerHTML = ic('trophy') + ' ' + 'Winner!';
-        if (sub) sub.innerHTML = winner === playerId ? tPO('hc_win_you_total', { t: totals[winner] || 0 })
-          : tPO('hc_win_total', { n: escapeHtml(hcNameOf(players, winner)), t: totals[winner] || 0 }) +
+        if (sub) sub.innerHTML = winner === playerId ? tPO(ptsMode ? 'hc_win_you_total_pts' : 'hc_win_you_total', { t: totals[winner] || 0 })
+          : tPO(ptsMode ? 'hc_win_total_pts' : 'hc_win_total', { n: escapeHtml(hcNameOf(players, winner)), t: totals[winner] || 0 }) +
             (hc.forfeit ? ' <small>(' + tPO('hc_by_forfeit') + ')</small>' : '');
       }
       const list = document.getElementById('hcEndList');
       if (list) {
         list.innerHTML = '';
         const order = hcOrderOf();
+        const dir = ptsMode ? -1 : 1;
         const sorted = order.filter(pid => players[pid]).slice()
-          .sort((a, b) => ((totals[a] || 0) - (totals[b] || 0)) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
+          .sort((a, b) => (((totals[a] || 0) - (totals[b] || 0)) * dir) || String(hcNameOf(players, a)).localeCompare(String(hcNameOf(players, b))));
         sorted.forEach((pid, i) => {
           const p = players[pid] || {};
           const out = p.outInGame === hc.gameId;
@@ -4873,7 +5080,7 @@
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
           const crown = (winner !== 'draw' && pid === winner) ? ic('trophy') + ' ' : '';
           const tag = escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? ' (You)' : '') + (out ? ' <small style="color:var(--muted);">(' + tPO('hc_pts_left') + ')</small>' : '');
-          row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + crown + tag + '</span><span class="me-pts">' + tPO('hc_round_word', { c: totals[pid] || 0 }) + '</span>';
+          row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + crown + tag + '</span><span class="me-pts">' + tPO(ptsMode ? 'hc_pts_word' : 'hc_round_word', { c: totals[pid] || 0 }) + '</span>';
           list.appendChild(row);
         });
       }
