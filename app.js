@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '45';
+    const SAKU_BUILD = '46';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1105,7 +1105,7 @@
 
     function selectHostSource(type) {
       hostSource = type;
-      const map = { favorites: 'hostSrcFavorites', generic: 'hostSrcGeneric', mix: 'hostSrcMix' };
+      const map = { favorites: 'hostSrcFavorites', generic: 'hostSrcGeneric', mix: 'hostSrcMix', watched: 'hostSrcWatched' };
       Object.values(map).forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.toggle('selected', id === map[type]);
@@ -1203,7 +1203,7 @@
       ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
       document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
       // 🃏 pool + Guess Who board
-      if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) selectHostSource(cfg.source);
+      if (['generic', 'favorites', 'mix', 'watched'].indexOf(cfg.source) >= 0) selectHostSource(cfg.source);
       document.getElementById('hostCharCountSlider').value = clampN(cfg.charCount, 12, 80, 24); updateHostCharCount();
       document.getElementById('hostMixSlider').value = clampN(cfg.mix, 0, parseInt(document.getElementById('hostMixSlider').max) || 80, 12); updateHostMix();
       if (cfg.pool) selectHostPool(cfg.pool === 'watched' ? 'watched' : 'random');
@@ -1351,7 +1351,7 @@
       } else {
         if (g === 'hotcold' || g === 'blur') {
           if (cfg.pool) updates['settings/pool'] = cfg.pool === 'watched' ? 'watched' : 'random';
-        } else if (['generic', 'favorites', 'mix'].indexOf(cfg.source) >= 0) updates['settings/source'] = cfg.source;
+        } else if (['generic', 'favorites', 'mix', 'watched'].indexOf(cfg.source) >= 0) updates['settings/source'] = cfg.source;
         if (g === 'guesswho' || g === 'battle' || g === 'race') {
           updates['settings/characterCount'] = clampN(cfg.charCount, 12, 80, 24);
           updates['settings/mixCount'] = clampN(cfg.mix, 0, 80, Math.floor(clampN(cfg.charCount, 12, 80, 24) / 2));
@@ -1484,6 +1484,7 @@
         const isMulti = game === 'battle' || game === 'race' || game === 'blur';
         const isWatchGame = game === 'blur' || game === 'hotcold';
       if (!isUc && !isWatchGame && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Favorites needs a synced AniList account (profile menu) — or switch the pool to Generic!'); return; }
+      if (!isUc && !isWatchGame && hostSource === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs a synced AniList account (profile menu) — or pick another pool!'); return; }
       if (isWatchGame && hostPool === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs synced AniList accounts — friends auto-sync when they join with a linked account (or switch the pool to Random).'); }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
@@ -3739,6 +3740,7 @@
           const hm = Math.min(6, Math.max(2, currentRoom.maxPlayers || 4));
           document.getElementById('modalHcMaxSlider').value = hm;
           document.getElementById('modalHcMaxValue').textContent = hm;
+          syncHcSettingsUI(); // 🌡️ Guess mode + Ranking pairs mirror the live settings
         }
       }
       const multiBox = document.getElementById('modalMultiMaxBlock');
@@ -3834,7 +3836,7 @@
 
     function syncSourceUI() {
       const src = currentSource();
-      const map = { favorites: 'modalSrcFavorites', generic: 'modalSrcGeneric', mix: 'modalSrcMix' };
+      const map = { favorites: 'modalSrcFavorites', generic: 'modalSrcGeneric', mix: 'modalSrcMix', watched: 'modalSrcWatched' };
       Object.values(map).forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.toggle('selected', id === map[src]);
@@ -3865,6 +3867,33 @@
       await database.ref('rooms/' + roomCode + '/settings/pool').set(p === 'watched' ? 'watched' : 'random');
       touchActivity();
       syncPoolUI();
+    }
+
+    // 🌡️ HC Guess mode + Ranking visibility — same toggles as the create screen
+    function syncHcSettingsUI() {
+      const s = (currentRoom && currentRoom.settings) || {};
+      const m = s.hcMode === 'individual' ? 'individual' : 'shared';
+      const e1 = document.getElementById('modalHcModeShared');
+      const e2 = document.getElementById('modalHcModeIndividual');
+      if (e1) e1.classList.toggle('selected', m === 'shared');
+      if (e2) e2.classList.toggle('selected', m === 'individual');
+      const hidden = !!s.hcHideRank;
+      const r1 = document.getElementById('modalHcRankShow');
+      const r2 = document.getElementById('modalHcRankHide');
+      if (r1) r1.classList.toggle('selected', !hidden);
+      if (r2) r2.classList.toggle('selected', hidden);
+    }
+    async function changeHcMode(m) {
+      if (!isHost || !currentRoom) return;
+      await database.ref('rooms/' + roomCode + '/settings/hcMode').set(m === 'individual' ? 'individual' : 'shared');
+      touchActivity();
+      syncHcSettingsUI();
+    }
+    async function changeHcRank(h) {
+      if (!isHost || !currentRoom) return;
+      await database.ref('rooms/' + roomCode + '/settings/hcHideRank').set(!!h);
+      touchActivity();
+      syncHcSettingsUI();
     }
 
     // 🔀 Mix split bar (Guess Who games, pool = Mix) — reads/writes settings/mixCount
@@ -4099,7 +4128,15 @@
       if (!best) return 'draw';
       return tied ? 'draw' : best.pid;
     }
-    const hcModeOfRoom = (r) => ((((r || {}).settings) || {}).hcMode === 'individual') ? 'individual' : 'shared';
+    // Effective guess mode for a room. Shared guesses are a 3+ players mode:
+    // with only 2 seats (1 hider + 1 seeker) a shared log is pointless, so the
+    // match always falls back to 'individual'.
+    function hcModeOfRoom(r) {
+      const s = ((r || {}).settings) || {};
+      const n = Object.keys((r || {}).players || {}).length;
+      if (n > 0 && n < 3) return 'individual';
+      return s.hcMode === 'individual' ? 'individual' : 'shared';
+    }
     function hcWinnerOf(seats, totals, mode) {
       return mode === 'individual' ? hcLowestWinner(seats, totals) : hcPointsWinner(seats, totals);
     }
@@ -4330,6 +4367,10 @@
         const fresh = snap.val() || currentRoom || {};
         const pids = Object.keys(fresh.players || {});
         if (pids.length < 2) { showNotification('Hot & Cold needs at least 2 players!'); return; }
+        // shared asked with only 2 players → the match runs individual
+        if (((fresh.settings || {}).hcMode || 'shared') !== 'individual' && hcModeOfRoom(fresh) === 'individual') {
+          showNotification('Shared guesses need 3+ players — this match runs in Individual!', 4000);
+        }
         const order = pids.slice();
         for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = order[i]; order[i] = order[j]; order[j] = t; }
         const prev = fresh.hc || {};
@@ -5232,9 +5273,14 @@
         if (selectedChars.length < totalChars) {
           selectedChars = shuffleArray([...selectedChars, ...pickUnique(generic.slice(), totalChars - selectedChars.length)]);
         }
+      } else if (source === 'watched' && accountData.length > 0) {
+        // 👀 Watched: the board comes from characters of anime the synced
+        // accounts have seen (same pool as Hot & Cold / Blur Guess)
+        selectedChars = pickUnique(watchedPoolChars(currentRoom), totalChars);
       } else {
         // 'generic', or any source with no AniList accounts configured
-        if (source !== 'generic') showNotification('No AniList accounts in this room — using the generic pool.');
+        if (source === 'watched') showNotification('Watched pool is empty — check the AniList accounts or switch the pool.');
+        else if (source !== 'generic') showNotification('No AniList accounts in this room — using the generic pool.');
         selectedChars = pickUnique(generic.slice(), totalChars);
       }
 

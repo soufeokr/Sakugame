@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="45">
+<meta name="saku-build" content="46">
 <title>Sakugame — Free Online Anime Guessing Games</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -56,7 +56,7 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=45">
+<link rel="stylesheet" href="style.css?v=46">
 </head>
 <body>
 
@@ -365,7 +365,7 @@
             <input type="range" id="hostHcMaxSlider" min="2" max="6" value="4" oninput="updateHcMaxPlayers()">
             <div class="slider-label" style="margin-top: 12px;"><span>Guess mode</span></div>
             <div class="hc-mode-row">
-              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div><small style="color: var(--muted);">Everyone sees every proposal &amp; its score</small></label>
+              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div><small style="color: var(--muted);">Everyone sees every proposal &amp; its score (3+ players)</small></label>
               <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div><small style="color: var(--muted);">Each seeker sees ONLY their own — no peeking!</small></label>
             </div>
             <div class="slider-label" style="margin-top: 12px;"><span>Ranking</span></div>
@@ -393,6 +393,7 @@
               <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div><small style="color: var(--muted);">5000 famous characters — no AniList needed</small></label>
               <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
               <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
+              <label class="radio-option" id="hostSrcWatched" onclick="selectHostSource('watched')"><input type="radio" name="charsource" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div><small style="color: var(--muted);">Only from anime the synced accounts have watched</small></label>
             </div>
           </div>
           <!-- 👀🎲 Hot & Cold + Blur Guess: simplified pool — Random (full website pool) vs Watched (only anime the synced AniList accounts have seen) -->
@@ -737,6 +738,7 @@
           <div class="question-form">
             <div class="bg-guess-wrap hc-has-rnd">
               <input type="text" id="hcPickInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="hc-rnd" onclick="hcRandomPick()" title="Random"><svg class="ic"><use href="#i-dice"/></svg></button>
               <button class="hc-clr" onclick="hcClearPick()" title="Eraser"><svg class="ic"><use href="#i-x"/></svg></button>
               <div class="bg-suggest" id="hcPickSuggest"></div>
             </div>
@@ -887,6 +889,17 @@
           <div class="slider-container" id="modalHcMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="modalHcMaxValue">4</strong></div>
             <input type="range" id="modalHcMaxSlider" min="2" max="6" value="4" oninput="updateModalHcMaxPlayers()">
+            <!-- 🌡️ same Guess mode + Ranking toggles as the create-room screen -->
+            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode</span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div><small style="color: var(--muted);">Everyone sees every proposal &amp; its score (3+ players)</small></label>
+              <label class="radio-option" id="modalHcModeIndividual" onclick="changeHcMode('individual')"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div><small style="color: var(--muted);">Each seeker sees ONLY their own — no peeking!</small></label>
+            </div>
+            <div class="slider-label" style="margin-top: 12px;"><span>Ranking</span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div><small style="color: var(--muted);">Players see the live points ranking</small></label>
+              <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div><small style="color: var(--muted);">Revealed only at match end</small></label>
+            </div>
           </div>
           <div class="slider-container" id="modalMultiMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="modalMultiMaxValue">6</strong></div>
@@ -907,6 +920,7 @@
               <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div></label>
               <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div></label>
               <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div></label>
+              <label class="radio-option" id="modalSrcWatched" onclick="changeSource('watched')"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
             </div>
           </div>
           <!-- 👀🎲 Hot & Cold + Blur Guess: Random vs Watched pool -->
@@ -1071,8 +1085,8 @@
             <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
           </div>
           <!-- 👀 Which AniList list-statuses count as "watched" for the HC/Blur Watched pools -->
+          <span class="ws-lead">Count as watched:</span>
           <div class="ws-row" id="watchStatusRow">
-            <span class="ws-lead">Count as watched:</span>
             <label><input type="checkbox" id="wsWatching" checked onchange="saveWatchStatuses()"> Watching</label>
             <label><input type="checkbox" id="wsCompleted" checked onchange="saveWatchStatuses()"> Completed</label>
             <label><input type="checkbox" id="wsPaused" checked onchange="saveWatchStatuses()"> Paused</label>
@@ -1231,11 +1245,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=45"></script>
-  <script src="animes.js?v=45"></script>
-  <script src="undercover.js?v=45"></script>
-  <script src="music.js?v=45"></script>
-  <script src="lang.js?v=45"></script>
-  <script src="app.js?v=45"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a34e44aba8214348',t:'MTc4ODM3MDQ5NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="characters.js?v=46"></script>
+  <script src="animes.js?v=46"></script>
+  <script src="undercover.js?v=46"></script>
+  <script src="music.js?v=46"></script>
+  <script src="lang.js?v=46"></script>
+  <script src="app.js?v=46"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a34ed9c709d19104',t:'MTc4ODM3NjYwMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
