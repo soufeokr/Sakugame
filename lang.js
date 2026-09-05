@@ -255,6 +255,8 @@ var I18N = {
   "Game switched to": { fr: "Jeu changé pour", es: "Juego cambiado a" },
   "Game:": { fr: "Jeu :", es: "Juego:" },
   "Games": { fr: "Jeux", es: "Juegos" },
+  "Rules": { fr: "Règles", es: "Reglas" },
+  "Browse games & their rules": { fr: "Parcourir les jeux et leurs règles", es: "Explorar los juegos y sus reglas" },
   "Generic": { fr: "Générique", es: "Genérico" },
   "Generic pool": { fr: "Réserve générique", es: "Grupo genérico" },
   "goes back to the lobby": { fr: "retourne au lobby", es: "vuelve al lobby" },

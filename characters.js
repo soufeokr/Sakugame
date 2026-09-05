@@ -48,7 +48,7 @@ const GENERIC_CHARACTERS =
   "id": 27,
   "name": "Killua Zoldyck",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b27-Z5O02kQUydpT.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -324,7 +324,7 @@ const GENERIC_CHARACTERS =
   "id": 28,
   "name": "Kurapika",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b28-ivA7UGnfE40a.png",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -555,7 +555,7 @@ const GENERIC_CHARACTERS =
   "id": 6356,
   "name": "Joseph Joestar",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b6356-RImEfUfHpC58.png",
-  "series": "JoJo no Kimyou na Bouken (2000)",
+  "series": "JoJo no Kimyou na Bouken (TV)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -626,7 +626,7 @@ const GENERIC_CHARACTERS =
   "id": 30,
   "name": "Gon Freecss",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b30-lyFExKyDhefc.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -806,7 +806,7 @@ const GENERIC_CHARACTERS =
   "id": 31,
   "name": "Hisoka Morow",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b31-FZckOuu7L1un.png",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -831,7 +831,7 @@ const GENERIC_CHARACTERS =
   "id": 90107,
   "name": "Kusuo Saiki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90107-ZULW5HlPX1uU.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Ansatsu Kyoushitsu 2nd Season",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -849,7 +849,7 @@ const GENERIC_CHARACTERS =
   "id": 66173,
   "name": "Izumi Miyamura",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b66173-g8eU1LGWPB8O.png",
-  "series": "Hori-san to Miyamura-kun",
+  "series": "Horimiya",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -1013,7 +1013,7 @@ const GENERIC_CHARACTERS =
   "id": 4003,
   "name": "Joutarou Kuujou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4003-gWDSEGbeOAll.png",
-  "series": "JoJo no Kimyou na Bouken (2000)",
+  "series": "JoJo no Kimyou na Bouken (TV)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -1342,7 +1342,7 @@ const GENERIC_CHARACTERS =
   "id": 66171,
   "name": "Kyouko Hori",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b66171-o2vk3689wWFK.png",
-  "series": "Hori-san to Miyamura-kun",
+  "series": "Horimiya",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -1365,7 +1365,7 @@ const GENERIC_CHARACTERS =
   "id": 257562,
   "name": "Hitori Gotou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b257562-Ru35NYPfsqhY.png",
-  "series": "Slow Loop",
+  "series": "Bocchi the Rock!",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -1415,7 +1415,7 @@ const GENERIC_CHARACTERS =
   "id": 71933,
   "name": "Karma Akabane",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b71933-HQ1TSjlrJ8Hv.jpg",
-  "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
+  "series": "Ansatsu Kyoushitsu",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -1485,7 +1485,7 @@ const GENERIC_CHARACTERS =
   "id": 209,
   "name": "Kyou Souma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b209-NOAbiLvJt1QA.png",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -1695,7 +1695,7 @@ const GENERIC_CHARACTERS =
   "id": 65643,
   "name": "Koro-sensei",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65643-jimrOw0RGtoB.png",
-  "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
+  "series": "Ansatsu Kyoushitsu",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -1714,7 +1714,7 @@ const GENERIC_CHARACTERS =
   "id": 58,
   "name": "Chrollo Lucilfer",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b58-USOmsz3nursi.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -1826,7 +1826,7 @@ const GENERIC_CHARACTERS =
   "id": 123385,
   "name": "Phosphophyllite",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123385-ild8gXk13xcO.png",
-  "series": "Houseki no Kuni PV",
+  "series": "Houseki no Kuni",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -1849,7 +1849,7 @@ const GENERIC_CHARACTERS =
   "id": 4004,
   "name": "Dio Brando",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4004-w0OtWuvjhftG.png",
-  "series": "JoJo no Kimyou na Bouken (2000)",
+  "series": "JoJo no Kimyou na Bouken (TV)",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -1880,7 +1880,7 @@ const GENERIC_CHARACTERS =
   "id": 123285,
   "name": "Asta",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123285-tKijiuQErDS0.png",
-  "series": "Black Clover: Jump Festa 2016 Special",
+  "series": "Black Clover",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -2024,7 +2024,7 @@ const GENERIC_CHARACTERS =
   "id": 207,
   "name": "Tooru Honda",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b207-RQ4EUdTD0K62.png",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -2580,7 +2580,7 @@ const GENERIC_CHARACTERS =
   "id": 65645,
   "name": "Nagisa Shiota",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b65645-nWH4mBMW5lYw.png",
-  "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
+  "series": "Ansatsu Kyoushitsu",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -2973,7 +2973,7 @@ const GENERIC_CHARACTERS =
   "id": 29,
   "name": "Leorio Paradinight",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b29-RgzoSeKmDYzl.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -2985,7 +2985,7 @@ const GENERIC_CHARACTERS =
   "id": 14864,
   "name": "Hyakkimaru",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14864-MMntDWi2EkyR.png",
-  "series": "Dororo to Hyakkimaru",
+  "series": "Dororo",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -3069,7 +3069,7 @@ const GENERIC_CHARACTERS =
   "id": 261674,
   "name": "Nijika Ijichi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b261674-a8tJYvtzqWgC.png",
-  "series": "Slow Loop",
+  "series": "Bocchi the Rock!",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -3203,7 +3203,7 @@ const GENERIC_CHARACTERS =
   "id": 4963,
   "name": "Yuno Gasai",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4963-7ZMcCtXW5hkY.png",
-  "series": "Mirai Nikki OVA",
+  "series": "Mirai Nikki",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -3343,7 +3343,7 @@ const GENERIC_CHARACTERS =
   "id": 264529,
   "name": "Ryou Yamada",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b264529-BvEusZnJLD2Y.png",
-  "series": "Slow Loop",
+  "series": "Bocchi the Rock!",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -3370,7 +3370,7 @@ const GENERIC_CHARACTERS =
   "id": 90112,
   "name": "Shun Kaidou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90112-KVRcvbKBKLxY.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no Ψ-nan",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -4040,7 +4040,7 @@ const GENERIC_CHARACTERS =
   "id": 8945,
   "name": "Noriaki Kakyouin",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/8945-gyPfrVpCb5CF.jpg",
-  "series": "JoJo no Kimyou na Bouken (2000)",
+  "series": "JoJo no Kimyou na Bouken: Stardust Crusaders",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -4090,7 +4090,7 @@ const GENERIC_CHARACTERS =
   "id": 3195,
   "name": "Feitan Portor",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/3195.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -4112,7 +4112,7 @@ const GENERIC_CHARACTERS =
   "id": 2456,
   "name": "Akira Fudou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2456-rTjIXMLPHTu2.jpg",
-  "series": "Devilman",
+  "series": "DEVILMAN crybaby",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -4191,7 +4191,7 @@ const GENERIC_CHARACTERS =
   "id": 208,
   "name": "Yuki Souma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b208-5TmAqqh82wNe.png",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -4404,7 +4404,7 @@ const GENERIC_CHARACTERS =
   "id": 4368,
   "name": "Jean-Pierre Polnareff",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4368-1KToX8uSi1U1.png",
-  "series": "JoJo no Kimyou na Bouken (2000)",
+  "series": "JoJo no Kimyou na Bouken: Stardust Crusaders",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -4525,7 +4525,7 @@ const GENERIC_CHARACTERS =
   "id": 4606,
   "name": "Tomoya Okazaki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4606-61r9h3WUrkA9.png",
-  "series": "Clannad Movie",
+  "series": "CLANNAD",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -5013,7 +5013,7 @@ const GENERIC_CHARACTERS =
   "id": 81853,
   "name": "Decim",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b81853-CY99xwoziDG4.png",
-  "series": "Death Billiards",
+  "series": "Death Parade",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -5079,7 +5079,7 @@ const GENERIC_CHARACTERS =
   "id": 127292,
   "name": "Marcille Donato",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127292-MAWgxbS0Cbrs.png",
-  "series": "Dungeon Meshi CM",
+  "series": "Dungeon Meshi",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -5150,7 +5150,7 @@ const GENERIC_CHARACTERS =
   "id": 4092,
   "name": "Ryo Asuka",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4092-63yxC7cCrWke.png",
-  "series": "Devilman: Tanjou-hen",
+  "series": "DEVILMAN crybaby",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -5233,7 +5233,7 @@ const GENERIC_CHARACTERS =
   "id": 369,
   "name": "Hatsuharu Souma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b369-NDFi2A2BzqO6.png",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -5282,7 +5282,7 @@ const GENERIC_CHARACTERS =
   "id": 83019,
   "name": "Rin Matsuoka",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83019-wCHpG1RDVVNC.png",
-  "series": "Kyoto Animation: Suiei-hen",
+  "series": "Free!",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -5332,7 +5332,7 @@ const GENERIC_CHARACTERS =
   "id": 266041,
   "name": "Ikuyo Kita",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b266041-1HKgjJGP2MmM.png",
-  "series": "Slow Loop",
+  "series": "Bocchi the Rock!",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -5701,7 +5701,7 @@ const GENERIC_CHARACTERS =
   "id": 123284,
   "name": "Yuno",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123284-w6kIFYnTclMd.png",
-  "series": "Black Clover: Jump Festa 2016 Special",
+  "series": "Black Clover",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -5748,7 +5748,7 @@ const GENERIC_CHARACTERS =
   "id": 4604,
   "name": "Nagisa Furukawa",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4604-YFJiWeuGSIYf.png",
-  "series": "Clannad Movie",
+  "series": "CLANNAD",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -5829,7 +5829,7 @@ const GENERIC_CHARACTERS =
   "id": 16021,
   "name": "Iskandar",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b16021-w5Jn1eb807vt.png",
-  "series": "Carnival Phantasm",
+  "series": "Fate/Zero",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -6072,7 +6072,7 @@ const GENERIC_CHARACTERS =
   "id": 81751,
   "name": "Mirai Kuriyama",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b81751-nUEIrhRFlkKc.png",
-  "series": "Kyoto Animation: Megane-hen",
+  "series": "Kyoukai no Kanata",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -6383,7 +6383,7 @@ const GENERIC_CHARACTERS =
   "id": 8087,
   "name": "Jonathan Joestar",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8087-GTrObHQvujB5.png",
-  "series": "JoJo no Kimyou na Bouken (2000)",
+  "series": "JoJo no Kimyou na Bouken (TV)",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -6792,7 +6792,7 @@ const GENERIC_CHARACTERS =
   "id": 126818,
   "name": "Laios Thorden",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126818-vWeIwxSERSHd.png",
-  "series": "Dungeon Meshi CM",
+  "series": "Dungeon Meshi",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -7110,7 +7110,7 @@ const GENERIC_CHARACTERS =
   "id": 88344,
   "name": "Chise Hatori",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88344-zn7wbe8rKgqT.png",
-  "series": "Mahoutsukai no Yome: Hoshi Matsu Hito",
+  "series": "Mahoutsukai no Yome",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -7160,7 +7160,7 @@ const GENERIC_CHARACTERS =
   "id": 57,
   "name": "Illumi Zoldyck",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b57-pTFguojSOQZW.png",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -7205,7 +7205,7 @@ const GENERIC_CHARACTERS =
   "id": 83023,
   "name": "Haruka Nanase",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83023-l6SV5nBLfVkv.jpg",
-  "series": "Kyoto Animation: Suiei-hen",
+  "series": "Free!",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -7395,7 +7395,7 @@ const GENERIC_CHARACTERS =
   "id": 5833,
   "name": "Shizuku Murasaki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/5833.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "unknown",
   "mediaType": "anime"
  },
@@ -7403,7 +7403,7 @@ const GENERIC_CHARACTERS =
   "id": 14489,
   "name": "Isaac Netero",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14489-WgGsdlQJka65.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -7958,7 +7958,7 @@ const GENERIC_CHARACTERS =
   "id": 367,
   "name": "Momiji Souma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b367-Jc6wMVpL76Ib.png",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -7989,7 +7989,7 @@ const GENERIC_CHARACTERS =
   "id": 21938,
   "name": "Robert E. O. Speedwagon",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n21938-7iTMOJ4i6ET8.png",
-  "series": "JoJo no Kimyou na Bouken: Phantom Blood",
+  "series": "JoJo no Kimyou na Bouken (TV)",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -7997,7 +7997,7 @@ const GENERIC_CHARACTERS =
   "id": 66963,
   "name": "Yuki Yoshikawa",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b66963-JBKCtpgwdgkG.png",
-  "series": "Hori-san to Miyamura-kun",
+  "series": "Horimiya",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -8052,7 +8052,7 @@ const GENERIC_CHARACTERS =
   "id": 121590,
   "name": "Ren Amamiya",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121590-0IyliPlkGSZa.png",
-  "series": "PERSONA 5 the Animation: THE DAY BREAKERS",
+  "series": "PERSONA5 the Animation",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -8452,7 +8452,7 @@ const GENERIC_CHARACTERS =
   "id": 20594,
   "name": "Kite",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20594-QQJBR3LYobbv.jpg",
-  "series": "HUNTER×HUNTER",
+  "series": "HUNTER×HUNTER (2011)",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -8530,7 +8530,7 @@ const GENERIC_CHARACTERS =
   "id": 2865,
   "name": "Kusuriuri",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2865-n2zjwVfgOHZq.jpg",
-  "series": "ayakashi: Japanese Classic Horror",
+  "series": "Mononoke",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -8717,7 +8717,7 @@ const GENERIC_CHARACTERS =
   "id": 83027,
   "name": "Makoto Tachibana",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83027-SpFq12qbN0Dr.png",
-  "series": "Kyoto Animation: Suiei-hen",
+  "series": "Free!",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -8774,7 +8774,7 @@ const GENERIC_CHARACTERS =
   "id": 10498,
   "name": "Baki Hanma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10498-Ep1aY2liGmIA.png",
-  "series": "Grappler Baki (TV)",
+  "series": "Baki",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -8865,7 +8865,7 @@ const GENERIC_CHARACTERS =
   "id": 127689,
   "name": "Senshi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b127689-SC65fBVrUx8v.png",
-  "series": "Dungeon Meshi CM",
+  "series": "Dungeon Meshi",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -8899,7 +8899,7 @@ const GENERIC_CHARACTERS =
   "id": 269,
   "name": "Totoro",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b269-sbPL4w1ygjSe.jpg",
-  "series": "Kareshi Kanojo no Jijou",
+  "series": "Tonari no Totoro",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -9093,7 +9093,7 @@ const GENERIC_CHARACTERS =
   "id": 36309,
   "name": "Narrator",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b36309-6KM0riV4lqfN.jpg",
-  "series": "TRIGUN",
+  "series": "ONE PIECE",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -9136,7 +9136,7 @@ const GENERIC_CHARACTERS =
   "id": 90108,
   "name": "Riki Nendou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90108-BJYQbUaMLS7G.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no Ψ-nan",
   "gender": "male",
   "mediaType": "anime"
  },
@@ -9724,7 +9724,7 @@ const GENERIC_CHARACTERS =
   "id": 4966,
   "name": "Minene Uryuu",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4966-Bb0hjxjJtidY.jpg",
-  "series": "Mirai Nikki OVA",
+  "series": "Mirai Nikki",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -9800,7 +9800,7 @@ const GENERIC_CHARACTERS =
   "id": 90109,
   "name": "Kokomi Teruhashi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b90109-hr98ksrKzMOe.png",
-  "series": "Saiki Kusuo no Ψ-nan (ONA)",
+  "series": "Saiki Kusuo no Ψ-nan",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -9967,7 +9967,7 @@ const GENERIC_CHARACTERS =
   "id": 206,
   "name": "Shigure Souma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b206-4HokrxTIqu7L.jpg",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -10148,7 +10148,7 @@ const GENERIC_CHARACTERS =
   "id": 376,
   "name": "Saki Hanajima",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b376-gDdhShL8BIVg.jpg",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -10186,7 +10186,7 @@ const GENERIC_CHARACTERS =
   "id": 82037,
   "name": "Kurokami no Onna",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b82037-xvKHWk4AE4df.png",
-  "series": "Death Billiards",
+  "series": "Death Parade",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -10208,7 +10208,7 @@ const GENERIC_CHARACTERS =
   "id": 368,
   "name": "Hatori Souma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b368-zJEE8gpxBb5f.jpg",
-  "series": "Fruits Basket",
+  "series": "Fruits Basket: 1st Season",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -10339,7 +10339,7 @@ const GENERIC_CHARACTERS =
   "id": 121430,
   "name": "Elias Ainsworth",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b121430-n1k9M5RdkXyI.png",
-  "series": "Mahoutsukai no Yome: Hoshi Matsu Hito",
+  "series": "Mahoutsukai no Yome",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -10562,7 +10562,7 @@ const GENERIC_CHARACTERS =
   "id": 73881,
   "name": "Tadaomi Karasuma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/73881-Ukr6cBzK8dsi.png",
-  "series": "Ansatsu Kyoushitsu: Jump Festa 2013 Special",
+  "series": "Ansatsu Kyoushitsu",
   "gender": "male",
   "mediaType": "anime",
   "al": [
@@ -10637,7 +10637,7 @@ const GENERIC_CHARACTERS =
   "id": 46163,
   "name": "Nico Yazawa",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46163-FNug6cIPWxYk.png",
-  "series": "Bokura no LIVE Kimi to no LIFE",
+  "series": "Love Live! School idol project",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -10811,7 +10811,7 @@ const GENERIC_CHARACTERS =
   "id": 18130,
   "name": "Dororo",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b18130-qD7dREeDAkLE.png",
-  "series": "Dororo to Hyakkimaru",
+  "series": "Dororo",
   "gender": "unknown",
   "mediaType": "anime",
   "al": [
@@ -10858,7 +10858,7 @@ const GENERIC_CHARACTERS =
   "id": 46165,
   "name": "Maki Nishikino",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46165-0SB7Je2kSwnb.png",
-  "series": "Bokura no LIVE Kimi to no LIFE",
+  "series": "Love Live! School idol project",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -11047,7 +11047,7 @@ const GENERIC_CHARACTERS =
   "id": 10418,
   "name": "Yuuko Aioi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b10418-nDUxYpR4dpmA.png",
-  "series": "Nichijou no 0-wa",
+  "series": "Nichijou",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -11718,7 +11718,7 @@ const GENERIC_CHARACTERS =
   "id": 3442,
   "name": "Kenji Endou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3442-QdMHJOKv2Xos.jpg",
-  "series": "20th Century Boys",
+  "series": "Boy",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -12564,7 +12564,7 @@ const GENERIC_CHARACTERS =
   "id": 88565,
   "name": "Ouran Nakagawa",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88565-8RC8tFVxVzz0.png",
-  "series": "Dead Dead Demon's Dededede Destruction",
+  "series": "Dead Dead Demon's Dededededestruction",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -12695,7 +12695,7 @@ const GENERIC_CHARACTERS =
   "id": 62793,
   "name": "Sawa Nakamura",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b62793-7YclMbAYh0q1.png",
-  "series": "The Flowers of Evil",
+  "series": "Aku no Hana",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -12933,7 +12933,7 @@ const GENERIC_CHARACTERS =
   "id": 175945,
   "name": "Buddha",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b175945-3xQ22gud0QfO.jpg",
-  "series": "Record of Ragnarok",
+  "series": "Shuumatsu no Valkyrie II",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -14773,7 +14773,7 @@ const GENERIC_CHARACTERS =
   "id": 37154,
   "name": "Alisa Ilichina Amiella",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b37154-RandT6dKNHlS.png",
-  "series": "GOD EATER Prologue",
+  "series": "GOD EATER",
   "gender": "female",
   "mediaType": "anime"
  },
@@ -15686,7 +15686,7 @@ const GENERIC_CHARACTERS =
   "id": 162080,
   "name": "Hirofumi Yoshida",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b162080-fbX6t96GUQpo.jpg",
-  "series": "Chainsaw Man",
+  "series": "Chainsaw Man: Shikaku-hen",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -16647,7 +16647,7 @@ const GENERIC_CHARACTERS =
   "id": 143632,
   "name": "Athanasia de Alger Obelia",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b143632-3JXSQ2OelHv4.png",
-  "series": "Who Made Me a Princess",
+  "series": "Mofa Gongzhu De Xiao Fannao",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -16793,7 +16793,7 @@ const GENERIC_CHARACTERS =
   "id": 136777,
   "name": "Lucas",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136777-8ZGIYEBxjjkX.png",
-  "series": "Who Made Me a Princess",
+  "series": "Mofa Gongzhu De Xiao Fannao",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -16932,7 +16932,7 @@ const GENERIC_CHARACTERS =
   "id": 169632,
   "name": "Penelope Eckhart",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b169632-YCq6ateRLXbM.png",
-  "series": "Villains Are Destined to Die",
+  "series": "Akuyaku no Ending wa Shi nomi",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -19804,7 +19804,7 @@ const GENERIC_CHARACTERS =
   "id": 209687,
   "name": "Tartaglia",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b209687-E6ft1ITgPzOK.png",
-  "series": "Genshin Dengeki Comic Anthology",
+  "series": "Yuanshen: Chen Jian Xing Lu",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -20233,7 +20233,7 @@ const GENERIC_CHARACTERS =
   "id": 137855,
   "name": "Yi Huan",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b137855-2DbejZ4TErnw.png",
-  "series": "Kingdom",
+  "series": "Kingdom 2nd Season",
   "gender": "unknown",
   "mediaType": "manga",
   "al": [
@@ -20742,7 +20742,7 @@ const GENERIC_CHARACTERS =
   "id": 136776,
   "name": "Claude de Alger Obelia",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136776-36ItTDd9ZSlL.png",
-  "series": "Who Made Me a Princess",
+  "series": "Mofa Gongzhu De Xiao Fannao",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -21081,7 +21081,7 @@ const GENERIC_CHARACTERS =
   "id": 203633,
   "name": "Shihuang Qin",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b203633-0ERteocAvO31.png",
-  "series": "Record of Ragnarok",
+  "series": "Shuumatsu no Valkyrie II Part 2",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -21429,7 +21429,7 @@ const GENERIC_CHARACTERS =
   "id": 233410,
   "name": "Ganyu",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b233410-ighPdb5x8tQK.png",
-  "series": "Genshin Comic Anthology",
+  "series": "Genshin Ten: Tabigokoro no Omomuku Mama ni Kinen Anime",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -22635,7 +22635,7 @@ const GENERIC_CHARACTERS =
   "id": 62795,
   "name": "Takao Kasuga",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b62795-Dz6v679QTqe3.png",
-  "series": "The Flowers of Evil",
+  "series": "Aku no Hana",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -25014,7 +25014,7 @@ const GENERIC_CHARACTERS =
   "id": 235435,
   "name": "Senju Kawaragi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b235435-pHS4ESZhlztL.png",
-  "series": "Tokyo Revengers",
+  "series": "Tokyo Revengers: Santen Sensou-hen",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -25465,7 +25465,7 @@ const GENERIC_CHARACTERS =
   "id": 196891,
   "name": "I-Jin Yu",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b196891-MvIgbsIz8gEj.jpg",
-  "series": "Teenage Mercenary",
+  "series": "Nyuugaku Youhei",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -25538,7 +25538,7 @@ const GENERIC_CHARACTERS =
   "id": 169492,
   "name": "Pekora Usada",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b169492-td5UVxwzQe5g.png",
-  "series": "Fly Me to the Moon",
+  "series": "Holo no Graffiti",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -25977,7 +25977,7 @@ const GENERIC_CHARACTERS =
   "id": 192783,
   "name": "Ren Yamashiro",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b192783-yqW1z23efg07.png",
-  "series": "Chained Soldier",
+  "series": "Mato Seihei no Slave 2",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -26836,7 +26836,7 @@ const GENERIC_CHARACTERS =
   "id": 278064,
   "name": "Ruri Aoki",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b278064-DjTfB1Gytc8T.jpg",
-  "series": "RuriDragon",
+  "series": "Ruri Dragon",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -28128,7 +28128,7 @@ const GENERIC_CHARACTERS =
   "id": 23651,
   "name": "Lucy Steel",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/n23651-fWU7JnUMHH8U.png",
-  "series": "JoJo's Bizarre Adventure: Part 7–Steel Ball Run",
+  "series": "JoJo no Kimyou na Bouken: Steel Ball Run - 1st STAGE",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -28735,7 +28735,7 @@ const GENERIC_CHARACTERS =
   "id": 24552,
   "name": "Teto Kasane",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b24552-stXFqL7wVmSY.png",
-  "series": "Hatsune Miku: Unofficial Hatsune Mix",
+  "series": "Tabidachi no Uta",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -29543,7 +29543,7 @@ const GENERIC_CHARACTERS =
   "id": 23650,
   "name": "Hot Pants",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b23650-awMG2DtHsm8N.jpg",
-  "series": "JoJo's Bizarre Adventure: Part 7–Steel Ball Run",
+  "series": "JoJo no Kimyou na Bouken: Steel Ball Run - 2nd - 3rd STAGE",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -30196,7 +30196,7 @@ const GENERIC_CHARACTERS =
   "id": 223350,
   "name": "Reisalin Stout",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b223350-yNmgtin88wwu.png",
-  "series": "Azur Lane Anime PVs",
+  "series": "Ryza no Atelier: Tokoyami no Joou to Himitsu no Kakurega",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -32202,7 +32202,7 @@ const GENERIC_CHARACTERS =
   "id": 126087,
   "name": "Kouichi Haimawari",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b126087-Etax9gdag1rl.png",
-  "series": "My Hero Academia",
+  "series": "Vigilante: Boku no Hero Academia ILLEGALS",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -36915,7 +36915,7 @@ const GENERIC_CHARACTERS =
   "id": 124091,
   "name": "Chiyo",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124091-0bWGmYly8EV6.png",
-  "series": "The Elder Sister-Like One",
+  "series": "Ane Naru Mono",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -37294,7 +37294,7 @@ const GENERIC_CHARACTERS =
   "id": 193930,
   "name": "Tae-Hoon Seong",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b193930-X5jkpJb3cMNK.png",
-  "series": "Lookism",
+  "series": "Kenka Dokugaku",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -37484,7 +37484,7 @@ const GENERIC_CHARACTERS =
   "id": 6540,
   "name": "Kirie Goshima",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/6540.jpg",
-  "series": "Uzumaki: Spiral into Horror",
+  "series": "Uzumaki",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -37710,7 +37710,7 @@ const GENERIC_CHARACTERS =
   "id": 157207,
   "name": "Sakurako Busujima",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b157207-W4FWkSYmnG7z.png",
-  "series": "Grand Blue Dreaming",
+  "series": "Grand Blue Season 2",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -38440,7 +38440,7 @@ const GENERIC_CHARACTERS =
   "id": 46989,
   "name": "Koto",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b46989-6W6ugNA1kMfm.png",
-  "series": "Kyousougiga",
+  "series": "Kyousougiga (TV)",
   "gender": "female",
   "mediaType": "anime",
   "al": [
@@ -38889,7 +38889,7 @@ const GENERIC_CHARACTERS =
   "id": 172890,
   "name": "Cosmo",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b172890-l35ftRwlTBwh.png",
-  "series": "Chainsaw Man",
+  "series": "Chainsaw Man: Shikaku-hen",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -39922,7 +39922,7 @@ const GENERIC_CHARACTERS =
   "id": 192784,
   "name": "Fubuki Azuma",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b192784-oB31s5ZqaRjJ.png",
-  "series": "Chained Soldier",
+  "series": "Mato Seihei no Slave 2",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -40339,7 +40339,7 @@ const GENERIC_CHARACTERS =
   "id": 143631,
   "name": "Felix Robane",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b143631-q4scGCgW1eLm.png",
-  "series": "Who Made Me a Princess",
+  "series": "Mofa Gongzhu De Xiao Fannao",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -40722,7 +40722,7 @@ const GENERIC_CHARACTERS =
   "id": 169487,
   "name": "Subaru Oozora",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b169487-bU2VeLlCtoWb.png",
-  "series": "Fly Me to the Moon",
+  "series": "Holo no Graffiti",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -42697,7 +42697,7 @@ const GENERIC_CHARACTERS =
   "id": 8459,
   "name": "Shuuichi Saitou",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8459-y456x3P6mrwY.jpg",
-  "series": "Uzumaki: Spiral into Horror",
+  "series": "Uzumaki",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -42896,7 +42896,7 @@ const GENERIC_CHARACTERS =
   "id": 124685,
   "name": "Li Nie",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124685-BgKG6Z1BeA9l.jpg",
-  "series": "Tales of Demons and Gods",
+  "series": "Yao Shen Ji",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -44675,7 +44675,7 @@ const GENERIC_CHARACTERS =
   "id": 154717,
   "name": "Peter Parker",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b154717-y43WTcwaAnQC.png",
-  "series": "Deadpool: Samurai",
+  "series": "Disk Wars: Avengers",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -45320,7 +45320,7 @@ const GENERIC_CHARACTERS =
   "id": 264342,
   "name": "Aashii Kedarui",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b264342-MnpJyshAfreV.jpg",
-  "series": "The 100 Girlfriends Who Really, Really, Really, Really, Really Love You",
+  "series": "Kimi no Koto ga Dai Dai Dai Dai Daisuki na 100-nin no Kanojo 3rd Season",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -45589,7 +45589,7 @@ const GENERIC_CHARACTERS =
   "id": 192785,
   "name": "Mira Kamiunten",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b192785-MNEeXEtdmfRq.png",
-  "series": "Chained Soldier",
+  "series": "Mato Seihei no Slave 2",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -46027,7 +46027,7 @@ const GENERIC_CHARACTERS =
   "id": 210935,
   "name": "Jin-Yeong Choi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b210935-KjfvvhnE64jl.png",
-  "series": "Seasons of Blossom",
+  "series": "Cheongchun Blossom: Uriui Bom",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -46050,7 +46050,7 @@ const GENERIC_CHARACTERS =
   "id": 193869,
   "name": "Ho-Bin Yu",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b193869-l1YoNFjOmrU7.png",
-  "series": "Lookism",
+  "series": "Kenka Dokugaku",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -48070,7 +48070,7 @@ const GENERIC_CHARACTERS =
   "id": 252553,
   "name": "Hades",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b252553-BpzOlTtycREr.png",
-  "series": "Record of Ragnarok",
+  "series": "Shuumatsu no Valkyrie II Part 2",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -48805,7 +48805,7 @@ const GENERIC_CHARACTERS =
   "id": 88566,
   "name": "Kadode Koyama",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88566-XI3I0tYcK8XN.png",
-  "series": "Dead Dead Demon's Dededede Destruction",
+  "series": "Dead Dead Demon's Dededededestruction",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -51040,7 +51040,7 @@ const GENERIC_CHARACTERS =
   "id": 40982,
   "name": "Dokuga",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/40982.jpg",
-  "series": "Dorohedoro",
+  "series": "Dorohedoro Season 2",
   "gender": "unknown",
   "mediaType": "manga",
   "al": [
@@ -51308,7 +51308,7 @@ const GENERIC_CHARACTERS =
   "id": 87540,
   "name": "Jian Wang",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87540-QE419IogVrad.jpg",
-  "series": "Kingdom",
+  "series": "Kingdom 2nd Season",
   "gender": "unknown",
   "mediaType": "manga",
   "al": [
@@ -51505,7 +51505,7 @@ const GENERIC_CHARACTERS =
   "id": 184429,
   "name": "Kai Yang",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b184429-I38Np4MIZThG.png",
-  "series": "Martial Peak",
+  "series": "Wu Lian Dianfeng",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -52169,7 +52169,7 @@ const GENERIC_CHARACTERS =
   "id": 5523,
   "name": "Reika Shimohira",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5523-ctPgXRMABCR6.png",
-  "series": "Gantz",
+  "series": "GANTZ:O",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -53897,7 +53897,7 @@ const GENERIC_CHARACTERS =
   "id": 439,
   "name": "Subaru Sumeragi",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b439-RzYhpd5brXlV.jpg",
-  "series": "Tsubasa RESERVoir CHRoNiCLE",
+  "series": "X (TV)",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -54025,7 +54025,7 @@ const GENERIC_CHARACTERS =
   "id": 193868,
   "name": "Ga-Eul",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b193868-Q2r8Xb3oKX6C.png",
-  "series": "Lookism",
+  "series": "Kenka Dokugaku",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -55024,7 +55024,7 @@ const GENERIC_CHARACTERS =
   "id": 83549,
   "name": "GUMI",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b83549-XAZ4vQ3M5dsI.png",
-  "series": "Hatsune Miku: Unofficial Hatsune Mix",
+  "series": "DONUT HOLE 2024",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -55120,7 +55120,7 @@ const GENERIC_CHARACTERS =
   "id": 181402,
   "name": "Mihate Hiura",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b181402-f2tpJjQznqeO.jpg",
-  "series": "I Think I Turned My Childhood Friend Into a Girl",
+  "series": "Koisuru (Otome) no Tsukurikata",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -55384,7 +55384,7 @@ const GENERIC_CHARACTERS =
   "id": 252554,
   "name": "Beelzebub",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b252554-qRDOqJURah0M.jpg",
-  "series": "Record of Ragnarok",
+  "series": "Shuumatsu no Valkyrie II Part 2",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -55682,7 +55682,7 @@ const GENERIC_CHARACTERS =
   "id": 125497,
   "name": "Hana Nono",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b125497-h5ITYs46UDJQ.jpg",
-  "series": "Fly Me to the Moon",
+  "series": "HUGtto! Precure",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -56102,7 +56102,7 @@ const GENERIC_CHARACTERS =
   "id": 4330,
   "name": "Sarasa",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4330-o5ReQqOVQfBG.jpg",
-  "series": "Basara",
+  "series": "Legend of Basara",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -56806,7 +56806,7 @@ const GENERIC_CHARACTERS =
   "id": 266759,
   "name": "Kuusetsu",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b266759-nazT2jt8E9kr.png",
-  "series": "Chained Soldier",
+  "series": "Mato Seihei no Slave 2",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -56943,7 +56943,7 @@ const GENERIC_CHARACTERS =
   "id": 19498,
   "name": "Harumichi Bouya",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/19498.jpg",
-  "series": "CROWS",
+  "series": "Koukou Butouden Crows",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -57133,7 +57133,7 @@ const GENERIC_CHARACTERS =
   "id": 124686,
   "name": "Ninger Xiao",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b124686-CRiviTYdlzjI.jpg",
-  "series": "Tales of Demons and Gods",
+  "series": "Yao Shen Ji",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -57894,7 +57894,7 @@ const GENERIC_CHARACTERS =
   "id": 307899,
   "name": "Otogi Katsura",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b307899-lfC4WnBxklAW.jpg",
-  "series": "Fall in Love, You False Angels",
+  "series": "Koiseyo Mayakashi Tenshi-domo",
   "gender": "female",
   "mediaType": "manga",
   "al": [
@@ -57965,7 +57965,7 @@ const GENERIC_CHARACTERS =
   "id": 151211,
   "name": "Wade Wilson",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b151211-L3DulahwrhKc.jpg",
-  "series": "Deadpool: Samurai",
+  "series": "Disk Wars: Avengers",
   "gender": "male",
   "mediaType": "manga",
   "al": [
@@ -58431,7 +58431,7 @@ const GENERIC_CHARACTERS =
   "id": 132981,
   "name": "Gosha",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b132981-RUz1yUyhNcI1.png",
-  "series": "BEASTARS",
+  "series": "BEASTARS FINAL SEASON Part 1",
   "gender": "unknown",
   "mediaType": "manga",
   "al": [
@@ -59416,7 +59416,7 @@ const GENERIC_CHARACTERS =
   "id": 87538,
   "name": "Tian Meng",
   "image": "https://s4.anilist.co/file/anilistcdn/character/large/b87538-6TtSKneZ3etw.jpg",
-  "series": "Kingdom",
+  "series": "Kingdom 2nd Season",
   "gender": "unknown",
   "mediaType": "manga",
   "al": [

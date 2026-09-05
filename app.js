@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '46';
+    const SAKU_BUILD = '47';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -798,12 +798,24 @@
             }
           }
         `;
-        const response = await fetch(ANILIST_API, {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ query, variables: { username, chunk } })
-        });
-        const data = await response.json();
-        if (data.errors) throw new Error(data.errors[0].message);
+        // ⚖️ AniList rate limit (90/min): a 429 must not silently empty the
+        // watched list — back off and retry the chunk up to 3 times first.
+        let ok = false; let data = null;
+        for (let attempt = 0; attempt < 3 && !ok; attempt++) {
+          try {
+            const response = await fetch(ANILIST_API, {
+              method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ query, variables: { username, chunk } })
+            });
+            if (response.status === 429) throw new Error('rate limited');
+            data = await response.json();
+            if (data.errors) throw new Error(data.errors[0].message);
+            ok = true;
+          } catch (e) {
+            if (attempt < 2) await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+            else throw e;
+          }
+        }
         const col = data.data && data.data.MediaListCollection;
         if (!col) break;
         (col.lists || []).forEach(l => { (l.entries || []).forEach(e => { if (e && e.media && e.media.id != null) entries.push(e); }); });
@@ -4152,7 +4164,11 @@
       const accounts = (room && room.accounts) || {};
       const key = Object.keys(accounts).map(k => {
         const a = accounts[k] || {};
-        return k + ':' + ((a.watched || []).length) + ':' + ((Array.isArray(a.ws) && a.ws.length ? a.ws : WATCH_STATUS_DEFAULT).join(','));
+        // includes the entries themselves (id+status) — two accounts with the
+        // same list LENGTH are different pools, and a re-synced list must
+        // bust the cache too
+        const wl = (a.watched || []).map(w => w ? (String(w.i) + String(w.s || '').charAt(0)) : '').join(';');
+        return k + ':' + wl + ':' + ((Array.isArray(a.ws) && a.ws.length ? a.ws : WATCH_STATUS_DEFAULT).join(','));
       }).join('|');
       if (watchSetCache && watchSetCacheKey === key) return watchSetCache;
       const ids = {}; const titles = {};
@@ -4183,12 +4199,24 @@
       return out;
     }
 
-    // 🔍 "Watched" character pool: the generic characters whose anime is on at
-    // least one synced account's watched list (checked statuses only).
+    // 🔍 "Watched" character pool: characters whose anime is on at least one
+    // synced account's watched list (checked statuses only). Matched by
+    // ANIList ANIME ID first (charanimes.js map) — kills same-title collisions
+    // like the "WIND BREAKER" manga vs anime — with the old series-title
+    // match as a fallback for rows the id map doesn't know (manga-only chars).
     function watchedPoolChars(room) {
       const wset = roomWatchSet(room);
       const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
-      return dedupPoolChars(generic.filter(c => c && wset.titles[bgNorm(c.series || '')]));
+      const aids = (typeof CHAR_ANIME_IDS !== 'undefined' && CHAR_ANIME_IDS) ? CHAR_ANIME_IDS : null;
+      return dedupPoolChars(generic.filter(c => {
+        if (!c) return false;
+        const la = aids ? aids[c.id] : null;
+        if (la && la.length) {
+          for (let i = 0; i < la.length; i++) { if (wset.ids[la[i]]) return true; }
+          return false; // mapped row: strict — a title must never bridge two different shows
+        }
+        return !!wset.titles[bgNorm(c.series || '')]; // unmapped: legacy title match
+      }));
     }
 
     // 🧺 shared pool for every Hot & Cold tool (hider secret pick + seekers'
@@ -4229,6 +4257,21 @@
         }
         if (best >= 0) hits.push({ c: c, rank: best });
       });
+      // 🔤 typo fallback: nothing at all? retry per-word so "hitori gotou"
+      // still surfaces "Hitori Gotoh" (match on the correct token, worst rank)
+      if (!hits.length && g.indexOf(' ') !== -1) {
+        const seenTokHit = {};
+        g.split(/\s+/).filter(t => t.length >= 3).forEach(tk => {
+          hcPoolChars().forEach(c => {
+            const key = c.id != null ? c.id : c.name;
+            if (seenTokHit[key]) return;
+            let okTk = false;
+            bgNamesOf(c).forEach(nm => { const n = bgNorm(nm); if (n && n.indexOf(tk) !== -1) okTk = true; });
+            if (!okTk) { const keys = bgSeriesKeys(c.series); for (let si = 0; si < keys.length; si++) { if (keys[si] && keys[si].indexOf(tk) !== -1) { okTk = true; break; } } }
+            if (okTk) { seenTokHit[key] = 1; hits.push({ c: c, rank: 20 }); }
+          });
+        });
+      }
       hits.sort((a, b) => a.rank - b.rank);
       return hits.slice(0, 8).map(h => h.c);
     }
@@ -5370,8 +5413,24 @@
     async function startGameFromSelection(selections) {
       const players = Object.keys(currentRoom ? currentRoom.players : {});
       if (players.length < 2) return;
+      if (currentRoom && currentRoom.state && currentRoom.state !== 'selection') return; // already started
+      // 🛡️ deal-overwrite guard: a trailing duplicate deal can replace the
+      // board while picks from the OLD board are in flight. Starting with a
+      // secret id that is not on the CURRENT board breaks every client, so
+      // drop foreign picks and wait for those players to pick again.
+      const boardIds = {}; ((currentRoom && currentRoom.characters) || []).forEach(c => { if (c && c.id != null) boardIds[c.id] = 1; });
+      const clean = {};
+      players.forEach(pid => { if (selections[pid] != null && boardIds[selections[pid]]) clean[pid] = selections[pid]; });
+      const missing = players.filter(pid => clean[pid] == null);
+      if (missing.length) {
+        // wipe the foreign picks so the affected players can pick again
+        const clear = {};
+        players.forEach(pid => { if (selections[pid] != null && !boardIds[selections[pid]]) clear[pid] = null; });
+        await database.ref('rooms/' + roomCode + '/selections').update(clear);
+        return;
+      }
       await database.ref('rooms/' + roomCode).update({
-        state: 'playing', secrets: selections, currentTurn: players[0],
+        state: 'playing', secrets: clean, currentTurn: players[0],
         eliminations: { [players[0]]: [], [players[1]]: [] },
         questionHistory: [], currentQuestion: null
       });
@@ -5389,11 +5448,15 @@
     }
 
     function startGame() {
-      if (!currentRoom || !currentRoom.characters) { console.error('Cannot start game: no characters data'); showNotification('Error: No character data available. Returning to lobby...'); returnToLobby(); return; }
+      // ⚠️ Failure policy: NEVER reset the whole room from here. A mismatch
+      // here means this client caught a mid-transition snapshot (board
+      // replaced mid-deal); the next room event retriggers startGame() while
+      // state is still 'playing' and gameScreen is not active. Quietly wait.
+      if (!currentRoom || !currentRoom.characters) { console.warn('startGame: waiting for board snapshot'); return; }
       characters = currentRoom.characters;
-      if (!characters || characters.length === 0) { console.error('Characters array is empty'); showNotification('Error: Character list is empty. Returning to lobby...'); returnToLobby(); return; }
+      if (!characters || characters.length === 0) { console.warn('startGame: empty board snapshot'); return; }
       mySecret = characters.find(c => c.id === (currentRoom.secrets ? currentRoom.secrets[playerId] : null));
-      if (!mySecret) { console.error('Could not find secret character'); showNotification('Error: Could not find your secret character. Returning to lobby...'); returnToLobby(); return; }
+      if (!mySecret) { console.warn('startGame: secret not on this board yet — waiting for the next snapshot'); return; }
       myEliminated.clear(); guessMode = false;
       const players = Object.keys(currentRoom.players || {});
       const opponentId = players.find(id => id !== playerId);
@@ -5676,16 +5739,21 @@
     let newGameLaunching = false;
     async function launchNewGame() {
       // Guard: the room listener can fire multiple times while state is still
-      // 'finished' with all restarts set — only launch once.
+      // 'finished' with all restarts set — only launch once. The latch MUST be
+      // set BEFORE the first await: every listener event that lands while we
+      // wait for the queue promotion otherwise passes the check and re-deals,
+      // overwriting the board while players already pick. (Old picks used to
+      // start a game against the NEW board → "secret not found" → whole room
+      // bounced back to the lobby.)
       if (newGameLaunching) return;
-      await maybePromoteQueue(true); // ⏳ queued players take free seats before the new deal
-      if (Object.keys((currentRoom && currentRoom.players) || {}).length < 2) {
-        showNotification('Not enough players left — back to the lobby.');
-        await returnToLobby();
-        return;
-      }
       newGameLaunching = true;
       try {
+        await maybePromoteQueue(true); // ⏳ queued players take free seats before the new deal
+        if (Object.keys((currentRoom && currentRoom.players) || {}).length < 2) {
+          showNotification('Not enough players left — back to the lobby.');
+          await returnToLobby();
+          return;
+        }
         document.getElementById('winningScreen').classList.remove('show');
         // Skip the lobby: deal a brand new character pool with the SAME rules
         // (accounts, characterCount and the Mix split are kept in the room) and

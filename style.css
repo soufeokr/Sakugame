@@ -111,6 +111,15 @@
   .games-grid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;
   }
+  /* 📱 Rules menu: a column of two blocks per row on phones */
+  @media (max-width: 700px) {
+    .games-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .game-card { border-radius: 14px; }
+    .game-card-img { height: 90px; font-size: 2.6rem; }
+    .game-card-content { padding: 12px; }
+    .game-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+    .game-card p { font-size: 0.78rem; line-height: 1.4; }
+  }
   .game-card { background: var(--card); border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s; border: 3px solid transparent; }
   .game-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 40px rgba(2, 169, 255, 0.3); }
   .game-card-img { width: 100%; height: 200px; background: linear-gradient(135deg, #02a9ff, #0f3460); display: flex; align-items: center; justify-content: center; font-size: 5rem; }
