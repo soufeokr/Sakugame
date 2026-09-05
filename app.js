@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '47';
+    const SAKU_BUILD = '49';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
