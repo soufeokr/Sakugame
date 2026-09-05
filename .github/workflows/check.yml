@@ -1,1 +1,33 @@
+# 🛡️ SAKUGAME — pre-flight checks on every push (and PR).
+# Catches broken JS, out-of-sync build stamps, and game-logic regressions
+# BEFORE they reach the live site.
+name: Check
 
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Syntax-check every JavaScript file
+        run: |
+          set -e
+          shopt -s nullglob
+          for f in *.js tools/*.js; do
+            node --check "$f"
+          done
+          echo "✅ all JS files parse"
+
+      - name: Build stamps are in sync (meta / ?v= / SAKU_BUILD)
+        run: node tools/stamp.js --check
+
+      - name: Game-logic test suite
+        run: node tools/test_hc37.js
