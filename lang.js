@@ -40,6 +40,12 @@ var ANIME_TITLE_IDX = {"shingeki no kyojin":{"fr":"L’Attaque des Titans","es":
 // The main dictionary. KEY = exact English text → { fr, es }.
 var I18N = {
   "- Click \"Confirm Selection\" when ready": { fr: "- Cliquez sur \"Confirmer la sélection\" quand vous êtes prêt", es: "- Pulsa \"Confirmar selección\" cuando estés listo" },
+  "You left a game!": { fr: "Tu as quitté une partie !", es: "¡Saliste de una partida!" },
+  "The game is still running in room": { fr: "La partie continue dans le salon", es: "La partida sigue en la sala" },
+  "Your room is still open:": { fr: "Ton salon est toujours ouvert :", es: "Tu sala sigue abierta:" },
+  "Hop back in?": { fr: "Tu reviens ?", es: "¿Vuelves?" },
+  "Rejoin": { fr: "Rejoindre", es: "Reunirse" },
+  "Dismiss": { fr: "Ignorer", es: "Descartar" },
   "— joins automatically when a seat opens": { fr: "— rejoint automatiquement dès qu'une place se libère", es: "— se une automáticamente en cuanto se libera un asiento" },
   "— no word —": { fr: "— aucun mot —", es: "— sin palabra —" },
   "— wrong!": { fr: "— raté !", es: "— ¡falló!" },
