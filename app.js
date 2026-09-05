@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '49';
+    const SAKU_BUILD = '50';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -93,9 +93,22 @@
     // ===== HOW TO PLAY — slideshow guides on the Games menu =====
     // Each game has a short step-by-step presentation with demo scenes (mock gameplay).
     var HT = { game: null, idx: 0 };
-    const HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
-    const HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
-    const HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+    // 🐢 Lazy data pools (characters.js/animes.js load after first paint — see the
+    // loader in index.html): read them THROUGH these getters so the demo scenes
+    // keep working whatever the load state. buildHowto() re-runs on data arrival.
+    var HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
+    var HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
+    var HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+    var HT_BOARD = '', HT_BOARD_OUT = '';
+    function htRefreshDataRefs() {
+      HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
+      HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
+      HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+      if (typeof HT_NAMES !== 'undefined') {
+        HT_BOARD = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, i === 3 ? 'secret' : ''); }).join('') + '</div>';
+        HT_BOARD_OUT = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, [0, 2, 6].indexOf(i) >= 0 ? 'out' : (i === 3 ? 'secret' : '')); }).join('') + '</div>';
+      }
+    }
 
     function htChip(txt, cls) { return '<span class="mk-chip' + (cls ? ' ' + cls : '') + '">' + txt + '</span>'; }
     function htQ(text, btn) {
@@ -117,14 +130,15 @@
         : '<div class="mk-face">' + escapeHtml(name[0]) + '</div>';
       return '<div class="mk-char' + (extra ? ' ' + extra : '') + '"><div class="mk-photo-wrap">' + face + '</div><span class="mk-name">' + escapeHtml(name) + '</span>' + (extra === 'secret' ? '<span class="mk-badge">?</span>' : '') + '</div>';
     }
-    const HT_BOARD = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, i === 3 ? 'secret' : ''); }).join('') + '</div>';
-    const HT_BOARD_OUT = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, [0, 2, 6].indexOf(i) >= 0 ? 'out' : (i === 3 ? 'secret' : '')); }).join('') + '</div>';
+    htRefreshDataRefs(); // HT_BOARD / HT_BOARD_OUT computed from whatever pool state exists now
     function htMiniBoard(who, outIdx) {
       const items = HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, outIdx.indexOf(i) >= 0 ? 'out' : ''); }).join('');
       return '<div class="mk-mini"><div class="mk-label">' + who + '</div><div class="mk-grid mk-grid3">' + items + '</div></div>';
     }
 
-    const HOWTO = {
+    function buildHowto() {
+      htRefreshDataRefs(); // scenes always reflect the currently available pools
+      return {
       guesswho: { title: 'Anime Guess Who?', icon: 'mask', players: '2 players', slides: [
         { t: 'Two players, two secrets', d: 'You each receive a secret anime character from a shared AniList board. Take turns asking yes/no questions — the first player to name the opponent\'s secret wins.',
           s: htScene('<div class="mk-label">Your shared board (real game characters)</div>' + HT_BOARD + '<div class="mk-note">Every game deals one secret card to each player.</div>') },
@@ -187,7 +201,12 @@
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]}
-    };
+      };
+    }
+    let HOWTO = buildHowto();
+    // 🐢 when the lazy game-data pools arrive (index.html loader), rebuild the
+    // demo scenes so they show real character photos & a real cover
+    if (window.sakuDataReady) window.sakuDataReady.then(function () { try { HOWTO = buildHowto(); } catch (e) {} }, function () {});
 
     function openHowTo(g) {
       if (!HOWTO[g]) return;
@@ -5234,6 +5253,15 @@
 
     async function hostStartGame() {
       if (!isHost || !currentRoom) return;
+      // ⏳ The character/cover pools load after first paint (see index.html).
+      // Dealing ANY game needs them — wait (seconds at most on a slow phone).
+      if (window.sakuDataReady && typeof GENERIC_CHARACTERS === 'undefined') {
+        try { showNotification('Loading game data… one second!'); } catch (e) {}
+        try { await window.sakuDataReady; } catch (e) {
+          showNotification('Game data failed to load — check your connection and hard-refresh (Ctrl+Shift+R).');
+          return;
+        }
+      }
       // ⏳ Fill free seats from the queue BEFORE dealing, so waiting players
       // are part of this game
       await maybePromoteQueue(true);

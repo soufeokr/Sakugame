@@ -3,10 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="49">
+<meta name="saku-build" content="50">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
+<!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
+     AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
+<link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+<link rel="dns-prefetch" href="https://s4.anilist.co">
 <meta name="description" content="Guess anime characters with friends online — Guess Who, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <!-- 🔎 SEO / discoverability -->
 <link rel="canonical" href="https://soufeokr.github.io/Sakugame/">
@@ -53,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.ico?v=50" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=49">
+<link rel="stylesheet" href="style.css?v=50">
 </head>
 <body>
 
@@ -1246,12 +1252,31 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-  <script src="characters.js?v=49"></script>
-  <script src="charanimes.js?v=49"></script>
-  <script src="animes.js?v=49"></script>
-  <script src="undercover.js?v=49"></script>
-  <script src="music.js?v=49"></script>
-  <script src="lang.js?v=49"></script>
-  <script src="app.js?v=49"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a365760789824524',t:'MTc4ODYxMzY4OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
+       AFTER first paint instead of blocking the opening page. This loader injects
+       the three scripts on window 'load' (async=false keeps classic-script order)
+       and exposes window.sakuDataReady — app.js awaits it before dealing a game. -->
+  <script>
+    window.sakuDataReady = new Promise(function (resolve, reject) {
+      function kickSakuData() {
+        var files = ['characters.js?v=50', 'charanimes.js?v=50', 'animes.js?v=50'];
+        var left = files.length, failed = false;
+        files.forEach(function (f) {
+          var s = document.createElement('script');
+          s.src = f; s.async = false;
+          s.onload = function () { if (!failed && --left === 0) resolve(); };
+          s.onerror = function () { if (!failed) { failed = true; reject(new Error('game data failed to load: ' + f)); } };
+          document.body.appendChild(s);
+        });
+      }
+      if (document.readyState === 'complete') kickSakuData();
+      else window.addEventListener('load', kickSakuData);
+    });
+    window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
+  </script>
+  <script src="undercover.js?v=50"></script>
+  <script src="music.js?v=50"></script>
+  <script src="lang.js?v=50"></script>
+  <script src="app.js?v=50"></script>
+</body>
 </html>
