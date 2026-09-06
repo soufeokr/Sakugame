@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '50';
+    const SAKU_BUILD = '52';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -904,7 +904,14 @@
     }
 
     let roomCode = null;
-    let playerId = 'player_' + Math.random().toString(36).substr(2, 9);
+    // 🆔 PERSISTENT PLAYER ID — used to be random per page load, so a closed
+    // app lost its seat forever. Kept in localStorage now: a refresh or a
+    // reopened app reclaims the same seat in the room.
+    let playerId;
+    try {
+      playerId = localStorage.getItem('sakugame_pid') || ('player_' + Math.random().toString(36).substr(2, 9));
+      localStorage.setItem('sakugame_pid', playerId);
+    } catch (e) { playerId = 'player_' + Math.random().toString(36).substr(2, 9); }
     let playerName = 'Player ' + Math.floor(Math.random() * 1000);
     let isHost = false;
     let currentRoom = null;
@@ -1546,6 +1553,7 @@
         await database.ref('rooms/' + roomCode).set(roomData);
         try { rememberLastFor(game); } catch (e) {} // 💾 auto-remember this game's setup
         setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
+        saveSession(); // 🔙 remember the room so a closed app can rejoin
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
         document.getElementById('lobbySettingsIcon').style.display = 'block';
@@ -1579,6 +1587,7 @@
         if (alreadySeated || alreadyQueued) {
           setupRoomListener(); setupChatListener(); setupPlayerCleanup();
           if (alreadySeated) markDisconnectTracking(); else markQueueDisconnect();
+          saveSession();
           afterJoinUI(room);
           return;
         }
@@ -1586,6 +1595,7 @@
           await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '' });
           touchActivity();
           setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
+          saveSession();
           syncMyAccountIntoRoom(); // guest's synced AniList account joins the pool automatically
           afterJoinUI(room);
         } else {
@@ -1595,6 +1605,7 @@
           await database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now() });
           touchActivity();
           setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markQueueDisconnect();
+          saveSession();
           afterJoinUI(room);
           showNotification((room.state === 'lobby' ? 'Room full' : 'Game in progress') + ' — you are #' + (queueCount + 1) + ' in the queue. You\'ll jump in automatically!', 5000);
         }
@@ -1634,7 +1645,7 @@
       roomRef = database.ref('rooms/' + roomCode);
       roomRef.on('value', (snapshot) => {
         currentRoom = snapshot.val();
-        if (!currentRoom) { showNotification('Room was closed'); goHome(); return; }
+        if (!currentRoom) { clearSession(); showNotification('Room was closed'); goHome(); return; }
         // Keep local host status in sync with the room data (supports host transfer)
         if (currentRoom.players && currentRoom.players[playerId]) {
           const wasHost = isHost;
@@ -1646,6 +1657,7 @@
         // Seated/queue transitions flip local state + notifications exactly once.
         const meSeated = !!(currentRoom.players && currentRoom.players[playerId]);
         const meWaiting = !!(currentRoom.queue && currentRoom.queue[playerId]);
+        if (meSeated) scheduleDcSelfHeal(); // our own dcAt never survives a live connection
         if (meWaiting && !meSeated) {
           if (!imQueued) {
             // I just got queued (joined a full room, or the host switched to a
@@ -1778,6 +1790,79 @@
         const queueCount = (currentRoom && currentRoom.queue) ? Object.keys(currentRoom.queue).length : 0;
         if ((!players || Object.keys(players).length === 0) && queueCount === 0) { database.ref('rooms/' + roomCode).remove(); }
       });
+    }
+
+    // 🛡️ The dcAt marker never CLEARED itself when the connection silently came
+    // back (Firebase reconnects the websocket without telling us): the player
+    // kept the "away" flag and the host's 45s purge kicked them MID-GAME while
+    // they were playing normally. Self-heal: if we're connected and carrying a
+    // stale marker, wipe it immediately.
+    let dcSelfHealTimer = null;
+    function scheduleDcSelfHeal() {
+      if (dcSelfHealTimer || !roomCode) return;
+      dcSelfHealTimer = setTimeout(() => {
+        dcSelfHealTimer = null;
+        try {
+          const me = currentRoom && currentRoom.players && currentRoom.players[playerId];
+          if (me && me.dcAt) database.ref('rooms/' + roomCode + '/players/' + playerId + '/dcAt').remove().catch(() => {});
+        } catch (e) {}
+      }, 1500);
+    }
+
+    // 📡 Firebase reconnects quietly after blips; re-arm tracking + heal on every
+    // reconnect so the marker never survives a recovered connection.
+    let connWatchRef = null;
+    function watchConnectionSelfHeal() {
+      if (connWatchRef) return;
+      connWatchRef = database.ref('.info/connected');
+      connWatchRef.on('value', (snap) => {
+        if (snap.val() !== true || !roomCode) return;
+        try { database.ref('rooms/' + roomCode + '/players/' + playerId + '/dcAt').remove().catch(() => {}); } catch (e) {}
+        try {
+          const me = currentRoom && currentRoom.players && currentRoom.players[playerId];
+          if (me) markDisconnectTracking(); // clears dcAt + re-arms the onDisconnect hook
+          else if (currentRoom && currentRoom.queue && currentRoom.queue[playerId]) markQueueDisconnect();
+        } catch (e) {}
+        // A blip silently DELETED our queue entry (plain onDisconnect-remove,
+        // no grace) — reclaim the spot if the room thinks we're not waiting.
+        try {
+          if (imQueued && currentRoom && !(currentRoom.queue || {})[playerId] && !(currentRoom.players || {})[playerId]) {
+            database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now() });
+          }
+        } catch (e) {}
+      });
+    }
+
+    // ===== 🔙 REJOIN AFTER CLOSED APP =====
+    // The app remembers the room code; after an accidental close (or refresh),
+    // the homepage offers to jump straight back in — same seat, same identity.
+    const SESSION_KEY = 'sakugame_session_v1';
+    function saveSession() {
+      try { if (roomCode) localStorage.setItem(SESSION_KEY, JSON.stringify({ code: roomCode, ts: Date.now() })); } catch (e) {}
+    }
+    function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+    async function offerRejoinIfAny() {
+      if (roomCode) return; // already in a room (e.g. came via a shared link)
+      try { if (shareLinkCode && shareLinkCode()) return; } catch (e) {} // a shared-link join wins priority
+      let sess = null;
+      try { sess = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) {}
+      if (!sess || !sess.code) return;
+      if (Date.now() - (sess.ts || 0) > 6 * 3600000) { clearSession(); return; } // rooms rot anyway
+      let room = null;
+      try { room = (await database.ref('rooms/' + sess.code).once('value')).val(); } catch (e) {}
+      if (!room) { clearSession(); return; }
+      const seated = !!(room.players && room.players[playerId]);
+      const queued = !!(room.queue && room.queue[playerId]);
+      if (!seated && !queued) { clearSession(); return; } // nothing of ours to reclaim
+      const g = GAME_LABELS[room.game] || room.game || 'game';
+      const inProgress = room.state && room.state !== 'lobby';
+      showInteraction(ic('refresh') + ' ' + (window.t ? t('You left a game!') : 'You left a game!'),
+        (inProgress ? (window.t ? t('The game is still running in room') : 'The game is still running in room') : (window.t ? t('Your room is still open:') : 'Your room is still open:')) +
+        ' <b>' + escapeHtml(sess.code) + '</b> (' + escapeHtml(g) + '). ' + (window.t ? t('Hop back in?') : 'Hop back in?'),
+        [
+          { label: ic('door') + ' ' + (window.t ? t('Rejoin') : 'Rejoin'), onclick: async () => { await joinRoomByCode(sess.code); }, class: 'success' },
+          { label: window.t ? t('Dismiss') : 'Dismiss', onclick: () => { clearSession(); }, class: 'secondary' }
+        ]);
     }
 
     // ===== DISCONNECT TRACKING =====
@@ -2062,6 +2147,7 @@
         roomRef.off(); roomRef = null;
       }
       roomCode = null; isHost = false; currentRoom = null; imQueued = false;
+      clearSession();
       showScreen('homepageScreen'); // leaving a room always brings you back home
     }
 
@@ -2105,6 +2191,7 @@
       if (kickRef) { kickRef.off(); kickRef = null; }
       if (roomRef) { roomRef.off(); roomRef = null; }
       roomCode = null; currentRoom = null; isHost = false; beingKicked = false;
+      clearSession();
       closeInteraction();
       showScreen('homepageScreen');
     }
@@ -2370,10 +2457,20 @@
       const inp = document.getElementById('brQuestionInput'); if (!inp) return;
       const text = inp.value.trim(); if (!text) return;
       if (brTurnPid() !== playerId) { showNotification("It's not your turn to ask!"); return; }
-      const upd = { question: { by: playerId, text: text.slice(0, 200) }, answers: {}, phase: 'answers' };
+      const upd = { question: { by: playerId, text: text.slice(0, 200) }, answers: null, phase: 'answers' };
       upd['log/' + gameLogPushKey('br')] = { k: 'q', txt: playerName + ': "' + text.slice(0, 200) + '"' };
       database.ref('rooms/' + roomCode + '/br').update(upd);
       inp.value = ''; touchActivity();
+    }
+    // One-line readable summary of who answered what, for the history — the
+    // answers node is wiped at every turn end, so it MUST be logged first.
+    function brAnswersSummary(br, oPlayers) {
+      const players = oPlayers || {};
+      const answers = br.answers || {};
+      const o = (br.order || []).filter(pid => players[pid]);
+      return '"' + (br.question ? br.question.text : '?') + '" → ' + o.filter(pid => br.question && pid !== br.question.by)
+        .map(pid => ((players[pid] || {}).name || '?') + ' ' + (answers[pid] === 'YES' ? 'YES' : answers[pid] === 'NO' ? 'NO' : '…'))
+        .join(' · ');
     }
     function battleAnswer(v) {
       const br = (currentRoom && currentRoom.br) || {};
@@ -2385,16 +2482,9 @@
       if (br.phase !== 'answers') return;
       const o = (br.order || []).filter(pid => (currentRoom.players || {})[pid]);
       if (!o.length) return;
-      const upd = { question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % o.length };
+      const upd = { question: null, answers: null, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % o.length };
       // 📜 keep the answers in the history before wiping them
-      if (br.question) {
-        const players = currentRoom.players || {};
-        const answers = br.answers || {};
-        const summary = o.filter(pid => pid !== br.question.by)
-          .map(pid => ((players[pid] || {}).name || '?') + ' ' + (answers[pid] === 'YES' ? 'YES' : answers[pid] === 'NO' ? 'NO' : '…'))
-          .join(' · ');
-        upd['log/' + gameLogPushKey('br')] = { k: 'ans', txt: '"' + br.question.text + '" → ' + summary };
-      }
+      if (br.question) upd['log/' + gameLogPushKey('br')] = { k: 'ans', txt: brAnswersSummary(br, currentRoom.players) };
       database.ref('rooms/' + roomCode + '/br').update(upd);
       touchActivity();
     }
@@ -2429,7 +2519,9 @@
           const name = (players[gs.by] || {}).name || '?';
           const tName = (players[gs.target] || {}).name || '?';
           const charName = ((currentRoom.characters || []).find(c => c.id === gs.charId) || {}).name || '?';
-          const upd = { 'br/guess': null, 'br/phase': 'ask', 'br/question': null, 'br/answers': {} };
+          const upd = { 'br/guess': null, 'br/phase': 'ask', 'br/question': null, 'br/answers': null };
+          // 📜 a guess interrupted a live Q&A — keep those answers in the history too
+          if (br.question) upd['br/log/' + gameLogPushKey('br')] = { k: 'ans', txt: brAnswersSummary(br, players) };
           upd['br/log/' + gameLogPushKey('br')] = correct
             ? { k: 'find', txt: tPO('found_secret', { a: name, n: tName }) + ' ' + charName + '! (+' + pts + ' pts)' }
             : { k: 'miss', txt: name + ' wrongly guessed ' + charName + ' for ' + tName + '…' };
@@ -2450,7 +2542,10 @@
       const turnPid = brTurnPid();
       if (turnPid && !alive(turnPid) && seatsConnectedCount() >= 2) {
         const o = brGamePids();
-        database.ref('rooms/' + roomCode + '/br').update({ question: null, answers: {}, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % Math.max(o.length, 1) });
+        // 📜 even a skipped turn keeps any answers already given (marked asker-gone)
+        const upd = { question: null, answers: null, phase: 'ask', turnIdx: ((br.turnIdx || 0) + 1) % Math.max(o.length, 1) };
+        if (br.question) upd['log/' + gameLogPushKey('br')] = { k: 'ans', txt: brAnswersSummary(br, players) };
+        database.ref('rooms/' + roomCode + '/br').update(upd);
       }
     }
     function seatsConnectedCount() { return Object.keys((currentRoom && currentRoom.players) || {}).filter(pid => !(currentRoom.players[pid] || {}).dcAt).length; }
@@ -2606,7 +2701,7 @@
       const answerers = brGamePids().filter(pid => pid !== q.by);
       const answerChips = answerers.map(pid => {
         const a = answers[pid];
-        return `<span class="qa-ans" style="--c:${brColorOf(pid)}">${avatarCircle(players[pid].avatar, 'ava-chat')}${escapeHtml(String(players[pid].name || '?'))} ${a ? (a === 'YES' ? ic('check') : ic('x')) : '…'}</span>`;
+        return `<span class="qa-ans" style="--c:${brColorOf(pid)}">${avatarCircle(players[pid].avatar, 'ava-chat')}${escapeHtml(String(players[pid].name || '?'))} ${a ? (a === 'YES' ? '<span class="qa-yes">' + ic('check') + ' YES</span>' : '<span class="qa-no">' + ic('x') + ' NO</span>') : '<span style="color:var(--muted)">…</span>'}</span>`;
       }).join('');
       const allIn = battleAllAnswersIn();
       let bottom = '';
@@ -2862,7 +2957,7 @@
         if (isTarget) bottom = `<div class="answer-buttons"><button class="success" onclick="raceAnswer('YES')">${ic('check')} YES</button><button class="danger" onclick="raceAnswer('NO')">${ic('x')} NO</button></div>`;
         else bottom = `<div class="uc-hint-line">${tPO('wait_answer', { n: '<b>' + escapeHtml(targetName) + '</b>' })}</div>`;
       } else {
-        bottom = `<div class="uc-hint-line" style="font-size:1rem">Answer: <b>${rc.answer}</b></div>`;
+        bottom = `<div class="uc-hint-line" style="font-size:1rem">Answer: ${rc.answer === 'YES' ? '<span class="qa-yes" style="font-weight:800">' + ic('check') + ' YES</span>' : '<span class="qa-no" style="font-weight:800">' + ic('x') + ' NO</span>'}</div>`;
         if (q.by === playerId) bottom += `<button class="success full" onclick="raceNextTurn()" style="margin-top:8px">Next turn</button>`;
       }
       area.innerHTML = `<div class="question-display"><div class="label">${escapeHtml((players[q.by] || {}).name || '?')} asks the target</div><div class="text">${escapeHtml(String(q.text || ''))}</div>${bottom}</div>`;
@@ -3721,7 +3816,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       cleanupStaleRooms();
       updateUserButton();
+      watchConnectionSelfHeal(); // heal dcAt markers / queue spot on every silent reconnect
       tryShareLinkJoin(); // opened via a 🔗 shared room link? jump straight in
+      setTimeout(() => { try { offerRejoinIfAny(); } catch (e) {} }, 1200); // closed the app mid-game? offer to hop back in
       // Enter on the floating chat window's input
       const chatOverlayInput = document.getElementById('chatOverlayInput');
       if (chatOverlayInput) chatOverlayInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendOverlayChatMessage(); });

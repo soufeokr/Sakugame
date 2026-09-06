@@ -652,6 +652,16 @@
   .br-log-wrap { background: #0f0f1a; border-radius: 14px; padding: 12px 14px; margin-top: 14px; }
   .br-log-wrap h3 { color: var(--accent); font-size: 0.9rem; margin-bottom: 8px; }
   .br-log { max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; }
+  /* 📜 history color-coding: questions neutral, answers muted, finds green, misses red */
+  .br-log > div { padding: 6px 10px; border-radius: 8px; line-height: 1.45; background: #141428; color: #c9d4ee; border-left: 3px solid #2a2a4a; }
+  .br-log-q { color: #eaf1ff; border-left-color: #29b6f6; font-weight: 600; }
+  .br-log-info { color: #9aa8cc; }
+  .br-log-find { color: #a8f0c0; border-left-color: #00c853; background: #0d2018; font-weight: 700; }
+  .br-log-miss { color: #ffb3ba; border-left-color: #ff5252; background: #241016; }
+  /* live YES/NO answer chips: green check / red cross instead of inherited color */
+  .qa-ans .ic { width: 14px; height: 14px; }
+  .qa-ans .qa-yes { color: #00e676; display: inline-flex; }
+  .qa-ans .qa-no { color: #ff5252; display: inline-flex; }
 
   /* ===== 🌡️ HOT & COLD — desktop 2-column layout + best-guess ranking ===== */
   /* The play areas stay on the left; the guesses log + ranking live in a
