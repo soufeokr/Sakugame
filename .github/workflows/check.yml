@@ -29,5 +29,11 @@ jobs:
       - name: Build stamps are in sync (meta / ?v= / SAKU_BUILD)
         run: node tools/stamp.js --check
 
-      - name: Game-logic test suite
+      - name: Game-logic test suite (Hot & Cold)
         run: node tools/test_hc37.js
+
+      - name: Game-logic test suite (Battle Royale + Race Q&A history)
+        run: node tools/test_battle_answers.js
+
+      - name: Game-logic test suite (Rejoin offer)
+        run: node tools/test_rejoin.js
