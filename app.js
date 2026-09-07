@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '52';
+    const SAKU_BUILD = '53';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1837,28 +1837,46 @@
     // The app remembers the room code; after an accidental close (or refresh),
     // the homepage offers to jump straight back in — same seat, same identity.
     const SESSION_KEY = 'sakugame_session_v1';
+    let rejoinOfferShown = false; // offer once per page load (the boot retry must not stack modals)
     function saveSession() {
       try { if (roomCode) localStorage.setItem(SESSION_KEY, JSON.stringify({ code: roomCode, ts: Date.now() })); } catch (e) {}
     }
     function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+    // Debug breadcrumbs: the last offer decision survives the reload, so a
+    // phone test (no console access) can be diagnosed afterwards.
+    function rejoinDbg(why) {
+      try { localStorage.setItem('sakugame_rejoin_dbg', JSON.stringify({ why: String(why), at: Date.now() })); } catch (e) {}
+      try { if (console.debug) console.debug('[rejoin]', why); } catch (e) {}
+    }
     async function offerRejoinIfAny() {
-      if (roomCode) return; // already in a room (e.g. came via a shared link)
+      if (rejoinOfferShown || roomCode) return; // already offered, or already in a room (e.g. came via a shared link)
       try { if (shareLinkCode && shareLinkCode()) return; } catch (e) {} // a shared-link join wins priority
       let sess = null;
       try { sess = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (e) {}
-      if (!sess || !sess.code) return;
-      if (Date.now() - (sess.ts || 0) > 6 * 3600000) { clearSession(); return; } // rooms rot anyway
+      if (!sess || !sess.code) { rejoinDbg('no session stored'); return; }
+      if (Date.now() - (sess.ts || 0) > 6 * 3600000) { clearSession(); rejoinDbg('session expired (>6h old)'); return; } // rooms rot anyway
       let room = null;
-      try { room = (await database.ref('rooms/' + sess.code).once('value')).val(); } catch (e) {}
-      if (!room) { clearSession(); return; }
+      try { room = (await database.ref('rooms/' + sess.code).once('value')).val(); } catch (e) { rejoinDbg('room read failed: ' + ((e && e.message) || e)); }
+      if (!room) { clearSession(); rejoinDbg('room ' + sess.code + ' no longer exists'); return; }
       const seated = !!(room.players && room.players[playerId]);
       const queued = !!(room.queue && room.queue[playerId]);
-      if (!seated && !queued) { clearSession(); return; } // nothing of ours to reclaim
+      // 🩹 Seat gone ≠ story over! The host purges players whose dcAt marker
+      // passes the 45s grace — so closing the app a bit "too long" made the
+      // old code SILENTLY clear the session here and NO rejoin offer ever
+      // appeared. But even purged, hopping back in (fresh seat in a lobby,
+      // or the queue while a game runs) is exactly what the player wants —
+      // so keep offering. The session only dies when the ROOM dies, or when
+      // the player taps Dismiss.
       const g = GAME_LABELS[room.game] || room.game || 'game';
       const inProgress = room.state && room.state !== 'lobby';
+      const what = (!seated && !queued)
+        ? (window.t ? t('You were away too long and lost your seat in room') : 'You were away too long and lost your seat in room')
+        : (inProgress ? (window.t ? t('The game is still running in room') : 'The game is still running in room')
+                      : (window.t ? t('Your room is still open:') : 'Your room is still open:'));
+      rejoinOfferShown = true;
+      rejoinDbg('offer shown (' + (seated ? 'seat kept' : queued ? 'still queued' : 'seat lost — rejoin offered anyway') + ')');
       showInteraction(ic('refresh') + ' ' + (window.t ? t('You left a game!') : 'You left a game!'),
-        (inProgress ? (window.t ? t('The game is still running in room') : 'The game is still running in room') : (window.t ? t('Your room is still open:') : 'Your room is still open:')) +
-        ' <b>' + escapeHtml(sess.code) + '</b> (' + escapeHtml(g) + '). ' + (window.t ? t('Hop back in?') : 'Hop back in?'),
+        what + ' <b>' + escapeHtml(sess.code) + '</b> (' + escapeHtml(g) + '). ' + (window.t ? t('Hop back in?') : 'Hop back in?'),
         [
           { label: ic('door') + ' ' + (window.t ? t('Rejoin') : 'Rejoin'), onclick: async () => { await joinRoomByCode(sess.code); }, class: 'success' },
           { label: window.t ? t('Dismiss') : 'Dismiss', onclick: () => { clearSession(); }, class: 'secondary' }
@@ -3818,7 +3836,8 @@
       updateUserButton();
       watchConnectionSelfHeal(); // heal dcAt markers / queue spot on every silent reconnect
       tryShareLinkJoin(); // opened via a 🔗 shared room link? jump straight in
-      setTimeout(() => { try { offerRejoinIfAny(); } catch (e) {} }, 1200); // closed the app mid-game? offer to hop back in
+      setTimeout(() => { try { offerRejoinIfAny(); } catch (e) {} }, 900);  // closed the app mid-game? offer to hop back in
+      setTimeout(() => { try { offerRejoinIfAny(); } catch (e) {} }, 3500); // retry — the first pass can race Firebase's cold boot on phones
       // Enter on the floating chat window's input
       const chatOverlayInput = document.getElementById('chatOverlayInput');
       if (chatOverlayInput) chatOverlayInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendOverlayChatMessage(); });

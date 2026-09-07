@@ -44,6 +44,7 @@ var I18N = {
   "The game is still running in room": { fr: "La partie continue dans le salon", es: "La partida sigue en la sala" },
   "Your room is still open:": { fr: "Ton salon est toujours ouvert :", es: "Tu sala sigue abierta:" },
   "Hop back in?": { fr: "Tu reviens ?", es: "¿Vuelves?" },
+  "You were away too long and lost your seat in room": { fr: "Tu as coupé trop longtemps et tu as perdu ta place dans le salon", es: "Te desconectaste demasiado tiempo y perdiste tu lugar en la sala" },
   "Rejoin": { fr: "Rejoindre", es: "Reunirse" },
   "Dismiss": { fr: "Ignorer", es: "Descartar" },
   "— joins automatically when a seat opens": { fr: "— rejoint automatiquement dès qu'une place se libère", es: "— se une automáticamente en cuanto se libera un asiento" },
