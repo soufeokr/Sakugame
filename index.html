@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="54">
+<meta name="saku-build" content="55">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=54" sizes="any">
+<link rel="icon" href="favicon.ico?v=55" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=54">
+<link rel="stylesheet" href="style.css?v=55">
 </head>
 <body>
 
@@ -287,6 +287,13 @@
           <div class="game-card-content">
             <h3>Guess Who — Hot & Cold</h3>
             <p>2-6 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess feeds your cumulative total — biggest total wins!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('codenames')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-key"/></svg></div>
+          <div class="game-card-content">
+            <h3>Code Names</h3>
+            <p>4-8 players, 2 teams! The spymaster gives a ONE-word clue — tap your agents' cards, dodge the assassin, and find all your agents first!</p>
           </div>
         </div>
       </div>
@@ -725,33 +732,50 @@
   <!-- 🌡️ GUESS WHO — HOT & COLD (2-6 players): every seeker hunts their own path, Σ guesses = the classement -->
   <!-- 🗝 CODE NAMES (4-8 players, 2 teams) — team setup screen -->
   <div class="screen" id="cnTeamsScreen">
-    <div class="lobby-container">
+    <div class="lobby-container cn-setup">
       <div class="lobby-header">
         <h2><svg class="ic"><use href="#i-key"/></svg> <span id="cnTeamsTitle">Code Names — Team Setup</span></h2>
         <p id="cnTeamsHint">Everyone joins a team, then give the 🔑 to one spymaster per team. The host can move anyone or shuffle it all.</p>
       </div>
-      <div class="cn-selfjoin">
-        <button id="cnJoinRed" class="cn-join red" onclick="cnJoinTeam('red')">Join 🔴</button>
-        <button id="cnJoinBlue" class="cn-join blue" onclick="cnJoinTeam('blue')">Join 🔵</button>
+      <!-- 👀 spectators strip — players who haven't picked a team yet -->
+      <div class="cn-spect" id="cnSpect">
+        <span class="cn-spect-title">Spectators</span>
+        <div class="cn-spect-strip" id="cnBench"></div>
       </div>
-      <div class="cn-teams">
-        <div class="cn-team red">
-          <div class="cn-team-title" id="cnTeamRedTitle">🔴 RED team</div>
-          <div id="cnTeamRed"></div>
-        </div>
+      <div class="cn-cols">
         <div class="cn-team blue">
           <div class="cn-team-title" id="cnTeamBlueTitle">🔵 BLUE team</div>
-          <div id="cnTeamBlue"></div>
+          <div class="cn-box agents">
+            <div class="cn-box-title">AGENTS</div>
+            <div class="cn-box-list" id="cnAgentsBlue"></div>
+            <button id="cnJoinBlue" class="cn-join blue" onclick="cnJoinTeam('blue')">Join 🔵</button>
+          </div>
+          <div class="cn-box spies">
+            <div class="cn-box-title">SPIES</div>
+            <div class="cn-box-list" id="cnSpiesBlue"></div>
+            <div class="cn-spy-hint" id="cnSpyHintBlue">Tap 🔑 next to an agent to make them spymaster</div>
+          </div>
+        </div>
+        <div class="cn-team red">
+          <div class="cn-team-title" id="cnTeamRedTitle">🔴 RED team</div>
+          <div class="cn-box agents">
+            <div class="cn-box-title">AGENTS</div>
+            <div class="cn-box-list" id="cnAgentsRed"></div>
+            <button id="cnJoinRed" class="cn-join red" onclick="cnJoinTeam('red')">Join 🔴</button>
+          </div>
+          <div class="cn-box spies">
+            <div class="cn-box-title">SPIES</div>
+            <div class="cn-box-list" id="cnSpiesRed"></div>
+            <div class="cn-spy-hint" id="cnSpyHintRed">Tap 🔑 next to an agent to make them spymaster</div>
+          </div>
         </div>
       </div>
-      <h3 class="cn-bench-title" id="cnBenchTitle">Waiting to pick a team</h3>
-      <div class="cn-bench" id="cnBench"></div>
       <div id="cnTeamsStatus" class="selection-status waiting"></div>
-      <div class="game-controls">
+      <div class="cn-actions">
         <button id="cnRandomBtn" class="secondary" onclick="cnRandomTeams()" title="Random teams"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random teams</span></button>
-        <button id="cnStartBtn" class="success" onclick="cnStartGame()" title="Deal the 25 cards"><svg class="ic"><use href="#i-play"/></svg> <span class="btn-label">Start — deal the cards!</span></button>
         <button id="cnBackLobbyBtn" class="danger" onclick="cnBackToLobbyFromTeams()" title="Cancel and return to the lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
       </div>
+      <button id="cnStartBtn" class="success cn-start-big" onclick="cnStartGame()" title="Deal the 25 cards"><svg class="ic"><use href="#i-play"/></svg> <span class="btn-label">Start — deal the cards!</span></button>
     </div>
   </div>
 
@@ -1335,7 +1359,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=54', 'charanimes.js?v=54', 'animes.js?v=54'];
+        var files = ['characters.js?v=55', 'charanimes.js?v=55', 'animes.js?v=55'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1350,9 +1374,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=54"></script>
-  <script src="music.js?v=54"></script>
-  <script src="lang.js?v=54"></script>
-  <script src="app.js?v=54"></script>
-</body>
+  <script src="undercover.js?v=55"></script>
+  <script src="music.js?v=55"></script>
+  <script src="lang.js?v=55"></script>
+  <script src="app.js?v=55"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a38914eea9768036',t:'MTc4ODk4NzE5OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

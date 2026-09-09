@@ -1100,3 +1100,52 @@
     .cn-turn { font-size: 0.88rem; }
     .cn-cluebar { font-size: 0.92rem; }
   }
+
+  /* ===== 🗝 CODE NAMES — team setup v2 (image-inspired: AGENTS / SPIES boxes per team) ===== */
+  .cn-setup .lobby-header p { margin-bottom: 12px; }
+  .cn-spect { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(10, 20, 45, 0.55); border: 1px dashed rgba(127, 176, 240, 0.35); border-radius: 14px; padding: 10px 14px; margin-bottom: 18px; }
+  .cn-spect-title { font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+  .cn-spect-strip { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cn-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  .cn-cols .cn-team { background: transparent; border: none; padding: 0; }
+  .cn-cols .cn-team-title { text-align: center; font-size: 1.15rem; margin-bottom: 12px; padding: 8px 12px; border-radius: 12px; background: rgba(13, 25, 54, 0.7); }
+  .cn-box { background: rgba(13, 25, 54, 0.6); border-radius: 16px; padding: 12px; border: 2px solid rgba(127, 176, 240, 0.22); margin-bottom: 14px; min-height: 120px; }
+  .cn-team.blue .cn-box { border-color: rgba(2, 169, 255, 0.55); box-shadow: inset 0 0 26px rgba(2, 169, 255, 0.07); }
+  .cn-team.red .cn-box { border-color: rgba(255, 82, 82, 0.55); box-shadow: inset 0 0 26px rgba(255, 82, 82, 0.07); }
+  .cn-box-title { font-weight: 900; letter-spacing: 0.14em; font-size: 0.82rem; text-align: center; margin-bottom: 10px; opacity: 0.95; }
+  .cn-team.blue .cn-box-title { color: #7fd3ff; }
+  .cn-team.red .cn-box-title { color: #ff9b9b; }
+  .cn-box .cn-empty { margin: 8px 0; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  .cn-box .cn-join { width: 100%; margin: 10px 0 2px; }
+  .cn-spy-hint { text-align: center; color: var(--muted); font-size: 0.76rem; padding: 4px 6px 2px; }
+  .cn-member.cn-spy-slot { border-width: 2px; }
+  .cn-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .cn-start-big { width: 100%; max-width: 560px; display: block; margin: 16px auto 4px; padding: 16px 20px; font-size: 1.15rem; font-weight: 900; border-radius: 16px; }
+  @media (max-width: 700px) { .cn-cols { grid-template-columns: 1fr; } }
+
+  /* ===== 🗝 CODE NAMES — glowy color reveals (battle-royale style) ===== */
+  @keyframes cnGlowPulse { 0% { filter: brightness(1.5) saturate(1.3); } 100% { filter: none; } }
+  .cn-card[class*="cn-rev-"] { animation: cnGlowPulse 0.55s ease-out; }
+  .cn-card.cn-rev-red { border-color: #ff5252 !important; box-shadow: 0 0 18px 4px rgba(255, 82, 82, 0.8), inset 0 0 26px rgba(255, 82, 82, 0.25); }
+  .cn-card.cn-rev-blue { border-color: #02a9ff !important; box-shadow: 0 0 18px 4px rgba(2, 169, 255, 0.8), inset 0 0 26px rgba(2, 169, 255, 0.25); }
+  .cn-card.cn-rev-beige { border-color: #e8d9b8 !important; box-shadow: 0 0 14px 3px rgba(232, 217, 184, 0.55), inset 0 0 22px rgba(232, 217, 184, 0.18); }
+  .cn-card.cn-rev-black { border-color: #b8b8d8 !important; box-shadow: 0 0 18px 4px rgba(120, 110, 220, 0.65), inset 0 0 26px rgba(0, 0, 0, 0.65); }
+  .cn-card.cn-key-red { border-color: #ff5252 !important; box-shadow: 0 0 12px 2px rgba(255, 82, 82, 0.7); }
+  .cn-card.cn-key-blue { border-color: #02a9ff !important; box-shadow: 0 0 12px 2px rgba(2, 169, 255, 0.7); }
+  .cn-card.cn-key-beige { border-color: #e8d9b8 !important; box-shadow: 0 0 10px 2px rgba(232, 217, 184, 0.45); }
+  .cn-card.cn-key-black { border-color: #8a8ab8 !important; box-shadow: 0 0 14px 2px rgba(120, 110, 220, 0.6); }
+  .cn-card.can-pick:hover { box-shadow: 0 0 16px 3px rgba(255, 243, 176, 0.55) !important; transform: translateY(-3px); }
+
+  /* ===== 📱 Phone disposition — home: two big side-by-side cards (per mockup) ===== */
+  @media (max-width: 600px) {
+    #homepageScreen .homepage-buttons { flex-direction: row !important; gap: 16px; align-items: stretch; }
+    #homepageScreen .homepage-btn { flex: 1 1 0; padding: 32px 10px; margin: 0; }
+    #homepageScreen .homepage-btn .icon { margin-bottom: 12px; }
+    #homepageScreen .homepage-btn .icon .ic { width: 3rem; height: 3rem; }
+    #homepageScreen .homepage-btn h3 { font-size: 1.3rem; }
+    #homepageScreen .homepage-btn p { font-size: 0.78rem; }
+    /* rules grid: tighten cards so scrolling scans fast */
+    #gamesMenuScreen .game-card p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    #gamesMenuScreen .game-card-img { height: 80px; }
+    #gamesMenuScreen .game-card-img .ic { width: 3.4rem; height: 3.4rem; }
+  }

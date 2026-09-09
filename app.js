@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '54';
+    const SAKU_BUILD = '55';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -3739,8 +3739,8 @@
     async function cnSetSpy(team, pid) {
       if (!currentRoom || currentRoom.state !== 'teams' || CN_TEAMS.indexOf(team) === -1) return;
       const teams = cnTeams();
-      if (teams[team].members.indexOf(pid) === -1 || teams[team].spy === pid) return;
-      // the host, the player themself, or the current spymaster may reassign the role
+      if (pid !== null && (teams[team].members.indexOf(pid) === -1 || teams[team].spy === pid)) return;
+      // the host, the player themself, or the current spymaster may reassign the role (pid null = demote)
       if (!(isHost || pid === playerId || teams[team].spy === playerId)) return;
       await database.ref('rooms/' + roomCode + '/cn/teams/' + team + '/spy').set(pid);
       touchActivity();
@@ -3993,27 +3993,35 @@
       const seated = Object.keys(players);
       const tt = (k) => (window.t ? t(k) : k);
       CN_TEAMS.forEach(team => {
-        const el = document.getElementById(team === 'red' ? 'cnTeamRed' : 'cnTeamBlue');
-        el.innerHTML = '';
+        const agentsEl = document.getElementById(team === 'red' ? 'cnAgentsRed' : 'cnAgentsBlue');
+        const spiesEl = document.getElementById(team === 'red' ? 'cnSpiesRed' : 'cnSpiesBlue');
+        const hintEl = document.getElementById(team === 'red' ? 'cnSpyHintRed' : 'cnSpyHintBlue');
+        if (agentsEl) agentsEl.innerHTML = '';
+        if (spiesEl) spiesEl.innerHTML = '';
         const members = teams[team].members.filter(m => players[m]);
+        const spy = teams[team].spy && players[teams[team].spy] ? teams[team].spy : null;
         const cap = document.getElementById(team === 'red' ? 'cnTeamRedTitle' : 'cnTeamBlueTitle');
-        const spyName = teams[team].spy ? ((players[teams[team].spy] || {}).name || '?') : tt('(none yet)');
-        cap.innerHTML = cnEmoji(team) + ' ' + (team === 'red' ? tt('RED team') : tt('BLUE team')) + ' <small>' + members.length + tt(' player(s)') + ' · ' + tt('🕵️ spymaster:') + ' <b>' + escapeHtml(spyName) + '</b></small>';
-        if (members.length === 0) { el.innerHTML = '<p class="cn-empty">' + tt('Nobody here yet…') + '</p>'; return; }
-        members.forEach(pid => {
+        cap.innerHTML = cnEmoji(team) + ' ' + (team === 'red' ? tt('RED team') : tt('BLUE team')) + ' <small>' + members.length + tt(' player(s)') + '</small>';
+        const mkRow = (pid, inSpies) => {
           const p = players[pid] || {};
-          const isSpy = teams[team].spy === pid;
           const row = document.createElement('div');
-          row.className = 'cn-member' + (pid === playerId ? ' me' : '') + (isSpy ? ' spy' : '');
+          row.className = 'cn-member' + (pid === playerId ? ' me' : '') + (inSpies ? ' spy cn-spy-slot' : '');
           row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
             '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
-            (isSpy ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('SPYMASTER') + '</span>' : '');
-          // 🔑 (re)assign the key — host, the player themself, or the current spymaster
-          if (!isSpy && (isHost || pid === playerId || teams[team].spy === playerId)) {
+            (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('SPYMASTER') + '</span>' : '');
+          // 🔑 promote an agent — host, the player themself, or the current spymaster
+          if (!inSpies && (isHost || pid === playerId || teams[team].spy === playerId)) {
             const b = document.createElement('button');
             b.className = 'cn-mini'; b.title = tt('Make spymaster'); b.innerHTML = ic('key');
             b.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, pid); };
             row.appendChild(b);
+          }
+          // ⇩ demote the spymaster back to the agents — host or the spymaster themself
+          if (inSpies && (isHost || teams[team].spy === playerId)) {
+            const d = document.createElement('button');
+            d.className = 'cn-mini'; d.title = tt('Demote to agents'); d.textContent = '⇩';
+            d.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, null); };
+            row.appendChild(d);
           }
           // host moves a member to the other team or to the bench
           if (isHost) {
@@ -4027,14 +4035,21 @@
             bn.onclick = (e) => { e.stopPropagation(); cnMove(pid, null); };
             row.appendChild(bn);
           }
-          el.appendChild(row);
-        });
+          return row;
+        };
+        const guessers = members.filter(m => m !== spy);
+        if (!guessers.length) agentsEl.innerHTML = '<p class="cn-empty">' + tt('Nobody here yet…') + '</p>';
+        else guessers.forEach(pid => agentsEl.appendChild(mkRow(pid, false)));
+        if (hintEl) hintEl.style.display = spy ? 'none' : 'block';
+        if (!spy) spiesEl.innerHTML = '<p class="cn-empty">' + tt('(none yet)') + '</p>';
+        else spiesEl.appendChild(mkRow(spy, true));
       });
       // bench = seated players who picked no team
       const benchEl = document.getElementById('cnBench');
       benchEl.innerHTML = '';
       const unseated = seated.filter(pid => !cnTeamOf(pid));
-      document.getElementById('cnBenchTitle').style.display = unseated.length ? 'block' : 'none';
+      const spectWrap = document.getElementById('cnSpect');
+      if (spectWrap) spectWrap.style.display = unseated.length ? 'flex' : 'none';
       unseated.forEach(pid => {
         const p = players[pid] || {};
         const chip = document.createElement('div');
@@ -4062,7 +4077,7 @@
       document.getElementById('cnTeamsStatus').textContent = gate.msg;
       document.getElementById('cnTeamsStatus').className = 'selection-status ' + (gate.ok ? 'ready' : 'waiting');
       const rb = document.getElementById('cnRandomBtn'); if (rb) rb.style.display = isHost ? 'inline-block' : 'none';
-      const sb = document.getElementById('cnStartBtn'); if (sb) { sb.style.display = isHost ? 'inline-block' : 'none'; sb.disabled = !gate.ok; }
+      const sb = document.getElementById('cnStartBtn'); if (sb) { sb.style.display = isHost ? 'block' : 'none'; sb.disabled = !gate.ok; }
       const bb = document.getElementById('cnBackLobbyBtn'); if (bb) bb.style.display = isHost ? 'inline-block' : 'none';
     }
 
