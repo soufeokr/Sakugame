@@ -996,3 +996,107 @@
   }
   .dc-copy:hover { background: #4752c4; transform: translateY(-1px); }
   .dc-copy .ic { width: 0.85rem; height: 0.85rem; }
+
+  /* ================================ 🗝 CODE NAMES ================================ */
+  /* ---- shared team colors ---- */
+  .cn-team.red, .cn-score-badge.red, .cn-clue-tag.red { border-color: rgba(229, 57, 53, 0.6); }
+  .cn-team.blue, .cn-score-badge.blue, .cn-clue-tag.blue { border-color: rgba(30, 136, 229, 0.6); }
+
+  /* ---- team-setup screen ---- */
+  .cn-selfjoin { display: flex; gap: 10px; justify-content: center; margin: 6px 0 14px; }
+  .cn-join { padding: 12px 26px; border-radius: 12px; border: 2px solid; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.2s; background: var(--card); color: #fff; }
+  .cn-join.red { border-color: rgba(229, 57, 53, 0.7); }
+  .cn-join.blue { border-color: rgba(30, 136, 229, 0.7); }
+  .cn-join.red.selected { background: rgba(229, 57, 53, 0.25); box-shadow: 0 0 14px rgba(229, 57, 53, 0.35); }
+  .cn-join.blue.selected { background: rgba(30, 136, 229, 0.25); box-shadow: 0 0 14px rgba(30, 136, 229, 0.35); }
+  .cn-join:hover { transform: translateY(-2px); }
+  .cn-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .cn-team { border: 2px solid; border-radius: 14px; padding: 12px; background: var(--card); }
+  .cn-team.red { background: rgba(229, 57, 53, 0.07); }
+  .cn-team.blue { background: rgba(30, 136, 229, 0.07); }
+  .cn-team-title { font-weight: 900; font-size: 1.05rem; margin-bottom: 10px; }
+  .cn-team-title small { display: block; font-weight: 600; color: var(--muted); font-size: 0.75rem; margin-top: 2px; }
+  .cn-empty { color: var(--muted); text-align: center; font-size: 0.9rem; padding: 12px 0; }
+  .cn-member { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid transparent; margin-bottom: 6px; }
+  .cn-member.me { border-color: rgba(41, 182, 246, 0.55); }
+  .cn-member.spy { border-color: rgba(255, 193, 7, 0.5); background: rgba(255, 193, 7, 0.07); }
+  .cn-member-name { font-weight: 700; font-size: 0.92rem; }
+  .cn-member-name i { color: var(--muted); font-style: normal; font-size: 0.8em; }
+  .cn-spy-badge { margin-left: auto; font-size: 0.68rem; font-weight: 900; color: #ffc107; background: rgba(255, 193, 7, 0.12); padding: 3px 8px; border-radius: 8px; letter-spacing: 0.05em; white-space: nowrap; }
+  .cn-spy-badge .ic { width: 12px; height: 12px; vertical-align: -0.15em; }
+  .cn-mini { margin-left: auto; background: none; border: 1px solid var(--card-border, rgba(255,255,255,.15)); color: #fff; border-radius: 7px; padding: 3px 7px; font-size: 0.78rem; cursor: pointer; }
+  .cn-mini + .cn-mini { margin-left: 4px; }
+  .cn-mini:hover { background: rgba(255,255,255,0.12); }
+  .cn-mini .ic { width: 13px; height: 13px; vertical-align: -0.2em; }
+  .cn-bench-title { margin: 14px 0 8px; font-size: 0.95rem; color: var(--muted); }
+  .cn-bench { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cn-bench .cn-member { margin-bottom: 0; }
+
+  /* ---- live screen: score header + turn banner ---- */
+  .cn-score-badge.red { color: #ff8a80; border: 2px solid rgba(229, 57, 53, 0.6); }
+  .cn-score-badge.blue { color: #82b1ff; border: 2px solid rgba(30, 136, 229, 0.6); }
+  .cn-role { text-align: center; font-size: 0.88rem; font-weight: 700; color: var(--muted); margin: 4px 0; }
+  .cn-role.red { color: #ff8a80; }
+  .cn-role.blue { color: #82b1ff; }
+  .cn-turn { text-align: center; font-weight: 900; font-size: 1.02rem; padding: 10px 12px; border-radius: 12px; margin: 6px 0 10px; border: 2px solid transparent; }
+  .cn-turn.red { background: rgba(229, 57, 53, 0.14); border-color: rgba(229, 57, 53, 0.5); }
+  .cn-turn.blue { background: rgba(30, 136, 229, 0.14); border-color: rgba(30, 136, 229, 0.5); }
+  .cn-cluebar { text-align: center; min-height: 40px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.05rem; margin-bottom: 12px; padding: 8px; border-radius: 12px; background: #0f0f1a; }
+  .cn-clue-tag { font-size: 0.68rem; font-weight: 900; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--muted); padding: 2px 7px; border-radius: 7px; }
+  .cn-clue-n { color: var(--accent); font-weight: 900; }
+  .cn-clue-wait { color: var(--muted); font-size: 0.9rem; }
+
+  /* ---- the 5×5 board ---- */
+  .cn-board { display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 8px; }
+  .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.08); background: var(--card); transition: transform 0.15s, box-shadow 0.15s; }
+  .cn-card img { display: block; width: 100%; aspect-ratio: 1/1.1; object-fit: cover; }
+  .cn-name { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 24, 0.88); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cn-card.can-pick { cursor: pointer; border-color: rgba(41, 182, 246, 0.55); }
+  .cn-card.can-pick:hover { transform: scale(1.04); box-shadow: 0 0 12px rgba(41, 182, 246, 0.5); z-index: 2; }
+  /* spymaster key view: colored borders + corner dot */
+  .cn-card.cn-key-red { border-color: rgba(229, 57, 53, 0.85); }
+  .cn-card.cn-key-blue { border-color: rgba(30, 136, 229, 0.85); }
+  .cn-card.cn-key-beige { border-color: rgba(176, 164, 138, 0.55); }
+  .cn-card.cn-key-black { border-color: rgba(255, 255, 255, 0.85); }
+  .cn-dot { position: absolute; top: 5px; right: 5px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid #0f0f1a; }
+  .cn-dot-red { background: #e53935; }
+  .cn-dot-blue { background: #1e88e5; }
+  .cn-dot-beige { background: #b0a48a; }
+  .cn-dot-black { background: #111; box-shadow: 0 0 0 1px #fff; }
+  /* revealed cards get their true color (visible to EVERYONE) */
+  .cn-card.cn-rev img { opacity: 0.22; filter: saturate(0.6); }
+  .cn-card.cn-rev-red { border-color: #e53935; background: rgba(229, 57, 53, 0.55); }
+  .cn-card.cn-rev-blue { border-color: #1e88e5; background: rgba(30, 136, 229, 0.55); }
+  .cn-card.cn-rev-beige { border-color: #b0a48a; background: rgba(176, 164, 138, 0.35); }
+  .cn-card.cn-rev-black { border-color: #000; background: rgba(8, 8, 12, 0.92); box-shadow: 0 0 14px rgba(0, 0, 0, 0.9); }
+  .cn-stamp { position: absolute; top: 5px; left: 5px; font-size: 0.95rem; background: rgba(8, 8, 16, 0.75); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; text-align: center; }
+
+  /* ---- action rows ---- */
+  .cn-controls { margin: 6px 0 2px; }
+  .cn-input-row { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .cn-input-row input { flex: 1 1 180px; max-width: 320px; padding: 11px 14px; border-radius: 10px; border: 2px solid rgba(255, 255, 255, 0.14); background: #0f0f1a; color: #fff; font-size: 1rem; }
+  .cn-input-row input:focus { border-color: var(--accent); outline: none; }
+  .cn-input-row select { padding: 11px 10px; border-radius: 10px; border: 2px solid rgba(255, 255, 255, 0.14); background: #0f0f1a; color: #fff; font-size: 1rem; font-weight: 900; }
+  .cn-wait { text-align: center; color: var(--muted); font-size: 0.92rem; padding: 8px; }
+
+  /* ---- log colors ---- */
+  .br-log-cn-c-red { border-left-color: #e53935; color: #ff8a80; }
+  .br-log-cn-c-blue { border-left-color: #1e88e5; color: #82b1ff; }
+  .br-log-cn-f-red { border-left-color: #e53935; background: rgba(229, 57, 53, 0.10); }
+  .br-log-cn-f-blue { border-left-color: #1e88e5; background: rgba(30, 136, 229, 0.10); }
+  .br-log-cn-beige { border-left-color: #b0a48a; color: #b0a48a; }
+  .br-log-cn-black { border-left-color: #fff; color: #fff; font-weight: 900; background: rgba(255, 255, 255, 0.05); }
+
+  /* ---- end-screen team blocks ---- */
+  .me-row.cn-end-head { margin-top: 8px; font-weight: 900; background: rgba(255, 255, 255, 0.05); }
+  .me-row.cn-end-head.red { border-left: 3px solid #e53935; }
+  .me-row.cn-end-head.blue { border-left: 3px solid #1e88e5; }
+  .me-row.cn-end-row { font-size: 0.9rem; }
+
+  @media (max-width: 640px) {
+    .cn-board { gap: 5px; }
+    .cn-name { font-size: 0.5rem; padding: 2px 3px; }
+    .cn-teams { grid-template-columns: 1fr; }
+    .cn-turn { font-size: 0.88rem; }
+    .cn-cluebar { font-size: 0.92rem; }
+  }

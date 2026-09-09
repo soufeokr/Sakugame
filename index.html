@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="53">
+<meta name="saku-build" content="54">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=53" sizes="any">
+<link rel="icon" href="favicon.ico?v=54" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=53">
+<link rel="stylesheet" href="style.css?v=54">
 </head>
 <body>
 
@@ -356,8 +356,12 @@
                 <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
                 <div class="game-pick-content"><h4>Guess Who — Hot & Cold</h4><small>2-6 players</small></div>
               </div>
+              <div class="game-pick-card" data-game="codenames" onclick="selectHostGame('codenames')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
+                <div class="game-pick-content"><h4>Code Names</h4><small>4-8 players</small></div>
+              </div>
             </div>
-            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Guess Who — Hot & Cold (2-6 players)</option></select>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Guess Who — Hot & Cold (2-6 players)</option><option value="codenames">Codenames — Anime (4-8 players)</option></select>
           </div>
           <div class="input-group">
             <label>Room Visibility</label>
@@ -719,6 +723,73 @@
   </div>
 
   <!-- 🌡️ GUESS WHO — HOT & COLD (2-6 players): every seeker hunts their own path, Σ guesses = the classement -->
+  <!-- 🗝 CODE NAMES (4-8 players, 2 teams) — team setup screen -->
+  <div class="screen" id="cnTeamsScreen">
+    <div class="lobby-container">
+      <div class="lobby-header">
+        <h2><svg class="ic"><use href="#i-key"/></svg> <span id="cnTeamsTitle">Code Names — Team Setup</span></h2>
+        <p id="cnTeamsHint">Everyone joins a team, then give the 🔑 to one spymaster per team. The host can move anyone or shuffle it all.</p>
+      </div>
+      <div class="cn-selfjoin">
+        <button id="cnJoinRed" class="cn-join red" onclick="cnJoinTeam('red')">Join 🔴</button>
+        <button id="cnJoinBlue" class="cn-join blue" onclick="cnJoinTeam('blue')">Join 🔵</button>
+      </div>
+      <div class="cn-teams">
+        <div class="cn-team red">
+          <div class="cn-team-title" id="cnTeamRedTitle">🔴 RED team</div>
+          <div id="cnTeamRed"></div>
+        </div>
+        <div class="cn-team blue">
+          <div class="cn-team-title" id="cnTeamBlueTitle">🔵 BLUE team</div>
+          <div id="cnTeamBlue"></div>
+        </div>
+      </div>
+      <h3 class="cn-bench-title" id="cnBenchTitle">Waiting to pick a team</h3>
+      <div class="cn-bench" id="cnBench"></div>
+      <div id="cnTeamsStatus" class="selection-status waiting"></div>
+      <div class="game-controls">
+        <button id="cnRandomBtn" class="secondary" onclick="cnRandomTeams()" title="Random teams"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random teams</span></button>
+        <button id="cnStartBtn" class="success" onclick="cnStartGame()" title="Deal the 25 cards"><svg class="ic"><use href="#i-play"/></svg> <span class="btn-label">Start — deal the cards!</span></button>
+        <button id="cnBackLobbyBtn" class="danger" onclick="cnBackToLobbyFromTeams()" title="Cancel and return to the lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🗝 CODE NAMES (4-8 players, 2 teams) — live game screen -->
+  <div class="screen" id="codenamesScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="uc-badge cn-score-badge red" id="cnScoreRed">🔴 —</div>
+          <div class="uc-badge cn-score-badge blue" id="cnScoreBlue">🔵 —</div>
+        </div>
+        <div class="cn-role" id="cnMyRole"></div>
+        <div class="cn-turn" id="cnTurnBanner"></div>
+        <div class="cn-cluebar" id="cnClueBar"></div>
+        <div class="board-section">
+          <div class="board cn-board" id="cnBoard"></div>
+          <div class="cn-controls">
+            <div id="cnClueInput" class="cn-input-row">
+              <input id="cnClueWord" type="text" maxlength="24" placeholder="One-word clue…" autocomplete="off">
+              <select id="cnClueNum">
+                <option value="1">×1</option><option value="2">×2</option><option value="3">×3</option><option value="4">×4</option><option value="5">×5</option><option value="6">×6</option><option value="7">×7</option><option value="8">×8</option><option value="9">×9</option>
+              </select>
+              <button class="success" onclick="cnSendClue()"><svg class="ic"><use href="#i-send"/></svg> <span class="btn-label">Send clue</span></button>
+            </div>
+            <div id="cnGuessRow" class="cn-input-row">
+              <button class="secondary" onclick="cnPass()"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Pass turn</span></button>
+            </div>
+            <div id="cnWaitMsg" class="cn-wait"></div>
+          </div>
+          <div class="game-controls">
+            <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+          </div>
+        </div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> History</h3><div class="br-log" id="cnLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
   <div class="screen" id="hotcoldScreen">
     <div class="uc-container">
       <div class="uc-main">
@@ -875,6 +946,10 @@
                 <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
                 <div class="game-pick-content"><h4>Guess Who — Hot & Cold</h4><small>2-6 players</small></div>
               </div>
+              <div class="game-pick-card" data-game="codenames" onclick="modalCardGame('codenames')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
+                <div class="game-pick-content"><h4>Code Names</h4><small>4-8 players</small></div>
+              </div>
             </div>
             <select id="modalGameSelect" style="display: none;" onchange="modalGameChanged()">
               <option value="guesswho">Anime Guess Who? (2 players)</option>
@@ -883,6 +958,7 @@
               <option value="blur">Blur Guess (solo or up to 8 players)</option>
               <option value="undercover">Undercover (3-8 players)</option>
               <option value="hotcold">Guess Who — Hot & Cold (2-6 players)</option>
+              <option value="codenames">Codenames — Anime (4-8 players)</option>
             </select>
           </div>
           <div class="input-group">
@@ -1259,7 +1335,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=53', 'charanimes.js?v=53', 'animes.js?v=53'];
+        var files = ['characters.js?v=54', 'charanimes.js?v=54', 'animes.js?v=54'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1274,9 +1350,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=53"></script>
-  <script src="music.js?v=53"></script>
-  <script src="lang.js?v=53"></script>
-  <script src="app.js?v=53"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a37965218ee8c8e8',t:'MTc4ODgyMjcxMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=54"></script>
+  <script src="music.js?v=54"></script>
+  <script src="lang.js?v=54"></script>
+  <script src="app.js?v=54"></script>
+</body>
 </html>

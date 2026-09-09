@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '53';
+    const SAKU_BUILD = '54';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -32,7 +32,7 @@
     function ic(n, cls) {
       return '<svg class="ic' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
     }
-    const GAME_ICONS = { guesswho: 'mask', undercover: 'spy', battle: 'users', race: 'bolt', blur: 'layers', hotcold: 'target' };
+    const GAME_ICONS = { guesswho: 'mask', undercover: 'spy', battle: 'users', race: 'bolt', blur: 'layers', hotcold: 'target', codenames: 'key' };
 
     // 🌐 i18n shims (lang.js). Everything stays English if lang.js fails to load.
     function tPO(id, vars) { // sentence pattern with a name/word inside
@@ -200,6 +200,14 @@
           s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
+      ]},
+      codenames: { title: 'Code Names', icon: 'key', players: '4-8 players', slides: [
+        { t: 'Two teams, 25 characters', d: 'Split into RED and BLUE (2+ each). A 5×5 grid of anime characters is dealt; each card secretly belongs to a team, to the neutral bystanders… or to the 💀 assassin. Only the two SPYMASTERS see the color key.',
+          s: htScene('<div class="mk-label">The board (spymaster key hidden)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 9).map(function (n) { return htCharReal(n, ''); }).join('') + '</div>') },
+        { t: 'One word + one number', d: 'On your team\'s turn its spymaster gives ONE word and a count — "fire, 2" — pointing at that many characters. Teammates tap up to that many cards. Every correct pick keeps the turn alive!',
+          s: htScene(htQ('Spymaster says: "fire, 2"', 'CLUE') + '<div class="mk-chips">' + htChip('Rin Tohsaka ✓', 'ok') + htChip('Natsu Dragneel ✓', 'ok') + htChip('Shoto Todoroki ✗', 'no') + '</div>') },
+        { t: 'Wrong card? Turn over. Black card? Game over.', d: 'Picking a bystander ends your turn right away. Picking an OPPONENT agent helps them win instead! And the single 💀 black card = INSTANT LOSS for the team that picks it. First team to find all its agents wins!',
+          s: htScene('<div class="mk-chips">' + htChip('💀 Assassin — instant loss!', 'no') + htChip('Bystander — turn ends', 'dim') + htChip('9 agents 🔴 / 8 agents 🔵', 'ok') + '</div>') }
       ]}
       };
     }
@@ -996,7 +1004,7 @@
     //   opponent gets a ❌ color, finds give points, ranking at the end.
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
-    const GAME_LABELS = { guesswho: 'Anime Guess Who?', undercover: 'Undercover', battle: 'Guess Who — Battle Royale', race: 'Guess Who — Race', blur: 'Blur Guess', hotcold: 'Guess Who — Hot & Cold' };
+    const GAME_LABELS = { guesswho: 'Anime Guess Who?', undercover: 'Undercover', battle: 'Guess Who — Battle Royale', race: 'Guess Who — Race', blur: 'Blur Guess', hotcold: 'Guess Who — Hot & Cold', codenames: 'Code Names' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
     let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
@@ -1221,8 +1229,8 @@
     // Restore a snapshot into the whole form (clamped + guarded)
     function applyRoomConfig(cfg) {
       if (!cfg || typeof cfg !== 'object') return;
-      const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold'];
-      if (['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold'].indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
+      const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'];
+      if (['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'].indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
       // 🔒 visibility radios
       const vis = cfg.visibility === 'public' ? 'public' : 'private';
       roomVisibility = vis;
@@ -1395,6 +1403,7 @@
           updates['settings/mixCount'] = clampN(cfg.mix, 0, 80, Math.floor(clampN(cfg.charCount, 12, 80, 24) / 2));
         }
         if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
+        if (g === 'codenames') updates.maxPlayers = Math.min(8, Math.max(Math.max(4, playerCount), clampN(cfg.multiMax, 4, 8, 6))); // CN needs 2+ per team
         if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
         if (g === 'hotcold' && cfg.hcMode) updates['settings/hcMode'] = cfg.hcMode === 'individual' ? 'individual' : 'shared'; // legacy presets keep the room's current mode
         if (g === 'hotcold' && cfg.hcHideRank != null) updates['settings/hcHideRank'] = !!cfg.hcHideRank;
@@ -1437,8 +1446,9 @@
       // 🎮 highlight the matching mini card
       document.querySelectorAll('#hostGamePick .game-pick-card').forEach(function (c) { c.classList.toggle('selected', c.dataset.game === hostGame); });
       const isUc = hostGame === 'undercover';
-      const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur';
+      const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur' || hostGame === 'codenames';
       const isBlur = hostGame === 'blur';
+      const isCn = hostGame === 'codenames';
       // 🏠 Room tab: only ONE player-count control matches the game
       document.getElementById('hostGwPlayersHint').style.display = hostGame === 'guesswho' ? 'block' : 'none';
       document.getElementById('hostHcMaxBlock').style.display = hostGame === 'hotcold' ? 'block' : 'none';
@@ -1451,19 +1461,21 @@
       const watchUi = isBlur || hostGame === 'hotcold';
       document.getElementById('hostPoolSrcGwGroup').style.display = watchUi ? 'none' : 'block';
       document.getElementById('hostPoolSrcWatchGroup').style.display = watchUi ? 'block' : 'none';
-      document.getElementById('hostGwSettings').style.display = (isUc || isBlur || hostGame === 'hotcold') ? 'none' : 'block';
+      document.getElementById('hostGwSettings').style.display = (isUc || isBlur || hostGame === 'hotcold' || isCn) ? 'none' : 'block'; // CN board is always a 5×5 = 25
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
       // ❤️/❓ sliders are Race-only, 🌫️ options are Blur-only
       document.querySelectorAll('.race-only-settings').forEach(el => { el.style.display = hostGame === 'race' ? 'block' : 'none'; });
       document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = isBlur ? 'block' : 'none'; });
       if (isMulti) {
-        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : 'Blur Guess';
+        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : hostGame === 'codenames' ? 'Code Names' : 'Blur Guess';
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
           ? 'Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Eliminate cards on each opponent\'s colored board, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
           : hostGame === 'race'
             ? 'One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. Hunters take turns ASKING — but GUESSING is free for everyone, at any moment (wrong = -1 life)! First to find the mystery character wins!'
-            : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
+            : hostGame === 'codenames'
+              ? 'Two teams face a 5×5 grid of characters. Each SPYMASTER sees the secret colors and gives ONE word + a number; their team taps that many cards. Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
+              : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
       }
     }
     function updateUcMaxPlayers() {
@@ -1519,7 +1531,7 @@
     async function createGameRoom() {
       const game = document.getElementById('gameSelect').value || 'guesswho';
         const isUc = game === 'undercover';
-        const isMulti = game === 'battle' || game === 'race' || game === 'blur';
+        const isMulti = game === 'battle' || game === 'race' || game === 'blur' || game === 'codenames';
         const isWatchGame = game === 'blur' || game === 'hotcold';
       if (!isUc && !isWatchGame && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Favorites needs a synced AniList account (profile menu) — or switch the pool to Generic!'); return; }
       if (!isUc && !isWatchGame && hostSource === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs a synced AniList account (profile menu) — or pick another pool!'); return; }
@@ -1543,6 +1555,7 @@
           if (game === 'hotcold') roomData.settings.hcHideRank = !!hostHcHideRank; // 📊 hide the live ranking until match end
           if (isWatchGame) roomData.settings.pool = hostPool; // 🎲 random (full pool) | watched (synced accounts' seen anime)
           if (isMulti) roomData.maxPlayers = multiMaxPlayers;
+          if (game === 'codenames') roomData.maxPlayers = Math.min(8, Math.max(4, multiMaxPlayers)); // 2+ per team
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
           if (game === 'blur') {
             roomData.settings.bgRounds = hostBgRounds;
@@ -1738,6 +1751,20 @@
             if (participates && !document.getElementById('blurScreen').classList.contains('active')) showScreen('blurScreen');
             if (participates) updateBlur();
             if (isHost && currentRoom.state === 'playing') { blurWatchdog(); ensureBgHostTimer(); }
+          }
+        } else if (currentRoom.game === 'codenames') {
+          const cn = currentRoom.cn || {};
+          if (currentRoom.state === 'teams') {
+            if (!document.getElementById('cnTeamsScreen').classList.contains('active')) showScreen('cnTeamsScreen');
+            renderCnTeams();
+            if (isHost) cnPruneTeams();
+          }
+          if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
+            const meP = (currentRoom.players || {})[playerId] || {};
+            const participates = cn.gameId && meP.outInGame !== cn.gameId && !!cnTeamOf(playerId);
+            if (participates && !document.getElementById('codenamesScreen').classList.contains('active')) showScreen('codenamesScreen');
+            if (participates) updateCodenames();
+            if (isHost && currentRoom.state === 'playing') cnWatchdog();
           }
         } else if (currentRoom.game === 'hotcold') {
           const hc = currentRoom.hc || {};
@@ -1968,7 +1995,8 @@
       const isMultiGame = currentRoom.game === 'undercover' || currentRoom.game === 'battle' || currentRoom.game === 'race';
       const isBlurGame = currentRoom.game === 'blur';
       const isHcGame = currentRoom.game === 'hotcold'; // 🔥 2-6 seats (multiplayer rework)
-      const canStart = isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
+      const isCnGame = currentRoom.game === 'codenames'; // 🗝 4-8 (2+ per team)
+      const canStart = isCnGame ? (allReady && playerCount >= 4) : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
       // My own "you're waiting" banner + hide Ready while queued
       const qBanner = document.getElementById('queueBanner');
@@ -2074,12 +2102,12 @@
         queuePromoting = true;
         try {
           const me = sorted[0];
-          const updates = {
-            state: 'lobby', characters: null, selections: null, secrets: null, currentTurn: null,
-            eliminations: null, winner: null, currentQuestion: null, questionHistory: null,
-            restarts: null, uc: null, br: null, rc: null, bg: null, hc: null,
-            host: playerId
-          };
+      const updates = {
+        state: 'lobby', characters: null, selections: null, secrets: null, currentTurn: null,
+        eliminations: null, winner: null, currentQuestion: null, questionHistory: null,
+        restarts: null, uc: null, br: null, rc: null, bg: null, hc: null, cn: null,
+        host: playerId
+      };
           updates['players/' + playerId] = { id: playerId, ready: false, name: me.name || playerName, isHost: true, avatar: me.avatar || '' };
           updates['queue/' + playerId] = null;
           await database.ref('rooms/' + roomCode).update(updates);
@@ -2122,6 +2150,7 @@
       else if (g === 'race') gd = currentRoom.rc;
       else if (g === 'blur') gd = currentRoom.bg;
       else if (g === 'hotcold') gd = currentRoom.hc;
+      else if (g === 'codenames') gd = currentRoom.cn;
       if (!gd || !gd.gameId) return; // 2P Guess Who ends via its own buttons
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
       if (seated.length === 0) return;
@@ -2326,6 +2355,7 @@
         if (r.game === 'undercover') rules = 'max ' + maxP + ' · Mr. White ' + ((r.settings && r.settings.mrWhite) ? 'ON' : 'OFF');
         else if (r.game === 'battle') rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
         else if (r.game === 'race') rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
+        else if (r.game === 'codenames') rules = '5×5 grid · 2 teams · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
         else rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · ' + SRC[(r.settings && r.settings.source) || 'generic'];
         const card = document.createElement('div');
         card.className = 'public-room-card';
@@ -3641,11 +3671,498 @@
         return true;
       });
     }
+    // ================================ 🗝 CODE NAMES (4-8 players, 2 teams) ================================
+    // A 5×5 grid of 25 characters. Red vs Blue; each team has ONE spymaster
+    // who sees the secret color key and gives ONE-WORD + NUMBER clues (each
+    // spymaster sees the key — guessers see plain cards, colors revealed on tap).
+    // First team to reveal all its agents wins; the 🖤 black card loses instantly.
+    const CN_TEAMS = ['red', 'blue'];
+    function cnTeams(cn) {
+      cn = cn || (currentRoom && currentRoom.cn) || {};
+      const t = cn.teams || {};
+      const norm = (tt) => ({ spy: (tt && tt.spy) || null, members: Object.keys((tt && tt.members) || {}).sort() });
+      return { red: norm(t.red), blue: norm(t.blue) };
+    }
+    function cnTeamOf(pid, cn) {
+      const teams = cnTeams(cn);
+      if (teams.red.members.indexOf(pid) !== -1) return 'red';
+      if (teams.blue.members.indexOf(pid) !== -1) return 'blue';
+      return null;
+    }
+    function cnEmoji(team) { return team === 'red' ? '🔴' : team === 'blue' ? '🔵' : team === 'beige' ? '🤍' : '🖤'; }
+    function cnColorKey(cn, idx) { const key = (cn && cn.key) || {}; return key[String(idx)] || null; }
+    function cnNameOf(pid) { return ((currentRoom.players || {})[pid] || {}).name || '?'; }
+    function cnPushLog(k, txt) { try { database.ref('rooms/' + roomCode + '/cn/log').push({ k: k, txt: txt, ts: Date.now() }); } catch (e) {} }
+
+    // ---- team setup (state 'teams') ----
+    async function cnOpenTeams() {
+      if (!isHost || !currentRoom || currentRoom.state !== 'lobby') return;
+      await database.ref('rooms/' + roomCode + '/cn').set({ gameId: Date.now(), teams: {} });
+      await database.ref('rooms/' + roomCode + '/state').set('teams');
+      touchActivity();
+    }
+    function cnTeamsGate() {
+      const room = currentRoom || {};
+      const seated = Object.keys(room.players || {});
+      const teams = cnTeams();
+      const tt = (k) => (window.t ? t(k) : k);
+      if (seated.length < 4) return { ok: false, msg: tt('Code Names needs at least 4 players (2+ per team)!') };
+      if (teams.red.members.length < 2 || teams.blue.members.length < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
+      if (seated.some(pid => !cnTeamOf(pid))) return { ok: false, msg: tt('Everyone must pick a team (🔴 or 🔵)!') };
+      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a spymaster — tap the 🔑 next to a teammate!') };
+      return { ok: true, msg: tt('Teams are ready — the host can deal!') };
+    }
+    async function cnSetTeam(pid, team) {
+      if (!currentRoom || !roomCode || currentRoom.state !== 'teams') return;
+      if (pid !== playerId && !isHost) return;                    // host moves anyone, players only move themselves
+      if (team && CN_TEAMS.indexOf(team) === -1) return;
+      const teams = cnTeams();
+      const cur = cnTeamOf(pid);
+      if (cur === team) team = null;                              // re-tap the same team = back to the bench
+      const upd = {};
+      if (cur) {
+        upd['cn/teams/' + cur + '/members/' + pid] = null;
+        if (teams[cur].spy === pid && team !== cur) {
+          const rest = teams[cur].members.filter(m => m !== pid);
+          upd['cn/teams/' + cur + '/spy'] = rest.length ? rest[0] : null;
+        }
+      }
+      if (team) {
+        upd['cn/teams/' + team + '/members/' + pid] = true;
+        if (!teams[team].spy && teams[team].members.length === 0) upd['cn/teams/' + team + '/spy'] = pid; // first member grabs the key
+      }
+      await database.ref('rooms/' + roomCode).update(upd);
+      touchActivity();
+    }
+    function cnJoinTeam(team) { cnSetTeam(playerId, team); }
+    function cnMove(pid, team) { cnSetTeam(pid, team); }          // host chips
+    async function cnSetSpy(team, pid) {
+      if (!currentRoom || currentRoom.state !== 'teams' || CN_TEAMS.indexOf(team) === -1) return;
+      const teams = cnTeams();
+      if (teams[team].members.indexOf(pid) === -1 || teams[team].spy === pid) return;
+      // the host, the player themself, or the current spymaster may reassign the role
+      if (!(isHost || pid === playerId || teams[team].spy === playerId)) return;
+      await database.ref('rooms/' + roomCode + '/cn/teams/' + team + '/spy').set(pid);
+      touchActivity();
+    }
+    async function cnRandomTeams() {
+      if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
+      const pids = shuffleArray(Object.keys(currentRoom.players || {}));
+      if (pids.length < 4) { showNotification(window.t ? t('Code Names needs at least 4 players (2+ per team)!') : 'Code Names needs at least 4 players (2+ per team)!'); return; }
+      const halves = [[], []];
+      pids.forEach((p, i) => halves[i % 2].push(p));
+      if (Math.random() < 0.5) halves.reverse(); // which half lands in RED is random too
+      const mk = (arr) => { const m = {}; arr.forEach(p => { m[p] = true; }); return { spy: arr[0], members: m }; };
+      await database.ref('rooms/' + roomCode + '/cn/teams').set({ red: mk(halves[0]), blue: mk(halves[1]) });
+      touchActivity();
+    }
+    async function cnBackToLobbyFromTeams() {
+      if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
+      await database.ref('rooms/' + roomCode).update({ state: 'lobby', cn: null });
+      touchActivity();
+    }
+    // Remove vanished players from rosters (+ hand their key to the next member)
+    function cnPruneTeams() {
+      if (!isHost || !currentRoom || !roomCode) return;
+      const players = currentRoom.players || {};
+      const teams = cnTeams();
+      const upd = {}; let touch = false;
+      CN_TEAMS.forEach(tt => {
+        const alive = teams[tt].members.filter(m => players[m]);
+        teams[tt].members.forEach(m => { if (!players[m]) { upd['cn/teams/' + tt + '/members/' + m] = null; touch = true; } });
+        if (alive.length === 0 && teams[tt].spy) { upd['cn/teams/' + tt + '/spy'] = null; touch = true; }
+        else if (alive.length > 0 && teams[tt].spy && !players[teams[tt].spy]) { upd['cn/teams/' + tt + '/spy'] = alive[0]; touch = true; }
+      });
+      if (touch) database.ref('rooms/' + roomCode).update(upd).catch(() => {});
+    }
+
+    // ---- the deal: 25 cards + secret color key ----
+    function cnBuildKey(first) {
+      const other = first === 'red' ? 'blue' : 'red';
+      const cols = [];
+      for (let i = 0; i < 9; i++) cols.push(first);
+      for (let i = 0; i < 8; i++) cols.push(other);
+      for (let i = 0; i < 7; i++) cols.push('beige');
+      cols.push('black');
+      shuffleArray(cols);
+      const key = {}; cols.forEach((c, i) => { key[String(i)] = c; });
+      return key;
+    }
+    function cnPickBoard(room) {
+      const accountData = Object.values((room && room.accounts) || {});
+      const settings = (room && room.settings) || {};
+      const source = settings.source || (accountData.length > 0 ? 'favorites' : 'generic');
+      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      const seenIds = new Set(); const out = [];
+      const pick = (list, n) => {
+        const pool = shuffleArray((list || []).filter(c => c && c.id != null && !seenIds.has(c.id)));
+        pool.slice(0, Math.max(0, n)).forEach(c => { seenIds.add(c.id); out.push(c); });
+      };
+      const allChars = []; accountData.forEach(a => allChars.push.apply(allChars, (a && a.characters) || []));
+      if (source === 'favorites' && accountData.length > 0) {
+        const n = accountData.length, per = Math.floor(25 / n);
+        accountData.forEach((acc, i) => pick((acc && acc.characters) || [], per + (i < (25 - per * n) ? 1 : 0)));
+        if (out.length < 25) pick(allChars, 25 - out.length);
+      } else if (source === 'mix' && accountData.length > 0) {
+        const wantG = Math.max(0, Math.min(25, settings.mixCount != null ? Math.round(25 * settings.mixCount / (settings.characterCount || 24)) : 12));
+        pick(generic, wantG);
+        if (out.length < 25) pick(allChars, 25 - out.length);
+        if (out.length < 25) pick(generic, 25 - out.length); // short favorites → generic tops up (never the reverse dupe)
+      } else if (source === 'watched' && accountData.length > 0) {
+        pick(watchedPoolChars(room), 25);
+      }
+      if (out.length < 25) pick(generic, 25 - out.length); // top-up or the plain full-generic board
+      return out.slice(0, 25);
+    }
+    async function cnDeal() {
+      if (!isHost || !currentRoom || !roomCode) return;
+      const board = cnPickBoard(currentRoom);
+      if (board.length < 25) { showNotification(window.t ? t('Not enough characters in the pool for a 5×5 board!') : 'Not enough characters in the pool for a 5×5 board!'); return; }
+      const first = Math.random() < 0.5 ? 'red' : 'blue';
+      const key = cnBuildKey(first);
+      const upd = {
+        state: 'playing',
+        'cn/gameId': Date.now(),
+        'cn/board': board,
+        'cn/key': key,
+        'cn/first': first,
+        'cn/turn': first,
+        'cn/phase': 'clue',
+        'cn/clue': null,
+        'cn/guessesLeft': 0,
+        'cn/revealed': null,
+        'cn/rem': first === 'red' ? { red: 9, blue: 8 } : { red: 8, blue: 9 },
+        'cn/winner': null,
+        'cn/log': null
+      };
+      await database.ref('rooms/' + roomCode).update(upd);
+      touchActivity();
+      cnPushLog('info', '🗝 ' + (window.t ? t('Board dealt!') : 'Board dealt!') + ' ' + (first === 'red'
+        ? (window.t ? t('🔴 RED starts (9 agents) — 🔵 BLUE has 8!') : '🔴 RED starts (9 agents) — 🔵 BLUE has 8!')
+        : (window.t ? t('🔵 BLUE starts (9 agents) — 🔴 RED has 8!') : '🔵 BLUE starts (9 agents) — 🔴 RED has 8!')));
+    }
+    async function cnStartGame() {
+      if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
+      const gate = cnTeamsGate();
+      if (!gate.ok) { if (gate.msg) showNotification(gate.msg); return; }
+      await cnDeal();
+      touchActivity();
+    }
+
+    // ---- the clue (spymaster) ----
+    function cnSendClue() {
+      const cn = (currentRoom && currentRoom.cn) || {};
+      if (!currentRoom || currentRoom.state !== 'playing' || cn.phase !== 'clue') return;
+      const teams = cnTeams(cn);
+      const myTeam = cnTeamOf(playerId, cn);
+      if (myTeam !== cn.turn) { showNotification(window.t ? t('Wait for your team\'s turn!') : 'Wait for your team\'s turn!'); return; }
+      if (teams[myTeam].spy !== playerId) { showNotification(window.t ? t('Only the spymaster can give the clue!') : 'Only the spymaster can give the clue!'); return; }
+      const w = (document.getElementById('cnClueWord').value || '').trim();
+      const n = parseInt((document.getElementById('cnClueNum').value || '0'), 10);
+      if (!/^\S{1,24}$/.test(w)) { showNotification(window.t ? t('The clue must be a single word!') : 'The clue must be a single word!'); return; }
+      if (!(n >= 1 && n <= 9)) { showNotification(window.t ? t('Choose how many cards it targets (1-9)!') : 'Choose how many cards it targets (1-9)!'); return; }
+      const lower = w.toLowerCase();
+      const forbidden = (cn.board || []).some(c => {
+        const nm = String((c && c.name) || '').toLowerCase();
+        return nm === lower || nm.split(/[\s,\-'’\.]+/).filter(Boolean).indexOf(lower) !== -1;
+      });
+      if (forbidden) { showNotification(window.t ? t('The clue can\'t be part of a visible character name!') : 'The clue can\'t be part of a visible character name!'); return; }
+      database.ref('rooms/' + roomCode).update({ 'cn/clue': { word: w, n: n, by: playerId, at: Date.now() }, 'cn/phase': 'guess', 'cn/guessesLeft': n });
+      touchActivity();
+      cnPushLog('clue-' + myTeam, cnEmoji(myTeam) + ' 🕵️ <b>' + escapeHtml(cnNameOf(playerId)) + '</b> ' + (window.t ? t('clues:') : 'clues:') + ' <b>"' + escapeHtml(w) + '" ×' + n + '</b>');
+      document.getElementById('cnClueWord').value = '';
+    }
+
+    // ---- guessing (teammates) — pure resolver keeps rules unit-testable ----
+    function cnResolveGuess(cn, team, idx, guesserHtml) {
+      const res = { err: null, upd: {}, logs: [] };
+      if (!cn || !cn.board || !cn.board[idx]) { res.err = 'card'; return res; }
+      const color = cnColorKey(cn, idx);
+      if (!color) { res.err = 'card'; return res; }
+      const rev = cn.revealed || {};
+      if (rev[String(idx)]) { res.err = 'taken'; return res; }
+      const turn = cn.turn, other = turn === 'red' ? 'blue' : 'red';
+      const rem = Object.assign({ red: 9, blue: 8 }, cn.rem || {});
+      const left = cn.guessesLeft || 0;
+      const t = (k) => (window.t ? window.t(k) : k);
+      const charName = escapeHtml(String(((cn.board[idx] || {}).name) || '?'));
+      res.upd['cn/revealed/' + idx] = color;
+      const endTurn = () => { res.upd['cn/turn'] = other; res.upd['cn/phase'] = 'clue'; res.upd['cn/clue'] = null; res.upd['cn/guessesLeft'] = 0; };
+      const win = (team2, reason) => {
+        res.upd['cn/phase'] = 'over'; res.upd['cn/winner'] = { team: team2, reason: reason }; res.upd['state'] = 'finished'; res.upd['cn/guessesLeft'] = 0;
+        res.logs.push({ k: 'win', txt: '🏆 ' + cnEmoji(team2) + ' ' + t('team WINS the Code Names game!') });
+        res.winnerFlag = true;
+      };
+      if (color === turn) {
+        res.upd['cn/rem/' + turn] = (rem[turn] || 0) - 1;
+        res.logs.push({ k: 'find-' + turn, txt: '✅ ' + cnEmoji(turn) + ' ' + guesserHtml + ' → ' + charName });
+        if (res.upd['cn/rem/' + turn] <= 0) { win(turn, 'agents'); }
+        else if (left - 1 <= 0) { endTurn(); }
+        else { res.upd['cn/guessesLeft'] = left - 1; }
+      } else if (color === 'black') {
+        res.logs.push({ k: 'black', txt: '🖤 ' + guesserHtml + ' ' + t('hit the ASSASSIN') + ' (' + charName + ') — ' + t('instant loss!') });
+        win(other, 'assassin');
+      } else if (color === 'beige') {
+        res.logs.push({ k: 'beige', txt: '🤍 ' + guesserHtml + ' → ' + charName + ' ' + t('was a bystander — turn over') });
+        endTurn();
+      } else { // the OTHER team's agent — revealed for them, turn handed over
+        res.upd['cn/rem/' + other] = (rem[other] || 0) - 1;
+        res.logs.push({ k: 'find-' + other, txt: cnEmoji(other) + ' ' + guesserHtml + ' → ' + charName + ' ' + t('…was one of the OPPONENTS\' cards! Turn over') });
+        if (res.upd['cn/rem/' + other] <= 0) { win(other, 'agents'); }
+        else { endTurn(); }
+      }
+      return res;
+    }
+    function cnCanIGuess(cn) {
+      cn = cn || (currentRoom && currentRoom.cn) || {};
+      if (!currentRoom || currentRoom.state !== 'playing' || cn.phase !== 'guess') return false;
+      const myTeam = cnTeamOf(playerId, cn);
+      if (myTeam !== cn.turn) return false;
+      return cnTeams(cn)[myTeam].spy !== playerId;
+    }
+    function cnGuess(idx) {
+      const cn = (currentRoom && currentRoom.cn) || {};
+      if (!cnCanIGuess(cn)) {
+        if (cn.phase === 'guess' && currentRoom && cnTeamOf(playerId, cn) === cn.turn) showNotification(window.t ? t('The spymaster watches — teammates pick the cards!') : 'The spymaster watches — teammates pick the cards!');
+        return;
+      }
+      const rev = cn.revealed || {};
+      if (rev[String(idx)]) return;
+      const charName = String((((cn.board || [])[idx]) || {}).name || '?');
+      showInteraction(ic('key') + ' ' + (window.t ? t('Pick this card?') : 'Pick this card?'),
+        (window.t ? t('Lock in') : 'Lock in') + ' <b>' + escapeHtml(charName) + '</b>?<br><small>' + (window.t ? t('A wrong color ends the turn — and 🖤 the assassin loses the game instantly!') : 'A wrong color ends the turn — and 🖤 the assassin loses the game instantly!') + '</small>',
+        [
+          { label: '✅ ' + (window.t ? t('Pick it!') : 'Pick it!'), onclick: () => { doCnGuess(idx); }, class: 'success' },
+          { label: window.t ? t('Cancel') : 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' }
+        ]);
+    }
+    async function doCnGuess(idx) {
+      const cn = (currentRoom && currentRoom.cn) || {};
+      if (!cnCanIGuess(cn)) return;
+      const myTeam = cnTeamOf(playerId, cn);
+      const res = cnResolveGuess(cn, myTeam, idx, '<b>' + escapeHtml(cnNameOf(playerId)) + '</b>');
+      if (res.err) return;
+      await database.ref('rooms/' + roomCode).update(res.upd);
+      touchActivity();
+      res.logs.forEach(l => cnPushLog(l.k, l.txt));
+    }
+    async function cnPass() {
+      const cn = (currentRoom && currentRoom.cn) || {};
+      if (!cnCanIGuess(cn)) return;
+      const myTeam = cnTeamOf(playerId, cn);
+      const other = myTeam === 'red' ? 'blue' : 'red';
+      await database.ref('rooms/' + roomCode).update({ 'cn/turn': other, 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0 });
+      touchActivity();
+      cnPushLog('info', '⏭ ' + cnEmoji(myTeam) + ' <b>' + escapeHtml(cnNameOf(playerId)) + '</b> ' + (window.t ? t('passes — next team!') : 'passes — next team!'));
+    }
+
+    // ---- host watchdog (spymaster rage-quit? whole team gone? rescue the game) ----
+    async function cnWatchdog() {
+      if (!isHost || !roomCode || !currentRoom || currentRoom.state !== 'playing') return;
+      const cn = currentRoom.cn || {};
+      if (cn.phase === 'over') return;
+      const players = currentRoom.players || {};
+      const teams = cnTeams(cn);
+      const otherT = (tt) => (tt === 'red' ? 'blue' : 'red');
+      // 1) a whole team vanished → the other team wins by forfeit
+      for (const tt of CN_TEAMS) {
+        const alive = teams[tt].members.filter(pid => players[pid]);
+        if (teams[tt].members.length > 0 && alive.length === 0) {
+          await database.ref('rooms/' + roomCode).update({ 'cn/phase': 'over', 'cn/winner': { team: otherT(tt), reason: 'team-left' }, state: 'finished' });
+          cnPushLog('win', cnEmoji(otherT(tt)) + ' ' + (window.t ? t('wins — the other team left!') : 'wins — the other team left!'));
+          return;
+        }
+      }
+      // 2) prune vanished members + reassign a dead spymaster's key (any state)
+      cnPruneTeams();
+      // 3) guess phase stalled: nobody connected can pick a card → auto end the turn
+      if (cn.phase === 'guess') {
+        const teamsNow = cnTeams(cn);
+        const turnGuessers = teamsNow[cn.turn].members.filter(pid => players[pid] && pid !== teamsNow[cn.turn].spy);
+        if (turnGuessers.length === 0) {
+          await database.ref('rooms/' + roomCode).update({ 'cn/turn': otherT(cn.turn), 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0 });
+        }
+      }
+    }
+
+    // ---- team-setup screen ----
+    function renderCnTeams() {
+      const room = currentRoom || {};
+      const players = room.players || {};
+      const teams = cnTeams();
+      const seated = Object.keys(players);
+      const tt = (k) => (window.t ? t(k) : k);
+      CN_TEAMS.forEach(team => {
+        const el = document.getElementById(team === 'red' ? 'cnTeamRed' : 'cnTeamBlue');
+        el.innerHTML = '';
+        const members = teams[team].members.filter(m => players[m]);
+        const cap = document.getElementById(team === 'red' ? 'cnTeamRedTitle' : 'cnTeamBlueTitle');
+        const spyName = teams[team].spy ? ((players[teams[team].spy] || {}).name || '?') : tt('(none yet)');
+        cap.innerHTML = cnEmoji(team) + ' ' + (team === 'red' ? tt('RED team') : tt('BLUE team')) + ' <small>' + members.length + tt(' player(s)') + ' · ' + tt('🕵️ spymaster:') + ' <b>' + escapeHtml(spyName) + '</b></small>';
+        if (members.length === 0) { el.innerHTML = '<p class="cn-empty">' + tt('Nobody here yet…') + '</p>'; return; }
+        members.forEach(pid => {
+          const p = players[pid] || {};
+          const isSpy = teams[team].spy === pid;
+          const row = document.createElement('div');
+          row.className = 'cn-member' + (pid === playerId ? ' me' : '') + (isSpy ? ' spy' : '');
+          row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
+            '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
+            (isSpy ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('SPYMASTER') + '</span>' : '');
+          // 🔑 (re)assign the key — host, the player themself, or the current spymaster
+          if (!isSpy && (isHost || pid === playerId || teams[team].spy === playerId)) {
+            const b = document.createElement('button');
+            b.className = 'cn-mini'; b.title = tt('Make spymaster'); b.innerHTML = ic('key');
+            b.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, pid); };
+            row.appendChild(b);
+          }
+          // host moves a member to the other team or to the bench
+          if (isHost) {
+            const other = team === 'red' ? 'blue' : 'red';
+            const mv = document.createElement('button');
+            mv.className = 'cn-mini'; mv.title = tt('Move to the other team'); mv.textContent = cnEmoji(other);
+            mv.onclick = (e) => { e.stopPropagation(); cnMove(pid, other); };
+            row.appendChild(mv);
+            const bn = document.createElement('button');
+            bn.className = 'cn-mini'; bn.title = tt('To the bench'); bn.textContent = '✕';
+            bn.onclick = (e) => { e.stopPropagation(); cnMove(pid, null); };
+            row.appendChild(bn);
+          }
+          el.appendChild(row);
+        });
+      });
+      // bench = seated players who picked no team
+      const benchEl = document.getElementById('cnBench');
+      benchEl.innerHTML = '';
+      const unseated = seated.filter(pid => !cnTeamOf(pid));
+      document.getElementById('cnBenchTitle').style.display = unseated.length ? 'block' : 'none';
+      unseated.forEach(pid => {
+        const p = players[pid] || {};
+        const chip = document.createElement('div');
+        chip.className = 'cn-member' + (pid === playerId ? ' me' : '');
+        chip.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>';
+        if (isHost) {
+          CN_TEAMS.forEach(team => {
+            const b = document.createElement('button');
+            b.className = 'cn-mini'; b.title = tt('Put in team'); b.textContent = cnEmoji(team);
+            b.onclick = (e) => { e.stopPropagation(); cnMove(pid, team); };
+            chip.appendChild(b);
+          });
+        }
+        benchEl.appendChild(chip);
+      });
+      // my join buttons adapt (Join ↔ Leave)
+      const myTeam = cnTeamOf(playerId);
+      const jr = document.getElementById('cnJoinRed'), jb = document.getElementById('cnJoinBlue');
+      jr.textContent = myTeam === 'red' ? tt('Leave') + ' 🔴' : tt('Join') + ' 🔴';
+      jb.textContent = myTeam === 'blue' ? tt('Leave') + ' 🔵' : tt('Join') + ' 🔵';
+      jr.classList.toggle('selected', myTeam === 'red');
+      jb.classList.toggle('selected', myTeam === 'blue');
+      // gating + host controls
+      const gate = cnTeamsGate();
+      document.getElementById('cnTeamsStatus').textContent = gate.msg;
+      document.getElementById('cnTeamsStatus').className = 'selection-status ' + (gate.ok ? 'ready' : 'waiting');
+      const rb = document.getElementById('cnRandomBtn'); if (rb) rb.style.display = isHost ? 'inline-block' : 'none';
+      const sb = document.getElementById('cnStartBtn'); if (sb) { sb.style.display = isHost ? 'inline-block' : 'none'; sb.disabled = !gate.ok; }
+      const bb = document.getElementById('cnBackLobbyBtn'); if (bb) bb.style.display = isHost ? 'inline-block' : 'none';
+    }
+
+    // ---- live game screen ----
+    function updateCodenames() {
+      const cn = (currentRoom && currentRoom.cn) || {};
+      if (!cn.gameId) return;
+      if (cn.phase === 'over') { renderMultiEnd('codenames'); return; }
+      document.getElementById('multiEndScreen').classList.remove('show');
+      const teams = cnTeams(cn);
+      const myTeam = cnTeamOf(playerId, cn);
+      const turn = cn.turn, otherT = turn === 'red' ? 'blue' : 'red';
+      const rem = cn.rem || { red: 9, blue: 8 };
+      const tt = (k) => (window.t ? t(k) : k);
+      document.getElementById('cnScoreRed').innerHTML = '🔴 <b>' + (rem.red != null ? rem.red : '?') + '</b>';
+      document.getElementById('cnScoreBlue').innerHTML = '🔵 <b>' + (rem.blue != null ? rem.blue : '?') + '</b>';
+      // my role chip
+      const turnSpy = teams[turn].spy;
+      const roleEl = document.getElementById('cnMyRole');
+      roleEl.className = 'cn-role' + (myTeam ? ' ' + myTeam : '');
+      roleEl.innerHTML = myTeam
+        ? cnEmoji(myTeam) + ' ' + tt('Your team') + (teams[myTeam].spy === playerId ? ' · <b>' + tt('you are the 🕵️ SPYMASTER') + '</b>' : '')
+        : tt('Spectating — pick a team next round!');
+      // turn banner
+      const banner = document.getElementById('cnTurnBanner');
+      banner.className = 'cn-turn ' + turn;
+      if (cn.phase === 'clue') {
+        banner.innerHTML = cnEmoji(turn) + ' ' + (turnSpy === playerId
+          ? tt('Your turn — give a clue!')
+          : tt('⏳ clue time —') + ' 🕵️ <b>' + escapeHtml(cnNameOf(turnSpy)) + '</b> ' + tt('is thinking…'));
+      } else {
+        const n = cn.guessesLeft || 0;
+        banner.innerHTML = cnEmoji(turn) + ' ' + tt('pick phase —') + ' <b>' + n + '</b> ' + (n > 1 ? tt('card(s) left to pick') : tt('card left to pick'));
+      }
+      // the live clue
+      document.getElementById('cnClueBar').innerHTML = cn.clue
+        ? '<span class="cn-clue-tag' + '">' + cnEmoji(turn) + ' ' + tt('CLUE') + '</span> <b>"' + escapeHtml(String(cn.clue.word || '?')) + '"</b> <span class="cn-clue-n">×' + (cn.clue.n || '?') + '</span>'
+        : '<span class="cn-clue-wait">' + tt('no clue yet…') + '</span>';
+      // input area: exactly ONE of the three rows is visible
+      const iAmSpyTurn = turnSpy === playerId && myTeam === turn;
+      const iCanGuess = cnCanIGuess(cn);
+      const clueRow = document.getElementById('cnClueInput');
+      const guessRow = document.getElementById('cnGuessRow');
+      const waitMsg = document.getElementById('cnWaitMsg');
+      clueRow.style.display = (cn.phase === 'clue' && iAmSpyTurn) ? 'flex' : 'none';
+      guessRow.style.display = (cn.phase === 'guess' && iCanGuess) ? 'flex' : 'none';
+      let waitTxt = '';
+      if (cn.phase === 'clue' && !iAmSpyTurn) waitTxt = myTeam === turn ? tt('Waiting for YOUR spymaster to give the clue…') : tt('Waiting for the other team\'s clue…');
+      if (cn.phase === 'guess' && !iCanGuess) waitTxt = myTeam === turn ? tt('Your team is picking — spymaster, stay silent! 🤫') : tt('The other team is picking…');
+      waitMsg.textContent = waitTxt;
+      waitMsg.style.display = waitTxt ? 'block' : 'none';
+      // board + log
+      const spyView = teams.red.spy === playerId || teams.blue.spy === playerId;
+      renderCnBoard(cn, spyView, iCanGuess);
+      renderCnLog(cn);
+    }
+    function renderCnBoard(cn, spyView, canPick) {
+      const grid = document.getElementById('cnBoard');
+      grid.innerHTML = '';
+      const rev = cn.revealed || {};
+      (cn.board || []).forEach((c, i) => {
+        const col = cnColorKey(cn, i);
+        const rv = rev[String(i)] || null;
+        const d = document.createElement('div');
+        d.className = 'cn-card';
+        if (rv) {
+          d.classList.add('cn-rev', 'cn-rev-' + rv);
+          d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy"><div class="cn-stamp cn-stamp-' + rv + '">' + (rv === 'black' ? '💀' : '✓') + '</div><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div>';
+        } else {
+          if (spyView && col) d.classList.add('cn-key-' + col);
+          if (canPick && !spyView) {
+            d.classList.add('can-pick');
+            d.addEventListener('click', () => cnGuess(i));
+          }
+          d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy">' +
+            (spyView && col ? '<div class="cn-dot cn-dot-' + col + '" title="' + col + '"></div>' : '') +
+            '<div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div>';
+        }
+        grid.appendChild(d);
+      });
+    }
+    function renderCnLog(cn) {
+      const logEl = document.getElementById('cnLog');
+      if (!logEl) return;
+      const log = gameLogList(cn);
+      if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">' + (window.t ? t('Nothing yet') : 'Nothing yet') + '</p>'; return; }
+      logEl.innerHTML = '';
+      log.slice(-60).reverse().forEach(e => {
+        const d = document.createElement('div');
+        d.className = 'br-log-' + ({ 'clue-red': 'cn-c-red', 'clue-blue': 'cn-c-blue', 'find-red': 'cn-f-red', 'find-blue': 'cn-f-blue', 'beige': 'cn-beige', 'black': 'cn-black', 'win': 'find', 'info': 'info' }[e.k] || 'info');
+        d.innerHTML = e.txt;
+        logEl.appendChild(d);
+      });
+    }
+    // =============================== 🗝 (Code Names ends) ===============================
     function renderMultiEnd(kind) {
       const screen = document.getElementById('multiEndScreen');
       const activeScreen = document.querySelector('.screen.active');
       const sid = activeScreen ? activeScreen.id : '';
-      if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen') { screen.classList.remove('show'); return; }
+      if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen' && sid !== 'codenamesScreen') { screen.classList.remove('show'); return; }
       const players = currentRoom.players || {};
       const title = document.getElementById('meTitle');
       const sub = document.getElementById('meSub');
@@ -3697,6 +4214,37 @@
           row.innerHTML = `<span class="me-rank">${ic('layers')}</span><span>${played} rounds played — the fastest eyes score speed bonuses!</span>`;
           list.appendChild(row);
         }
+      } else if (kind === 'codenames') {
+        const cn = currentRoom.cn || {};
+        const winTeam = cn.winner ? cn.winner.team : null;
+        const myTeam = cnTeamOf(playerId, cn);
+        title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Code Names over') : 'Code Names over');
+        sub.innerHTML = (!cn.winner || !cn.winner.reason) ? ''
+          : cn.winner.reason === 'assassin' ? (myTeam === winTeam ? (window.t ? t('The other team hit the 💀 assassin — lucky break!') : 'The other team hit the 💀 assassin — lucky break!') : (window.t ? t('Your team hit the 💀 assassin card…') : 'Your team hit the 💀 assassin card…'))
+          : cn.winner.reason === 'team-left' ? (window.t ? t('The other team left the game!') : 'The other team left the game!')
+          : (myTeam === winTeam ? (window.t ? t('All your agents found — brilliant spycraft!') : 'All your agents found — brilliant spycraft!') : (window.t ? t('They found all their agents first!') : 'They found all their agents first!'));
+        const teams = cnTeams(cn);
+        CN_TEAMS.forEach(team => {
+          const head = document.createElement('div');
+          head.className = 'me-row cn-end-head ' + team;
+          head.innerHTML = '<span>' + cnEmoji(team) + ' <b>' + (team === 'red' ? 'RED' : 'BLUE') + '</b>' + (team === winTeam ? ' 🏆' : '') + '</span><span class="me-pts">' + (((cn.rem || {})[team] != null ? (cn.rem || {})[team] : '?')) + ' ' + (window.t ? t('left') : 'left') + '</span>';
+          list.appendChild(head);
+          teams[team].members.filter(pid => players[pid]).forEach(pid => {
+            const p = players[pid] || {};
+            const row = document.createElement('div');
+            row.className = 'me-row cn-end-row ' + team + (pid === playerId ? ' me' : '');
+            const isSpy = teams[team].spy === pid;
+            row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${isSpy ? '🕵️ spymaster' : 'agent'}</span>`;
+            list.appendChild(row);
+          });
+        });
+        (function () { // reveal the whole key in the log, post-mortem
+          const revCount = Object.keys(cn.revealed || {}).length;
+          const row = document.createElement('div');
+          row.className = 'me-row';
+          row.innerHTML = `<span class="me-rank">${ic('key')}</span><span>${revCount}/25 ` + (window.t ? t('cards were revealed') : 'cards were revealed') + `</span>`;
+          list.appendChild(row);
+        })();
       } else {
         const rc = currentRoom.rc || {};
         const winner = rc.winner;
@@ -3760,7 +4308,8 @@
         const snap = await database.ref('rooms/' + roomCode).once('value');
         currentRoom = snap.val();
         document.getElementById('multiEndScreen').classList.remove('show');
-        await multiDeal(currentRoom.game);
+        if (currentRoom.game === 'codenames') await cnDeal(); // same teams, fresh 5×5 board
+        else await multiDeal(currentRoom.game);
       } finally { multiLaunching = false; }
     }
     // Shared "the game is OVER → the whole room goes back to the lobby" reset.
@@ -3772,7 +4321,7 @@
       const updates = {
         state: 'lobby', characters: null, selections: null, restarts: null, winner: null,
         secrets: null, currentTurn: null, eliminations: null, currentQuestion: null,
-        questionHistory: null, uc: null, br: null, rc: null, bg: null, hc: null
+        questionHistory: null, uc: null, br: null, rc: null, bg: null, hc: null, cn: null
       };
       Object.keys(currentRoom.players || {}).forEach(pid => {
         updates['players/' + pid + '/ready'] = false;
@@ -3782,7 +4331,7 @@
       touchActivity();
     }
     // game data node for the current multiplayer game (battle/race/blur)
-    const multiGd = (r) => { const rr = r || currentRoom; if (!rr) return {}; return rr.game === 'battle' ? (rr.br || {}) : rr.game === 'race' ? (rr.rc || {}) : rr.game === 'blur' ? (rr.bg || {}) : {}; };
+    const multiGd = (r) => { const rr = r || currentRoom; if (!rr) return {}; return rr.game === 'battle' ? (rr.br || {}) : rr.game === 'race' ? (rr.rc || {}) : rr.game === 'blur' ? (rr.bg || {}) : rr.game === 'codenames' ? (rr.cn || {}) : {}; };
     async function returnToLobbyFromMulti() {
       const gd = multiGd();
       const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && gd.gameId;
@@ -4158,7 +4707,7 @@
     // Seats for a game given the room's current size: duels stay 2, Hot &
     // Cold keeps 2-6, the real multi games keep 3-8 (defaults 6 / 2 when unset).
     function seatsForGame(g) {
-      if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur') return ((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6;
+      if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur' || g === 'codenames') return ((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6;
       if (g === 'hotcold') return Math.min(6, Math.max(2, currentRoom.maxPlayers || 2));
       return 2;
     }
@@ -4697,6 +5246,17 @@
         alive.forEach(pid => { if (players[pid]) rows.push('<div class="player-card"><div class="player-head">' + av(pid) + '<div class="player-info"><div class="name">' + nameOf(pid) + '</div><div class="status">' + (window.t ? t('in play') : 'in play') + '</div></div></div></div>'); });
         const clues = uc.clues || {};
         Object.keys(clues).forEach(pid => { if (players[pid] && clues[pid]) feedRows.push(nameOf(pid) + ': ' + escapeHtml(String(clues[pid]))); });
+      } else if (g === 'codenames') {
+        const cn = r.cn || {};
+        const rem = cn.rem || {};
+        phaseTxt = cn.phase === 'over'
+          ? (window.t ? t('game over') : 'game over')
+          : (cn.turn === 'red' ? '🔴' : '🔵') + ' ' + (cn.phase === 'clue' ? (window.t ? t('clue time') : 'clue time') : (window.t ? t('pick phase') : 'pick phase')) + (cn.clue ? ' · "' + escapeHtml(String(cn.clue.word || '')) + '" ×' + (cn.clue.n || '?') : '');
+        [['red', rem.red], ['blue', rem.blue]].forEach(function (kv) {
+          rows.push('<div class="player-card"><div class="player-head"><span class="queue-pos">' + (kv[0] === 'red' ? '🔴' : '🔵') + '</span><div class="player-info"><div class="name">' + (kv[0] === 'red' ? 'RED' : 'BLUE') + '</div></div></div><span class="me-pts">' + (kv[1] != null ? kv[1] : '?') + ' ' + (window.t ? t('left') : 'left') + '</span></div>');
+        });
+        gameLogList(cn).slice(-8).reverse().forEach(function (e) { feedRows.push(e.txt); });
+        if (!feedRows.length) feedRows.push(window.t ? t('Nothing yet') : 'Nothing yet');
       } else { // guesswho — public question history only
         phaseTxt = String(r.state || '');
         (r.questionHistory || []).slice(-8).forEach(item => { if (item) feedRows.push('Q: ' + escapeHtml(String(item.question || '')) + ' → ' + escapeHtml(String(item.answer || ''))); });
@@ -5398,6 +5958,13 @@
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await multiDeal(g);
+        return;
+      }
+      if (g === 'codenames') {
+        if (playerCount < 4) { showNotification('Code Names needs at least 4 players (2+ per team)!'); return; }
+        if (!allReady) { showNotification('All players must be ready!'); return; }
+        touchActivity();
+        await cnOpenTeams();
         return;
       }
       if (g === 'blur') {
