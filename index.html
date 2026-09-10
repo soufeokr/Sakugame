@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="57">
+<meta name="saku-build" content="58">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=57" sizes="any">
+<link rel="icon" href="favicon.ico?v=58" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=57">
+<link rel="stylesheet" href="style.css?v=58">
 </head>
 <body>
 
@@ -204,13 +204,13 @@
     <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
   </div>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><svg class="ic"><use href="#i-logo"/></svg><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-master.png" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
   <div id="phoneTopBar" data-noi18n>
     <button type="button" class="tb-btn" id="tbVolBtn" onclick="phoneBarToggle('tbVolMenu')" title="Music volume" aria-label="Music volume"><svg class="ic"><use href="#i-music"/></svg></button>
-    <button type="button" class="tb-btn" id="tbLangBtn" onclick="phoneBarToggle('tbLangMenu')" title="Language" aria-label="Language"><svg class="ic"><use href="#i-globe"/></svg></button>
+    <button type="button" class="tb-btn" id="tbLangBtn" onclick="phoneBarToggle('tbLangMenu')" title="Language" aria-label="Language"><span id="tbLangFlag" class="tb-flag"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg></span></button>
     <div class="tb-menu" id="tbVolMenu"><input type="range" class="music-volume-slider" min="0" max="100" value="50"></div>
     <div class="tb-menu lang-row" id="tbLangMenu">
       <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
@@ -1371,7 +1371,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=57', 'charanimes.js?v=57', 'animes.js?v=57'];
+        var files = ['characters.js?v=58', 'charanimes.js?v=58', 'animes.js?v=58'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1386,9 +1386,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=57"></script>
-  <script src="music.js?v=57"></script>
-  <script src="lang.js?v=57"></script>
-  <script src="app.js?v=57"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a38d2f1eebdaaa1e',t:'MTc4OTAzMDIxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=58"></script>
+  <script src="music.js?v=58"></script>
+  <script src="lang.js?v=58"></script>
+  <script src="app.js?v=58"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a38d4f82d91be1ba',t:'MTc4OTAzMTU0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

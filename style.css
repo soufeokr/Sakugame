@@ -1151,28 +1151,31 @@
   }
 
   /* ===== 📱 Phone disposition — mockup layout, ORIGINAL style kept ===== */
-  /* quick top bar: volume + language pinned top-right (hidden on desktop) */
+  /* quick top bar: a permanent strip ABOVE the SAKUGAME logo (hidden on desktop) */
   #phoneTopBar { display: none; }
   @media (max-width: 600px) {
-    #phoneTopBar { display: flex; position: fixed; top: 10px; right: 10px; gap: 8px; z-index: 1200; }
+    #phoneTopBar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 1200; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 12px; background: rgba(13, 25, 54, 0.9); border-bottom: 1px solid rgba(2, 169, 255, 0.25); backdrop-filter: blur(6px); }
+    .site-header { padding-top: 62px; } /* the strip always sits above the logo */
     .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
     .tb-btn .ic { width: 20px; height: 20px; color: var(--accent); }
     .tb-btn:hover { border-color: var(--accent); }
-    .tb-menu { display: none; position: absolute; top: 50px; right: 0; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55); z-index: 1201; }
+    .tb-flag { display: flex; align-items: center; }
+    .tb-flag .flg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45); }
+    .tb-menu { display: none; position: absolute; top: 48px; right: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55); z-index: 1201; }
     .tb-menu.open { display: block; }
     #tbVolMenu { width: 190px; }
     #tbVolMenu .music-volume-slider { width: 100%; }
     #tbLangMenu .lang-opt { width: 100%; margin-bottom: 6px; }
     #tbLangMenu .lang-opt:last-child { margin-bottom: 0; }
-    /* volume & language now live in the top bar on phones — hide the old copies inside the menus */
+    /* volume & language live in the top bar on phones — hide the old copies inside the menus */
     .phm-hide { display: none !important; }
   }
 
   /* home + rules: mockup disposition only — original card style untouched */
   @media (max-width: 600px) {
-    /* HOME — one screen, no scrolling, two big cards side by side */
-    #homepageScreen.active { display: flex; align-items: center; min-height: calc(100dvh - 110px); }
-    #homepageScreen .homepage-container { margin: 0 auto; width: 100%; max-width: 560px; padding: 0 18px; }
+    /* HOME — two big cards right under the SAKUGAME logo, fits one screen */
+    #homepageScreen.active { display: block; min-height: 0; }
+    #homepageScreen .homepage-container { margin: 14px auto 0; width: 100%; max-width: 560px; padding: 0 18px; }
     #homepageScreen .homepage-title { display: none; }
     #homepageScreen .homepage-subtitle { display: none; }
     #homepageScreen .homepage-buttons { gap: 18px; flex-wrap: nowrap; flex-direction: row; }
@@ -1181,4 +1184,14 @@
     #homepageScreen .homepage-btn .icon .ic { width: 3rem; height: 3rem; }
     #homepageScreen .homepage-btn h3 { font-size: 1.3rem; margin: 0; }
     #homepageScreen .homepage-btn p { display: none; }
+    /* RULES — compact phone cards (the smaller version you liked is back) */
+    #gamesMenuScreen h2 { font-size: 1.6rem !important; margin-bottom: 18px !important; }
+    #gamesMenuScreen .games-grid { gap: 12px; margin-top: 4px; }
+    #gamesMenuScreen .game-card { border-radius: 16px; }
+    #gamesMenuScreen .game-card-img { height: 66px; }
+    #gamesMenuScreen .game-card-img .ic { width: 2.8rem; height: 2.8rem; }
+    #gamesMenuScreen .game-card-content { padding: 10px 10px 12px; }
+    #gamesMenuScreen .game-card-content h3 { font-size: 0.92rem; margin-bottom: 4px; text-align: center; }
+    #gamesMenuScreen .game-card-content p { font-size: 0.7rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    #gamesMenuScreen .game-card-content::after { font-size: 0.66rem; margin-top: 6px; }
   }

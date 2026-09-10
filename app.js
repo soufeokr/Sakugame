@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '57';
+    const SAKU_BUILD = '58';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1107,6 +1107,29 @@
         if (e.target && e.target.closest && !e.target.closest('#phoneTopBar')) phoneBarToggle('___none___');
       } catch (err) {}
     });
+    // top-bar language button shows the CURRENT language's flag
+    const TB_FLAGS = {
+      en: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>',
+      fr: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>',
+      es: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>'
+    };
+    function tbSyncLangBtn() {
+      const el = document.getElementById('tbLangFlag');
+      if (!el) return;
+      const l = (window.SAKU_I18N && SAKU_I18N.lang) || 'en';
+      el.innerHTML = TB_FLAGS[l] || TB_FLAGS.en;
+    }
+    (function () {
+      const wrap = () => {
+        if (window.SAKU_I18N && SAKU_I18N.setLang && !SAKU_I18N.__tbWrapped) {
+          const orig = SAKU_I18N.setLang;
+          SAKU_I18N.setLang = function (l) { orig(l); tbSyncLangBtn(); };
+          SAKU_I18N.__tbWrapped = true;
+        }
+        tbSyncLangBtn();
+      };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wrap); else wrap();
+    })();
 
     function generateRoomCode() { return Math.random().toString(36).substr(2, 4).toUpperCase(); }
     function shuffleArray(array) {
