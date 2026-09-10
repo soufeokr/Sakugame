@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="58">
+<meta name="saku-build" content="59">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=58" sizes="any">
+<link rel="icon" href="favicon.ico?v=59" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=58">
+<link rel="stylesheet" href="style.css?v=59">
 </head>
 <body>
 
@@ -240,7 +240,7 @@
 
   <div class="screen" id="playMenuScreen">
     <div class="play-menu">
-      <h2>Play</h2>
+      <h2><button type="button" class="back-mini" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button>Play</h2>
       <div class="play-options">
         <div class="play-option" " onclick="showHostRoom()">
           <div class="icon"><svg class="ic"><use href="#i-home"/></svg></div>
@@ -251,13 +251,13 @@
           <div class="content"><h3>Join Room</h3><p>Enter a room code to join an existing game</p></div>
         </div>
       </div>
-      <button class="full back-btn" onclick="goHome()">← Back to Home</button>
+      <button class="full back-btn" style="display:none" onclick="goHome()">← Back to Home</button>
     </div>
   </div>
 
   <div class="screen" id="gamesMenuScreen">
     <div style="max-width: 1200px; margin: 0 auto;">
-      <h2 style="text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;">Rules</h2>
+      <h2 style="text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;"><button type="button" class="back-mini" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button>Rules</h2>
       <div class="games-grid">
         <div class="game-card" onclick="openHowTo('guesswho')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('guesswho')">
           <div class="game-card-img"><svg class="ic"><use href="#i-mask"/></svg></div>
@@ -309,9 +309,7 @@
           </div>
         </div>
       </div>
-      <div style="text-align: center; margin-top: 40px;">
-        <button class="full back-btn" style="max-width: 300px;" onclick="goHome()">← Back to Home</button>
-      </div>
+      <button class="full back-btn" style="display:none" onclick="goHome()">← Back to Home</button>
     </div>
   </div>
 
@@ -338,7 +336,7 @@
 
   <div class="screen" id="hostRoomScreen">
     <div class="panel">
-      <h2>Create Game Room</h2>
+      <h2><button type="button" class="back-mini" onclick="showPlayMenu()" title="Back" aria-label="Back">←</button>Create Game Room</h2>
       <!-- 💾📂 named configs — save the current game's settings, reload anytime -->
       <div class="cfg-quick">
         <button class="secondary small" onclick="openConfigSave()"><svg class="ic"><use href="#i-check"/></svg> Save</button>
@@ -487,13 +485,13 @@
         </div>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
-      <button class="full back-btn" onclick="showPlayMenu()">← Back</button>
+      <button class="full back-btn" style="display:none" onclick="showPlayMenu()">← Back</button>
     </div>
   </div>
 
   <div class="screen" id="joinRoomScreen">
     <div class="panel">
-      <h2>Join Game Room</h2>
+      <h2><button type="button" class="back-mini" onclick="showPlayMenu()" title="Back" aria-label="Back">←</button>Join Game Room</h2>
       <p>Enter the room code to join</p>
       <div class="input-group">
         <label>Room Code</label>
@@ -507,7 +505,7 @@
         </div>
         <div id="publicRoomsList" class="public-rooms-list"><p class="pub-empty">Looking for open rooms…</p></div>
       </div>
-      <button class="full back-btn" onclick="showPlayMenu()">← Back</button>
+      <button class="full back-btn" style="display:none" onclick="showPlayMenu()">← Back</button>
     </div>
   </div>
 
@@ -1371,7 +1369,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=58', 'charanimes.js?v=58', 'animes.js?v=58'];
+        var files = ['characters.js?v=59', 'charanimes.js?v=59', 'animes.js?v=59'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1386,9 +1384,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=58"></script>
-  <script src="music.js?v=58"></script>
-  <script src="lang.js?v=58"></script>
-  <script src="app.js?v=58"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a38d4f82d91be1ba',t:'MTc4OTAzMTU0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=59"></script>
+  <script src="music.js?v=59"></script>
+  <script src="lang.js?v=59"></script>
+  <script src="app.js?v=59"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a38f2a355f1aeff1',t:'MTc4OTA1MDk4NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
