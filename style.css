@@ -1206,3 +1206,20 @@
     #playMenuScreen .play-menu { margin: 8px auto; padding: 0 14px; }
     #hostRoomScreen .panel, #joinRoomScreen .panel { margin: 8px auto; padding: 22px 18px; max-height: calc(100dvh - 150px); overflow-y: auto; }
   }
+
+  /* ===== 👤 account modal — phone fixes (edit badges, checkboxes, rows) ===== */
+  /* (1) edit badges: perfectly circular everywhere — crush any inherited button box-model */
+  .ava-edit { min-width: 26px; min-height: 26px; max-width: 26px; max-height: 26px; width: 26px; height: 26px; flex: none; padding: 0; line-height: 1; font-size: 0; box-sizing: border-box; }
+  /* (4) name edit pencil — same badge style, just inline next to the name */
+  .profile-name-row { display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+  .ava-edit.name-edit { position: static; width: 24px; height: 24px; min-width: 24px; max-width: 24px; min-height: 24px; max-height: 24px; }
+  /* (5) profile rows: inputs may shrink, buttons never overlap them */
+  .profile-row .pw-wrap { flex: 1 1 auto; min-width: 0; position: relative; }
+  .profile-row input[type="text"], .profile-row input[type="password"] { flex: 1 1 auto; min-width: 0; width: 100%; }
+  .profile-row .pw-wrap input { width: 100%; }
+  .profile-row button { flex-shrink: 0; white-space: nowrap; }
+  /* (3) Count-as-watched checkboxes — wrap onto clean lines instead of a cropped scroll strip */
+  @media (max-width: 600px) {
+    .ws-row { flex-wrap: wrap; overflow: visible; gap: 6px 14px; }
+    .ws-row label { font-size: 0.78rem; }
+  }
