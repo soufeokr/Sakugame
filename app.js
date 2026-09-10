@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '56';
+    const SAKU_BUILD = '57';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1094,6 +1094,19 @@
     function showGamesMenu() { showScreen('gamesMenuScreen'); }
     function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} }
     function showJoinRoom() { showScreen('joinRoomScreen'); }
+
+    // 📱 phone quick top bar — volume & language menus (bar only visible ≤600px)
+    function phoneBarToggle(id) {
+      ['tbVolMenu', 'tbLangMenu'].forEach(m => {
+        const el = document.getElementById(m);
+        if (el) el.classList.toggle('open', m === id && !el.classList.contains('open'));
+      });
+    }
+    document.addEventListener('pointerdown', (e) => {
+      try {
+        if (e.target && e.target.closest && !e.target.closest('#phoneTopBar')) phoneBarToggle('___none___');
+      } catch (err) {}
+    });
 
     function generateRoomCode() { return Math.random().toString(36).substr(2, 4).toUpperCase(); }
     function shuffleArray(array) {
