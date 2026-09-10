@@ -1155,7 +1155,7 @@
   #phoneTopBar { display: none; }
   @media (max-width: 600px) {
     #phoneTopBar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 1200; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 12px; background: rgba(13, 25, 54, 0.9); border-bottom: 1px solid rgba(2, 169, 255, 0.25); backdrop-filter: blur(6px); }
-    .site-header { padding-top: 62px; } /* the strip always sits above the logo */
+    body { padding-top: 54px; } /* reserve the strip's space — page-anchored controls (like the ⚙️ gear) stay clickable underneath */
     .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
     .tb-btn .ic { width: 20px; height: 20px; color: var(--accent); }
     .tb-btn:hover { border-color: var(--accent); }
