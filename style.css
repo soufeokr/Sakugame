@@ -1149,3 +1149,30 @@
     #gamesMenuScreen .game-card-img { height: 80px; }
     #gamesMenuScreen .game-card-img .ic { width: 3.4rem; height: 3.4rem; }
   }
+
+  /* ===== 📱 Phone mockup match — final pass ===== */
+  @media (max-width: 600px) {
+    /* HOME: no welcome text, header is the logo pill, exactly two big square cards */
+    #homepageScreen .homepage-container { margin: 22px auto; padding: 0 18px; }
+    #homepageScreen .homepage-title { display: none; }
+    #homepageScreen .homepage-subtitle { display: none; }
+    #homepageScreen .homepage-buttons { gap: 18px; flex-wrap: nowrap; }
+    #homepageScreen .homepage-btn {
+      aspect-ratio: 1 / 1; min-width: 0; padding: 18px 8px; border-radius: 22px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+      background: rgba(72, 110, 180, 0.85);
+    }
+    #homepageScreen .homepage-btn .icon { display: none; }
+    #homepageScreen .homepage-btn h3 { font-size: 1.55rem; font-weight: 700; color: #fff; margin: 0; letter-spacing: 0.01em; }
+    #homepageScreen .homepage-btn p { display: none; }
+    /* RULES: compact cards, reduced texts (per mockup), still a full 2-col scrollable grid */
+    #gamesMenuScreen h2 { font-size: 1.6rem !important; margin-bottom: 18px !important; }
+    #gamesMenuScreen .games-grid { gap: 12px; margin-top: 4px; }
+    #gamesMenuScreen .game-card { border-radius: 16px; }
+    #gamesMenuScreen .game-card-img { height: 66px; }
+    #gamesMenuScreen .game-card-img .ic { width: 2.8rem; height: 2.8rem; }
+    #gamesMenuScreen .game-card-content { padding: 10px 10px 12px; }
+    #gamesMenuScreen .game-card-content h3 { font-size: 0.92rem; margin-bottom: 4px; text-align: center; }
+    #gamesMenuScreen .game-card-content p { font-size: 0.7rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    #gamesMenuScreen .game-card-content::after { font-size: 0.66rem; margin-top: 6px; }
+  }
