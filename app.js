@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '61';
+    const SAKU_BUILD = '62';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -505,7 +505,7 @@
         if (uwEl) uwEl.textContent = p.uWins || 0;
         if (ulEl) ulEl.textContent = p.uLosses || 0;
         document.getElementById('anilistSyncInput').value = p.anilist || '';
-        document.getElementById('profileUsernameInput').value = '';
+        const puReset = document.getElementById('profileUsernameInput'); if (puReset) puReset.value = '';
         document.getElementById('currentPasswordInput').value = '';
         document.getElementById('newPasswordInput').value = '';
         if (currentAccount) currentAccount.anilist = p.anilist || null;
@@ -602,24 +602,24 @@
     // Change display username. The LOGIN stays attached to the original name
     // internally (auth email never changes → no verification-email problem):
     // the /usernames registry maps display name → original login name.
-    async function changeAccountUsername() {
+    async function changeAccountUsername(newNameArg) {
       const user = firebase.auth().currentUser;
       if (!user || !currentAccount) return;
       const btn = document.getElementById('profileUsernameBtn');
-      const newName = document.getElementById('profileUsernameInput').value.trim();
+      const newName = (newNameArg != null ? String(newNameArg) : ((document.getElementById('profileUsernameInput') || {}).value || '')).trim();
       if (!/^[A-Za-z0-9_]{3,20}$/.test(newName)) { showNotification('Username: 3-20 characters, letters, numbers and _ only.'); return; }
       const lower = newName.toLowerCase();
       const authLower = (user.email || '').split('@')[0]; // original login name, never changes
       const oldLower = currentAccount.username.toLowerCase();
-      btn.disabled = true;
+      if (btn) btn.disabled = true;
       try {
         if (lower !== oldLower) {
           const takenSnap = await database.ref('usernames/' + lower).once('value');
           const tv = takenSnap.val();
           const takenByOther = tv && !((typeof tv === 'object' && tv.uid === user.uid) || tv === user.uid);
-          if (takenByOther) { showNotification('This username is already taken.'); btn.disabled = false; return; }
+          if (takenByOther) { showNotification('This username is already taken.'); if (btn) btn.disabled = false; return; }
           const claim = await database.ref('usernames/' + lower).transaction(cur => (cur === null ? { uid: user.uid, authLower: authLower } : undefined));
-          if (!claim.committed) { showNotification('This username is already taken.'); btn.disabled = false; return; }
+          if (!claim.committed) { showNotification('This username is already taken.'); if (btn) btn.disabled = false; return; }
           await database.ref('users/' + user.uid).update({ username: newName, usernameLower: lower });
           try { await database.ref('usernames/' + oldLower).remove(); } catch (e) {} // release old name
         } else {
@@ -629,13 +629,13 @@
         playerName = newName;
         updateUserButton();
         document.getElementById('profileName').textContent = newName;
-        document.getElementById('profileUsernameInput').value = '';
+        const puClear = document.getElementById('profileUsernameInput'); if (puClear) puClear.value = '';
         if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
           database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName);
         }
         showNotification('Username changed to: ' + newName);
       } catch (e) { showNotification('Error: ' + e.message); }
-      btn.disabled = false;
+      if (btn) btn.disabled = false;
     }
 
     // Change password — Firebase requires a recent login, so re-authenticate first
@@ -1064,6 +1064,7 @@
     async function confirmUsernameChange() {
       const newName = document.getElementById('newUsernameInput').value.trim();
       if (!newName || newName.length < 2) { showNotification('Please enter a valid username (at least 2 characters)'); return; }
+      if (firebase.auth().currentUser) { closeUsernameModal(); await changeAccountUsername(newName); return; } // logged-in: full account rename (registry + DB)
       playerName = newName;
       updateUserButton();
       if (roomCode && currentRoom) { await database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName); }
