@@ -1223,3 +1223,12 @@
     .ws-row { flex-wrap: wrap; overflow: visible; gap: 6px 14px; }
     .ws-row label { font-size: 0.78rem; }
   }
+
+  /* ⏸️ music suspended (placeholder tracks removed) — hide every music control */
+  .music-off #tbVolBtn, .music-off #tbVolMenu, .music-off .music-volume-slider, .music-off .music-block { display: none !important; }
+
+  /* ⚖️ legal link at the bottom of the Support tab */
+  .legal-link-wrap { text-align: center; margin-top: 20px; }
+  .legal-link { color: var(--accent); font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding-bottom: 2px; border-bottom: 1px dashed rgba(2, 169, 255, 0.45); }
+  .legal-link:hover { color: #4fb9fb; border-bottom-color: #4fb9fb; }
+  .legal-link .ic { width: 14px; height: 14px; }

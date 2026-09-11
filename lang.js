@@ -48,7 +48,7 @@ var I18N = {
   "Rejoin": { fr: "Rejoindre", es: "Reunirse" },
   "Dismiss": { fr: "Ignorer", es: "Descartar" },
   // ===== 🗝 CODE NAMES =====
-  "Code Names needs at least 4 players (2+ per team)!": { fr: "Code Names demande au moins 4 joueurs (2+ par équipe) !", es: "¡Code Names necesita al menos 4 jugadores (2+ por equipo)!" },
+  "Sakura Spies needs at least 4 players (2+ per team)!": { fr: "Sakura Spies demande au moins 4 joueurs (2+ par équipe) !", es: "¡Sakura Spies necesita al menos 4 jugadores (2+ por equipo)!" },
   "Each team needs at least 2 players!": { fr: "Chaque équipe a besoin d'au moins 2 joueurs !", es: "¡Cada equipo necesita al menos 2 jugadores!" },
   "Everyone must pick a team (🔴 or 🔵)!": { fr: "Tout le monde doit choisir une équipe (🔴 ou 🔵) !", es: "¡Todos deben elegir un equipo (🔴 o 🔵)!" },
   "Each team needs a spymaster — tap the 🔑 next to a teammate!": { fr: "Chaque équipe a besoin d'un maître-espion — touche la 🔑 à côté d'un coéquipier !", es: "¡Cada equipo necesita un maestro espía — pulsa la 🔑 junto a un compañero!" },
@@ -63,7 +63,7 @@ var I18N = {
   "Choose how many cards it targets (1-9)!": { fr: "Choisis combien de cartes il vise (1-9) !", es: "¡Elige cuántas cartas designa (1-9)!" },
   "The clue can't be part of a visible character name!": { fr: "L'indice ne peut pas faire partie du nom d'un personnage visible !", es: "¡La pista no puede ser parte del nombre de un personaje visible!" },
   "clues:": { fr: "annonce :", es: "pista:" },
-  "team WINS the Code Names game!": { fr: "REMPORTE le Code Names !", es: "¡GANA el Code Names!" },
+  "team WINS the Sakura Spies game!": { fr: "REMPORTE le Sakura Spies !", es: "¡GANA el Sakura Spies!" },
   "hit the ASSASSIN": { fr: "a touché l'ASSASSIN", es: "tocó al ASESINO" },
   "instant loss!": { fr: "défaite instantanée !", es: "¡derrota instantánea!" },
   "was a bystander — turn over": { fr: "était un passant — tour terminé", es: "era un civil — turno terminado" },
@@ -106,7 +106,7 @@ var I18N = {
   "RED": { fr: "ROUGE", es: "ROJO" },
   "BLUE": { fr: "BLEU", es: "AZUL" },
   "team wins!": { fr: "remporte la partie !", es: "¡equipo ganador!" },
-  "Code Names over": { fr: "Code Names terminé", es: "Code Names terminado" },
+  "Sakura Spies over": { fr: "Sakura Spies terminé", es: "Sakura Spies terminado" },
   "The other team hit the 💀 assassin — lucky break!": { fr: "L'autre équipe a touché l'💀 assassin — coup de chance !", es: "¡El otro equipo tocó al 💀 asesino — suerte!" },
   "Your team hit the 💀 assassin card…": { fr: "Ton équipe a touché la carte 💀 assassin…", es: "Tu equipo tocó la carta 💀 asesino…" },
   "The other team left the game!": { fr: "L'autre équipe a quitté la partie !", es: "¡El otro equipo abandonó la partida!" },
@@ -117,13 +117,14 @@ var I18N = {
   "game over": { fr: "partie terminée", es: "fin de la partida" },
   "clue time": { fr: "heure de l'indice", es: "hora de la pista" },
   "pick phase": { fr: "phase de choix", es: "fase de elección" },
+  "Privacy Policy & Terms of Use and Service": { fr: "Politique de confidentialité et conditions d'utilisation", es: "Política de privacidad y términos de uso" },
   "SPIES": { fr: "ESPIONS", es: "ESPÍAS" },
   "AGENTS": { fr: "AGENTS", es: "AGENTES" },
   "Spectators": { fr: "Spectateurs", es: "Espectadores" },
   "Tap 🔑 next to an agent to make them spymaster": { fr: "Touche la 🔑 à côté d'un agent pour en faire le maître-espion", es: "Pulsa la 🔑 junto a un agente para nombrarlo maestro espía" },
   "Demote to agents": { fr: "Rétrograder en agent", es: "Bajar de rango a agente" },
   "4-8 players, 2 teams! The spymaster gives a ONE-word clue — tap your agents' cards, dodge the assassin, and find all your agents first!": { fr: "4-8 joueurs, 2 équipes ! Le maître-espion donne UN indice en un mot — touche les cartes de tes agents, évite l'assassin et trouve tous tes agents en premier !", es: "¡4-8 jugadores, 2 equipos! El maestro espía da UNA pista de una palabra — ¡toca las cartas de tus agentes, esquiva al asesino y encuentra todos tus agentes primero!" },
-  "Code Names — Team Setup": { fr: "Code Names — Composition des équipes", es: "Code Names — Formación de equipos" },
+  "Sakura Spies — Team Setup": { fr: "Sakura Spies — Composition des équipes", es: "Sakura Spies — Formación de equipos" },
   "Everyone joins a team, then give the 🔑 to one spymaster per team. The host can move anyone or shuffle it all.": { fr: "Tout le monde rejoint une équipe, puis donne la 🔑 à un maître-espion par équipe. L'hôte peut déplacer n'importe qui ou tout mélanger.", es: "Todos se unen a un equipo, luego da la 🔑 a un maestro espía por equipo. El anfitrión puede mover a cualquiera o mezclarlo todo." },
   "Waiting to pick a team": { fr: "En attente de choisir une équipe", es: "Esperando elegir equipo" },
   "Random teams": { fr: "Équipes aléatoires", es: "Equipos aleatorios" },
@@ -132,7 +133,7 @@ var I18N = {
   "Pass turn": { fr: "Passer le tour", es: "Pasar turno" },
   "One-word clue…": { fr: "Indice en un mot…", es: "Pista de una palabra…" },
   "4-8 players": { fr: "4-8 joueurs", es: "4-8 jugadores" },
-  "Code Names": { fr: "Code Names", es: "Code Names" },
+  "Sakura Spies": { fr: "Sakura Spies", es: "Sakura Spies" },
   "— joins automatically when a seat opens": { fr: "— rejoint automatiquement dès qu'une place se libère", es: "— se une automáticamente en cuanto se libera un asiento" },
   "— no word —": { fr: "— aucun mot —", es: "— sin palabra —" },
   "— wrong!": { fr: "— raté !", es: "— ¡falló!" },
@@ -198,8 +199,8 @@ var I18N = {
   "anime cover": { fr: "affiche d'anime", es: "portada de anime" },
   "Anime covers": { fr: "Affiches d'anime", es: "Portadas de anime" },
   "Anime covers mode": { fr: "Mode affiches d'anime", es: "Modo portadas de anime" },
-  "Anime Guess Who? (2 players)": { fr: "Anime Guess Who? (2 joueurs)", es: "Anime Guess Who? (2 jugadores)" },
-  "Anime Guess Who? is a head-to-head duel —": { fr: "Anime Guess Who? est un duel en tête-à-tête —", es: "Anime Guess Who? es un duelo cara a cara —" },
+  "Anime Detective (2 players)": { fr: "Anime Detective (2 joueurs)", es: "Anime Detective (2 jugadores)" },
+  "Anime Detective is a head-to-head duel —": { fr: "Anime Detective est un duel en tête-à-tête —", es: "Anime Detective es un duelo cara a cara —" },
   "anime series": { fr: "séries d'anime", es: "series de anime" },
   "Anime series": { fr: "Séries d'anime", es: "Series de anime" },
   "Answering…": { fr: "Réponse en cours…", es: "Respondiendo…" },
@@ -341,7 +342,7 @@ var I18N = {
   "Game Over": { fr: "Partie terminée", es: "Fin de la partida" },
   "Game over — check the results!": { fr: "Partie terminée — regardez les résultats !", es: "¡Partida terminada — mira los resultados!" },
   "Game Settings - Blur Guess": { fr: "Paramètres du jeu - Blur Guess", es: "Ajustes del juego - Blur Guess" },
-  "Game Settings - Guess Who": { fr: "Paramètres du jeu - Guess Who", es: "Ajustes del juego - Guess Who" },
+  "Game Settings - Anime Detective": { fr: "Paramètres du jeu - Anime Detective", es: "Ajustes del juego - Anime Detective" },
   "Game Settings - Race": { fr: "Paramètres du jeu - Race", es: "Ajustes del juego - Race" },
   "Game Settings - Undercover": { fr: "Paramètres du jeu - Undercover", es: "Ajustes del juego - Undercover" },
   "Game Settings —": { fr: "Paramètres du jeu —", es: "Ajustes del juego —" },
@@ -357,8 +358,8 @@ var I18N = {
   "Guess mode: click the card you think is": { fr: "Mode accusation : cliquez sur la carte qui selon vous est", es: "Modo acusación: pulsa la carta que crees que es" },
   "Guess the anime cover": { fr: "Devinez l'affiche d'anime", es: "Adivina la portada de anime" },
   "Guess the character": { fr: "Devinez le personnage", es: "Adivina el personaje" },
-  "Guess Who — Battle Royale (3-8 players)": { fr: "Guess Who — Battle Royale (3-8 joueurs)", es: "Guess Who — Battle Royale (3-8 jugadores)" },
-  "Guess Who — Race (3-8 players)": { fr: "Guess Who — Race (3-8 joueurs)", es: "Guess Who — Race (3-8 jugadores)" },
+  "Anime Detective — Battle Royale (3-8 players)": { fr: "Anime Detective — Battle Royale (3-8 joueurs)", es: "Anime Detective — Battle Royale (3-8 jugadores)" },
+  "Anime Detective — Race (3-8 players)": { fr: "Anime Detective — Race (3-8 joueurs)", es: "Anime Detective — Race (3-8 jugadores)" },
   "Guess!": { fr: "Devinez !", es: "¡Adivina!" },
   "GUESS!": { fr: "DEVINEZ !", es: "¡ADIVINA!" },
   "guessed \"": { fr: "a tenté « ", es: "intentó «" },
@@ -622,7 +623,7 @@ var I18N = {
   "Switch to": { fr: "Passer à", es: "Cambiar a" },
   "Sync": { fr: "Synchro", es: "Sincronizar" },
   "takes it!": { fr: "remporte la mise !", es: "se lo lleva!" },
-  "Tap a color chip to switch to that player's board — every card glows with their color. Tap a card to eliminate it (greyed like in 1v1 Guess Who — tap again to undo). Eliminations and guesses are per-board!": { fr: "Touchez un jeton de couleur pour passer au plateau de ce joueur — chaque carte brille de sa couleur. Touchez une carte pour l'éliminer (grisée comme en Guess Who 1v1 — retouchez pour annuler). Éliminations et accusations sont par plateau !", es: "Pulsa una ficha de color para cambiar al tablero de ese jugador — cada carta brilla con su color. Pulsa una carta para eliminarla (en gris como en Guess Who 1v1 — pulsa de nuevo para deshacer). ¡Las eliminaciones y acusaciones son por tablero!" },
+  "Tap a color chip to switch to that player's board — every card glows with their color. Tap a card to eliminate it (greyed like in 1v1 Anime Detective — tap again to undo). Eliminations and guesses are per-board!": { fr: "Touchez un jeton de couleur pour passer au plateau de ce joueur — chaque carte brille de sa couleur. Touchez une carte pour l'éliminer (grisée comme en Anime Detective 1v1 — retouchez pour annuler). Éliminations et accusations sont par plateau !", es: "Pulsa una ficha de color para cambiar al tablero de ese jugador — cada carta brilla con su color. Pulsa una carta para eliminarla (en gris como en Anime Detective 1v1 — pulsa de nuevo para deshacer). ¡Las eliminaciones y acusaciones son por tablero!" },
   "tap cards to eliminate": { fr: "touchez les cartes pour éliminer", es: "pulsa las cartas para eliminar" },
   "Tap the cards on your own board to cross out characters that no longer fit. It is your personal workspace — organize it however you like.": { fr: "Touchez les cartes de votre propre plateau pour rayer les personnages qui ne correspondent plus. C'est votre espace de travail personnel — organisez-le comme vous voulez.", es: "Pulsa las cartas de tu propio tablero para tachar los personajes que ya no encajan. Es tu espacio personal — organízalo como quieras." },
   "Target answered": { fr: "La Cible a répondu", es: "El Objetivo respondió" },
@@ -844,9 +845,9 @@ var I18N = {
   "Show/Hide My Character": { fr: "Afficher/Cacher mon personnage", es: "Mostrar/Ocultar mi personaje" },
   "Tap to hide/show your secret": { fr: "Touchez pour cacher/afficher votre secret", es: "Pulsa para ocultar/mostrar tu secreto" },
   "Words can only be changed during description/vote phases.": { fr: "Les mots ne peuvent être changés que pendant les phases description/vote.", es: "Las palabras solo se pueden cambiar durante las fases de descripción/votación." },
-  "Anime Guess Who?": { fr: "Anime Guess Who?", es: "Anime Guess Who?" }, // PROTECT (game/role name — stays in English)
-  "Guess Who — Race": { fr: "Guess Who — Race", es: "Guess Who — Race" }, // PROTECT (game/role name — stays in English)
-  "Guess Who — Battle Royale": { fr: "Guess Who — Battle Royale", es: "Guess Who — Battle Royale" }, // PROTECT (game/role name — stays in English)
+  "Anime Detective": { fr: "Anime Detective", es: "Anime Detective" }, // PROTECT (game/role name — stays in English)
+  "Anime Detective — Race": { fr: "Anime Detective — Race", es: "Anime Detective — Race" }, // PROTECT (game/role name — stays in English)
+  "Anime Detective — Battle Royale": { fr: "Anime Detective — Battle Royale", es: "Anime Detective — Battle Royale" }, // PROTECT (game/role name — stays in English)
   "Blur Guess": { fr: "Blur Guess", es: "Blur Guess" }, // PROTECT (game/role name — stays in English)
   "Undercover": { fr: "Undercover", es: "Undercover" }, // PROTECT (game/role name — stays in English)
   "Battle Royale": { fr: "Battle Royale", es: "Battle Royale" }, // PROTECT (game/role name — stays in English)
@@ -888,10 +889,10 @@ var I18N = {
   "Discord → Add Friend → paste my username — I usually answer within a day.": { fr: "Discord → Ajouter un ami → collez mon pseudo — je réponds généralement sous 24 h.", es: "Discord → Añadir amigo → pega mi usuario — normalmente respondo en un día." },
   "Copy": { fr: "Copier", es: "Copiar" },
   "Discord username copied!": { fr: "Pseudo Discord copié !", es: "¡Usuario de Discord copiado!" },
-  // ---- v32-37 additions (Guess Who — Hot & Cold, multiplayer 2-6) ----
-  "Guess Who — Hot & Cold": { fr: "Guess Who — Hot & Cold", es: "Guess Who — Hot & Cold" }, // PROTECT (game/role name — stays in English)
+  // ---- v32-37 additions (Anime Detective — Hot & Cold, multiplayer 2-6) ----
+  "Anime Detective — Hot & Cold": { fr: "Anime Detective — Hot & Cold", es: "Anime Detective — Hot & Cold" }, // PROTECT (game/role name — stays in English)
   "2-6 players": { fr: "2-6 joueurs", es: "2-6 jugadores" },
-  "Guess Who — Hot & Cold (2-6 players)": { fr: "Guess Who — Hot & Cold (2-6 joueurs)", es: "Guess Who — Hot & Cold (2-6 jugadores)" },
+  "Anime Detective — Hot & Cold (2-6 players)": { fr: "Anime Detective — Hot & Cold (2-6 joueurs)", es: "Anime Detective — Hot & Cold (2-6 jugadores)" },
   "You are a SEEKER": { fr: "Vous êtes un CHERCHEUR", es: "Eres un BUSCADOR" },
   "You are the HIDER": { fr: "Vous êtes le CACHEUR", es: "Eres el ESCONDEDOR" },
   "Draw!": { fr: "Match nul !", es: "¡Empate!" },
@@ -986,7 +987,7 @@ var I18N_PAT = {
   mix_label:       { en: "Mix: {v} generic · {r} favorites", fr: "Mix : {v} génériques · {r} favoris", es: "Mezcla: {v} genéricos · {r} favoritos" },
   picked_slot:     { en: "{n} picked for Word {s}", fr: "{n} choisi pour le Mot {s}", es: "{n} elegido para la Palabra {s}" },
   come_play:       { en: "a game", fr: "un jeu", es: "un juego" },
-  // ---- v37 additions (Guess Who — Hot & Cold, multiplayer 2-6) ----
+  // ---- v37 additions (Anime Detective — Hot & Cold, multiplayer 2-6) ----
   hc_hide_you:     { en: "You <b>HIDE</b> this round — pick any character from the pool!", fr: "Vous <b>CACHEZ</b> dans cette manche — choisissez n'importe quel personnage du pool !", es: "Tú <b>ESCONDES</b> esta ronda — ¡elige cualquier personaje del pool!" },
   hc_track:        { en: "Track down the secret — this is guess <b>#{c}</b>! Scores only guide you — every guess counts 1, so find it in as few as possible!", fr: "Trouvez le secret — ceci est la proposition <b>n°{c}</b> ! Les notes ne font que guider — chaque essai compte 1, trouvez-le en le moins possible !", es: "Encuentra el secreto — esta es la suposición <b>n.º {c}</b>. ¡Las puntuaciones solo guían — cada intento cuenta 1, encuéntralo en los menos posibles!" },
   hc_wait_hide:    { en: "<b>{n}</b> is choosing the secret character…", fr: "<b>{n}</b> choisit le personnage secret…", es: "<b>{n}</b> está eligiendo el personaje secreto…" },

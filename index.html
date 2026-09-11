@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="62">
+<meta name="saku-build" content="63">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
 <link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
 <link rel="dns-prefetch" href="https://s4.anilist.co">
-<meta name="description" content="Guess anime characters with friends online — Guess Who, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
+<meta name="description" content="Guess anime characters with friends online — Anime Detective, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <!-- 🔎 SEO / discoverability -->
 <link rel="canonical" href="https://soufeokr.github.io/Sakugame/">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -23,7 +23,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Sakugame">
 <meta property="og:title" content="Sakugame">
-<meta property="og:description" content="Guess anime characters with friends online — Guess Who, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
+<meta property="og:description" content="Guess anime characters with friends online — Anime Detective, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <meta property="og:url" content="https://soufeokr.github.io/Sakugame/">
 <meta property="og:image" content="https://soufeokr.github.io/Sakugame/icons/open-graph.png">
 <meta property="og:image:width" content="1200">
@@ -34,7 +34,7 @@
 <meta property="og:locale:alternate" content="es_ES">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sakugame">
-<meta name="twitter:description" content="Guess anime characters with friends online — Guess Who, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
+<meta name="twitter:description" content="Guess anime characters with friends online — Anime Detective, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <meta name="twitter:image" content="https://soufeokr.github.io/Sakugame/icons/open-graph.png">
 <meta name="twitter:image:alt" content="Sakugame — anime guessing games with friends">
 <script type="application/ld+json">
@@ -43,7 +43,7 @@
   "@type": "WebApplication",
   "name": "Sakugame",
   "url": "https://soufeokr.github.io/Sakugame/",
-  "description": "Guess anime characters with friends online — Guess Who, Blur Guess, Hot & Cold, Undercover and more. Free, right in your browser.",
+  "description": "Guess anime characters with friends online — Anime Detective, Blur Guess, Hot & Cold, Undercover and more. Free, right in your browser.",
   "applicationCategory": "GameApplication",
   "operatingSystem": "Any",
   "browserRequirements": "Requires JavaScript",
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=62" sizes="any">
+<link rel="icon" href="favicon.ico?v=63" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=62">
+<link rel="stylesheet" href="style.css?v=63">
 </head>
 <body>
 
@@ -262,7 +262,7 @@
         <div class="game-card" onclick="openHowTo('guesswho')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('guesswho')">
           <div class="game-card-img"><svg class="ic"><use href="#i-mask"/></svg></div>
           <div class="game-card-content">
-            <h3>Anime Guess Who?</h3>
+            <h3>Anime Detective</h3>
             <p>Classic guessing game with your favorite anime characters from AniList. Eliminate characters and guess your opponent's secret!</p>
           </div>
         </div>
@@ -276,14 +276,14 @@
         <div class="game-card" onclick="openHowTo('battle')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('battle')">
           <div class="game-card-img"><svg class="ic"><use href="#i-users"/></svg></div>
           <div class="game-card-content">
-            <h3>Guess Who — Battle Royale</h3>
+            <h3>Anime Detective — Battle Royale</h3>
             <p>3-8 players! Everyone has a secret character. Ask questions to the whole table, track each opponent on their own glowing board, guess their secrets, and climb the points ranking!</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('race')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('race')">
           <div class="game-card-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
           <div class="game-card-content">
-            <h3>Guess Who — Race</h3>
+            <h3>Anime Detective — Race</h3>
             <p>3-8 players! One player is the TARGET with a mystery character. Hunters take turns ASKING questions — but everyone can GUESS at any moment (wrong guess = -1 life)! First to find the mystery character wins!</p>
           </div>
         </div>
@@ -297,14 +297,14 @@
         <div class="game-card" onclick="openHowTo('hotcold')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('hotcold')">
           <div class="game-card-img"><svg class="ic"><use href="#i-target"/></svg></div>
           <div class="game-card-content">
-            <h3>Guess Who — Hot & Cold</h3>
+            <h3>Anime Detective — Hot & Cold</h3>
             <p>2-6 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess feeds your cumulative total — biggest total wins!</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('codenames')">
           <div class="game-card-img"><svg class="ic"><use href="#i-key"/></svg></div>
           <div class="game-card-content">
-            <h3>Code Names</h3>
+            <h3>Sakura Spies</h3>
             <p>4-8 players, 2 teams! The spymaster gives a ONE-word clue — tap your agents' cards, dodge the assassin, and find all your agents first!</p>
           </div>
         </div>
@@ -351,15 +351,15 @@
             <div class="game-pick-grid" id="hostGamePick">
               <div class="game-pick-card selected" data-game="guesswho" onclick="selectHostGame('guesswho')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
-                <div class="game-pick-content"><h4>Anime Guess Who?</h4><small>2 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective</h4><small>2 players</small></div>
               </div>
               <div class="game-pick-card" data-game="battle" onclick="selectHostGame('battle')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
-                <div class="game-pick-content"><h4>Guess Who — Battle Royale</h4><small>3-8 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective — Battle Royale</h4><small>3-8 players</small></div>
               </div>
               <div class="game-pick-card" data-game="race" onclick="selectHostGame('race')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
-                <div class="game-pick-content"><h4>Guess Who — Race</h4><small>3-8 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective — Race</h4><small>3-8 players</small></div>
               </div>
               <div class="game-pick-card" data-game="blur" onclick="selectHostGame('blur')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
@@ -371,14 +371,14 @@
               </div>
               <div class="game-pick-card" data-game="hotcold" onclick="selectHostGame('hotcold')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
-                <div class="game-pick-content"><h4>Guess Who — Hot & Cold</h4><small>2-6 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective — Hot & Cold</h4><small>2-6 players</small></div>
               </div>
               <div class="game-pick-card" data-game="codenames" onclick="selectHostGame('codenames')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
-                <div class="game-pick-content"><h4>Code Names</h4><small>4-8 players</small></div>
+                <div class="game-pick-content"><h4>Sakura Spies</h4><small>4-8 players</small></div>
               </div>
             </div>
-            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Guess Who? (2 players)</option><option value="battle">Guess Who — Battle Royale (3-8 players)</option><option value="race">Guess Who — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Guess Who — Hot & Cold (2-6 players)</option><option value="codenames">Codenames — Anime (4-8 players)</option></select>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Anime Detective (2 players)</option><option value="battle">Anime Detective — Battle Royale (3-8 players)</option><option value="race">Anime Detective — Race (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Anime Detective — Hot & Cold (2-6 players)</option><option value="codenames">Sakura Spies (4-8 players)</option></select>
           </div>
           <div class="input-group">
             <label>Room Visibility</label>
@@ -387,7 +387,7 @@
               <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div><small style="color: var(--muted);">Listed</small></label>
             </div>
           </div>
-          <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Detective is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="hostHcMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="hostHcMaxValue">4</strong></div>
             <input type="range" id="hostHcMaxSlider" min="2" max="6" value="4" oninput="updateHcMaxPlayers()">
@@ -433,7 +433,7 @@
           </div>
         </div>
         <div class="settings-section" id="hostGwSettings">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Guess Who</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Anime Detective</h3>
           <div class="slider-container">
             <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
             <input type="range" id="hostCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateHostCharCount()">
@@ -527,7 +527,7 @@
           <div class="players-list" id="queueList"></div>
         </div>
         <div style="background: #0f0f1a; padding: 15px; border-radius: 10px; margin: 20px 0;">
-          <strong style="color: var(--accent);">Game:</strong> <span id="lobbyGameName">Anime Guess Who?</span><br>
+          <strong style="color: var(--accent);">Game:</strong> <span id="lobbyGameName">Anime Detective</span><br>
           <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">Private</span><br>
           <strong style="color: var(--accent);">Players:</strong> <span id="lobbyPlayerCount">1/2</span>
         </div>
@@ -670,7 +670,7 @@
           <div class="br-my-points" id="brMyPoints">0 pts</div>
         </div>
         <div class="br-chips" id="brChips"></div>
-        <div class="br-chip-hint">Tap a color chip to switch to that player's board — every card glows with their color. Tap a card to eliminate it (greyed like in 1v1 Guess Who — tap again to undo). Eliminations and guesses are per-board!</div>
+        <div class="br-chip-hint">Tap a color chip to switch to that player's board — every card glows with their color. Tap a card to eliminate it (greyed like in 1v1 Anime Detective — tap again to undo). Eliminations and guesses are per-board!</div>
         <div class="question-box" id="brQuestionArea"></div>
         <div class="board-section">
           <h3 id="brBoardTitle">All Characters</h3>
@@ -744,7 +744,7 @@
   <div class="screen" id="cnTeamsScreen">
     <div class="lobby-container cn-setup">
       <div class="lobby-header">
-        <h2><svg class="ic"><use href="#i-key"/></svg> <span id="cnTeamsTitle">Code Names — Team Setup</span></h2>
+        <h2><svg class="ic"><use href="#i-key"/></svg> <span id="cnTeamsTitle">Sakura Spies — Team Setup</span></h2>
         <p id="cnTeamsHint">Everyone joins a team, then give the 🔑 to one spymaster per team. The host can move anyone or shuffle it all.</p>
       </div>
       <!-- 👀 spectators strip — players who haven't picked a team yet -->
@@ -958,15 +958,15 @@
             <div class="game-pick-grid" id="modalGamePick">
               <div class="game-pick-card selected" data-game="guesswho" onclick="modalCardGame('guesswho')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
-                <div class="game-pick-content"><h4>Anime Guess Who?</h4><small>2 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective</h4><small>2 players</small></div>
               </div>
               <div class="game-pick-card" data-game="battle" onclick="modalCardGame('battle')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
-                <div class="game-pick-content"><h4>Guess Who — Battle Royale</h4><small>3-8 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective — Battle Royale</h4><small>3-8 players</small></div>
               </div>
               <div class="game-pick-card" data-game="race" onclick="modalCardGame('race')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
-                <div class="game-pick-content"><h4>Guess Who — Race</h4><small>3-8 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective — Race</h4><small>3-8 players</small></div>
               </div>
               <div class="game-pick-card" data-game="blur" onclick="modalCardGame('blur')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
@@ -978,21 +978,21 @@
               </div>
               <div class="game-pick-card" data-game="hotcold" onclick="modalCardGame('hotcold')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
-                <div class="game-pick-content"><h4>Guess Who — Hot & Cold</h4><small>2-6 players</small></div>
+                <div class="game-pick-content"><h4>Anime Detective — Hot & Cold</h4><small>2-6 players</small></div>
               </div>
               <div class="game-pick-card" data-game="codenames" onclick="modalCardGame('codenames')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
-                <div class="game-pick-content"><h4>Code Names</h4><small>4-8 players</small></div>
+                <div class="game-pick-content"><h4>Sakura Spies</h4><small>4-8 players</small></div>
               </div>
             </div>
             <select id="modalGameSelect" style="display: none;" onchange="modalGameChanged()">
-              <option value="guesswho">Anime Guess Who? (2 players)</option>
-              <option value="battle">Guess Who — Battle Royale (3-8 players)</option>
-              <option value="race">Guess Who — Race (3-8 players)</option>
+              <option value="guesswho">Anime Detective (2 players)</option>
+              <option value="battle">Anime Detective — Battle Royale (3-8 players)</option>
+              <option value="race">Anime Detective — Race (3-8 players)</option>
               <option value="blur">Blur Guess (solo or up to 8 players)</option>
               <option value="undercover">Undercover (3-8 players)</option>
-              <option value="hotcold">Guess Who — Hot & Cold (2-6 players)</option>
-              <option value="codenames">Codenames — Anime (4-8 players)</option>
+              <option value="hotcold">Anime Detective — Hot & Cold (2-6 players)</option>
+              <option value="codenames">Sakura Spies (4-8 players)</option>
             </select>
           </div>
           <div class="input-group">
@@ -1002,7 +1002,7 @@
               <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
-          <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Guess Who? is a head-to-head duel — <b>2 players</b>, always.</p>
+          <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Anime Detective is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="modalHcMaxBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="modalHcMaxValue">4</strong></div>
             <input type="range" id="modalHcMaxSlider" min="2" max="6" value="4" oninput="updateModalHcMaxPlayers()">
@@ -1049,12 +1049,12 @@
           </div>
         </div>
         <div class="settings-section" id="modalGwSettings">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Guess Who</h3>
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Anime Detective</h3>
           <div class="slider-container">
             <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
             <input type="range" id="modalCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateModalCharCount()">
           </div>
-          <!-- 🔀 Mix split bar (Guess Who games only, when pool = Mix) -->
+          <!-- 🔀 Mix split bar (Anime Detective games only, when pool = Mix) -->
           <div class="slider-container" id="modalMixBlock" style="display: none;">
             <div class="slider-label"><span id="modalMixLabel">Mix</span></div>
             <input type="range" id="modalMixSlider" min="0" max="24" value="12" oninput="updateModalMix()">
@@ -1123,7 +1123,7 @@
         <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
         <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
       </div>
-      <h4 class="profile-section-title phm-hide"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+      <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
       <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
     </div>
   </div>
@@ -1171,7 +1171,7 @@
         <!-- 🎮 GAME tab: stats · language · volume -->
         <div id="acctPaneGame" class="acct-pane" role="tabpanel">
           <h4 class="profile-section-title"><svg class="ic"><use href="#i-chart"/></svg> Stats</h4>
-          <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;"><svg class="ic"><use href="#i-mask"/></svg> Anime Guess Who?</p>
+          <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;"><svg class="ic"><use href="#i-mask"/></svg> Anime Detective</p>
           <div style="display: flex; gap: 12px; justify-content: center;">
             <div class="stat-box"><strong id="profileWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
             <div class="stat-box"><strong id="profileLosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
@@ -1188,7 +1188,7 @@
             <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
             <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
           </div>
-          <h4 class="profile-section-title phm-hide"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+          <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
           <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
         </div>
 
@@ -1241,6 +1241,7 @@
             <button type="button" class="dc-copy" onclick="copyDiscord()"><svg class="ic"><use href="#i-copy"/></svg> Copy</button>
           </div>
           <p style="color: var(--muted); font-size: 0.78rem; margin-top: 10px; line-height: 1.5;">Discord → Add Friend → paste my username — I usually answer within a day.</p>
+          <p class="legal-link-wrap"><a href="privacy.html" target="_blank" rel="noopener" class="legal-link"><svg class="ic"><use href="#i-note"/></svg> Privacy Policy &amp; Terms of Use and Service</a></p>
         </div>
       </div>
     </div>
@@ -1362,7 +1363,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=62', 'charanimes.js?v=62', 'animes.js?v=62'];
+        var files = ['characters.js?v=63', 'charanimes.js?v=63', 'animes.js?v=63'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1377,9 +1378,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=62"></script>
-  <script src="music.js?v=62"></script>
-  <script src="lang.js?v=62"></script>
-  <script src="app.js?v=62"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a38fb1f9d802e28c',t:'MTc4OTA1NjU0Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=63"></script>
+  <script src="music.js?v=63"></script>
+  <script src="lang.js?v=63"></script>
+  <script src="app.js?v=63"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a39795a43a08697e',t:'MTc4OTEzOTI3Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

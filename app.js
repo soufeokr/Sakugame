@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '62';
+    const SAKU_BUILD = '63';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -139,7 +139,7 @@
     function buildHowto() {
       htRefreshDataRefs(); // scenes always reflect the currently available pools
       return {
-      guesswho: { title: 'Anime Guess Who?', icon: 'mask', players: '2 players', slides: [
+      guesswho: { title: 'Anime Detective', icon: 'mask', players: '2 players', slides: [
         { t: 'Two players, two secrets', d: 'You each receive a secret anime character from a shared AniList board. Take turns asking yes/no questions — the first player to name the opponent\'s secret wins.',
           s: htScene('<div class="mk-label">Your shared board (real game characters)</div>' + HT_BOARD + '<div class="mk-note">Every game deals one secret card to each player.</div>') },
         { t: 'Ask smart questions', d: 'On your turn, type one yes/no question about appearance, powers or series. The answer is public — pick questions that cut your remaining cards in half!',
@@ -161,7 +161,7 @@
         { t: 'How it ends', d: 'Citizens win by voting out every impostor. Impostors win once they equal the citizens. And Mr. White can steal everything: when caught, one correct guess of the secret word = instant solo win!',
           s: htScene('<div class="mk-chips">' + htChip('Citizens win!', 'ok') + htChip('Impostors win!', 'no') + htChip('Mr. White steals it!', 'dim') + '</div>') }
       ]},
-      battle: { title: 'Guess Who — Battle Royale', icon: 'users', players: '3-8 players', slides: [
+      battle: { title: 'Anime Detective — Battle Royale', icon: 'users', players: '3-8 players', slides: [
         { t: 'Everyone hides a secret', d: 'Each player secretly receives a character. 3 to 8 detectives sit at one big table — and everyone is both hunter and prey.',
           s: htScene('<div class="mk-chipwrap">' + htChip('You') + htChip('Aria — secret set') + htChip('Rex — secret set') + htChip('Noa — secret set') + '</div>' + HT_BOARD) },
         { t: 'One board PER rival', d: 'This is the key to Battle Royale: you do NOT share one big board. Every opponent has their OWN private suspect board on your screen. Cross out cards independently — Aria\'s answers only shrink Aria\'s board!',
@@ -173,7 +173,7 @@
         { t: 'Ranking decides the winner', d: 'Points for exposed secrets, sharp guesses and keeping your own secret alive. When the game ends, the top of the leaderboard takes the crown.',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — Aria', 'ok') + ' 340 pts</p><p>' + htChip('2nd — You', 'dim') + ' 290 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 210 pts</p></div>') }
       ]},
-      race: { title: 'Guess Who — Race', icon: 'bolt', players: '3-8 players', slides: [
+      race: { title: 'Anime Detective — Race', icon: 'bolt', players: '3-8 players', slides: [
         { t: 'The Target and the Hunters', d: 'One player is the TARGET — only they know the mystery character. Everyone else is a hunter racing to name it first and win the game.',
           s: htScene('<div class="mk-chipwrap">' + htChip('Aria — TARGET', 'dim') + htChip('You — hunter') + htChip('Rex — hunter') + htChip('Noa — hunter') + '</div><div class="mk-note">The Target sees the mystery character. Hunters see nothing.</div>') },
         { t: 'Inside the Target seat', d: 'When YOU are the Target: only your screen shows the mystery character. Answer every question honestly with YES or NO — then sit back and enjoy the hunt. If every hunter burns all their lives on wrong guesses, the win is yours!',
@@ -193,7 +193,7 @@
         { t: 'Build your streak', d: 'Rounds chain and the leaderboard remembers everything. In multiplayer, the most consistent eye wins — learn studios, eras and art styles!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 24 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 19 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 14 pts</p></div>') }
       ]},
-      hotcold: { title: 'Guess Who — Hot & Cold', icon: 'target', players: '2-6 players', slides: [
+      hotcold: { title: 'Anime Detective — Hot & Cold', icon: 'target', players: '2-6 players', slides: [
         { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
           s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
         { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 100 tries).',
@@ -201,7 +201,7 @@
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]},
-      codenames: { title: 'Code Names', icon: 'key', players: '4-8 players', slides: [
+      codenames: { title: 'Sakura Spies', icon: 'key', players: '4-8 players', slides: [
         { t: 'Two teams, 25 characters', d: 'Split into RED and BLUE (2+ each). A 5×5 grid of anime characters is dealt; each card secretly belongs to a team, to the neutral bystanders… or to the 💀 assassin. Only the two SPYMASTERS see the color key.',
           s: htScene('<div class="mk-label">The board (spymaster key hidden)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 9).map(function (n) { return htCharReal(n, ''); }).join('') + '</div>') },
         { t: 'One word + one number', d: 'On your team\'s turn its spymaster gives ONE word and a count — "fire, 2" — pointing at that many characters. Teammates tap up to that many cards. Every correct pick keeps the turn alive!',
@@ -934,9 +934,9 @@
     let guessMode = false;
     let guessingCharacter = null;
     let roomVisibility = 'private';
-    let hostSource = 'generic'; // character pool for the next room: 'generic' | 'favorites' | 'mix' (Guess Who games)
+    let hostSource = 'generic'; // character pool for the next room: 'generic' | 'favorites' | 'mix' (Anime Detective games)
     let hostPool = 'random';    // 🎲 Hot & Cold + Blur Guess pool: 'random' (full website pool) | 'watched' (only anime the synced accounts have seen)
-    let hostMixCount = 12;      // 🔀 Guess Who Mix split: how many board slots come from the generic pool
+    let hostMixCount = 12;      // 🔀 Anime Detective Mix split: how many board slots come from the generic pool
     // 👀 AniList list-statuses that count as "watched" (account-pane checkboxes)
     const WATCH_STATUS_DEFAULT = ['watching', 'completed', 'paused'];
     const WATCH_STATUS_MAP = { current: 'watching', repeating: 'watching', completed: 'completed', paused: 'paused', dropped: 'dropped', planning: 'planning' };
@@ -1004,7 +1004,7 @@
     //   opponent gets a ❌ color, finds give points, ranking at the end.
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
-    const GAME_LABELS = { guesswho: 'Anime Guess Who?', undercover: 'Undercover', battle: 'Guess Who — Battle Royale', race: 'Guess Who — Race', blur: 'Blur Guess', hotcold: 'Guess Who — Hot & Cold', codenames: 'Code Names' };
+    const GAME_LABELS = { guesswho: 'Anime Detective', undercover: 'Undercover', battle: 'Anime Detective — Battle Royale', race: 'Anime Detective — Race', blur: 'Blur Guess', hotcold: 'Anime Detective — Hot & Cold', codenames: 'Sakura Spies' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
     let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
@@ -1285,7 +1285,7 @@
       setHostHcRank(!!cfg.hcHideRank);
       ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
       document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
-      // 🃏 pool + Guess Who board
+      // 🃏 pool + Anime Detective board
       if (['generic', 'favorites', 'mix', 'watched'].indexOf(cfg.source) >= 0) selectHostSource(cfg.source);
       document.getElementById('hostCharCountSlider').value = clampN(cfg.charCount, 12, 80, 24); updateHostCharCount();
       document.getElementById('hostMixSlider').value = clampN(cfg.mix, 0, parseInt(document.getElementById('hostMixSlider').max) || 80, 12); updateHostMix();
@@ -1491,10 +1491,10 @@
       document.getElementById('hostHcMaxBlock').style.display = hostGame === 'hotcold' ? 'block' : 'none';
       document.getElementById('hostMultiMaxBlock').style.display = isMulti ? 'block' : 'none';
       document.getElementById('hostUcMaxBlock').style.display = isUc ? 'block' : 'none';
-      // ⚙️ Game tab: pool for all but Undercover; Guess Who board settings for
+      // ⚙️ Game tab: pool for all but Undercover; Anime Detective board settings for
       // guesswho/battle/race (Blur & Hot & Cold draw from the FULL pool — no count)
       document.getElementById('hostPoolGroup').style.display = isUc ? 'none' : 'block';
-      // 👀🎲 HC/Blur get the simplified Random/Watched pair; Guess Who games keep Generic/Favorites/Mix
+      // 👀🎲 HC/Blur get the simplified Random/Watched pair; Anime Detective games keep Generic/Favorites/Mix
       const watchUi = isBlur || hostGame === 'hotcold';
       document.getElementById('hostPoolSrcGwGroup').style.display = watchUi ? 'none' : 'block';
       document.getElementById('hostPoolSrcWatchGroup').style.display = watchUi ? 'block' : 'none';
@@ -1505,7 +1505,7 @@
       document.querySelectorAll('.race-only-settings').forEach(el => { el.style.display = hostGame === 'race' ? 'block' : 'none'; });
       document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = isBlur ? 'block' : 'none'; });
       if (isMulti) {
-        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : hostGame === 'codenames' ? 'Code Names' : 'Blur Guess';
+        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : hostGame === 'codenames' ? 'Sakura Spies' : 'Blur Guess';
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
           ? 'Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Eliminate cards on each opponent\'s colored board, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
           : hostGame === 'race'
@@ -1607,7 +1607,7 @@
         showScreen('lobbyScreen');
         document.getElementById('displayRoomCode').textContent = roomCode;
         document.getElementById('lobbySettingsIcon').style.display = 'block';
-        document.getElementById('lobbyGameName').innerHTML = ic(GAME_ICONS[game] || 'gamepad') + ' ' + (GAME_LABELS[game] || 'Anime Guess Who?');
+        document.getElementById('lobbyGameName').innerHTML = ic(GAME_ICONS[game] || 'gamepad') + ' ' + (GAME_LABELS[game] || 'Anime Detective');
         document.getElementById('lobbyRoomType').textContent = roomVisibility === 'private' ? 'Private' : 'Public';
         updateLobby();
       } catch (error) { showNotification('Error creating room: ' + error.message); console.error('Firebase error:', error); }
@@ -1664,7 +1664,7 @@
     function afterJoinUI(room) {
       showScreen('lobbyScreen');
       document.getElementById('displayRoomCode').textContent = roomCode;
-      document.getElementById('lobbyGameName').innerHTML = ic(GAME_ICONS[room.game] || 'gamepad') + ' ' + (GAME_LABELS[room.game] || 'Anime Guess Who?');
+      document.getElementById('lobbyGameName').innerHTML = ic(GAME_ICONS[room.game] || 'gamepad') + ' ' + (GAME_LABELS[room.game] || 'Anime Detective');
       document.getElementById('lobbyRoomType').textContent = room.visibility === 'private' ? 'Private' : 'Public';
       updateLobby();
     }
@@ -2028,7 +2028,7 @@
       const countEl = document.getElementById('lobbyPlayerCount');
       if (countEl) countEl.textContent = playerCount + '/' + (currentRoom.maxPlayers || 2) + (queueList.length ? ' · queue +' + queueList.length : '');
       const gameNameEl = document.getElementById('lobbyGameName');
-      if (gameNameEl) gameNameEl.innerHTML = ic(GAME_ICONS[currentRoom.game] || 'gamepad') + ' ' + (GAME_LABELS[currentRoom.game] || 'Anime Guess Who?');
+      if (gameNameEl) gameNameEl.innerHTML = ic(GAME_ICONS[currentRoom.game] || 'gamepad') + ' ' + (GAME_LABELS[currentRoom.game] || 'Anime Detective');
       const isMultiGame = currentRoom.game === 'undercover' || currentRoom.game === 'battle' || currentRoom.game === 'race';
       const isBlurGame = currentRoom.game === 'blur';
       const isHcGame = currentRoom.game === 'hotcold'; // 🔥 2-6 seats (multiplayer rework)
@@ -2188,7 +2188,7 @@
       else if (g === 'blur') gd = currentRoom.bg;
       else if (g === 'hotcold') gd = currentRoom.hc;
       else if (g === 'codenames') gd = currentRoom.cn;
-      if (!gd || !gd.gameId) return; // 2P Guess Who ends via its own buttons
+      if (!gd || !gd.gameId) return; // 2P Anime Detective ends via its own buttons
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
       if (seated.length === 0) return;
       const everyoneOut = seated.every(p => p.outInGame === gd.gameId);
@@ -2751,7 +2751,7 @@
         const card = document.createElement('div'); card.className = 'card';
         if (foundSet[char.id] != null) { card.classList.add('br-found'); card.style.setProperty('--c', brColorOf(foundSet[char.id])); }
         // ❌ marked cards are COMPLETELY ELIMINATED — same greyed-dark look
-        // with a big ✕ as in the 1v1 Guess Who. Tap the card again to undo.
+        // with a big ✕ as in the 1v1 Anime Detective. Tap the card again to undo.
         // Only the active board's eliminations are shown (one board = one color).
         if (active && brMarks[active] && brMarks[active][char.id]) card.classList.add('eliminated');
         const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
@@ -3743,7 +3743,7 @@
       const seated = Object.keys(room.players || {});
       const teams = cnTeams();
       const tt = (k) => (window.t ? t(k) : k);
-      if (seated.length < 4) return { ok: false, msg: tt('Code Names needs at least 4 players (2+ per team)!') };
+      if (seated.length < 4) return { ok: false, msg: tt('Sakura Spies needs at least 4 players (2+ per team)!') };
       if (teams.red.members.length < 2 || teams.blue.members.length < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
       if (seated.some(pid => !cnTeamOf(pid))) return { ok: false, msg: tt('Everyone must pick a team (🔴 or 🔵)!') };
       if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a spymaster — tap the 🔑 next to a teammate!') };
@@ -3785,7 +3785,7 @@
     async function cnRandomTeams() {
       if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
       const pids = shuffleArray(Object.keys(currentRoom.players || {}));
-      if (pids.length < 4) { showNotification(window.t ? t('Code Names needs at least 4 players (2+ per team)!') : 'Code Names needs at least 4 players (2+ per team)!'); return; }
+      if (pids.length < 4) { showNotification(window.t ? t('Sakura Spies needs at least 4 players (2+ per team)!') : 'Sakura Spies needs at least 4 players (2+ per team)!'); return; }
       const halves = [[], []];
       pids.forEach((p, i) => halves[i % 2].push(p));
       if (Math.random() < 0.5) halves.reverse(); // which half lands in RED is random too
@@ -3927,7 +3927,7 @@
       const endTurn = () => { res.upd['cn/turn'] = other; res.upd['cn/phase'] = 'clue'; res.upd['cn/clue'] = null; res.upd['cn/guessesLeft'] = 0; };
       const win = (team2, reason) => {
         res.upd['cn/phase'] = 'over'; res.upd['cn/winner'] = { team: team2, reason: reason }; res.upd['state'] = 'finished'; res.upd['cn/guessesLeft'] = 0;
-        res.logs.push({ k: 'win', txt: '🏆 ' + cnEmoji(team2) + ' ' + t('team WINS the Code Names game!') });
+        res.logs.push({ k: 'win', txt: '🏆 ' + cnEmoji(team2) + ' ' + t('team WINS the Sakura Spies game!') });
         res.winnerFlag = true;
       };
       if (color === turn) {
@@ -4209,7 +4209,7 @@
         logEl.appendChild(d);
       });
     }
-    // =============================== 🗝 (Code Names ends) ===============================
+    // =============================== 🗝 (Sakura Spies ends) ===============================
     function renderMultiEnd(kind) {
       const screen = document.getElementById('multiEndScreen');
       const activeScreen = document.querySelector('.screen.active');
@@ -4270,7 +4270,7 @@
         const cn = currentRoom.cn || {};
         const winTeam = cn.winner ? cn.winner.team : null;
         const myTeam = cnTeamOf(playerId, cn);
-        title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Code Names over') : 'Code Names over');
+        title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Sakura Spies over') : 'Sakura Spies over');
         sub.innerHTML = (!cn.winner || !cn.winner.reason) ? ''
           : cn.winner.reason === 'assassin' ? (myTeam === winTeam ? (window.t ? t('The other team hit the 💀 assassin — lucky break!') : 'The other team hit the 💀 assassin — lucky break!') : (window.t ? t('Your team hit the 💀 assassin card…') : 'Your team hit the 💀 assassin card…'))
           : cn.winner.reason === 'team-left' ? (window.t ? t('The other team left the game!') : 'The other team left the game!')
@@ -4644,7 +4644,7 @@
       syncHcSettingsUI();
     }
 
-    // 🔀 Mix split bar (Guess Who games, pool = Mix) — reads/writes settings/mixCount
+    // 🔀 Mix split bar (Anime Detective games, pool = Mix) — reads/writes settings/mixCount
     function syncMixUI() {
       const g = (currentRoom && currentRoom.game) || 'guesswho';
       const gwFam = g === 'guesswho' || g === 'battle' || g === 'race';
@@ -6013,7 +6013,7 @@
         return;
       }
       if (g === 'codenames') {
-        if (playerCount < 4) { showNotification('Code Names needs at least 4 players (2+ per team)!'); return; }
+        if (playerCount < 4) { showNotification('Sakura Spies needs at least 4 players (2+ per team)!'); return; }
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await cnOpenTeams();

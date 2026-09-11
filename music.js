@@ -17,6 +17,11 @@
    Keeping it updated is a good idea, but not required.
    ============================================================ */
 
+// ⏸️ MUSIC IS SUSPENDED — set MUSIC_ENABLED back to true once your own,
+// fully-licensed .mp3 files are in the music/ folder. While false, NOTHING is
+// listed, loaded or played, and the UI hides every music control.
+const MUSIC_ENABLED = false;
+
 // The GitHub repo that hosts this site (used to list the music/ folder).
 // If you ever rename the repo, update ONLY this line:
 const MUSIC_REPO = 'soufeokr/Sakugame';
@@ -225,5 +230,6 @@ const MUSIC_DEFAULT_VOLUME = 0.5;   // 0.0 to 1.0 — used on first visit only (
   }
 
   // ---------- go: find the tracks, then start ----------
+  if (!MUSIC_ENABLED) { try { document.body.classList.add('music-off'); } catch (e) {} return; }
   (async function () { startPlayer(await discoverTrackNames()); })();
 })();
