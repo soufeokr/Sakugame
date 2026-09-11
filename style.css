@@ -980,14 +980,22 @@
   .acct-pane { animation: acctFade 0.25s ease; }
   @keyframes acctFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-  /* 💻 PC only: bigger settings window + fixed-height tab area so the header
-     (avatar, name, tab bar) stays perfectly still when switching tabs —
-     only the tab content below changes. Phone layout untouched. */
+  /* 💻 PC only: bigger settings window, SAME proportions as the original design —
+     the whole window is uniformly zoomed, so every element inside (avatar, name,
+     tabs, inputs, text) keeps its build-64 ratios. The tab area has a fixed
+     height per tier, so the header (avatar, name, tab bar) never moves when
+     switching tabs. Phone layout untouched. */
   @media (min-width: 901px) {
-    #authModal .modal-content { max-width: 640px; }
-    #usernameModal .modal-content { max-width: 540px; }
+    #authModal .modal-content { zoom: 1.18; }
+    #usernameModal .modal-content { zoom: 1.1; }
     #authModal #authProfileView .acct-pane,
-    #usernameModal .acct-pane { height: clamp(300px, 50vh, 420px); overflow-y: auto; scrollbar-gutter: stable; padding-right: 6px; }
+    #usernameModal .acct-pane { height: clamp(240px, 36vh, 340px); overflow-y: auto; scrollbar-gutter: stable; padding-right: 6px; }
+  }
+  @media (min-width: 901px) and (min-height: 950px) {
+    #authModal .modal-content { zoom: 1.38; }
+    #usernameModal .modal-content { zoom: 1.2; }
+    #authModal #authProfileView .acct-pane,
+    #usernameModal .acct-pane { height: clamp(280px, 32vh, 380px); }
   }
 
   /* Support tab: Discord card */
