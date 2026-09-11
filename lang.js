@@ -118,6 +118,7 @@ var I18N = {
   "clue time": { fr: "heure de l'indice", es: "hora de la pista" },
   "pick phase": { fr: "phase de choix", es: "fase de elección" },
   "Privacy Policy & Terms of Use and Service": { fr: "Politique de confidentialité et conditions d'utilisation", es: "Política de privacidad y términos de uso" },
+  "Your Profile": { fr: "Ton profil", es: "Tu perfil" },
   "SPIES": { fr: "ESPIONS", es: "ESPÍAS" },
   "AGENTS": { fr: "AGENTS", es: "AGENTES" },
   "Spectators": { fr: "Spectateurs", es: "Espectadores" },

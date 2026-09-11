@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="63">
+<meta name="saku-build" content="64">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=63" sizes="any">
+<link rel="icon" href="favicon.ico?v=64" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=63">
+<link rel="stylesheet" href="style.css?v=64">
 </head>
 <body>
 
@@ -1106,25 +1106,67 @@
     </div>
   </div>
 
+  <!-- 🔑 password change — a window OVER the account/settings window -->
+  <div class="modal" id="passwordModal" style="z-index: 1300;">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closePasswordModal()">×</div>
+      <h2><svg class="ic"><use href="#i-lock"/></svg> Change Password</h2>
+      <div class="input-group" style="margin-bottom: 8px;">
+        <div class="pw-wrap">
+          <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
+          <button class="hc-clr pw-eye" type="button" onclick="togglePassword('currentPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="pw-wrap">
+          <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
+          <button class="hc-clr pw-eye" type="button" onclick="togglePassword('newPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
+      <button class="full success" id="profilePasswordBtn" onclick="changeAccountPassword()">Update</button>
+    </div>
+  </div>
+
   <div class="modal" id="usernameModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeUsernameModal()">×</div>
-      <h2>Change Username</h2>
-      <p style="color: var(--muted); margin-bottom: 20px;">Choose a new display name</p>
-      <div class="input-group">
-        <label>New Username</label>
-        <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20">
+      <h2 style="font-size: 1.4rem;">Your Profile</h2>
+      <!-- 📑 guest tabs: Account (default) / Support — same support info as logged-in users -->
+      <div class="acct-tabs" role="tablist">
+        <button type="button" class="acct-tab on" role="tab" aria-selected="true" data-tab="account" onclick="switchUnameTab('account')"><svg class="ic"><use href="#i-user"/></svg> Account</button>
+        <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="support" onclick="switchUnameTab('support')"><svg class="ic"><use href="#i-chat"/></svg> Support</button>
       </div>
-      <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
-      <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
-      <h4 class="profile-section-title phm-hide"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
-      <div class="lang-row phm-hide" data-noi18n>
-        <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
-        <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
-        <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
+      <div id="unamePaneAccount" class="acct-pane" role="tabpanel">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-user"/></svg> Change Username</h4>
+        <div class="input-group">
+          <label>New Username</label>
+          <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20">
+        </div>
+        <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
+        <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
+        <h4 class="profile-section-title phm-hide"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+        <div class="lang-row phm-hide" data-noi18n>
+          <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
+          <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
+          <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
+        </div>
+        <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+        <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
       </div>
-      <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
-      <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
+      <div id="unamePaneSupport" class="acct-pane" role="tabpanel" style="display: none;">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-chat"/></svg> Contact & Support</h4>
+        <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!</p>
+        <div class="discord-card">
+          <span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Z"/></svg></span>
+          <div style="text-align: left; flex: 1; min-width: 0;">
+            <div class="dc-label">Discord</div>
+            <div class="dc-handle">@soufiane_jv</div>
+          </div>
+          <button type="button" class="dc-copy" onclick="copyDiscord()"><svg class="ic"><use href="#i-copy"/></svg> Copy</button>
+        </div>
+        <p style="color: var(--muted); font-size: 0.78rem; margin-top: 10px; line-height: 1.5;">Discord → Add Friend → paste my username — I usually answer within a day.</p>
+        <p class="legal-link-wrap"><a href="privacy.html" target="_blank" rel="noopener" class="legal-link"><svg class="ic"><use href="#i-note"/></svg> Privacy Policy &amp; Terms of Use and Service</a></p>
+      </div>
     </div>
   </div>
 
@@ -1158,7 +1200,12 @@
             <span id="profileAvatar"></span>
             <button type="button" class="ava-edit" aria-label="Change picture" title="Change picture"><svg class="ic"><use href="#i-pencil"/></svg></button>
           </div>
-          <h2 style="margin: 8px 0 2px;" class="profile-name-row"><span id="profileName">Account</span><button type="button" class="ava-edit name-edit" onclick="changeUsername()" title="Change username" aria-label="Change username"><svg class="ic"><use href="#i-pencil"/></svg></button></h2>
+          <h2 style="margin: 8px 0 2px;" class="profile-name-row"><span id="profileName">Account</span><button type="button" class="ava-edit name-edit" onclick="toggleNameEdit()" title="Change username" aria-label="Change username"><svg class="ic"><use href="#i-pencil"/></svg></button></h2>
+          <!-- ✏️ inline username editor — a simple box like the AniList sync row (no popup) -->
+          <div class="profile-row name-edit-row" id="nameEditRow" style="display: none;">
+            <input type="text" id="inlNameInput" placeholder="New username (3-20 chars)" maxlength="20">
+            <button class="secondary" onclick="saveNameEdit()">Save</button>
+          </div>
         </div>
 
         <!-- Tabs -->
@@ -1210,20 +1257,7 @@
             <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
           </div>
 
-          <h4 class="profile-section-title"><svg class="ic"><use href="#i-lock"/></svg> Change Password</h4>
-          <div class="input-group" style="margin-bottom: 8px;">
-            <div class="pw-wrap">
-              <input type="password" id="currentPasswordInput" placeholder="Current password" maxlength="50" autocomplete="current-password">
-              <button class="hc-clr pw-eye" type="button" onclick="togglePassword('currentPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
-            </div>
-          </div>
-          <div class="profile-row">
-            <div class="pw-wrap">
-              <input type="password" id="newPasswordInput" placeholder="New password (min 6 characters)" maxlength="50" autocomplete="new-password">
-              <button class="hc-clr pw-eye" type="button" onclick="togglePassword('newPasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
-            </div>
-            <button class="secondary" id="profilePasswordBtn" onclick="changeAccountPassword()">Update</button>
-          </div>
+          <button class="full secondary" style="margin-top: 18px;" onclick="openPasswordModal()"><svg class="ic"><use href="#i-lock"/></svg> Change Password</button>
 
           <button class="full danger" style="margin-top: 22px;" onclick="logoutAccount()">Log Out</button>
         </div>
@@ -1363,7 +1397,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=63', 'charanimes.js?v=63', 'animes.js?v=63'];
+        var files = ['characters.js?v=64', 'charanimes.js?v=64', 'animes.js?v=64'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1378,9 +1412,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=63"></script>
-  <script src="music.js?v=63"></script>
-  <script src="lang.js?v=63"></script>
-  <script src="app.js?v=63"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a39795a43a08697e',t:'MTc4OTEzOTI3Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=64"></script>
+  <script src="music.js?v=64"></script>
+  <script src="lang.js?v=64"></script>
+  <script src="app.js?v=64"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3982f469b351491',t:'MTc4OTE0NTU2NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

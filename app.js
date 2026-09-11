@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '63';
+    const SAKU_BUILD = '64';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -654,7 +654,7 @@
         await user.updatePassword(next);
         document.getElementById('currentPasswordInput').value = '';
         document.getElementById('newPasswordInput').value = '';
-        showNotification('Password updated!');
+        showNotification('Password updated!'); closePasswordModal();
       } catch (e) {
         const code = (e && e.code) || '';
         if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') showNotification('Current password is incorrect.');
@@ -1057,10 +1057,40 @@
     let publicRoomsRef = null;     // live 🌐 list listener (join screen only)
 
     function changeUsername() {
+      try { switchUnameTab('account'); } catch (e) {} // guests always land on the Account tab
       document.getElementById('newUsernameInput').value = playerName;
       document.getElementById('usernameModal').classList.add('show');
     }
     function closeUsernameModal() { document.getElementById('usernameModal').classList.remove('show'); }
+    // 📑 guest modal tabs (Account / Support — same support content as the account modal)
+    function switchUnameTab(tab) {
+      ['account', 'support'].forEach(t => {
+        const pane = document.getElementById('unamePane' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (pane) pane.style.display = (t === tab) ? 'block' : 'none';
+      });
+      document.querySelectorAll('#usernameModal .acct-tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    }
+    // ✏️ inline username editor (pencil next to the name — a simple box, no popup)
+    function toggleNameEdit() {
+      const row = document.getElementById('nameEditRow');
+      if (!row) return;
+      const showing = row.style.display === 'none';
+      row.style.display = showing ? 'flex' : 'none';
+      if (showing) { const inp = document.getElementById('inlNameInput'); if (inp) { inp.value = (document.getElementById('profileName') || {}).textContent || ''; try { inp.focus(); } catch (e) {} } }
+    }
+    async function saveNameEdit() {
+      const inp = document.getElementById('inlNameInput');
+      const val = ((inp && inp.value) || '').trim();
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(val)) { showNotification(window.t ? t('Username: 3-20 characters, letters, numbers and _ only.') : 'Username: 3-20 characters, letters, numbers and _ only.'); return; }
+      await changeAccountUsername(val);
+      toggleNameEdit(); // collapse the inline box after the attempt
+    }
+    // 🔑 password modal opens OVER the account window
+    function openPasswordModal() {
+      ['currentPasswordInput', 'newPasswordInput'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      const m = document.getElementById('passwordModal'); if (m) m.classList.add('show');
+    }
+    function closePasswordModal() { const m = document.getElementById('passwordModal'); if (m) m.classList.remove('show'); }
     async function confirmUsernameChange() {
       const newName = document.getElementById('newUsernameInput').value.trim();
       if (!newName || newName.length < 2) { showNotification('Please enter a valid username (at least 2 characters)'); return; }
