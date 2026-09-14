@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '66';
+    const SAKU_BUILD = '68';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1117,6 +1117,65 @@
       // The 🌐 public room list only streams while the join screen is open
       if (screenId === 'joinRoomScreen') startPublicRoomsWatch(); else stopPublicRoomsWatch();
     }
+    // ================= 🧭 PAGE ROUTER (hash URLs + browser Back/Forward) =================
+    // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
+    // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
+    // the game keeps running, and walking forward drops you right back into it.
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen' };
+    const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'cnTeamsScreen', 'spectateScreen', 'selectionScreen'];
+    let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
+    let R_muteHash = false;    // hash change came from us — skip the next hashchange render
+    let R_fromRouter = false;  // screen change came from a route render — don't push history
+    let R_booted = false;      // until boot lands, pushes stay silent (deep links survive init)
+    function routerRouteForScreen(id) {
+      for (const r in R_PAGES) if (R_PAGES[r] === id) return r;
+      return 'room'; // every other full screen lives inside a room
+    }
+    function routerPush(route) {
+      if (!R_booted) return;
+      const target = '#/' + route;
+      if (location.hash !== target) { R_muteHash = true; location.hash = target; }
+    }
+    // wrapped AFTER its definition: every screen switch now also syncs the address bar
+    const routerShowScreen = showScreen;
+    showScreen = function (screenId) {
+      routerShowScreen(screenId);
+      if (R_ROOM_SCREENS.includes(screenId)) R_lastRoomScreen = screenId;
+      if (!R_fromRouter) routerPush(routerRouteForScreen(screenId));
+    };
+    function routerCurrentRoute() {
+      const r = ((location.hash || '').replace(/^#\/?/, '').split('/')[0]) || 'home';
+      return (R_PAGES[r] || r === 'room') ? r : 'home';
+    }
+    function routerRender() {
+      if (R_muteHash) { R_muteHash = false; return; }
+      let route = routerCurrentRoute();
+      R_fromRouter = true;
+      try {
+        if (route === 'room') {
+          if (roomCode) showScreen(R_lastRoomScreen || 'lobbyScreen'); // walk back INTO your running game
+          else { R_muteHash = true; try { location.replace('#/rooms'); } catch (e) { try { location.hash = '#/rooms'; } catch (e2) {} } showPlayMenu(); } // no room here → room selection
+        }
+        else if (route === 'rules') showGamesMenu();
+        else if (route === 'rooms') showPlayMenu();
+        else if (route === 'join') showJoinRoom();
+        else if (route === 'setup') showHostRoom();
+        else showScreen('homepageScreen');
+      } catch (e) {}
+      R_fromRouter = false;
+      try { window.scrollTo(0, 0); } catch (e) {}
+    }
+    window.addEventListener('hashchange', routerRender);
+    // boot: land on the page the URL asks for (deep links & refresh keep your page)
+    (function routerBoot() {
+      const boot = () => {
+        R_booted = true;
+        // home is already on screen — only re-render when the URL asks for another page
+        if (!location.hash || location.hash === '#/' || location.hash === '#/home') { try { history.replaceState(null, '', '#/home'); } catch (e) {} return; }
+        routerRender();
+      };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+    })();
     async function goHome() {
       if (roomCode) { await leaveRoom(true); } // leaveRoom also resets roomCode and shows the home screen
       showScreen('homepageScreen');
@@ -1128,14 +1187,14 @@
 
     // 📱 phone quick top bar — volume & language menus (bar only visible ≤600px)
     function phoneBarToggle(id) {
-      ['tbVolMenu', 'tbLangMenu'].forEach(m => {
+      ['tbVolMenu', 'tbLangMenu', 'pcLangMenu'].forEach(m => {
         const el = document.getElementById(m);
         if (el) el.classList.toggle('open', m === id && !el.classList.contains('open'));
       });
     }
     document.addEventListener('pointerdown', (e) => {
       try {
-        if (e.target && e.target.closest && !e.target.closest('#phoneTopBar')) phoneBarToggle('___none___');
+        if (e.target && e.target.closest && !e.target.closest('#phoneTopBar, #pcLangWrap')) phoneBarToggle('___none___');
       } catch (err) {}
     });
     // top-bar language button shows the CURRENT language's flag
@@ -1145,10 +1204,11 @@
       es: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>'
     };
     function tbSyncLangBtn() {
-      const el = document.getElementById('tbLangFlag');
-      if (!el) return;
       const l = (window.SAKU_I18N && SAKU_I18N.lang) || 'en';
-      el.innerHTML = TB_FLAGS[l] || TB_FLAGS.en;
+      ['tbLangFlag', 'pcLangFlag'].forEach(id => { // phone top-bar flag + PC bottom-bar flag
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = TB_FLAGS[l] || TB_FLAGS.en;
+      });
     }
     (function () {
       const wrap = () => {
@@ -1596,6 +1656,7 @@
     }
 
     async function createGameRoom() {
+      if (roomCode) { R_fromRouter = true; try { await leaveRoom(true); } catch (e) {} R_fromRouter = false; } // already in a room (navigated away with the browser arrows) — leave it silently first
       const game = document.getElementById('gameSelect').value || 'guesswho';
         const isUc = game === 'undercover';
         const isMulti = game === 'battle' || game === 'race' || game === 'blur' || game === 'codenames';
@@ -1654,6 +1715,7 @@
     // Free seat + lobby → you sit down directly. Game in progress (or full)
     // → you wait in the room's QUEUE and auto-join when a seat opens.
     async function joinRoomByCode(code) {
+      if (roomCode) { R_fromRouter = true; try { await leaveRoom(true); } catch (e) {} R_fromRouter = false; } // switching rooms after browsing away with the arrows — leave the old one silently first
       try {
         const roomSnapshot = await database.ref('rooms/' + code).once('value');
         if (!roomSnapshot.exists()) { showNotification('Room not found. Check the code and try again.'); return; }

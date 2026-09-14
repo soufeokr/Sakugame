@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="66">
+<meta name="saku-build" content="68">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=66" sizes="any">
+<link rel="icon" href="favicon.ico?v=68" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=66">
+<link rel="stylesheet" href="style.css?v=68">
 </head>
 <body>
 
@@ -201,6 +201,15 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
+    <!-- 💻 PC-only language picker (menu opens upward) — phones keep their top-bar flag button -->
+    <div id="pcLangWrap" data-noi18n>
+      <button type="button" class="tb-btn" id="pcLangBtn" onclick="phoneBarToggle('pcLangMenu')" title="Language" aria-label="Language"><span id="pcLangFlag" class="tb-flag"></span></button>
+      <div class="tb-menu lang-row" id="pcLangMenu">
+        <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
+        <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
+        <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
+      </div>
+    </div>
     <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
   </div>
   <div class="site-header">
@@ -1144,12 +1153,6 @@
         </div>
         <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
         <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
-        <h4 class="profile-section-title phm-hide"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
-        <div class="lang-row phm-hide" data-noi18n>
-          <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
-          <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
-          <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
-        </div>
         <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
         <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
       </div>
@@ -1229,12 +1232,6 @@
             <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
           </div>
 
-          <h4 class="profile-section-title phm-hide"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
-          <div class="lang-row phm-hide" data-noi18n>
-            <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
-            <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
-            <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
-          </div>
           <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
           <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
         </div>
@@ -1397,7 +1394,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=66', 'charanimes.js?v=66', 'animes.js?v=66'];
+        var files = ['characters.js?v=68', 'charanimes.js?v=68', 'animes.js?v=68'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1412,9 +1409,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=66"></script>
-  <script src="music.js?v=66"></script>
-  <script src="lang.js?v=66"></script>
-  <script src="app.js?v=66"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a398664e7b31e1ae',t:'MTc4OTE0NzgxOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=68"></script>
+  <script src="music.js?v=68"></script>
+  <script src="lang.js?v=68"></script>
+  <script src="app.js?v=68"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3ae46a2aad0d14d',t:'MTc4OTM3NzIwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
