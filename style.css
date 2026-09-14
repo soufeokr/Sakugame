@@ -1236,6 +1236,20 @@
   .back-mini:hover { opacity: 1; transform: translateX(-3px); }
   #playMenuScreen h2, #gamesMenuScreen h2, #hostRoomScreen h2, #joinRoomScreen h2 { display: flex; align-items: center; justify-content: center; gap: 2px; }
 
+  /* 🧭 Unified page-back button — a real button (not just an arrow), always in the
+     same spot: top-left of the page, just under the logo, hugging the content column. */
+  .page-back {
+    position: fixed; top: 74px; left: max(18px, calc(50% - 330px)); z-index: 70;
+    width: 48px; height: 48px; border-radius: 13px; border: 2px solid rgba(2,169,255,0.35);
+    background: var(--card); color: var(--accent); font-size: 1.5rem; font-weight: 800; line-height: 1;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4); transition: all 0.18s;
+  }
+  .page-back:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(2,169,255,0.25); }
+  @media (max-width: 900px) {
+    .page-back { top: 62px; left: 10px; width: 44px; height: 44px; border-radius: 12px; font-size: 1.4rem; }
+  }
+
   /* 📱 play menu + host/join panels — fit one viewport on phones */
   @media (max-width: 600px) {
     #playMenuScreen .play-menu { margin: 8px auto; padding: 0 14px; }
