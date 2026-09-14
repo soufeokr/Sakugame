@@ -1247,7 +1247,11 @@
   }
   .page-back:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(2,169,255,0.25); }
   @media (max-width: 900px) {
-    .page-back { top: 62px; left: 10px; width: 44px; height: 44px; border-radius: 12px; font-size: 1.4rem; }
+    /* 📱 anchor the back button to its page's title: vertically centered on the
+       heading line, just left of the centered content column (orange-circle zone) */
+    #playMenuScreen h2, #gamesMenuScreen h2, #hostRoomScreen h2, #joinRoomScreen h2 { position: relative; }
+    .page-back { position: absolute; top: 50%; transform: translateY(-50%); left: max(44px, calc(50% - 250px)); width: 44px; height: 44px; border-radius: 12px; font-size: 1.4rem; }
+    .page-back:hover { transform: translateY(calc(-50% - 2px)); }
   }
 
   /* 📱 play menu + host/join panels — fit one viewport on phones */
