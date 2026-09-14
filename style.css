@@ -980,16 +980,33 @@
   .acct-pane { animation: acctFade 0.25s ease; }
   @keyframes acctFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
+  /* 🔒 Rock-steady tab area on EVERY screen: fixed height, so the header (avatar,
+     name, tab bar) never moves when switching tabs; long panes scroll inside. */
+  #authModal #authProfileView .acct-pane,
+  #usernameModal .acct-pane { height: clamp(240px, 42vh, 340px); height: clamp(240px, 42svh, 340px); overflow-y: auto; scrollbar-gutter: stable; padding-right: 6px; }
+
+  /* 💻 PC-only language picker in the bottom bar (phones use the top bar) */
+  #pcLangWrap { display: none; }
+
   /* 💻 PC only: bigger settings window, SAME proportions as the original design —
      the whole window is uniformly zoomed, so every element inside (avatar, name,
-     tabs, inputs, text) keeps its build-64 ratios. The tab area has a fixed
-     height per tier, so the header (avatar, name, tab bar) never moves when
-     switching tabs. Phone layout untouched. */
+     tabs, inputs, text) keeps its build-64 ratios. Phone layout untouched. */
   @media (min-width: 901px) {
     #authModal .modal-content { zoom: 1.18; }
     #usernameModal .modal-content { zoom: 1.1; }
     #authModal #authProfileView .acct-pane,
-    #usernameModal .acct-pane { height: clamp(240px, 36vh, 340px); overflow-y: auto; scrollbar-gutter: stable; padding-right: 6px; }
+    #usernameModal .acct-pane { height: clamp(240px, 36vh, 340px); }
+    /* bottom-bar language picker: little square flag button, bottom-RIGHT, just left of the settings button */
+    #bottomBar { justify-content: flex-end; }
+    #pcLangWrap { display: inline-flex; align-items: center; position: relative; margin-left: 0; }
+    #bottomBar .username-change-btn { margin-left: 0; }
+    #pcLangWrap .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2,169,255,0.35); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.35); flex: none; }
+    #pcLangWrap .tb-btn:hover { border-color: var(--accent); }
+    #pcLangWrap .tb-flag { display: flex; align-items: center; }
+    #pcLangWrap .tb-flag .flg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+    #pcLangMenu { display: none; position: absolute; bottom: calc(100% + 10px); right: 0; flex-direction: column; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 130; min-width: 170px; margin: 0; gap: 6px; }
+    #pcLangMenu.open { display: flex; }
+    #pcLangMenu .lang-opt { width: 100%; margin: 0; }
   }
   @media (min-width: 901px) and (min-height: 950px) {
     #authModal .modal-content { zoom: 1.38; }
