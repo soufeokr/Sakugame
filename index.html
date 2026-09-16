@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="74">
+<meta name="saku-build" content="75">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=74" sizes="any">
+<link rel="icon" href="favicon.ico?v=75" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=74">
+<link rel="stylesheet" href="style.css?v=75">
 </head>
 <body>
 
@@ -1135,6 +1135,22 @@
     </div>
   </div>
 
+  <!-- 🗑️ delete account — final confirmation, password required (GDPR) -->
+  <div class="modal" id="deleteAccountModal" style="z-index: 1310;">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeDeleteAccountModal()">×</div>
+      <h2 style="color: var(--danger);"><svg class="ic"><use href="#i-skull"/></svg> Delete my account</h2>
+      <p style="color: var(--muted); font-size: 0.85rem;">This permanently deletes your account, username, stats and AniList link. This cannot be undone.</p>
+      <div class="input-group">
+        <div class="pw-wrap">
+          <input type="password" id="deletePasswordInput" placeholder="Type your password to confirm" maxlength="50" autocomplete="current-password">
+          <button class="hc-clr pw-eye" type="button" onclick="togglePassword('deletePasswordInput', this)" title="Show password" aria-label="Show password" tabindex="-1"><svg class="ic"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
+      <button class="full danger" id="deleteAccountBtn" onclick="confirmDeleteAccount()">Delete permanently</button>
+    </div>
+  </div>
+
   <div class="modal" id="usernameModal">
     <div class="modal-content">
       <div class="modal-close" onclick="closeUsernameModal()">×</div>
@@ -1152,6 +1168,8 @@
         </div>
         <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
         <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
+        <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
         <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
         <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
       </div>
@@ -1253,7 +1271,13 @@
             <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
           </div>
 
+          <h4 class="profile-section-title" style="margin-top: 16px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
+          <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
+
           <button class="full secondary" style="margin-top: 18px;" onclick="openPasswordModal()"><svg class="ic"><use href="#i-lock"/></svg> Change Password</button>
+
+          <h4 class="profile-section-title" style="margin-top: 18px; color: var(--danger);"><svg class="ic"><use href="#i-skull"/></svg> Danger zone</h4>
+          <button class="full ghost-danger" onclick="openDeleteAccountModal()"><svg class="ic"><use href="#i-skull"/></svg> Delete my account</button>
 
           <button class="full danger" style="margin-top: 22px;" onclick="logoutAccount()">Log Out</button>
         </div>
@@ -1393,7 +1417,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=74', 'charanimes.js?v=74', 'animes.js?v=74'];
+        var files = ['characters.js?v=75', 'charanimes.js?v=75', 'animes.js?v=75', 'nsfwdata.js?v=75'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1408,9 +1432,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=74"></script>
-  <script src="music.js?v=74"></script>
-  <script src="lang.js?v=74"></script>
-  <script src="app.js?v=74"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3bc28b8287983cc',t:'MTc4OTUyMjc4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=75"></script>
+  <script src="music.js?v=75"></script>
+  <script src="lang.js?v=75"></script>
+  <script src="app.js?v=75"></script>
+</body>
 </html>

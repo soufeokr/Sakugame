@@ -1015,6 +1015,12 @@
     #usernameModal .acct-pane { height: clamp(280px, 32vh, 380px); }
   }
 
+  /* 🚫 Content filter row (Settings → Account) + 🗑️ danger-zone button */
+  .nsfw-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(90,150,230,0.22); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-size: 0.85rem; }
+  .nsfw-row input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex: none; }
+  .ghost-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); }
+  .ghost-danger:hover { background: var(--danger); color: #ffffff; }
+
   /* Support tab: Discord card */
   .discord-card {
     display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 10px;
@@ -1278,7 +1284,13 @@
   }
 
   /* ⏸️ music suspended (placeholder tracks removed) — hide every music control */
-  .music-off #tbVolBtn, .music-off #tbVolMenu, .music-off .music-volume-slider, .music-off .music-block { display: none !important; }
+  /* 🔇 Music UI is OPT-IN: hidden by default everywhere, shown only when the
+     player really boots (body.music-on). Suspension-proof even with stale JS. */
+  #tbVolBtn, #tbVolMenu, .music-volume-slider, .music-block { display: none !important; }
+  body.music-on #tbVolBtn { display: flex !important; }
+  body.music-on #tbVolMenu.open { display: block !important; }
+  body.music-on .music-block { display: block !important; }
+  body.music-on .music-volume-slider { display: block !important; }
 
   /* ⚖️ legal link at the bottom of the Support tab */
   .legal-link-wrap { text-align: center; margin-top: 20px; }

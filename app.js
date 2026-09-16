@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '74';
+    const SAKU_BUILD = '75';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1117,6 +1117,26 @@
       // The 🌐 public room list only streams while the join screen is open
       if (screenId === 'joinRoomScreen') startPublicRoomsWatch(); else stopPublicRoomsWatch();
     }
+    // ============== 🚫 NSFW (18+) CONTENT FILTER ==============
+    // Toggle in Settings → Account (default ON). Hides adult characters & covers
+    // via the id lists in nsfwdata.js (generated from AniList's isAdult flags).
+    function nsfwHidden() { try { return localStorage.getItem('sakuHideNsfw') !== '0'; } catch (e) { return true; } }
+    function sakuCleanChars(list) {
+      if (!nsfwHidden() || typeof NSFW_CHARACTER_IDS === 'undefined') return list || [];
+      return (list || []).filter(function (c) { return !(c && NSFW_CHARACTER_IDS.has(c.id)); });
+    }
+    function sakuCleanAnimes(list) {
+      if (!nsfwHidden() || typeof NSFW_ANIME_IDS === 'undefined') return list || [];
+      return (list || []).filter(function (a) { return !(a && NSFW_ANIME_IDS.has(a.id)); });
+    }
+    function setNsfwSwitchStates() { document.querySelectorAll('.nsfw-switch').forEach(function (cb) { cb.checked = nsfwHidden(); }); }
+    function toggleNsfwFilter(cb) {
+      const on = !!(cb && cb.checked);
+      try { localStorage.setItem('sakuHideNsfw', on ? '1' : '0'); } catch (e) {}
+      setNsfwSwitchStates();
+      showNotification(on ? t('18+ content hidden.') : t('18+ content visible.'));
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setNsfwSwitchStates); else setNsfwSwitchStates();
     // ================= 🧭 PAGE ROUTER (hash URLs + browser Back/Forward) =================
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
@@ -2327,6 +2347,44 @@
       showScreen('homepageScreen'); // leaving a room always brings you back home
     }
 
+    // 🗑️ DELETE ACCOUNT (GDPR right to erasure): password confirm → wipe
+    // users/<uid> + the usernames registry → delete the Firebase auth user.
+    function openDeleteAccountModal() {
+      const p = document.getElementById('deletePasswordInput'); if (p) p.value = '';
+      const m = document.getElementById('deleteAccountModal'); if (m) m.classList.add('show');
+    }
+    function closeDeleteAccountModal() { const m = document.getElementById('deleteAccountModal'); if (m) m.classList.remove('show'); }
+    async function confirmDeleteAccount() {
+      const user = firebase.auth().currentUser;
+      if (!user) return;
+      const btn = document.getElementById('deleteAccountBtn');
+      const pw = (document.getElementById('deletePasswordInput') || {}).value || '';
+      if (!pw) { showNotification(t('Type your password to confirm')); return; }
+      btn.disabled = true;
+      try {
+        const cred = firebase.auth.EmailAuthProvider.credential(user.email, pw);
+        await user.reauthenticateWithCredential(cred); // recent-login requirement
+        let lower = null;
+        try {
+          const snap = await database.ref('users/' + user.uid).once('value');
+          const v = snap && snap.val();
+          lower = v && (v.usernameLower || (v.username ? String(v.username).toLowerCase() : null));
+        } catch (e) {}
+        try { await database.ref('users/' + user.uid).remove(); } catch (e) {}       // profile + stats + AniList link + avatar
+        if (lower) { try { await database.ref('usernames/' + lower).remove(); } catch (e) {} } // release the name
+        await user.delete();
+        closeDeleteAccountModal();
+        try { closeAuthModal(); } catch (e) {}
+        showNotification(t('Account deleted. Goodbye!'), 5000);
+      } catch (e) {
+        const code = (e && e.code) || '';
+        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') showNotification(t('Current password is incorrect.'));
+        else if (code === 'auth/requires-recent-login') showNotification(t('Please log out and back in, then try again.'));
+        else showNotification(friendlyAuthError(e));
+      }
+      btn.disabled = false;
+    }
+
     // ===== ROOM ACTIVITY TRACKING (auto-close idle rooms) =====
     function touchActivity() {
       if (roomCode) database.ref('rooms/' + roomCode + '/lastActivity').set(Date.now());
@@ -3175,12 +3233,12 @@
       const bg = r.bg || {};
       const mode = bg.mode || s.bgMode || 'characters';
       if (mode === 'covers') {
-        const covers = (typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : [];
+        const covers = sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []);
         if (s.pool !== 'watched') return covers;
         const wset = roomWatchSet(r);
         return covers.filter(c => c && c.id != null && c.name && wset.ids[c.id]);
       }
-      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      const generic = sakuCleanChars((typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : []);
       if (s.pool === 'watched') return watchedPoolChars(r);
       const seen = new Set();
       return generic.filter(c => { if (!c || c.id == null || !c.name || seen.has(c.id)) return false; seen.add(c.id); return true; });
@@ -3921,16 +3979,16 @@
       const accountData = Object.values((room && room.accounts) || {});
       const settings = (room && room.settings) || {};
       const source = settings.source || (accountData.length > 0 ? 'favorites' : 'generic');
-      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      const generic = sakuCleanChars((typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : []);
       const seenIds = new Set(); const out = [];
       const pick = (list, n) => {
         const pool = shuffleArray((list || []).filter(c => c && c.id != null && !seenIds.has(c.id)));
         pool.slice(0, Math.max(0, n)).forEach(c => { seenIds.add(c.id); out.push(c); });
       };
-      const allChars = []; accountData.forEach(a => allChars.push.apply(allChars, (a && a.characters) || []));
+      const allChars = []; accountData.forEach(a => allChars.push.apply(allChars, sakuCleanChars((a && a.characters) || [])));
       if (source === 'favorites' && accountData.length > 0) {
         const n = accountData.length, per = Math.floor(25 / n);
-        accountData.forEach((acc, i) => pick((acc && acc.characters) || [], per + (i < (25 - per * n) ? 1 : 0)));
+        accountData.forEach((acc, i) => pick(sakuCleanChars((acc && acc.characters) || []), per + (i < (25 - per * n) ? 1 : 0)));
         if (out.length < 25) pick(allChars, 25 - out.length);
       } else if (source === 'mix' && accountData.length > 0) {
         const wantG = Math.max(0, Math.min(25, settings.mixCount != null ? Math.round(25 * settings.mixCount / (settings.characterCount || 24)) : 12));
@@ -4596,7 +4654,7 @@
       // ⚙️ Game tab
       document.getElementById('modalPoolGroup').style.display = isUc ? 'none' : 'block';
       // Blur Guess & Hot & Cold draw from the FULL source pool — no character count board needed
-      document.getElementById('modalGwSettings').style.display = (isUc || isBlur || game === 'hotcold') ? 'none' : 'block';
+      document.getElementById('modalGwSettings').style.display = (isUc || isBlur || game === 'hotcold' || game === 'codenames') ? 'none' : 'block'; // CN board is always a fixed 5×5 — never a char count
       document.getElementById('modalUwSettings').style.display = isUc ? 'block' : 'none';
       const raceBox = document.getElementById('modalRaceSettings');
       if (raceBox) {
@@ -5034,7 +5092,7 @@
     // match as a fallback for rows the id map doesn't know (manga-only chars).
     function watchedPoolChars(room) {
       const wset = roomWatchSet(room);
-      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      const generic = sakuCleanChars((typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : []);
       const aids = (typeof CHAR_ANIME_IDS !== 'undefined' && CHAR_ANIME_IDS) ? CHAR_ANIME_IDS : null;
       return dedupPoolChars(generic.filter(c => {
         if (!c) return false;
@@ -5053,7 +5111,7 @@
     function hcPoolChars() {
       const r = currentRoom || {};
       const s = r.settings || {};
-      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      const generic = sakuCleanChars((typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : []);
       return s.pool === 'watched' ? watchedPoolChars(r) : dedupPoolChars(generic);
     }
 
@@ -6136,10 +6194,10 @@
       const settings = currentRoom ? currentRoom.settings : { characterCount: 24 };
       const totalChars = settings.characterCount || 24;
       const source = (settings && settings.source) || (accountData.length > 0 ? 'favorites' : 'generic');
-      const generic = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      const generic = sakuCleanChars((typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : []);
 
       let allChars = [];
-      accountData.forEach(acc => allChars.push(...(acc.characters || [])));
+      accountData.forEach(acc => allChars.push(...sakuCleanChars(acc.characters || [])));
 
       const seenIds = new Set();
       const pickUnique = (list, n) => {
@@ -6157,7 +6215,7 @@
         const n = accountData.length;
         const per = Math.floor(totalChars / n);
         let rem = totalChars - per * n;
-        accountData.forEach((acc, i) => selectedChars.push(...pickUnique(shuffleArray(((acc && acc.characters) || []).slice()), per + (i < rem ? 1 : 0))));
+        accountData.forEach((acc, i) => selectedChars.push(...pickUnique(shuffleArray(sakuCleanChars((acc && acc.characters) || []).slice()), per + (i < rem ? 1 : 0))));
         if (selectedChars.length < totalChars) selectedChars.push(...pickUnique(shuffleArray(allChars.slice()), totalChars - selectedChars.length));
         selectedChars = shuffleArray(selectedChars);
       } else if (source === 'mix' && accountData.length > 0) {
