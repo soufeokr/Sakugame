@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="73">
+<meta name="saku-build" content="74">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=73" sizes="any">
+<link rel="icon" href="favicon.ico?v=74" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=73">
+<link rel="stylesheet" href="style.css?v=74">
 </head>
 <body>
 
@@ -928,7 +928,6 @@
           <div class="hc-side">
             <div class="br-log-wrap" id="hcRankWrap"><h3 id="hcRankTitle"><svg class="ic"><use href="#i-trophy"/></svg> Classement</h3><small class="hc-rank-hint">Every guess counts — fewest wins!</small><div class="br-log hc-log hc-cls" id="hcRank"><p style="text-align:center;color:var(--muted);">No guesses yet</p></div></div>
             <div class="br-log-wrap" id="hcLogWrap"><h3 id="hcLogTitle"><svg class="ic"><use href="#i-note"/></svg> Guesses</h3><div class="br-log hc-log" id="hcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
-            <div class="br-log-wrap" id="hcTopWrap" style="display: none;"><h3 id="hcTopTitle"><svg class="ic"><use href="#i-trophy"/></svg> Best guesses</h3><div class="br-log hc-log hc-top" id="hcTop"></div></div>
           </div>
         </div>
       </div>
@@ -1394,7 +1393,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=73', 'charanimes.js?v=73', 'animes.js?v=73'];
+        var files = ['characters.js?v=74', 'charanimes.js?v=74', 'animes.js?v=74'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1409,9 +1408,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=73"></script>
-  <script src="music.js?v=73"></script>
-  <script src="lang.js?v=73"></script>
-  <script src="app.js?v=73"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3b376d888a5d82a',t:'MTc4OTQzMTYxMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=74"></script>
+  <script src="music.js?v=74"></script>
+  <script src="lang.js?v=74"></script>
+  <script src="app.js?v=74"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3bc28b8287983cc',t:'MTc4OTUyMjc4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
