@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '79';
+    const SAKU_BUILD = '81';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1126,6 +1126,7 @@
         let kb = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
         if (kb < 60) kb = 0; // 📏 ignore tiny fluctuations (browser chrome show/hide)
         document.documentElement.style.setProperty('--kb', kb > 0 ? kb + 'px' : '0px');
+        if (document.body) document.body.classList.toggle('kb-open', kb > 0); // ⌨️ pin the chat input just above the keyboard
       };
       window.visualViewport.addEventListener('resize', sakuSyncKb);
       window.visualViewport.addEventListener('scroll', sakuSyncKb);
@@ -1355,6 +1356,7 @@
       if (sel) sel.value = g;
       try { modalGameChanged(); } catch (e) {}
       syncModalGameCards();
+      try { syncGamePickBtn(); } catch (e) {} // refresh the compact bar label
     }
     function syncModalGameCards() {
       const sel = document.getElementById('modalGameSelect');
@@ -1643,27 +1645,40 @@
     // 📱 compact game picker (phone): a small button opens a window listing all games
     const GAME_PICK_ORDER = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'];
     const GAME_PLAYERS_TXT = { guesswho: '2 players', battle: '3-8 players', race: '3-8 players', blur: '1-8 players', undercover: '3-8 players', hotcold: '2-6 players', codenames: '4-8 players' };
-    function openGamePickModal() {
+    let gamePickCtx = 'host'; // 'host' = create-room button · 'modal' = lobby ⚙️ settings bar
+    function openGamePickModal(mode) {
+      gamePickCtx = (mode === 'modal') ? 'modal' : 'host';
       const list = document.getElementById('gamePickList');
       if (!list) return;
-      const cur = (document.getElementById('gameSelect') || {}).value || 'guesswho';
+      const cur = gamePickCtx === 'modal'
+        ? ((currentRoom && currentRoom.game) || (document.getElementById('modalGameSelect') || {}).value || 'guesswho')
+        : ((document.getElementById('gameSelect') || {}).value || 'guesswho');
       list.innerHTML = '';
       GAME_PICK_ORDER.forEach(function (g) {
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'gpm-row' + (g === cur ? ' on' : '');
         b.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg><span class="gpm-name">' + (GAME_LABELS[g] || g) + '</span><small>' + GAME_PLAYERS_TXT[g] + '</small>';
-        b.onclick = function () { selectHostGame(g); closeGamePickModal(); };
+        b.onclick = function () {
+          if (gamePickCtx === 'modal') { try { modalCardGame(g); } catch (e) {} } else { selectHostGame(g); }
+          closeGamePickModal();
+        };
         list.appendChild(b);
       });
       document.getElementById('gamePickModal').classList.add('show');
     }
     function closeGamePickModal() { const m = document.getElementById('gamePickModal'); if (m) m.classList.remove('show'); }
-    function syncGamePickBtn() { // keep the phone button in sync with the current game
-      const lbl = document.getElementById('gamePickOpenLabel');
-      if (!lbl) return;
-      const g = (document.getElementById('gameSelect') || {}).value || 'guesswho';
-      lbl.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg> ' + (GAME_LABELS[g] || g) + ' <small>' + GAME_PLAYERS_TXT[g] + '</small>';
+    function syncGamePickBtn() { // keep BOTH compact picker buttons (create-room + lobby settings) in sync
+      const hl = document.getElementById('gamePickOpenLabel');
+      if (hl) {
+        const g = (document.getElementById('gameSelect') || {}).value || 'guesswho';
+        hl.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg> ' + (GAME_LABELS[g] || g) + ' <small>' + GAME_PLAYERS_TXT[g] + '</small>';
+      }
+      const ml = document.getElementById('modalGamePickOpenLabel');
+      if (ml) {
+        const gm = (currentRoom && currentRoom.game) || (document.getElementById('modalGameSelect') || {}).value || 'guesswho';
+        ml.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[gm] || 'gamepad') + '"/></svg> ' + (GAME_LABELS[gm] || gm) + ' <small>' + GAME_PLAYERS_TXT[gm] + '</small>';
+      }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncGamePickBtn); else syncGamePickBtn();
     function updateUcMaxPlayers() {
@@ -4671,6 +4686,7 @@
       const gsel = document.getElementById('modalGameSelect');
       if (gsel) gsel.value = game;
       syncModalGameCards();
+      try { syncGamePickBtn(); } catch (e) {} // refresh the compact bar label
       // 🏠 Room tab: exactly one player-count control per game
       document.getElementById('modalGwPlayersHint').style.display = game === 'guesswho' ? 'block' : 'none';
       const hcBox = document.getElementById('modalHcMaxBlock');

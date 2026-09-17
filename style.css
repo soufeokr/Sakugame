@@ -565,13 +565,16 @@
   #chatToggleBtn { position: fixed; right: 14px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; width: 54px; height: 54px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.4rem; display: none; align-items: center; justify-content: center; background: var(--accent); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
   #chatUnreadBadge { position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; border-radius: 12px; background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #0b0b15; }
   #chatRowBtn { display: none; } /* 📱 phone-only: the 💬 button joins the in-game bar (Detective Showdown) */
-  .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + var(--kb, 0px) + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
+  .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
   .chat-overlay.show { display: flex; }
+  /* ⌨️ phone keyboard open: the chat window hugs the keyboard — the typing space
+     sits JUST above it so you always see what you write */
+  body.kb-open .chat-overlay { bottom: calc(var(--kb, 0px) + env(safe-area-inset-bottom, 0px) + 8px); }
   .chat-overlay-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 2px solid #0f0f1a; flex-shrink: 0; }
   .chat-overlay-head h3 { color: var(--accent); font-size: 1rem; }
   .chat-overlay-close { background: var(--danger); width: 38px; height: 38px; min-height: 0; border-radius: 50%; font-size: 1rem; padding: 0; flex-shrink: 0; }
   @media (min-width: 901px) {
-    .chat-overlay { left: auto; right: 16px; top: auto; bottom: calc(126px + var(--kb, 0px) + env(safe-area-inset-bottom, 0px)); width: 400px; height: 62vh; }
+    .chat-overlay { left: auto; right: 16px; top: auto; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); width: 400px; height: 62vh; }
   }
 
   /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
@@ -890,7 +893,7 @@
     .uc-controls .btn-label { display: none; }
     /* 💬 joins the button row: same line, same size, pinned to the right edge */
     #chatToggleBtn { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); right: 12px; width: 48px; height: 48px; font-size: 1.25rem; }
-    .chat-overlay { bottom: calc(118px + var(--kb, 0px) + env(safe-area-inset-bottom, 0px)); }
+    .chat-overlay { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
     /* 💬🕵️ Detective Showdown bar: the chat button takes its share of the row's width,
        the old floating round button steps aside while that bar is on screen */
     .game-controls #chatRowBtn { display: flex; position: relative; }
@@ -925,8 +928,30 @@
     .modal-content { padding: 24px 16px; border-radius: 16px; }
     .avatar-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .interaction-buttons button { flex: 1; }
-    .winning-screen { padding: 20px 14px; max-height: 92vh; overflow-y: auto; width: 94%; }
-    .winner-card .char-img { width: 120px; height: 160px; }
+    /* 🏆 the winning screen FITS the phone — no scrolling needed */
+    .winning-screen { padding: 16px 12px 14px; max-height: calc(100svh - 20px); overflow-y: auto; width: min(94%, 420px); }
+    .winner-card { margin-bottom: 10px; }
+    .winner-card h2 { font-size: 1.5rem; margin-bottom: 5px; }
+    .winner-card .char-img { width: 92px; height: 123px; margin-bottom: 6px; border-width: 2px; }
+    #winningScreen .winner-card h3 { font-size: 1.05rem !important; margin-bottom: 2px !important; }
+    #winningScreen .winner-card p { margin-bottom: 2px; }
+    #winningScreen > h3 { font-size: 1rem !important; margin-bottom: 8px !important; }
+    .secrets-revealed { gap: 10px; margin-bottom: 10px; }
+    .secret-card { width: 104px; }
+    .secret-card .name { font-size: 0.76rem; padding: 6px 4px; }
+    .secret-card .player-label { font-size: 0.68rem; padding: 3px 6px; }
+    #winningScreen > div:last-child { gap: 10px !important; margin-top: 4px !important; }
+    #winningScreen button { padding: 10px 22px !important; font-size: 0.9rem !important; }
+
+    /* 🛋️ the lobby FITS the phone too — tighter blocks, players list scrolls inside */
+    #lobbyScreen .lobby-left { padding: 16px 14px 14px; }
+    #lobbyScreen .lobby-left h2 { font-size: 1.35rem; margin-bottom: 4px !important; }
+    #lobbyScreen .lobby-left p { font-size: 0.82rem; margin-bottom: 10px !important; }
+    #lobbyScreen .room-code { font-size: 1.5rem; letter-spacing: 3px; margin: 10px 0; padding: 10px; }
+    #lobbyScreen #playersList { max-height: 200px; overflow-y: auto; margin: 10px 0; }
+    #lobbyInfoBox { padding: 10px 12px !important; margin: 10px 0 !important; font-size: 0.85rem; }
+    .lobby-code-actions { margin-bottom: 8px; }
+    #lobbyScreen .lobby-cta { padding: 10px 16px; font-size: 0.95rem; }
 
     /* ----- lobby ----- */
     .player-card { padding: 10px; }
@@ -1056,9 +1081,14 @@
     #gamePickOpenBtn small { color: var(--muted); font-weight: 600; }
     #gamePickOpenBtn:hover { border-color: var(--accent); }
   }
-  @media (min-width: 901px) {
-    #gamePickModal { display: none !important; } /* phone-only window */
-  }
+  /* 🎮 lobby-settings game bar (⚙️ modal): the card grid retired in favor of the
+     compact picker button + list window — on phone AND PC */
+  #modalGamePick { display: none !important; }
+  #modalGamePickOpenBtn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 14px; border-radius: 14px; background: #14142a; border: 2px solid rgba(2,169,255,0.35); color: var(--accent); font-family: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+  #modalGamePickOpenBtn .ic { width: 20px; height: 20px; }
+  #modalGamePickOpenBtn .gpo-chev { color: var(--muted); font-size: 1.1rem; line-height: 1; }
+  #modalGamePickOpenBtn small { color: var(--muted); font-weight: 600; }
+  #modalGamePickOpenBtn:hover { border-color: var(--accent); }
 
   /* 🛋️ Lobby actions — slimmer & tidier: one prominent CTA (Ready/Start),
      the AFK/Leave pair side-by-side below it */
@@ -1249,6 +1279,7 @@
   @media (max-width: 600px) {
     #phoneTopBar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 1200; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 12px; background: rgba(13, 25, 54, 0.9); border-bottom: 1px solid rgba(2, 169, 255, 0.25); backdrop-filter: blur(6px); }
     body { padding-top: 54px; } /* reserve the strip's space — page-anchored controls (like the ⚙️ gear) stay clickable underneath */
+    .chat-overlay { top: calc(54px + env(safe-area-inset-top, 0px) + 10px); } /* 💬 never tucked under the top strip — close button fully visible */
     .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
     .tb-btn .ic { width: 20px; height: 20px; color: var(--accent); }
     .tb-btn:hover { border-color: var(--accent); }

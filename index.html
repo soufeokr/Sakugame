@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="79">
+<meta name="saku-build" content="81">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=79" sizes="any">
+<link rel="icon" href="favicon.ico?v=81" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=79">
+<link rel="stylesheet" href="style.css?v=81">
 </head>
 <body>
 
@@ -537,7 +537,7 @@
           <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;"><svg class="ic"><use href="#i-hourglass"/></svg> Waiting queue <small style="color: var(--muted); font-weight: 400;">— joins automatically when a seat opens</small></h3>
           <div class="players-list" id="queueList"></div>
         </div>
-        <div style="background: #0f0f1a; padding: 15px; border-radius: 10px; margin: 20px 0;">
+        <div style="background: #0f0f1a; padding: 15px; border-radius: 10px; margin: 20px 0;" id="lobbyInfoBox">
           <strong style="color: var(--accent);">Game:</strong> <span id="lobbyGameName">Detective Showdown</span><br>
           <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">Private</span><br>
           <strong style="color: var(--accent);">Players:</strong> <span id="lobbyPlayerCount">1/2</span>
@@ -970,6 +970,8 @@
         <div class="settings-section">
           <div class="input-group">
             <label>Switch the game <small style="color: var(--muted);">(everyone stays in the room)</small></label>
+            <!-- 🎮 compact game-selection bar (phone & PC): opens the list window -->
+            <button type="button" id="modalGamePickOpenBtn" onclick="openGamePickModal('modal')"><span id="modalGamePickOpenLabel"><svg class="ic"><use href="#i-gamepad"/></svg> Choose a game…</span><span class="gpo-chev">▾</span></button>
             <div class="game-pick-grid" id="modalGamePick">
               <div class="game-pick-card selected" data-game="guesswho" onclick="modalCardGame('guesswho')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
@@ -1433,7 +1435,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=79', 'charanimes.js?v=79', 'animes.js?v=79', 'nsfwdata.js?v=79'];
+        var files = ['characters.js?v=81', 'charanimes.js?v=81', 'animes.js?v=81', 'nsfwdata.js?v=81'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1448,9 +1450,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=79"></script>
-  <script src="music.js?v=79"></script>
-  <script src="lang.js?v=79"></script>
-  <script src="app.js?v=79"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c762f99d906aa1',t:'MTc4OTY0MDUxMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=81"></script>
+  <script src="music.js?v=81"></script>
+  <script src="lang.js?v=81"></script>
+  <script src="app.js?v=81"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c7ad735e48a65d',t:'MTc4OTY0MzU2NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
