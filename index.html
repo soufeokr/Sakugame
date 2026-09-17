@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="77">
+<meta name="saku-build" content="78">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=77" sizes="any">
+<link rel="icon" href="favicon.ico?v=78" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=77">
+<link rel="stylesheet" href="style.css?v=78">
 </head>
 <body>
 
@@ -542,10 +542,13 @@
           <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">Private</span><br>
           <strong style="color: var(--accent);">Players:</strong> <span id="lobbyPlayerCount">1/2</span>
         </div>
-        <button class="full success" id="readyBtn" onclick="toggleReady()">Ready</button>
-        <button class="full success" id="startGameBtn" onclick="hostStartGame()" style="display: none;"><svg class="ic"><use href="#i-gamepad"/></svg> START GAME</button>
-        <button class="full secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Go AFK (spectate)</span></button>
-        <button class="full danger" onclick="leaveRoom()">Leave Room</button>
+        <!-- 🛋️ slimmer actions: one prominent CTA, the AFK/Leave pair side-by-side -->
+        <button class="full success lobby-cta" id="readyBtn" onclick="toggleReady()">Ready</button>
+        <button class="full success lobby-cta" id="startGameBtn" onclick="hostStartGame()" style="display: none;"><svg class="ic"><use href="#i-gamepad"/></svg> START GAME</button>
+        <div class="lobby-btn-row">
+          <button class="secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Go AFK (spectate)</span></button>
+          <button class="danger" onclick="leaveRoom()"><svg class="ic"><use href="#i-door"/></svg> Leave Room</button>
+        </div>
       </div>
     </div>
   </div>
@@ -626,9 +629,10 @@
           <h3>All Characters <span id="remainingCount">(0 remaining)</span></h3>
           <div class="board" id="gameBoard"></div>
           <div class="game-controls">
-            <button class="secondary" onclick="toggleMyCharacter()" title="Show/Hide My Character"><svg class="ic"><use href="#i-eye"/></svg> <span class="btn-label">Show/Hide My Character</span></button>
-            <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span></button>
-            <button class="danger" onclick="returnToLobbyFromGame()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Return to Lobby</span></button>
+            <!-- 📱 phone: 3 slim rectangles spanning the width, small labels — the 1st flips Hide/Show -->
+            <button class="secondary" onclick="toggleMyCharacter()" title="Show/Hide My Character"><svg class="ic"><use href="#i-eye"/></svg> <span class="btn-label">Show/Hide My Character</span><span class="btn-label-phone" id="hideCharPhoneLabel">Hide</span></button>
+            <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span><span class="btn-label-phone">Guess</span></button>
+            <button class="danger" onclick="returnToLobbyFromGame()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Return to Lobby</span><span class="btn-label-phone">Leave</span></button>
           </div>
         </div>
       </div>
@@ -1428,7 +1432,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=77', 'charanimes.js?v=77', 'animes.js?v=77', 'nsfwdata.js?v=77'];
+        var files = ['characters.js?v=78', 'charanimes.js?v=78', 'animes.js?v=78', 'nsfwdata.js?v=78'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1443,9 +1447,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=77"></script>
-  <script src="music.js?v=77"></script>
-  <script src="lang.js?v=77"></script>
-  <script src="app.js?v=77"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c3d4959ca9e1c5',t:'MTc4OTYwMzIyMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=78"></script>
+  <script src="music.js?v=78"></script>
+  <script src="lang.js?v=78"></script>
+  <script src="app.js?v=78"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c71d28b84b92e0',t:'MTc4OTYzNzY1Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

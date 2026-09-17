@@ -261,6 +261,7 @@
   button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   button.full { width: 100%; margin-bottom: 10px; }
+  .btn-label-phone { display: none; } /* 📱 phone-only short label (the desktop .btn-label stays) */
   button.secondary { background: var(--accent2); }
   button.success { background: var(--success); }
   button.danger { background: var(--danger); }
@@ -875,9 +876,17 @@
            spread evenly across the whole screen width ----- */
     /* The right padding makes room for the 💬 chat button, so it sits IN the
        same full-width button row as the game buttons. */
-    .game-controls, .uc-controls { position: fixed; left: 0; right: 0; padding: 0 68px 0 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; gap: 8px; margin-top: 0; pointer-events: none; }
-    .game-controls button, .uc-controls button { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.5); flex-shrink: 0; pointer-events: auto; }
-    .game-controls .btn-label, .uc-controls .btn-label { display: none; }
+    /* 🕵️ Detective Showdown in-game bar (phone): 3 slim RECTANGLE buttons with
+       small text, spanning almost the whole width side by side */
+    .game-controls { position: fixed; left: 0; right: 0; padding: 0 10px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; display: flex; flex-direction: row; flex-wrap: nowrap; gap: 8px; margin-top: 0; }
+    .game-controls button { flex: 1; min-width: 0; height: 44px; min-height: 0; padding: 0 6px; border-radius: 10px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); white-space: nowrap; }
+    .game-controls button .ic { width: 16px; height: 16px; flex: none; }
+    .game-controls .btn-label { display: none; }
+    .game-controls .btn-label-phone { display: inline; font-weight: 700; }
+    /* 🤫 Undercover in-game bar: keeps the round icon buttons (2 buttons only) */
+    .uc-controls { position: fixed; left: 0; right: 0; padding: 0 68px 0 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; gap: 8px; margin-top: 0; pointer-events: none; }
+    .uc-controls button { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.5); flex-shrink: 0; pointer-events: auto; }
+    .uc-controls .btn-label { display: none; }
     /* 💬 joins the button row: same line, same size, pinned to the right edge */
     #chatToggleBtn { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); right: 12px; width: 48px; height: 48px; font-size: 1.25rem; }
     .chat-overlay { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
@@ -994,6 +1003,10 @@
   @media (min-width: 901px) {
     #authModal .modal-content { zoom: 1.18; }
     #usernameModal .modal-content { zoom: 1.1; }
+    /* 💻 PC only: bigger room-settings window — uniformly zoomed (same b64
+       proportions, no width-stretch); height is divided by the zoom so the
+       rendered window keeps its 88vh/820px size and never exceeds the screen */
+    #settingsModal .modal-content { zoom: 1.18; height: min(74.5vh, 695px); }
     #authModal #authProfileView .acct-pane,
     #usernameModal .acct-pane { height: clamp(240px, 36vh, 340px); }
     /* bottom-bar language picker: little square flag button, bottom-RIGHT, just left of the settings button */
@@ -1011,6 +1024,7 @@
   @media (min-width: 901px) and (min-height: 950px) {
     #authModal .modal-content { zoom: 1.38; }
     #usernameModal .modal-content { zoom: 1.2; }
+    #settingsModal .modal-content { zoom: 1.35; height: min(65.2vh, 607px); }
     #authModal #authProfileView .acct-pane,
     #usernameModal .acct-pane { height: clamp(280px, 32vh, 380px); }
   }
@@ -1036,6 +1050,13 @@
   @media (min-width: 901px) {
     #gamePickModal { display: none !important; } /* phone-only window */
   }
+
+  /* 🛋️ Lobby actions — slimmer & tidier: one prominent CTA (Ready/Start),
+     the AFK/Leave pair side-by-side below it */
+  #lobbyScreen .lobby-cta { padding: 11px 18px; font-size: 1rem; border-radius: 14px; }
+  .lobby-btn-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .lobby-btn-row button { flex: 1; min-width: 0; padding: 10px 8px; font-size: 0.85rem; border-radius: 12px; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .lobby-btn-row button .ic { width: 16px; height: 16px; flex: none; }
 
   /* 🚫 Content filter row (Settings → Account) + 🗑️ danger-zone button */
   .nsfw-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(90,150,230,0.22); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-size: 0.85rem; }

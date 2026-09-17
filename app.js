@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '77';
+    const SAKU_BUILD = '78';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -6406,6 +6406,12 @@
       setAvatarImg('opponentAvatar', (opponentId && currentRoom.players[opponentId]) ? currentRoom.players[opponentId].avatar : null);
       document.getElementById('myCharacterImg').src = mySecret.image || '';
       document.getElementById('myCharacterName').textContent = mySecret.name || '---';
+      // 🔄 fresh game: secret card visible again + phone label back to "Hide"
+      myCharacterHidden = false;
+      const myCharEl = document.getElementById('myCharacter');
+      if (myCharEl) myCharEl.classList.remove('hidden');
+      const hidePh = document.getElementById('hideCharPhoneLabel');
+      if (hidePh) hidePh.textContent = 'Hide';
       showScreen('gameScreen');
       setTimeout(() => { renderBoard(); updateTurnIndicator(); updateQuestionBox(); updateHistory(); }, 100);
     }
@@ -6454,10 +6460,12 @@
     }
 
     async function askQuestion() {
-      if (!currentRoom || currentRoom.currentTurn !== playerId) { showNotification("It's not your turn!"); return; }
+      if (!currentRoom || currentRoom.currentTurn !== playerId) { showNotification(t('It\'s not your turn!')); return; }
+      // 🕵️ ONE question per turn: never overwrite a question still waiting for an answer
+      if (currentRoom.currentQuestion) { showNotification(t('One question per turn — wait for the answer first.')); return; }
       const input = document.getElementById('questionInput');
       const question = input.value.trim();
-      if (!question) { showNotification('Please enter a question'); return; }
+      if (!question) { showNotification(t('Please enter a question')); return; }
       await database.ref('rooms/' + roomCode).update({
         currentQuestion: { text: question, askedBy: playerId, askerName: currentRoom.players[playerId].name, timestamp: Date.now() }
       });
@@ -6471,9 +6479,10 @@
       const historyItem = { question: question.text, answer: answer, askedBy: question.askerName, timestamp: Date.now() };
       const history = currentRoom.questionHistory ? [...currentRoom.questionHistory] : [];
       history.push(historyItem);
-      const players = Object.keys(currentRoom.players || {});
-      const nextPlayer = players.find(id => id !== playerId);
-      await database.ref('rooms/' + roomCode).update({ currentTurn: nextPlayer, currentQuestion: null, questionHistory: history });
+      // 🔄 ONE question per turn: once answered, the turn passes to the ANSWERER,
+      // who gets to ask next. (Before this fix the turn bounced back to the asker,
+      // so the same player could chain question after question.)
+      await database.ref('rooms/' + roomCode).update({ currentTurn: playerId, currentQuestion: null, questionHistory: history });
       touchActivity();
     }
 
@@ -6503,12 +6512,15 @@
       myCharacterHidden = !myCharacterHidden;
       const myChar = document.getElementById('myCharacter');
       if (myCharacterHidden) myChar.classList.add('hidden'); else myChar.classList.remove('hidden');
+      // 📱 the phone button flips its label: "Hide" while the character is shown, "Show" while hidden
+      const ph = document.getElementById('hideCharPhoneLabel');
+      if (ph) ph.textContent = myCharacterHidden ? 'Show' : 'Hide';
     }
 
     function startGuessing() {
       if (!currentRoom || currentRoom.currentTurn !== playerId) { showNotification("It's not your turn! You can only guess on your turn."); return; }
       guessMode = true;
-      document.getElementById('guessBtn').innerHTML = ic('x') + ' <span class="btn-label">Cancel Guess</span>';
+      document.getElementById('guessBtn').innerHTML = ic('x') + ' <span class="btn-label">Cancel Guess</span><span class="btn-label-phone">Cancel</span>';
       document.getElementById('guessBtn').onclick = cancelGuessingMode;
       showNotification('Click on a character to make your guess!');
       renderBoard();
@@ -6516,7 +6528,7 @@
 
     function cancelGuessingMode() {
       guessMode = false;
-      document.getElementById('guessBtn').innerHTML = ic('target') + ' <span class="btn-label">Make a Guess</span>';
+      document.getElementById('guessBtn').innerHTML = ic('target') + ' <span class="btn-label">Make a Guess</span><span class="btn-label-phone">Guess</span>';
       document.getElementById('guessBtn').onclick = startGuessing;
       renderBoard();
     }
