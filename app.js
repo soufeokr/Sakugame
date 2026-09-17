@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '81';
+    const SAKU_BUILD = '82';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1121,15 +1121,38 @@
     // The viewport meta uses interactive-widget=overlays-content: the keyboard
     // OVERLAYS the page instead of squishing it (no more whole-page jump). We
     // only lift the chat window above the keyboard via the --kb custom property.
+    // ============== 📱 VIRTUAL KEYBOARD (phone) ==============
+    // The viewport meta uses interactive-widget=overlays-content: the keyboard
+    // OVERLAYS the page instead of squishing it. The chat window is lifted so
+    // its typing row sits JUST above the keyboard, Discord-style.
+    function sakuKbMeasure() {
+      const kb = Math.max(0, window.innerHeight - (window.visualViewport ? window.visualViewport.height : window.innerHeight));
+      return kb > 60 ? kb : 0; // 📏 ignore tiny fluctuations (browser chrome show/hide)
+    }
+    function sakuKbApply() {
+      const kb = sakuKbMeasure();
+      document.documentElement.style.setProperty('--kb', kb > 0 ? kb + 'px' : '0px');
+      if (document.body) document.body.classList.toggle('kb-open', kb > 0);
+      // 📜 keep the LAST messages pinned right above the typing row while typing
+      if (kb > 0) { const c = document.getElementById('chatOverlayMessages'); if (c) c.scrollTop = c.scrollHeight; }
+    }
     if (window.visualViewport) {
-      const sakuSyncKb = function () {
-        let kb = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
-        if (kb < 60) kb = 0; // 📏 ignore tiny fluctuations (browser chrome show/hide)
-        document.documentElement.style.setProperty('--kb', kb > 0 ? kb + 'px' : '0px');
-        if (document.body) document.body.classList.toggle('kb-open', kb > 0); // ⌨️ pin the chat input just above the keyboard
-      };
-      window.visualViewport.addEventListener('resize', sakuSyncKb);
-      window.visualViewport.addEventListener('scroll', sakuSyncKb);
+      window.visualViewport.addEventListener('resize', sakuKbApply);
+      window.visualViewport.addEventListener('scroll', sakuKbApply);
+    }
+    // ⌨️ focus fallback: lift immediately when the chat input takes focus (phones
+    // only — PCs have no virtual keyboard), so the typing row is never covered
+    const sakuChatInpEl = document.getElementById('chatOverlayInput');
+    if (sakuChatInpEl) {
+      sakuChatInpEl.addEventListener('focus', function () {
+        if (!window.matchMedia('(max-width: 900px)').matches) return;
+        if (document.body) document.body.classList.add('kb-open');
+        setTimeout(sakuKbApply, 250);
+        setTimeout(function () { const c = document.getElementById('chatOverlayMessages'); if (c) c.scrollTop = c.scrollHeight; }, 400);
+      });
+      sakuChatInpEl.addEventListener('blur', function () {
+        setTimeout(function () { if (sakuKbMeasure() === 0 && document.body) document.body.classList.remove('kb-open'); }, 300);
+      });
     }
 
     // ============== 🚫 NSFW (18+) CONTENT FILTER ==============
