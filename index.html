@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="78">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
+<meta name="saku-build" content="79">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=78" sizes="any">
+<link rel="icon" href="favicon.ico?v=79" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=78">
+<link rel="stylesheet" href="style.css?v=79">
 </head>
 <body>
 
@@ -394,8 +394,8 @@
           <div class="input-group">
             <label>Room Visibility</label>
             <div class="radio-group">
-              <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div><svg class="ic"><use href="#i-lock"/></svg> Private</div><small style="color: var(--muted);">Code only</small></label>
-              <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div><small style="color: var(--muted);">Listed</small></label>
+              <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div><svg class="ic"><use href="#i-lock"/></svg> Private</div></label>
+              <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
           <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Detective Showdown is a head-to-head duel — <b>2 players</b>, always.</p>
@@ -404,13 +404,13 @@
             <input type="range" id="hostHcMaxSlider" min="2" max="6" value="4" oninput="updateHcMaxPlayers()">
             <div class="slider-label" style="margin-top: 12px;"><span>Guess mode</span></div>
             <div class="hc-mode-row">
-              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div><small style="color: var(--muted);">Everyone sees every proposal &amp; its score (3+ players)</small></label>
-              <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div><small style="color: var(--muted);">Each seeker sees ONLY their own — no peeking!</small></label>
+              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
+              <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
             </div>
             <div class="slider-label" style="margin-top: 12px;"><span>Ranking</span></div>
             <div class="hc-mode-row">
-              <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div><small style="color: var(--muted);">Players see the live points ranking</small></label>
-              <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div><small style="color: var(--muted);">Revealed only at match end</small></label>
+              <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
+              <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
             </div>
           </div>
           <div class="slider-container" id="hostMultiMaxBlock" style="display: none;">
@@ -429,17 +429,17 @@
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool</h3>
           <div class="input-group" id="hostPoolSrcGwGroup">
             <div class="radio-group">
-              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div><small style="color: var(--muted);">5000 famous characters — no AniList needed</small></label>
-              <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div><small style="color: var(--muted);">Players' synced AniList accounts</small></label>
-              <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div><small style="color: var(--muted);">Half generic, half favorites</small></label>
-              <label class="radio-option" id="hostSrcWatched" onclick="selectHostSource('watched')"><input type="radio" name="charsource" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div><small style="color: var(--muted);">Only from anime the synced accounts have watched</small></label>
+              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div></label>
+              <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div></label>
+              <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div></label>
+              <label class="radio-option" id="hostSrcWatched" onclick="selectHostSource('watched')"><input type="radio" name="charsource" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
             </div>
           </div>
           <!-- 👀🎲 Hot & Cold + Blur Guess: simplified pool — Random (full website pool) vs Watched (only anime the synced AniList accounts have seen) -->
           <div class="input-group" id="hostPoolSrcWatchGroup" style="display: none;">
             <div class="radio-group">
-              <label class="radio-option selected" id="hostPoolRandom" onclick="selectHostPool('random')"><input type="radio" name="pool" value="random" checked><div><svg class="ic"><use href="#i-dice"/></svg> Random</div><small style="color: var(--muted);">Every character &amp; cover on Sakugame</small></label>
-              <label class="radio-option" id="hostPoolWatched" onclick="selectHostPool('watched')"><input type="radio" name="pool" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div><small style="color: var(--muted);">Only from anime the synced accounts have watched</small></label>
+              <label class="radio-option selected" id="hostPoolRandom" onclick="selectHostPool('random')"><input type="radio" name="pool" value="random" checked><div><svg class="ic"><use href="#i-dice"/></svg> Random</div></label>
+              <label class="radio-option" id="hostPoolWatched" onclick="selectHostPool('watched')"><input type="radio" name="pool" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
             </div>
           </div>
         </div>
@@ -479,8 +479,8 @@
           <div class="input-group blur-only-settings" style="display: none;">
             <label>What to guess</label>
             <div class="radio-group">
-              <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div><small style="color: var(--muted);">blurred portraits</small></label>
-              <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div><small style="color: var(--muted);">blurred posters</small></label>
+              <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div></label>
+              <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div></label>
             </div>
           </div>
           <div class="slider-container blur-only-settings" style="display: none;">
@@ -546,7 +546,7 @@
         <button class="full success lobby-cta" id="readyBtn" onclick="toggleReady()">Ready</button>
         <button class="full success lobby-cta" id="startGameBtn" onclick="hostStartGame()" style="display: none;"><svg class="ic"><use href="#i-gamepad"/></svg> START GAME</button>
         <div class="lobby-btn-row">
-          <button class="secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Go AFK (spectate)</span></button>
+          <button class="secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Spectate</span></button>
           <button class="danger" onclick="leaveRoom()"><svg class="ic"><use href="#i-door"/></svg> Leave Room</button>
         </div>
       </div>
@@ -629,10 +629,11 @@
           <h3>All Characters <span id="remainingCount">(0 remaining)</span></h3>
           <div class="board" id="gameBoard"></div>
           <div class="game-controls">
-            <!-- 📱 phone: 3 slim rectangles spanning the width, small labels — the 1st flips Hide/Show -->
+            <!-- 📱 phone: slim rectangles spanning the width (chat button included), small labels — the 1st flips Hide/Show -->
             <button class="secondary" onclick="toggleMyCharacter()" title="Show/Hide My Character"><svg class="ic"><use href="#i-eye"/></svg> <span class="btn-label">Show/Hide My Character</span><span class="btn-label-phone" id="hideCharPhoneLabel">Hide</span></button>
             <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span><span class="btn-label-phone">Guess</span></button>
             <button class="danger" onclick="returnToLobbyFromGame()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Return to Lobby</span><span class="btn-label-phone">Leave</span></button>
+            <button class="secondary" id="chatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="chatUnreadBadgeRow"></span></button>
           </div>
         </div>
       </div>
@@ -1023,13 +1024,13 @@
             <!-- 🌡️ same Guess mode + Ranking toggles as the create-room screen -->
             <div class="slider-label" style="margin-top: 12px;"><span>Guess mode</span></div>
             <div class="hc-mode-row">
-              <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div><small style="color: var(--muted);">Everyone sees every proposal &amp; its score (3+ players)</small></label>
-              <label class="radio-option" id="modalHcModeIndividual" onclick="changeHcMode('individual')"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div><small style="color: var(--muted);">Each seeker sees ONLY their own — no peeking!</small></label>
+              <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
+              <label class="radio-option" id="modalHcModeIndividual" onclick="changeHcMode('individual')"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
             </div>
             <div class="slider-label" style="margin-top: 12px;"><span>Ranking</span></div>
             <div class="hc-mode-row">
-              <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div><small style="color: var(--muted);">Players see the live points ranking</small></label>
-              <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div><small style="color: var(--muted);">Revealed only at match end</small></label>
+              <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
+              <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
             </div>
           </div>
           <div class="slider-container" id="modalMultiMaxBlock" style="display: none;">
@@ -1432,7 +1433,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=78', 'charanimes.js?v=78', 'animes.js?v=78', 'nsfwdata.js?v=78'];
+        var files = ['characters.js?v=79', 'charanimes.js?v=79', 'animes.js?v=79', 'nsfwdata.js?v=79'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1447,9 +1448,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=78"></script>
-  <script src="music.js?v=78"></script>
-  <script src="lang.js?v=78"></script>
-  <script src="app.js?v=78"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c71d28b84b92e0',t:'MTc4OTYzNzY1Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=79"></script>
+  <script src="music.js?v=79"></script>
+  <script src="lang.js?v=79"></script>
+  <script src="app.js?v=79"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c762f99d906aa1',t:'MTc4OTY0MDUxMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

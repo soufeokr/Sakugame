@@ -564,13 +564,14 @@
   /* ===== Floating 💬 chat button + big chat window (phones: almost full screen, PC: side panel) ===== */
   #chatToggleBtn { position: fixed; right: 14px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; width: 54px; height: 54px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.4rem; display: none; align-items: center; justify-content: center; background: var(--accent); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
   #chatUnreadBadge { position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; border-radius: 12px; background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #0b0b15; }
-  .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
+  #chatRowBtn { display: none; } /* 📱 phone-only: the 💬 button joins the in-game bar (Detective Showdown) */
+  .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + var(--kb, 0px) + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
   .chat-overlay.show { display: flex; }
   .chat-overlay-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 2px solid #0f0f1a; flex-shrink: 0; }
   .chat-overlay-head h3 { color: var(--accent); font-size: 1rem; }
   .chat-overlay-close { background: var(--danger); width: 38px; height: 38px; min-height: 0; border-radius: 50%; font-size: 1rem; padding: 0; flex-shrink: 0; }
   @media (min-width: 901px) {
-    .chat-overlay { left: auto; right: 16px; top: auto; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); width: 400px; height: 62vh; }
+    .chat-overlay { left: auto; right: 16px; top: auto; bottom: calc(126px + var(--kb, 0px) + env(safe-area-inset-bottom, 0px)); width: 400px; height: 62vh; }
   }
 
   /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
@@ -889,7 +890,12 @@
     .uc-controls .btn-label { display: none; }
     /* 💬 joins the button row: same line, same size, pinned to the right edge */
     #chatToggleBtn { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); right: 12px; width: 48px; height: 48px; font-size: 1.25rem; }
-    .chat-overlay { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
+    .chat-overlay { bottom: calc(118px + var(--kb, 0px) + env(safe-area-inset-bottom, 0px)); }
+    /* 💬🕵️ Detective Showdown bar: the chat button takes its share of the row's width,
+       the old floating round button steps aside while that bar is on screen */
+    .game-controls #chatRowBtn { display: flex; position: relative; }
+    .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+    #gameScreen.active ~ #chatToggleBtn { display: none !important; }
     /* ----- multiplayer games + public rooms on phones ----- */
     .public-rooms-list { max-height: 300px; }
     .br-mysecret img { width: 46px; height: 62px; }
@@ -1007,6 +1013,8 @@
        proportions, no width-stretch); height is divided by the zoom so the
        rendered window keeps its 88vh/820px size and never exceeds the screen */
     #settingsModal .modal-content { zoom: 1.18; height: min(74.5vh, 695px); }
+    /* 🃏 the game-card icons stay the SAME rendered size as the create-room window (un-zoomed) */
+    #settingsModal .game-pick-img .ic { width: calc(2rem / 1.18); height: calc(2rem / 1.18); }
     #authModal #authProfileView .acct-pane,
     #usernameModal .acct-pane { height: clamp(240px, 36vh, 340px); }
     /* bottom-bar language picker: little square flag button, bottom-RIGHT, just left of the settings button */
@@ -1025,6 +1033,7 @@
     #authModal .modal-content { zoom: 1.38; }
     #usernameModal .modal-content { zoom: 1.2; }
     #settingsModal .modal-content { zoom: 1.35; height: min(65.2vh, 607px); }
+    #settingsModal .game-pick-img .ic { width: calc(2rem / 1.35); height: calc(2rem / 1.35); }
     #authModal #authProfileView .acct-pane,
     #usernameModal .acct-pane { height: clamp(280px, 32vh, 380px); }
   }

@@ -748,6 +748,7 @@ var I18N = {
   "Live feed": { fr: "Flux en direct", es: "En directo" },
   "Wait in the lobby instead": { fr: "Attendre dans le salon", es: "Esperar en el vestíbulo" },
   "Go AFK (spectate)": { fr: "Passer AFK (spectateur)", es: "Pasar AFK (espectador)" },
+  "Spectate": { fr: "Spectateur", es: "Espectador" },
   "I'm back!": { fr: "De retour !", es: "¡De vuelta!" },
   "Stay AFK (no auto-join)": { fr: "Rester AFK (sans auto-entrée)", es: "Quedarse AFK (sin auto-entrada)" },
   "Finish your game first — AFK parks you from the lobby.": { fr: "Terminez d'abord votre partie — AFK vous parque depuis le salon.", es: "Termina primero tu partida — AFK te aparca desde el vestíbulo." },

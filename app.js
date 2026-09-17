@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '78';
+    const SAKU_BUILD = '79';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1117,6 +1117,20 @@
       // The 🌐 public room list only streams while the join screen is open
       if (screenId === 'joinRoomScreen') startPublicRoomsWatch(); else stopPublicRoomsWatch();
     }
+    // ============== 📱 VIRTUAL KEYBOARD (phone) ==============
+    // The viewport meta uses interactive-widget=overlays-content: the keyboard
+    // OVERLAYS the page instead of squishing it (no more whole-page jump). We
+    // only lift the chat window above the keyboard via the --kb custom property.
+    if (window.visualViewport) {
+      const sakuSyncKb = function () {
+        let kb = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
+        if (kb < 60) kb = 0; // 📏 ignore tiny fluctuations (browser chrome show/hide)
+        document.documentElement.style.setProperty('--kb', kb > 0 ? kb + 'px' : '0px');
+      };
+      window.visualViewport.addEventListener('resize', sakuSyncKb);
+      window.visualViewport.addEventListener('scroll', sakuSyncKb);
+    }
+
     // ============== 🚫 NSFW (18+) CONTENT FILTER ==============
     // Toggle in Settings → Account (default ON). Hides adult characters & covers
     // via the id lists in nsfwdata.js (generated from AniList's isAdult flags).
@@ -2198,7 +2212,7 @@
       if (afkBtn) {
         const myEntry = queueList.find(q => q.id === playerId);
         const inLobbyNow = !currentRoom.state || currentRoom.state === 'lobby';
-        if (!imQueued && inLobbyNow) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('Go AFK (spectate)') : 'Go AFK (spectate)'; }
+        if (!imQueued && inLobbyNow) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('Spectate') : 'Spectate'; }
         else if (imQueued && myEntry && myEntry.away) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('I\'m back!') : 'I\'m back!'; }
         else if (imQueued && inLobbyNow) { afkBtn.style.display = 'block'; if (afkLabel) afkLabel.textContent = window.t ? t('Stay AFK (no auto-join)') : 'Stay AFK (no auto-join)'; }
         else afkBtn.style.display = 'none';
@@ -2504,9 +2518,10 @@
 
     function updateChatBadge() {
       const b = document.getElementById('chatUnreadBadge');
-      if (!b) return;
-      b.textContent = chatUnread > 0 ? String(chatUnread) : '';
-      b.style.display = chatUnread > 0 ? 'flex' : 'none';
+      if (b) { b.textContent = chatUnread > 0 ? String(chatUnread) : ''; b.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 📱 mirrored badge on the in-game bar's chat button (phone Detective Showdown)
+      const rb = document.getElementById('chatUnreadBadgeRow');
+      if (rb) { rb.textContent = chatUnread > 0 ? String(chatUnread) : ''; rb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
     }
     function toggleChatOverlay() {
       chatOverlayOpen = !chatOverlayOpen;
