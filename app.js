@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '82';
+    const SAKU_BUILD = '83';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1125,8 +1125,17 @@
     // The viewport meta uses interactive-widget=overlays-content: the keyboard
     // OVERLAYS the page instead of squishing it. The chat window is lifted so
     // its typing row sits JUST above the keyboard, Discord-style.
+    // ============== 📱 VIRTUAL KEYBOARD (phone) ==============
+    // The keyboard OVERLAYS the page (no squish) via the viewport meta AND — on
+    // Chromium/Brave (incl. the installed webapp, where visualViewport may never
+    // report the keyboard) — the VirtualKeyboard API, which also feeds the
+    // env(keyboard-inset-height) CSS fallback. The chat window is lifted so its
+    // typing row sits JUST above the keyboard, Discord-style.
+    try { if (navigator.virtualKeyboard) navigator.virtualKeyboard.overlaysContent = true; } catch (e) {}
     function sakuKbMeasure() {
-      const kb = Math.max(0, window.innerHeight - (window.visualViewport ? window.visualViewport.height : window.innerHeight));
+      let kb = 0;
+      try { if (window.visualViewport) kb = Math.max(0, window.innerHeight - window.visualViewport.height); } catch (e) {}
+      try { if (navigator.virtualKeyboard && navigator.virtualKeyboard.boundingRect) kb = Math.max(kb, navigator.virtualKeyboard.boundingRect.height); } catch (e) {}
       return kb > 60 ? kb : 0; // 📏 ignore tiny fluctuations (browser chrome show/hide)
     }
     function sakuKbApply() {
@@ -1140,6 +1149,7 @@
       window.visualViewport.addEventListener('resize', sakuKbApply);
       window.visualViewport.addEventListener('scroll', sakuKbApply);
     }
+    try { if (navigator.virtualKeyboard) navigator.virtualKeyboard.addEventListener('geometrychange', sakuKbApply); } catch (e) {}
     // ⌨️ focus fallback: lift immediately when the chat input takes focus (phones
     // only — PCs have no virtual keyboard), so the typing row is never covered
     const sakuChatInpEl = document.getElementById('chatOverlayInput');
@@ -1148,7 +1158,8 @@
         if (!window.matchMedia('(max-width: 900px)').matches) return;
         if (document.body) document.body.classList.add('kb-open');
         setTimeout(sakuKbApply, 250);
-        setTimeout(function () { const c = document.getElementById('chatOverlayMessages'); if (c) c.scrollTop = c.scrollHeight; }, 400);
+        setTimeout(sakuKbApply, 600); // ⌨️ keyboard fully open by then — final exact placement
+        setTimeout(function () { const c = document.getElementById('chatOverlayMessages'); if (c) c.scrollTop = c.scrollHeight; }, 650);
       });
       sakuChatInpEl.addEventListener('blur', function () {
         setTimeout(function () { if (sakuKbMeasure() === 0 && document.body) document.body.classList.remove('kb-open'); }, 300);

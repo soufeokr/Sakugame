@@ -569,8 +569,9 @@
   .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
   .chat-overlay.show { display: flex; }
   /* ⌨️ phone keyboard open: the chat window hugs the keyboard — the typing space
-     sits JUST above it so you always see what you write */
-  body.kb-open .chat-overlay { bottom: calc(var(--kb, 0px) + env(safe-area-inset-bottom, 0px) + 8px); }
+     sits JUST above it so you always see what you write. Three independent height
+     sources (JS --kb, Chromium's env(keyboard-inset-height)) — whichever is taller wins */
+  body.kb-open .chat-overlay { bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); }
   .chat-overlay-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 2px solid #0f0f1a; flex-shrink: 0; }
   .chat-overlay-head h3 { color: var(--accent); font-size: 1rem; }
   .chat-overlay-close { background: var(--danger); width: 38px; height: 38px; min-height: 0; border-radius: 50%; font-size: 1rem; padding: 0; flex-shrink: 0; }
