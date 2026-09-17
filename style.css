@@ -1015,6 +1015,28 @@
     #usernameModal .acct-pane { height: clamp(280px, 32vh, 380px); }
   }
 
+  /* 📱 compact game picker (phone): small button + selection window — saves a
+     full grid of screen space. PC keeps the classic card grid. */
+  #gamePickOpenBtn { display: none; }
+  .gpm-row { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 8px; padding: 12px 14px; border-radius: 12px; background: #14142a; border: 2px solid rgba(255,255,255,0.07); color: var(--text, #eee); font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; text-align: left; transition: all 0.15s; }
+  .gpm-row:last-child { margin-bottom: 0; }
+  .gpm-row:hover { border-color: rgba(2,169,255,0.6); transform: translateY(-1px); }
+  .gpm-row.on { border-color: var(--accent); background: rgba(2,169,255,0.12); }
+  .gpm-row .ic { width: 22px; height: 22px; color: var(--accent); flex: none; }
+  .gpm-row .gpm-name { flex: 1; }
+  .gpm-row small { color: var(--muted); font-weight: 600; }
+  @media (max-width: 900px) {
+    #hostGamePick { display: none; }
+    #gamePickOpenBtn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 14px; border-radius: 14px; background: #14142a; border: 2px solid rgba(2,169,255,0.35); color: var(--accent); font-family: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+    #gamePickOpenBtn .ic { width: 20px; height: 20px; }
+    #gamePickOpenBtn .gpo-chev { color: var(--muted); font-size: 1.1rem; line-height: 1; }
+    #gamePickOpenBtn small { color: var(--muted); font-weight: 600; }
+    #gamePickOpenBtn:hover { border-color: var(--accent); }
+  }
+  @media (min-width: 901px) {
+    #gamePickModal { display: none !important; } /* phone-only window */
+  }
+
   /* 🚫 Content filter row (Settings → Account) + 🗑️ danger-zone button */
   .nsfw-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(90,150,230,0.22); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-size: 0.85rem; }
   .nsfw-row input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex: none; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="saku-build" content="76">
+<meta name="saku-build" content="77">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=76" sizes="any">
+<link rel="icon" href="favicon.ico?v=77" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=76">
+<link rel="stylesheet" href="style.css?v=77">
 </head>
 <body>
 
@@ -388,6 +388,8 @@
               </div>
             </div>
             <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Detective Showdown (2 players)</option><option value="battle">Detective Royale (3-8 players)</option><option value="race">Wanted! (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Cold Case (2-6 players)</option><option value="codenames">Ninja Scrolls (4-8 players)</option></select>
+            <!-- 📱 phone only: compact game picker — opens the selection window -->
+            <button type="button" id="gamePickOpenBtn" onclick="openGamePickModal()"><span id="gamePickOpenLabel"><svg class="ic"><use href="#i-gamepad"/></svg> Choose a game…</span><span class="gpo-chev">▾</span></button>
           </div>
           <div class="input-group">
             <label>Room Visibility</label>
@@ -1135,6 +1137,15 @@
     </div>
   </div>
 
+  <!-- 📱 phone game picker window -->
+  <div class="modal" id="gamePickModal" style="z-index: 1260;">
+    <div class="modal-content gpm-box">
+      <div class="modal-close" onclick="closeGamePickModal()">×</div>
+      <h2><svg class="ic"><use href="#i-gamepad"/></svg> Choose a Game</h2>
+      <div id="gamePickList"></div>
+    </div>
+  </div>
+
   <!-- 🗑️ delete account — final confirmation, password required (GDPR) -->
   <div class="modal" id="deleteAccountModal" style="z-index: 1310;">
     <div class="modal-content">
@@ -1417,7 +1428,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=76', 'charanimes.js?v=76', 'animes.js?v=76', 'nsfwdata.js?v=76'];
+        var files = ['characters.js?v=77', 'charanimes.js?v=77', 'animes.js?v=77', 'nsfwdata.js?v=77'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1432,9 +1443,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=76"></script>
-  <script src="music.js?v=76"></script>
-  <script src="lang.js?v=76"></script>
-  <script src="app.js?v=76"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c3c014096cb97c',t:'MTc4OTYwMjM4NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=77"></script>
+  <script src="music.js?v=77"></script>
+  <script src="lang.js?v=77"></script>
+  <script src="app.js?v=77"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c3d4959ca9e1c5',t:'MTc4OTYwMzIyMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

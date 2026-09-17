@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '76';
+    const SAKU_BUILD = '77';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1624,7 +1624,34 @@
               ? 'Two teams face a 5×5 grid of characters. Each SPYMASTER sees the secret colors and gives ONE word + a number; their team taps that many cards. Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
               : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
       }
+      try { syncGamePickBtn(); } catch (e) {} // keep the 📱 picker button synced with the selection
     }
+    // 📱 compact game picker (phone): a small button opens a window listing all games
+    const GAME_PICK_ORDER = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'];
+    const GAME_PLAYERS_TXT = { guesswho: '2 players', battle: '3-8 players', race: '3-8 players', blur: '1-8 players', undercover: '3-8 players', hotcold: '2-6 players', codenames: '4-8 players' };
+    function openGamePickModal() {
+      const list = document.getElementById('gamePickList');
+      if (!list) return;
+      const cur = (document.getElementById('gameSelect') || {}).value || 'guesswho';
+      list.innerHTML = '';
+      GAME_PICK_ORDER.forEach(function (g) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'gpm-row' + (g === cur ? ' on' : '');
+        b.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg><span class="gpm-name">' + (GAME_LABELS[g] || g) + '</span><small>' + GAME_PLAYERS_TXT[g] + '</small>';
+        b.onclick = function () { selectHostGame(g); closeGamePickModal(); };
+        list.appendChild(b);
+      });
+      document.getElementById('gamePickModal').classList.add('show');
+    }
+    function closeGamePickModal() { const m = document.getElementById('gamePickModal'); if (m) m.classList.remove('show'); }
+    function syncGamePickBtn() { // keep the phone button in sync with the current game
+      const lbl = document.getElementById('gamePickOpenLabel');
+      if (!lbl) return;
+      const g = (document.getElementById('gameSelect') || {}).value || 'guesswho';
+      lbl.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg> ' + (GAME_LABELS[g] || g) + ' <small>' + GAME_PLAYERS_TXT[g] + '</small>';
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncGamePickBtn); else syncGamePickBtn();
     function updateUcMaxPlayers() {
       ucMaxPlayers = parseInt(document.getElementById('hostUcMaxSlider').value);
       document.getElementById('hostUcMaxValue').textContent = ucMaxPlayers;
