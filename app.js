@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '86';
+    const SAKU_BUILD = '87';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -124,7 +124,7 @@
       img.replaceWith(d);
     }
     function htCharReal(name, extra) {
-      const c = HT_POOL.find(function (x) { return x.name === name; }) || {};
+      const c = HT_POOL.find(function (x) { return x.name === name; }) || HT_POOL.find(function (x) { return x.al && x.al.indexOf(name) >= 0; }) || {}; // fallback: known aliases (e.g. "Roronoa Zoro" → Zoro Roronoa) keep the photo working
       const face = c.image
         ? '<img class="mk-photo" src="' + c.image + '" alt="" loading="lazy" data-l="' + name[0] + '" onerror="htImgFail(this)">'
         : '<div class="mk-face">' + escapeHtml(name[0]) + '</div>';
@@ -155,7 +155,7 @@
       const img = c.image ? '<img class="mk-hc-img" src="' + c.image + '" alt="" loading="lazy" data-l="' + escapeHtml(name[0]) + '" onerror="htImgFail(this)">' : '<div class="mk-hc-img">' + escapeHtml(name[0]) + '</div>';
       return '<div class="mk-hc-row">' + img + '<div class="mk-hc-name">' + escapeHtml(name) + '</div><div class="mk-hc-num ' + cls + '">' + score + '</div></div>';
     }
-    const HT_CN_NAMES10 = ['Levi', 'Roronoa Zoro', 'Naruto Uzumaki', 'Eren Yeager', 'Mikasa Ackerman', 'Ichigo Kurosaki', 'Rem', 'Saitama', 'Light Yagami', 'Usagi Tsukino']; // 🎯 10 DISTINCT cards + genuine sword-fighters for the demo clue ("sword, 2" → Levi & Zoro)
+    const HT_CN_NAMES10 = ['Levi', 'Zoro Roronoa', 'Naruto Uzumaki', 'Eren Yeager', 'Mikasa Ackerman', 'Ichigo Kurosaki', 'Rem', 'Saitama', 'Light Yagami', 'Usagi Tsukino']; // 🎯 10 DISTINCT cards + genuine sword-fighters for the demo clue ("sword, 2" → Levi & Zoro) — exact AniList pool names so every card carries its photo
     function htCnBoard(clsFor) { // Ninja Scrolls' real 5×5 card board
       return '<div class="mk-cn">' + HT_CN_NAMES10.map(function (n, i) { return htCharReal(n, clsFor ? (clsFor(i) || '') : ''); }).join('') + '</div>';
     }
@@ -1215,7 +1215,7 @@
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
     const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen' };
-    const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'cnTeamsScreen', 'spectateScreen', 'selectionScreen'];
+    const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
     let R_fromRouter = false;  // screen change came from a route render — don't push history
@@ -1958,7 +1958,8 @@
         purgeDisconnectedPlayers();
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         const isUcRoom = currentRoom.game === 'undercover';
-        if (currentRoom.state === 'lobby') { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('hcEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
+        // 🥷🎴 legacy 'teams' state = just the merged Ninja Scrolls lobby now
+        if (currentRoom.state === 'lobby' || (currentRoom.game === 'codenames' && currentRoom.state === 'teams')) { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('hcEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
         // 👀 Queued visitors auto-SPECTATE the live game (public info only);
         // an `away` queue entry parks in the lobby instead (never promoted).
         if (!meSeated) {
@@ -2017,11 +2018,8 @@
           }
         } else if (currentRoom.game === 'codenames') {
           const cn = currentRoom.cn || {};
-          if (currentRoom.state === 'teams') {
-            if (!document.getElementById('cnTeamsScreen').classList.contains('active')) showScreen('cnTeamsScreen');
-            renderCnTeams();
-            if (isHost) cnPruneTeams();
-          }
+          // 🥷🎴 no separate setup screen any more — the teams board lives INSIDE
+          // the lobby (updateLobby → renderCnTeams), so nothing to switch here
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             const meP = (currentRoom.players || {})[playerId] || {};
             const participates = cn.gameId && meP.outInGame !== cn.gameId && !!cnTeamOf(playerId);
@@ -2207,6 +2205,12 @@
       if (!currentRoom) return;
       const playersList = document.getElementById('playersList');
       playersList.innerHTML = '';
+      // 🥷🎴 SPECIAL Ninja Scrolls lobby: the ready-list is REPLACED by the teams
+      // board (everyone is a spectator by default — teams + bench tell the story)
+      const isCnLobby = currentRoom.game === 'codenames';
+      const cnBox = document.getElementById('lobbyCnBox');
+      if (cnBox) cnBox.style.display = isCnLobby ? 'block' : 'none';
+      playersList.style.display = isCnLobby ? 'none' : '';
       // real players only (skip transient disconnect-marker leftovers)
       const lobbyPlayers = Object.values(currentRoom.players || {}).filter(pl => pl && pl.name);
       lobbyPlayers.forEach(player => {
@@ -2259,7 +2263,9 @@
       const isBlurGame = currentRoom.game === 'blur';
       const isHcGame = currentRoom.game === 'hotcold'; // 🔥 2-6 seats (multiplayer rework)
       const isCnGame = currentRoom.game === 'codenames'; // 🗝 4-8 (2+ per team)
-      const canStart = isCnGame ? (allReady && playerCount >= 4) : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
+      // 🗝 Ninja Scrolls: the START button appears as soon as the TEAMS are
+      // valid — un-teamed players are spectators (never blockers), joining = ready
+      const canStart = isCnGame ? cnTeamsGate().ok : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
       // My own "you're waiting" banner + hide Ready while queued
       const qBanner = document.getElementById('queueBanner');
@@ -2270,14 +2276,20 @@
         const myAway = !!(queueList[myQ] && queueList[myQ].away);
         if (myAway) qBanner.innerHTML = ic('eye') + ' <b>You are parked AFK</b> — spectating only, you will NOT auto-join the next seat.';
         else {
-          const why = currentRoom.state === 'lobby' ? 'the room is full — waiting for a free seat' : 'a game is in progress';
-          qBanner.innerHTML = ic('hourglass') + ' <b>You are #' + (myQ + 1) + ' in the queue</b> — ' + why + '. You\'ll jump in automatically for the next game!';
+          if (isCnLobby) { // 🥷🎴 never auto-seated — your own tap only
+            qBanner.innerHTML = ic('hourglass') + ' <b>You are #' + (myQ + 1) + ' in the queue</b> — spectating for now. Join a team below to grab a seat & play!';
+          } else {
+            const why = currentRoom.state === 'lobby' ? 'the room is full — waiting for a free seat' : 'a game is in progress';
+            qBanner.innerHTML = ic('hourglass') + ' <b>You are #' + (myQ + 1) + ' in the queue</b> — ' + why + '. You\'ll jump in automatically for the next game!';
+          }
         }
         if (readyBtn) readyBtn.style.display = 'none';
       } else {
         qBanner.style.display = 'none';
         if (readyBtn) readyBtn.style.display = 'block';
       }
+      // 🥷🎴 no Ready button in the merged CN lobby — joining a team IS your ready
+      if (readyBtn && isCnLobby) readyBtn.style.display = 'none';
       // 👀 AFK/spectate toggle: seated → park AFK (from the lobby only);
       // queued → "I'm back" (away) or "park AFK" (auto-join on)
       const afkBtn = document.getElementById('afkBtn');
@@ -2293,7 +2305,7 @@
       // Queue section (visible to everyone, host can kick from the queue)
       const qSection = document.getElementById('queueSection');
       const qList = document.getElementById('queueList');
-      if (queueList.length === 0) { qSection.style.display = 'none'; }
+      if (queueList.length === 0 || isCnLobby) { qSection.style.display = 'none'; } // 🥷🎴 CN: one shared spectator bench instead
       else {
         qSection.style.display = 'block';
         // 🥷🎴 in Ninja Scrolls the queue never auto-seats — it spectates until setup
@@ -2332,6 +2344,8 @@
           qList.appendChild(card);
         });
       }
+      // 🥷🎴 SPECIAL Ninja Scrolls lobby: the teams board lives HERE (same screen)
+      if (isCnLobby) { renderCnTeams(); if (isHost) cnPruneTeams(); }
     }
 
     // Remove someone from the queue (host only)
@@ -4004,6 +4018,10 @@
     function cnPushLog(k, txt) { try { database.ref('rooms/' + roomCode + '/cn/log').push({ k: k, txt: txt, ts: Date.now() }); } catch (e) {} }
 
     // ---- team setup (state 'teams') ----
+    // 🥷🎴 the special merged lobby: the team setup is open while the room sits in
+    // 'lobby' (current flow) — legacy rooms created via cnOpenTeams use 'teams'
+    function cnInSetup() { return !!currentRoom && currentRoom.game === 'codenames' && (currentRoom.state === 'lobby' || currentRoom.state === 'teams'); }
+
     async function cnOpenTeams() {
       if (!isHost || !currentRoom || currentRoom.state !== 'lobby') return;
       await database.ref('rooms/' + roomCode + '/cn').set({ gameId: Date.now(), teams: {} });
@@ -4024,7 +4042,7 @@
       return { ok: true, msg: tt('Teams are ready — the host can deal!') + (spect ? ' ' + tt('(others spectate 👀)') : '') };
     }
     async function cnSetTeam(pid, team) {
-      if (!currentRoom || !roomCode || currentRoom.state !== 'teams') return;
+      if (!currentRoom || !roomCode || !cnInSetup()) return;
       if (pid !== playerId && !isHost) return;                    // host moves anyone, players only move themselves
       if (team && CN_TEAMS.indexOf(team) === -1) return;
       const upd = {};
@@ -4060,7 +4078,7 @@
     function cnJoinTeam(team) { cnSetTeam(playerId, team); }
     function cnMove(pid, team) { cnSetTeam(pid, team); }          // host chips
     async function cnSetSpy(team, pid) {
-      if (!currentRoom || currentRoom.state !== 'teams' || CN_TEAMS.indexOf(team) === -1) return;
+      if (!currentRoom || !cnInSetup() || CN_TEAMS.indexOf(team) === -1) return;
       const teams = cnTeams();
       if (pid !== null && (teams[team].members.indexOf(pid) === -1 || teams[team].spy === pid)) return;
       // the host, the player themself, or the current Ninja may reassign the role (pid null = demote)
@@ -4069,21 +4087,17 @@
       touchActivity();
     }
     async function cnRandomTeams() {
-      if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
-      const pids = shuffleArray(Object.keys(currentRoom.players || {}));
-      if (pids.length < 4) { showNotification(window.t ? t('Ninja Scrolls needs at least 4 players (2+ per team)!') : 'Ninja Scrolls needs at least 4 players (2+ per team)!'); return; }
+      if (!isHost || !currentRoom || !cnInSetup()) return;
+      // 🥷🎴 shuffle only people who CHOSE to play — spectators by default are
+      // never team-forced (not even by the host's shuffle)
+      const both = cnTeams();
+      const pids = shuffleArray([].concat(both.red.members, both.blue.members));
+      if (pids.length < 4) { showNotification(window.t ? t('Ninja Scrolls needs at least 4 players in teams (2+ per team)!') : 'Ninja Scrolls needs at least 4 players in teams (2+ per team)!'); return; }
       const halves = [[], []];
       pids.forEach((p, i) => halves[i % 2].push(p));
       if (Math.random() < 0.5) halves.reverse(); // which half lands in RED is random too
       const mk = (arr) => { const m = {}; arr.forEach(p => { m[p] = true; }); return { spy: arr[0], members: m }; };
       await database.ref('rooms/' + roomCode + '/cn/teams').set({ red: mk(halves[0]), blue: mk(halves[1]) });
-      touchActivity();
-    }
-    async function cnBackToLobbyFromTeams() {
-      if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
-      const upd = { state: 'lobby', cn: null };
-      Object.keys(currentRoom.players || {}).forEach(pid => { upd['players/' + pid + '/ready'] = false; }); // team=ready flags reset on cancel
-      await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
     }
     // Remove vanished players from rosters (+ hand their key to the next member)
@@ -4170,7 +4184,7 @@
         : (window.t ? t('🔵 BLUE starts (9 agents) — 🔴 RED has 8!') : '🔵 BLUE starts (9 agents) — 🔴 RED has 8!')));
     }
     async function cnStartGame() {
-      if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
+      if (!isHost || !currentRoom || !cnInSetup()) return;
       const gate = cnTeamsGate();
       if (!gate.ok) { if (gate.msg) showNotification(gate.msg); return; }
       await cnDeal();
@@ -4415,8 +4429,6 @@
       document.getElementById('cnTeamsStatus').textContent = gate.msg;
       document.getElementById('cnTeamsStatus').className = 'selection-status ' + (gate.ok ? 'ready' : 'waiting');
       const rb = document.getElementById('cnRandomBtn'); if (rb) rb.style.display = isHost ? 'inline-block' : 'none';
-      const sb = document.getElementById('cnStartBtn'); if (sb) { sb.style.display = isHost ? 'block' : 'none'; sb.disabled = !gate.ok; }
-      const bb = document.getElementById('cnBackLobbyBtn'); if (bb) bb.style.display = isHost ? 'inline-block' : 'none';
     }
 
     // ---- live game screen ----
@@ -6315,10 +6327,11 @@
         return;
       }
       if (g === 'codenames') {
-        if (playerCount < 4) { showNotification('Ninja Scrolls needs at least 4 players (2+ per team)!'); return; }
-        if (!allReady) { showNotification('All players must be ready!'); return; }
+        // 🥷🎴 merged special lobby: teams already picked on THIS screen — just deal
+        const gate = cnTeamsGate();
+        if (!gate.ok) { showNotification(gate.msg || 'Ninja Scrolls needs at least 4 players in teams (2+ per team)!'); return; }
         touchActivity();
-        await cnOpenTeams();
+        await cnStartGame();
         return;
       }
       if (g === 'blur') {

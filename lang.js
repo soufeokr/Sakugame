@@ -56,6 +56,7 @@ var I18N = {
   "spectating — pick a team when the setup opens": { fr: "spectateur — choisissez une équipe quand la préparation s'ouvre", es: "observando — elige un equipo cuando se abra la preparación" },
   "— spectators: pick a team when the setup opens": { fr: "— spectateurs : choisissez une équipe quand la préparation s'ouvre", es: "— espectadores: elige un equipo cuando se abra la preparación" },
   "spectating": { fr: "spectateur", es: "observando" },
+  "spectating for now. Join a team below to grab a seat & play!": { fr: "en spectateur pour l'instant. Rejoins une équipe ci-dessous pour prendre une place et jouer !", es: "observando por ahora. ¡Únete a un equipo abajo para tomar asiento y jugar!" },
   "Each team needs a Ninja — tap the 🔑 next to a teammate!": { fr: "Chaque équipe a besoin d'un Ninja — touche la 🔑 à côté d'un coéquipier !", es: "¡Cada equipo necesita un Ninja — pulsa la 🔑 junto a un compañero!" },
   "Teams are ready — the host can deal!": { fr: "Les équipes sont prêtes — l'hôte peut distribuer !", es: "¡Los equipos están listos — el anfitrión puede repartir!" },
   "Not enough characters in the pool for a 5×5 board!": { fr: "Pas assez de personnages dans la réserve pour un plateau 5×5 !", es: "¡No hay suficientes personajes para un tablero 5×5!" },
