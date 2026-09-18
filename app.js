@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '84';
+    const SAKU_BUILD = '85';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -155,7 +155,7 @@
       const img = c.image ? '<img class="mk-hc-img" src="' + c.image + '" alt="" loading="lazy" data-l="' + escapeHtml(name[0]) + '" onerror="htImgFail(this)">' : '<div class="mk-hc-img">' + escapeHtml(name[0]) + '</div>';
       return '<div class="mk-hc-row">' + img + '<div class="mk-hc-name">' + escapeHtml(name) + '</div><div class="mk-hc-num ' + cls + '">' + score + '</div></div>';
     }
-    const HT_CN_NAMES10 = HT_NAMES.concat(HT_NAMES.slice(0, 2));
+    const HT_CN_NAMES10 = ['Levi', 'Roronoa Zoro', 'Naruto Uzumaki', 'Eren Yeager', 'Mikasa Ackerman', 'Ichigo Kurosaki', 'Rem', 'Saitama', 'Light Yagami', 'Usagi Tsukino']; // 🎯 10 DISTINCT cards + genuine sword-fighters for the demo clue ("sword, 2" → Levi & Zoro)
     function htCnBoard(clsFor) { // Ninja Scrolls' real 5×5 card board
       return '<div class="mk-cn">' + HT_CN_NAMES10.map(function (n, i) { return htCharReal(n, clsFor ? (clsFor(i) || '') : ''); }).join('') + '</div>';
     }
@@ -226,12 +226,12 @@
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]},
       codenames: { title: 'Ninja Scrolls', icon: 'key', players: '4-8 players', slides: [
-        { t: 'Two teams, 25 characters', d: 'Split into RED and BLUE (2+ each). A 5×5 grid of anime characters is dealt; each card secretly belongs to a team, to the neutral bystanders… or to the 💀 assassin. Only the two SPYMASTERS see the color key.',
-          s: htScene(htBadges([['🔴 0/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a FIELD AGENT — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 5×5 board — names only, all colors hidden.</div>') },
-        { t: 'One word + one number', d: 'On your team\'s turn its spymaster gives ONE word and a count — "fire, 2" — pointing at that many characters. Teammates tap up to that many cards. Every correct pick keeps the turn alive!',
-          s: htScene(htBadges([['🔴 2/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">Clue: 🔥 "fire, 2" — tap up to 2 cards!</div>' + htCnBoard(function (i) { return [0, 3].indexOf(i) >= 0 ? 'rev-red' : ''; }) + '<div class="mk-note">Tapped cards reveal RED for everyone at the table.</div>') },
+        { t: 'Two teams, 25 characters', d: 'Split into RED and BLUE (2+ each). A 5×5 grid of anime characters is dealt; each card secretly belongs to a team, to the neutral bystanders… or to the 💀 assassin. Only the two NINJAS see the color key.',
+          s: htScene(htBadges([['🔴 0/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a SHOGUN — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 5×5 board — names only, all colors hidden.</div>') },
+        { t: 'One word + one number', d: 'On your team\'s turn its Ninja gives ONE word and a count — "sword, 2" — pointing at that many characters. Teammates tap up to that many cards. Every correct pick keeps the turn alive!',
+          s: htScene(htBadges([['🔴 2/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">Clue: ⚔ "sword, 2" — tap up to 2 cards!</div>' + htCnBoard(function (i) { return [0, 1].indexOf(i) >= 0 ? 'rev-red' : ''; }) + '<div class="mk-note">Levi & Zoro live by the sword — that\'s your RED pair! A spot-on clue like this flips both at once.</div>') },
         { t: 'Wrong card? Turn over. Black card? Game over.', d: 'Picking a bystander ends your turn right away. Picking an OPPONENT agent helps them win instead! And the single 💀 black card = INSTANT LOSS for the team that picks it. First team to find all its agents wins!',
-          s: htScene('<div class="mk-cluebar">SPYMASTER key — only you see every color</div>' + htCnBoard(function (i) { return ['key-red', 'key-blue', 'key-red', 'key-beige', 'key-black', 'key-blue', 'key-red', 'key-beige', 'key-blue', 'key-red'][i]; }) + '<div class="mk-note">💀 The white-ringed card = assassin — instant loss! Beige = bystander, ends your turn.</div>') }
+          s: htScene('<div class="mk-cluebar">NINJA key — only you see every color</div>' + htCnBoard(function (i) { return ['key-red', 'key-red', 'key-blue', 'key-beige', 'key-red', 'key-blue', 'key-black', 'key-blue', 'key-beige', 'key-red'][i]; }) + '<div class="mk-note">💀 The white-ringed card = assassin — instant loss! Beige = bystander, ends your turn. (Levi & Zoro are red — matching the clue!)</div>') }
       ]}
       };
     }
@@ -1695,7 +1695,7 @@
           : hostGame === 'race'
             ? 'One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. Hunters take turns ASKING — but GUESSING is free for everyone, at any moment (wrong = -1 life)! First to find the mystery character wins!'
             : hostGame === 'codenames'
-              ? 'Two teams face a 5×5 grid of characters. Each SPYMASTER sees the secret colors and gives ONE word + a number; their team taps that many cards. Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
+              ? 'Two teams face a 5×5 grid of characters. Each NINJA sees the secret colors and gives ONE word + a number; their team taps that many cards. Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
               : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
       }
       try { syncGamePickBtn(); } catch (e) {} // keep the 📱 picker button synced with the selection
@@ -3974,9 +3974,9 @@
       });
     }
     // ================================ 🗝 CODE NAMES (4-8 players, 2 teams) ================================
-    // A 5×5 grid of 25 characters. Red vs Blue; each team has ONE spymaster
+    // A 5×5 grid of 25 characters. Red vs Blue; each team has ONE Ninja
     // who sees the secret color key and gives ONE-WORD + NUMBER clues (each
-    // spymaster sees the key — guessers see plain cards, colors revealed on tap).
+    // Ninja sees the key — Shoguns see plain cards, colors revealed on tap).
     // First team to reveal all its agents wins; the 🖤 black card loses instantly.
     const CN_TEAMS = ['red', 'blue'];
     function cnTeams(cn) {
@@ -4011,7 +4011,7 @@
       if (seated.length < 4) return { ok: false, msg: tt('Ninja Scrolls needs at least 4 players (2+ per team)!') };
       if (teams.red.members.length < 2 || teams.blue.members.length < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
       if (seated.some(pid => !cnTeamOf(pid))) return { ok: false, msg: tt('Everyone must pick a team (🔴 or 🔵)!') };
-      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a spymaster — tap the 🔑 next to a teammate!') };
+      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — tap the 🔑 next to a teammate!') };
       return { ok: true, msg: tt('Teams are ready — the host can deal!') };
     }
     async function cnSetTeam(pid, team) {
@@ -4042,7 +4042,7 @@
       if (!currentRoom || currentRoom.state !== 'teams' || CN_TEAMS.indexOf(team) === -1) return;
       const teams = cnTeams();
       if (pid !== null && (teams[team].members.indexOf(pid) === -1 || teams[team].spy === pid)) return;
-      // the host, the player themself, or the current spymaster may reassign the role (pid null = demote)
+      // the host, the player themself, or the current Ninja may reassign the role (pid null = demote)
       if (!(isHost || pid === playerId || teams[team].spy === playerId)) return;
       await database.ref('rooms/' + roomCode + '/cn/teams/' + team + '/spy').set(pid);
       touchActivity();
@@ -4081,12 +4081,15 @@
     // ---- the deal: 25 cards + secret color key ----
     function cnBuildKey(first) {
       const other = first === 'red' ? 'blue' : 'red';
-      const cols = [];
-      for (let i = 0; i < 9; i++) cols.push(first);
-      for (let i = 0; i < 8; i++) cols.push(other);
-      for (let i = 0; i < 7; i++) cols.push('beige');
-      cols.push('black');
-      shuffleArray(cols);
+      // 🎲 shuffleArray returns a COPY — keep it! (the old code dropped the
+      // shuffled result, so every board stacked the 9 agents first, then the
+      // 8, then the bystanders and 💀 — fully random positions now)
+      const cols = shuffleArray([].concat(
+        Array(9).fill(first),
+        Array(8).fill(other),
+        Array(7).fill('beige'),
+        ['black']
+      ));
       const key = {}; cols.forEach((c, i) => { key[String(i)] = c; });
       return key;
     }
@@ -4151,14 +4154,14 @@
       touchActivity();
     }
 
-    // ---- the clue (spymaster) ----
+    // ---- the clue (the Ninja) ----
     function cnSendClue() {
       const cn = (currentRoom && currentRoom.cn) || {};
       if (!currentRoom || currentRoom.state !== 'playing' || cn.phase !== 'clue') return;
       const teams = cnTeams(cn);
       const myTeam = cnTeamOf(playerId, cn);
       if (myTeam !== cn.turn) { showNotification(window.t ? t('Wait for your team\'s turn!') : 'Wait for your team\'s turn!'); return; }
-      if (teams[myTeam].spy !== playerId) { showNotification(window.t ? t('Only the spymaster can give the clue!') : 'Only the spymaster can give the clue!'); return; }
+      if (teams[myTeam].spy !== playerId) { showNotification(window.t ? t('Only the Ninja can give the clue!') : 'Only the Ninja can give the clue!'); return; }
       const w = (document.getElementById('cnClueWord').value || '').trim();
       const n = parseInt((document.getElementById('cnClueNum').value || '0'), 10);
       if (!/^\S{1,24}$/.test(w)) { showNotification(window.t ? t('The clue must be a single word!') : 'The clue must be a single word!'); return; }
@@ -4225,7 +4228,7 @@
     function cnGuess(idx) {
       const cn = (currentRoom && currentRoom.cn) || {};
       if (!cnCanIGuess(cn)) {
-        if (cn.phase === 'guess' && currentRoom && cnTeamOf(playerId, cn) === cn.turn) showNotification(window.t ? t('The spymaster watches — teammates pick the cards!') : 'The spymaster watches — teammates pick the cards!');
+        if (cn.phase === 'guess' && currentRoom && cnTeamOf(playerId, cn) === cn.turn) showNotification(window.t ? t('The Ninja watches — teammates pick the cards!') : 'The Ninja watches — teammates pick the cards!');
         return;
       }
       const rev = cn.revealed || {};
@@ -4258,7 +4261,7 @@
       cnPushLog('info', '⏭ ' + cnEmoji(myTeam) + ' <b>' + escapeHtml(cnNameOf(playerId)) + '</b> ' + (window.t ? t('passes — next team!') : 'passes — next team!'));
     }
 
-    // ---- host watchdog (spymaster rage-quit? whole team gone? rescue the game) ----
+    // ---- host watchdog (Ninja rage-quit? whole team gone? rescue the game) ----
     async function cnWatchdog() {
       if (!isHost || !roomCode || !currentRoom || currentRoom.state !== 'playing') return;
       const cn = currentRoom.cn || {};
@@ -4275,7 +4278,7 @@
           return;
         }
       }
-      // 2) prune vanished members + reassign a dead spymaster's key (any state)
+      // 2) prune vanished members + reassign a dead Ninja's key (any state)
       cnPruneTeams();
       // 3) guess phase stalled: nobody connected can pick a card → auto end the turn
       if (cn.phase === 'guess') {
@@ -4310,18 +4313,18 @@
           row.className = 'cn-member' + (pid === playerId ? ' me' : '') + (inSpies ? ' spy cn-spy-slot' : '');
           row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
             '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
-            (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('SPYMASTER') + '</span>' : '');
-          // 🔑 promote an agent — host, the player themself, or the current spymaster
+            (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('NINJA') + '</span>' : '');
+          // 🔑 promote a Shogun — host, the player themself, or the current Ninja
           if (!inSpies && (isHost || pid === playerId || teams[team].spy === playerId)) {
             const b = document.createElement('button');
-            b.className = 'cn-mini'; b.title = tt('Make spymaster'); b.innerHTML = ic('key');
+            b.className = 'cn-mini'; b.title = tt('Make Ninja'); b.innerHTML = ic('key');
             b.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, pid); };
             row.appendChild(b);
           }
-          // ⇩ demote the spymaster back to the agents — host or the spymaster themself
+          // ⇩ demote the Ninja back to the Shoguns — host or the Ninja themself
           if (inSpies && (isHost || teams[team].spy === playerId)) {
             const d = document.createElement('button');
-            d.className = 'cn-mini'; d.title = tt('Demote to agents'); d.textContent = '⇩';
+            d.className = 'cn-mini'; d.title = tt('Demote to Shoguns'); d.textContent = '⇩';
             d.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, null); };
             row.appendChild(d);
           }
@@ -4401,7 +4404,7 @@
       const roleEl = document.getElementById('cnMyRole');
       roleEl.className = 'cn-role' + (myTeam ? ' ' + myTeam : '');
       roleEl.innerHTML = myTeam
-        ? cnEmoji(myTeam) + ' ' + tt('Your team') + (teams[myTeam].spy === playerId ? ' · <b>' + tt('you are the 🕵️ SPYMASTER') + '</b>' : '')
+        ? cnEmoji(myTeam) + ' ' + tt('Your team') + (teams[myTeam].spy === playerId ? ' · <b>' + tt('you are the 🕵️ NINJA') + '</b>' : '')
         : tt('Spectating — pick a team next round!');
       // turn banner
       const banner = document.getElementById('cnTurnBanner');
@@ -4427,8 +4430,8 @@
       clueRow.style.display = (cn.phase === 'clue' && iAmSpyTurn) ? 'flex' : 'none';
       guessRow.style.display = (cn.phase === 'guess' && iCanGuess) ? 'flex' : 'none';
       let waitTxt = '';
-      if (cn.phase === 'clue' && !iAmSpyTurn) waitTxt = myTeam === turn ? tt('Waiting for YOUR spymaster to give the clue…') : tt('Waiting for the other team\'s clue…');
-      if (cn.phase === 'guess' && !iCanGuess) waitTxt = myTeam === turn ? tt('Your team is picking — spymaster, stay silent! 🤫') : tt('The other team is picking…');
+      if (cn.phase === 'clue' && !iAmSpyTurn) waitTxt = myTeam === turn ? tt('Waiting for YOUR Ninja to give the clue…') : tt('Waiting for the other team\'s clue…');
+      if (cn.phase === 'guess' && !iCanGuess) waitTxt = myTeam === turn ? tt('Your team is picking — Ninja, stay silent! 🤫') : tt('The other team is picking…');
       waitMsg.textContent = waitTxt;
       waitMsg.style.display = waitTxt ? 'block' : 'none';
       // board + log
@@ -4551,7 +4554,7 @@
             const row = document.createElement('div');
             row.className = 'me-row cn-end-row ' + team + (pid === playerId ? ' me' : '');
             const isSpy = teams[team].spy === pid;
-            row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${isSpy ? '🕵️ spymaster' : 'agent'}</span>`;
+            row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${isSpy ? '🕵️ Ninja' : 'Shogun'}</span>`;
             list.appendChild(row);
           });
         });
