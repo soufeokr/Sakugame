@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '87';
+    const SAKU_BUILD = '88';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4037,7 +4037,7 @@
       // so a benched player (or a queued one) never blocks the start
       if (redN + blueN < 4) return { ok: false, msg: tt('Ninja Scrolls needs at least 4 players in teams (2+ per team)!') };
       if (redN < 2 || blueN < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
-      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — tap the 🔑 next to a teammate!') };
+      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — someone must join their SPIES spot!') };
       const spect = Object.keys(room.players || {}).filter(pid => !cnTeamOf(pid)).length + Object.keys(room.queue || {}).length;
       return { ok: true, msg: tt('Teams are ready — the host can deal!') + (spect ? ' ' + tt('(others spectate 👀)') : '') };
     }
@@ -4062,20 +4062,35 @@
       if (cur) {
         upd['cn/teams/' + cur + '/members/' + pid] = null;
         upd['players/' + pid + '/ready'] = false;                 // benched = spectator again
-        if (teams[cur].spy === pid && team !== cur) {
-          const rest = teams[cur].members.filter(m => m !== pid);
-          upd['cn/teams/' + cur + '/spy'] = rest.length ? rest[0] : null;
-        }
+        if (teams[cur].spy === pid && team !== cur) upd['cn/teams/' + cur + '/spy'] = null; // 🔑 frees up — it is never auto-handled out
       }
       if (team) {
         upd['cn/teams/' + team + '/members/' + pid] = true;
         upd['players/' + pid + '/ready'] = true;                  // 🥷🎴 joining a team = being READY
-        if (!teams[team].spy && teams[team].members.length === 0) upd['cn/teams/' + team + '/spy'] = pid; // first member grabs the key
       }
       await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
     }
-    function cnJoinTeam(team) { cnSetTeam(playerId, team); }
+    function cnJoinTeam(team) { cnJoinRole(team, false); }
+    // 🥷🎴 ONE join button per box: AGENTS = Shogun, SPIES = the team's Ninja (🔑).
+    // Re-tap anywhere = step off to the bench.
+    async function cnJoinRole(team, asSpy) {
+      if (!currentRoom || !roomCode || !cnInSetup()) return;
+      const teams = cnTeams();
+      const myTeam = cnTeamOf(playerId);
+      const meSpy = teams[team].spy === playerId;
+      if (asSpy) {
+        if (meSpy) return cnSetTeam(playerId, team);            // re-tap the 🔑 = leave to the bench
+        if (teams[team].spy) return;                             // key already taken (button shows disabled)
+        if (myTeam !== team) await cnSetTeam(playerId, team);    // seat+team first (queued self-join included)
+        await cnSetSpy(team, playerId);                          // …then grab the key
+      } else {
+        if (myTeam === team) {
+          if (meSpy) await cnSetSpy(team, null);                 // Ninja → plain Shogun
+          else await cnSetTeam(playerId, team);                  // re-tap = bench
+        } else await cnSetTeam(playerId, team);
+      }
+    }
     function cnMove(pid, team) { cnSetTeam(pid, team); }          // host chips
     async function cnSetSpy(team, pid) {
       if (!currentRoom || !cnInSetup() || CN_TEAMS.indexOf(team) === -1) return;
@@ -4337,7 +4352,6 @@
       CN_TEAMS.forEach(team => {
         const agentsEl = document.getElementById(team === 'red' ? 'cnAgentsRed' : 'cnAgentsBlue');
         const spiesEl = document.getElementById(team === 'red' ? 'cnSpiesRed' : 'cnSpiesBlue');
-        const hintEl = document.getElementById(team === 'red' ? 'cnSpyHintRed' : 'cnSpyHintBlue');
         if (agentsEl) agentsEl.innerHTML = '';
         if (spiesEl) spiesEl.innerHTML = '';
         const members = teams[team].members.filter(m => players[m]);
@@ -4351,38 +4365,12 @@
           row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
             '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
             (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('NINJA') + '</span>' : '');
-          // 🔑 promote a Shogun — host, the player themself, or the current Ninja
-          if (!inSpies && (isHost || pid === playerId || teams[team].spy === playerId)) {
-            const b = document.createElement('button');
-            b.className = 'cn-mini'; b.title = tt('Make Ninja'); b.innerHTML = ic('key');
-            b.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, pid); };
-            row.appendChild(b);
-          }
-          // ⇩ demote the Ninja back to the Shoguns — host or the Ninja themself
-          if (inSpies && (isHost || teams[team].spy === playerId)) {
-            const d = document.createElement('button');
-            d.className = 'cn-mini'; d.title = tt('Demote to Shoguns'); d.textContent = '⇩';
-            d.onclick = (e) => { e.stopPropagation(); cnSetSpy(team, null); };
-            row.appendChild(d);
-          }
-          // host moves a member to the other team or to the bench
-          if (isHost) {
-            const other = team === 'red' ? 'blue' : 'red';
-            const mv = document.createElement('button');
-            mv.className = 'cn-mini'; mv.title = tt('Move to the other team'); mv.textContent = cnEmoji(other);
-            mv.onclick = (e) => { e.stopPropagation(); cnMove(pid, other); };
-            row.appendChild(mv);
-            const bn = document.createElement('button');
-            bn.className = 'cn-mini'; bn.title = tt('To the bench'); bn.textContent = '✕';
-            bn.onclick = (e) => { e.stopPropagation(); cnMove(pid, null); };
-            row.appendChild(bn);
-          }
+          // 🥷🎴 read-only row — joining/leaving happens via the 4 Join buttons only
           return row;
         };
         const guessers = members.filter(m => m !== spy);
         if (!guessers.length) agentsEl.innerHTML = '<p class="cn-empty">' + tt('Nobody here yet…') + '</p>';
         else guessers.forEach(pid => agentsEl.appendChild(mkRow(pid, false)));
-        if (hintEl) hintEl.style.display = spy ? 'none' : 'block';
         if (!spy) spiesEl.innerHTML = '<p class="cn-empty">' + tt('(none yet)') + '</p>';
         else spiesEl.appendChild(mkRow(spy, true));
       });
@@ -4400,14 +4388,7 @@
         const chip = document.createElement('div');
         chip.className = 'cn-member' + (pid === playerId ? ' me' : '');
         chip.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>';
-        if (isHost) {
-          CN_TEAMS.forEach(team => {
-            const b = document.createElement('button');
-            b.className = 'cn-mini'; b.title = tt('Put in team'); b.textContent = cnEmoji(team);
-            b.onclick = (e) => { e.stopPropagation(); cnMove(pid, team); };
-            chip.appendChild(b);
-          });
-        }
+        // 🥷🎴 no host chips — spectators join a team THEMSELVES (host can shuffle members)
         benchEl.appendChild(chip);
       });
       queuedIds.forEach(pid => {
@@ -4420,10 +4401,21 @@
       // my join buttons adapt (Join ↔ Leave)
       const myTeam = cnTeamOf(playerId);
       const jr = document.getElementById('cnJoinRed'), jb = document.getElementById('cnJoinBlue');
-      jr.textContent = myTeam === 'red' ? tt('Leave') + ' 🔴' : tt('Join') + ' 🔴';
-      jb.textContent = myTeam === 'blue' ? tt('Leave') + ' 🔵' : tt('Join') + ' 🔵';
-      jr.classList.toggle('selected', myTeam === 'red');
-      jb.classList.toggle('selected', myTeam === 'blue');
+      const myRed = myTeam === 'red', myBlue = myTeam === 'blue';
+      // 🥷🎴 AGENTS button = plain Shogun spot (Leave only if I'm a plain agent there)
+      jr.textContent = (myRed && teams.red.spy !== playerId) ? tt('Leave') + ' 🔴' : tt('Join') + ' 🔴';
+      jb.textContent = (myBlue && teams.blue.spy !== playerId) ? tt('Leave') + ' 🔵' : tt('Join') + ' 🔵';
+      jr.classList.toggle('selected', myRed && teams.red.spy !== playerId);
+      jb.classList.toggle('selected', myBlue && teams.blue.spy !== playerId);
+      // 🔑 SPIES button = the team's Ninja spot — first tap wins, one key per team
+      ['red', 'blue'].forEach(t2 => {
+        const b = document.getElementById(t2 === 'red' ? 'cnJoinSpiesRed' : 'cnJoinSpiesBlue');
+        if (!b) return;
+        const mine = teams[t2].spy === playerId, taken = !!teams[t2].spy && !mine;
+        b.textContent = mine ? tt('Leave') + ' 🔑' : taken ? tt('Taken') : tt('Join as 🔑');
+        b.disabled = taken;
+        b.classList.toggle('selected', mine);
+      });
       // gating + host controls
       const gate = cnTeamsGate();
       document.getElementById('cnTeamsStatus').textContent = gate.msg;
