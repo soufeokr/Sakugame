@@ -236,6 +236,59 @@
   .mk-img.b2 { filter: blur(4px); }
   .mk-img.b1 { filter: blur(0.5px); }
 
+  /* 🎬 "How to play" ribbon — these pages are GUIDES, not the live game */
+  .howto-tag { background: rgba(2, 169, 255, 0.14); border: 1px solid rgba(2, 169, 255, 0.4); color: var(--accent); font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+
+  /* 🎬 authentic per-game demo scenes — mini replicas of each real screen */
+  .mk-badges { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 9px; }
+  .mk-pill { background: #1a1a2e; border: 1px solid rgba(2, 169, 255, 0.45); color: var(--accent); font-size: 0.64rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; }
+  .mk-pill.ok { border-color: rgba(2, 210, 120, 0.55); color: #7ce8a4; }
+  .mk-pill.warn { border-color: rgba(255, 202, 58, 0.55); color: var(--warning); }
+  .mk-pill.dim { border-color: #3a3a5a; color: #8b9bc0; }
+  .mk-pill.red { border-color: rgba(229, 57, 53, 0.65); color: #ff8079; }
+  .mk-pill.blue { border-color: rgba(30, 136, 229, 0.65); color: #64b5f6; }
+  /* the "your secret" banner — mirrors the in-game br-mysecret strip */
+  .mk-strip { display: flex; align-items: center; gap: 10px; background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 10px; padding: 7px 10px; margin-bottom: 9px; text-align: left; }
+  .mk-strip-img { width: 38px; height: 50px; border-radius: 7px; object-fit: cover; background: #1a1a2e; flex: none; }
+  .mk-strip-face { width: 38px; height: 50px; border-radius: 7px; background: linear-gradient(135deg, #2c4a80, #4368b8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #eaf4ff; flex: none; }
+  .mk-strip-info { flex: 1; min-width: 0; }
+  .mk-strip-label { color: #8b9bc0; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .mk-strip-name { color: #eaf4ff; font-weight: 800; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-strip-right { color: var(--warning); font-weight: 900; font-size: 0.72rem; flex: none; }
+  /* Battle Royale player color chips */
+  .mk-colorrow { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 9px; }
+  .mk-cchip { display: inline-flex; align-items: center; gap: 5px; background: #1e1e38; border: 1px solid #2f3a63; border-radius: 999px; padding: 3px 10px; font-size: 0.66rem; font-weight: 700; color: #cdd8ee; }
+  .mk-cchip.on { border-color: var(--accent); box-shadow: 0 0 8px rgba(2, 169, 255, 0.35); }
+  .mk-cdot { width: 9px; height: 9px; border-radius: 50%; }
+  /* Wanted! hunters bar */
+  .mk-hunters { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 9px; }
+  .mk-hunter { background: #1e1e38; border: 1px solid #2f3a63; color: #cdd8ee; font-size: 0.66rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; }
+  .mk-hunter.me { border-color: var(--accent); box-shadow: 0 0 8px rgba(2, 169, 255, 0.35); }
+  .mk-hearts { color: var(--danger); font-size: 0.66rem; letter-spacing: -1px; }
+  /* Blur Guess big stage image + "Who is this?!" */
+  .mk-bigimg { display: block; max-width: 180px; margin: 2px auto 0; }
+  .mk-who { text-align: center; color: var(--accent); font-weight: 800; font-size: 0.82rem; margin-top: 8px; }
+  /* Cold Case live score list */
+  .mk-hc { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .mk-hc-row { display: flex; align-items: center; gap: 9px; background: #14142a; border-radius: 8px; padding: 5px 8px; }
+  .mk-hc-img { width: 26px; height: 34px; border-radius: 5px; object-fit: cover; background: linear-gradient(135deg, #2c4a80, #4368b8); color: #eaf4ff; font-weight: 800; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; flex: none; }
+  .mk-hc-name { flex: 1; min-width: 0; color: #cdd8ee; font-weight: 700; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mk-hc-num { font-weight: 900; font-size: 0.72rem; min-width: 2.4em; text-align: right; }
+  .mk-hc-num.hot { color: #ff5252; }
+  .mk-hc-num.warm { color: #ffca3a; }
+  .mk-hc-num.cold { color: #29b6f6; }
+  /* Ninja Scrolls — spymaster clue bar + true-colored key cards */
+  .mk-cluebar { background: rgba(2, 169, 255, 0.10); border: 1px solid rgba(2, 169, 255, 0.4); color: #dfe9ff; border-radius: 10px; padding: 7px 10px; font-size: 0.74rem; font-weight: 700; text-align: center; margin-bottom: 9px; }
+  .mk-cn { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .mk-cn .mk-char { padding: 4px; font-size: 0.56rem; border: 2px solid rgba(255, 255, 255, 0.08); }
+  .mk-cn .mk-char .mk-name { font-size: 0.56rem; }
+  .mk-cn .mk-char.key-red { border-color: rgba(229, 57, 53, 0.9); }
+  .mk-cn .mk-char.key-blue { border-color: rgba(30, 136, 229, 0.9); }
+  .mk-cn .mk-char.key-beige { border-color: rgba(176, 164, 138, 0.6); }
+  .mk-cn .mk-char.key-black { border-color: #fff; background: #08080c; }
+  .mk-cn .mk-char.rev-red { border-color: #e53935; background: rgba(229, 57, 53, 0.5); }
+  .mk-cn .mk-char.rev-red .mk-photo { opacity: 0.3; filter: saturate(0.6); }
+
   @media (max-width: 640px) {
     .howto-slide { flex-direction: column; align-items: stretch; min-height: 0; }
     .ht-text { min-width: 0; }

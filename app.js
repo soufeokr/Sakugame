@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '83';
+    const SAKU_BUILD = '84';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -136,12 +136,36 @@
       return '<div class="mk-mini"><div class="mk-label">' + who + '</div><div class="mk-grid mk-grid3">' + items + '</div></div>';
     }
 
+    // 🎬 authentic per-game demo widgets — mini replicas of each REAL game screen,
+    // so every tutorial shows exactly what its game looks like (not the 1v1 board)
+    function htBadges(items) { return '<div class="mk-badges">' + items.map(function (x) { return '<span class="mk-pill' + (x[1] ? ' ' + x[1] : '') + '">' + x[0] + '</span>'; }).join('') + '</div>'; }
+    function htStrip(name, label, right) { // the "your secret" banner (br-mysecret look)
+      const c = HT_POOL.find(function (x) { return x.name === name; }) || {};
+      const img = c.image ? '<img class="mk-strip-img" src="' + c.image + '" alt="" loading="lazy" data-l="' + escapeHtml(name[0]) + '" onerror="htImgFail(this)">' : '<div class="mk-strip-face">' + escapeHtml(name[0]) + '</div>';
+      return '<div class="mk-strip">' + img + '<div class="mk-strip-info"><div class="mk-strip-label">' + label + '</div><div class="mk-strip-name">' + escapeHtml(name) + '</div></div><div class="mk-strip-right">' + (right || '') + '</div></div>';
+    }
+    function htColorRow(chips) { // Battle Royale's per-player colored board chips
+      return '<div class="mk-colorrow">' + chips.map(function (c) { return '<span class="mk-cchip' + (c[2] ? ' on' : '') + '"><span class="mk-cdot" style="background:' + c[1] + '"></span>' + escapeHtml(c[0]) + '</span>'; }).join('') + '</div>';
+    }
+    function htHunters(list) { // Wanted!'s hunters bar (lives + mic)
+      return '<div class="mk-hunters">' + list.map(function (h) { return '<span class="mk-hunter' + (h.me ? ' me' : '') + '">' + escapeHtml(h.n) + ' <span class="mk-hearts">' + escapeHtml(h.h) + '</span></span>'; }).join('') + '</div>';
+    }
+    function htHcRow(name, score, cls) { // Cold Case's live score list rows
+      const c = HT_POOL.find(function (x) { return x.name === name; }) || {};
+      const img = c.image ? '<img class="mk-hc-img" src="' + c.image + '" alt="" loading="lazy" data-l="' + escapeHtml(name[0]) + '" onerror="htImgFail(this)">' : '<div class="mk-hc-img">' + escapeHtml(name[0]) + '</div>';
+      return '<div class="mk-hc-row">' + img + '<div class="mk-hc-name">' + escapeHtml(name) + '</div><div class="mk-hc-num ' + cls + '">' + score + '</div></div>';
+    }
+    const HT_CN_NAMES10 = HT_NAMES.concat(HT_NAMES.slice(0, 2));
+    function htCnBoard(clsFor) { // Ninja Scrolls' real 5×5 card board
+      return '<div class="mk-cn">' + HT_CN_NAMES10.map(function (n, i) { return htCharReal(n, clsFor ? (clsFor(i) || '') : ''); }).join('') + '</div>';
+    }
+
     function buildHowto() {
       htRefreshDataRefs(); // scenes always reflect the currently available pools
       return {
       guesswho: { title: 'Detective Showdown', icon: 'mask', players: '2 players', slides: [
         { t: 'Two players, two secrets', d: 'You each receive a secret anime character from a shared AniList board. Take turns asking yes/no questions — the first player to name the opponent\'s secret wins.',
-          s: htScene('<div class="mk-label">Your shared board (real game characters)</div>' + HT_BOARD + '<div class="mk-note">Every game deals one secret card to each player.</div>') },
+          s: htScene(htStrip('Mikasa Ackerman', 'Your secret — tap to hide', '?') + HT_BOARD + '<div class="mk-note">The real screen: your secret strip on top, the shared board of true characters below.</div>') },
         { t: 'Ask smart questions', d: 'On your turn, type one yes/no question about appearance, powers or series. The answer is public — pick questions that cut your remaining cards in half!',
           s: htScene(htQ('Does your character use a sword?') + '<div class="mk-chips">' + htChip('YES', 'ok') + htChip('NO', 'no') + '</div>') },
         { t: 'Eliminate as you go', d: 'Tap the cards on your own board to cross out characters that no longer fit. It is your personal workspace — organize it however you like.',
@@ -163,9 +187,9 @@
       ]},
       battle: { title: 'Detective Royale', icon: 'users', players: '3-8 players', slides: [
         { t: 'Everyone hides a secret', d: 'Each player secretly receives a character. 3 to 8 detectives sit at one big table — and everyone is both hunter and prey.',
-          s: htScene('<div class="mk-chipwrap">' + htChip('You') + htChip('Aria — secret set') + htChip('Rex — secret set') + htChip('Noa — secret set') + '</div>' + HT_BOARD) },
+          s: htScene(htBadges([['Question time', 'ok'], ['3-8 detectives', 'dim']]) + htStrip('Mikasa Ackerman', 'Your secret — tap to hide', '0 pts') + htColorRow([['You', '#02a9ff', true], ['Aria', '#ff9800'], ['Rex', '#ab47bc'], ['Noa', '#26c6da']]) + HT_BOARD) },
         { t: 'One board PER rival', d: 'This is the key to Battle Royale: you do NOT share one big board. Every opponent has their OWN private suspect board on your screen. Cross out cards independently — Aria\'s answers only shrink Aria\'s board!',
-          s: htScene('<div class="mk-duo">' + htMiniBoard("Aria's suspects", []) + htMiniBoard("Rex's suspects", [1, 4]) + '</div><div class="mk-note">Same game, two different boards — eliminate per rival.</div>') },
+          s: htScene(htColorRow([['Aria', '#ff9800', true], ['Rex', '#ab47bc']]) + '<div class="mk-duo">' + htMiniBoard("Aria's suspects", []) + htMiniBoard("Rex's suspects", [1, 4]) + '</div><div class="mk-note">Same game, two different boards — eliminate per rival.</div>') },
         { t: 'One question for the whole table', d: 'On your turn, ask ONE yes/no question — every opponent answers it publicly. Their answers narrow your boards and everyone else\'s at the same time.',
           s: htScene(htQ('Is your character from a shonen?') + '<div class="mk-chipwrap">' + htChip('Aria: YES', 'ok') + htChip('Rex: NO', 'no') + htChip('Noa: YES', 'ok') + '</div>') },
         { t: 'Track and strike', d: 'As answers arrive, eliminate on each rival\'s board — then fire a guess at any rival when you feel sure. Each correctly exposed secret scores big points.',
@@ -175,17 +199,17 @@
       ]},
       race: { title: 'Wanted!', icon: 'bolt', players: '3-8 players', slides: [
         { t: 'The Target and the Hunters', d: 'One player is the TARGET — only they know the mystery character. Everyone else is a hunter racing to name it first and win the game.',
-          s: htScene('<div class="mk-chipwrap">' + htChip('Aria — TARGET', 'dim') + htChip('You — hunter') + htChip('Rex — hunter') + htChip('Noa — hunter') + '</div><div class="mk-note">The Target sees the mystery character. Hunters see nothing.</div>') },
+          s: htScene(htBadges([['Question time', 'ok'], ['Free guesses!', 'warn']]) + htHunters([{ n: 'Aria 👑 TARGET', h: '' }, { n: 'You', h: '♥♥♥', me: true }, { n: 'Rex', h: '♥♥♥' }, { n: 'Noa', h: '♥♥♥' }]) + HT_BOARD + '<div class="mk-note">The real hunters bar: lives per hunter — the Target sees the mystery character, hunters only see the board.</div>') },
         { t: 'Inside the Target seat', d: 'When YOU are the Target: only your screen shows the mystery character. Answer every question honestly with YES or NO — then sit back and enjoy the hunt. If every hunter burns all their lives on wrong guesses, the win is yours!',
-          s: htScene('<div class="mk-label">Only the Target sees this</div><div class="mk-duo"><div>' + htCharReal('Mikasa Ackerman', 'secret') + '</div><div class="mk-word" style="align-self:center">Mystery: Mikasa Ackerman<br><span style="color:#8b9bc0">Answer honestly, keep a straight face!</span></div></div><div class="mk-chips">' + htChip('YES', 'ok') + htChip('NO', 'no') + '</div>') },
+          s: htScene(htStrip('Mikasa Ackerman', 'Mystery — only YOU see this', 'TARGET') + '<div class="mk-chips">' + htChip('YES', 'ok') + htChip('NO', 'no') + htChip('…answer honestly, keep a straight face!', 'dim') + '</div>') },
         { t: 'The mic goes around', d: 'Hunters take turns holding the mic: one yes/no question each, answered publicly by the Target. Each hunter has a limited question budget — spend them wisely!',
-          s: htScene('<div class="mk-chipwrap">' + htChip('Rex ' + ic('mic'), 'ok') + htChip('You') + htChip('Noa') + '</div>' + htQ('Can the character fly?') + '<div class="mk-note">Target answers: YES</div>') },
+          s: htScene(htHunters([{ n: 'Aria 👑 TARGET', h: '' }, { n: 'You', h: '♥♥♥' }, { n: 'Rex 🎙', h: '♥♥♥', me: true }, { n: 'Noa', h: '♥♥' }]) + htQ('Can the character fly?') + '<div class="mk-note">Target answers: YES — the mic chip marks who may ask.</div>') },
         { t: 'Guess at ANY moment', d: 'No turns for guessing — fire it whenever inspiration strikes! But every wrong guess costs 1 of your 3 lives. Lose all three and you watch the rest of the hunt from the bench.',
           s: htScene('<div class="mk-lives">' + ic('heart') + ic('heart') + '<span class="mk-dead">' + ic('heart') + '</span></div>' + htQ('It\'s Mikasa Ackerman!', 'GUESS') + '<div class="mk-note">High risk, high reward — bold guesses win races.</div>') }
       ]},
       blur: { title: 'Blur Guess', icon: 'layers', players: 'solo or up to 8', slides: [
         { t: 'Pick your mode', d: 'Play solo to train, or with up to 8 players. Two modes: blurred anime characters, or blurred anime covers from 500 classics.',
-          s: htScene('<div class="mk-chips">' + htChip('Characters mode') + htChip('Anime covers mode') + '</div>' + (HT_BLUR_IMG ? '<img class="mk-img" src="' + HT_BLUR_IMG + '" alt="anime cover demo">' : '<div class="mk-note">500 covers in the pool!</div>')) },
+          s: htScene(htBadges([['Round 1/10', 'dim'], ['Blur stage 1/5', 'ok'], ['12s', 'warn']]) + (HT_BLUR_IMG ? '<img class="mk-img b3 mk-bigimg" src="' + HT_BLUR_IMG + '" alt="anime cover demo">' : '<div class="mk-note">500 covers in the pool!</div>') + '<div class="mk-who">Who is this?!</div>' + htQ('Type the name…', 'GUESS!') + '<div class="mk-chips" style="justify-content:center">' + htChip('Characters mode', 'ok') + htChip('Anime covers mode') + '</div>') },
         { t: 'Five stages, five payouts', d: 'The image unblurs over 5 stages, and the payout melts as it clears: stage 1 pays 5 pts… stage 5 pays only 1 pt. Trust your gut early!',
           s: htScene(HT_BLUR_IMG ? '<div class="mk-stages"><div><img class="mk-img b3" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">5 pts</span></div><div><img class="mk-img b2" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">3 pts</span></div><div><img class="mk-img b1" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">1 pt</span></div></div><div class="mk-note">Stage 1 → 3 of 5 — already nameable?</div>' : '<div class="mk-note">Stage 1 = 5 pts … stage 5 = 1 pt.</div>') },
         { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1 for the next players). A stage-1 first guess is the jackpot: 5 + 3 = 8 points!',
@@ -195,19 +219,19 @@
       ]},
       hotcold: { title: 'Cold Case', icon: 'target', players: '2-6 players', slides: [
         { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
-          s: htScene('<div class="mk-mini"><div class="mk-label">The hider\'s view (secret!)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, i === 4 ? 'secret' : ''); }).join('') + '</div></div>') },
+          s: htScene(htBadges([['Round 1/2', 'dim'], ['You are the HIDER', 'warn']]) + htStrip('Levi', 'Hide this one?', 'Hide it! ✓') + htQ('Type a character name…', '🎲') + '<div class="mk-note">The hider picks ANY character — the seekers never see this strip.</div>') },
         { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 100 tries).',
-          s: htScene(htQ('They guessed: "Naruto Uzumaki"', 'SCORE') + '<div class="mk-chips">' + htChip('82 — so hot!', 'ok') + htChip('41 — lukewarm', 'dim') + htChip('5 — ice cold', 'no') + '</div>') },
+          s: htScene(htBadges([['Round 1/2', 'dim'], ['You are a SEEKER', 'ok']]) + htQ('Type a character name…', 'GUESS!') + '<div class="mk-hc">' + htHcRow('Mikasa Ackerman', 82, 'hot') + htHcRow('Naruto Uzumaki', 41, 'warm') + htHcRow('Saitama', 5, 'cold') + '</div><div class="mk-note">The live score list — 82 burns, 41 is lukewarm, 5 freezes.</div>') },
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]},
       codenames: { title: 'Ninja Scrolls', icon: 'key', players: '4-8 players', slides: [
         { t: 'Two teams, 25 characters', d: 'Split into RED and BLUE (2+ each). A 5×5 grid of anime characters is dealt; each card secretly belongs to a team, to the neutral bystanders… or to the 💀 assassin. Only the two SPYMASTERS see the color key.',
-          s: htScene('<div class="mk-label">The board (spymaster key hidden)</div><div class="mk-grid mk-grid3">' + HT_NAMES.slice(0, 9).map(function (n) { return htCharReal(n, ''); }).join('') + '</div>') },
+          s: htScene(htBadges([['🔴 0/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a FIELD AGENT — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 5×5 board — names only, all colors hidden.</div>') },
         { t: 'One word + one number', d: 'On your team\'s turn its spymaster gives ONE word and a count — "fire, 2" — pointing at that many characters. Teammates tap up to that many cards. Every correct pick keeps the turn alive!',
-          s: htScene(htQ('Spymaster says: "fire, 2"', 'CLUE') + '<div class="mk-chips">' + htChip('Rin Tohsaka ✓', 'ok') + htChip('Natsu Dragneel ✓', 'ok') + htChip('Shoto Todoroki ✗', 'no') + '</div>') },
+          s: htScene(htBadges([['🔴 2/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">Clue: 🔥 "fire, 2" — tap up to 2 cards!</div>' + htCnBoard(function (i) { return [0, 3].indexOf(i) >= 0 ? 'rev-red' : ''; }) + '<div class="mk-note">Tapped cards reveal RED for everyone at the table.</div>') },
         { t: 'Wrong card? Turn over. Black card? Game over.', d: 'Picking a bystander ends your turn right away. Picking an OPPONENT agent helps them win instead! And the single 💀 black card = INSTANT LOSS for the team that picks it. First team to find all its agents wins!',
-          s: htScene('<div class="mk-chips">' + htChip('💀 Assassin — instant loss!', 'no') + htChip('Bystander — turn ends', 'dim') + htChip('9 agents 🔴 / 8 agents 🔵', 'ok') + '</div>') }
+          s: htScene('<div class="mk-cluebar">SPYMASTER key — only you see every color</div>' + htCnBoard(function (i) { return ['key-red', 'key-blue', 'key-red', 'key-beige', 'key-black', 'key-blue', 'key-red', 'key-beige', 'key-blue', 'key-red'][i]; }) + '<div class="mk-note">💀 The white-ringed card = assassin — instant loss! Beige = bystander, ends your turn.</div>') }
       ]}
       };
     }
