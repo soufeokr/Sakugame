@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="85">
+<meta name="saku-build" content="86">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=85" sizes="any">
+<link rel="icon" href="favicon.ico?v=86" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=85">
+<link rel="stylesheet" href="style.css?v=86">
 </head>
 <body>
 
@@ -535,7 +535,7 @@
         <div class="queue-banner" id="queueBanner" style="display: none;"></div>
         <div class="players-list" id="playersList"></div>
         <div id="queueSection" style="display: none;">
-          <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;"><svg class="ic"><use href="#i-hourglass"/></svg> Waiting queue <small style="color: var(--muted); font-weight: 400;">— joins automatically when a seat opens</small></h3>
+          <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;"><svg class="ic"><use href="#i-hourglass"/></svg> Waiting queue <small style="color: var(--muted); font-weight: 400;" id="queueAutoNote">— joins automatically when a seat opens</small></h3>
           <div class="players-list" id="queueList"></div>
         </div>
         <div style="background: #0f0f1a; padding: 15px; border-radius: 10px; margin: 20px 0;" id="lobbyInfoBox">
@@ -762,7 +762,7 @@
     <div class="lobby-container cn-setup">
       <div class="lobby-header">
         <h2><svg class="ic"><use href="#i-key"/></svg> <span id="cnTeamsTitle">Ninja Scrolls — Team Setup</span></h2>
-        <p id="cnTeamsHint">Everyone joins a team, then give the 🔑 to one Ninja per team. The host can move anyone or shuffle it all.</p>
+        <p id="cnTeamsHint">Spectating by default — join a team to play (that's your ready!). Then give the 🔑 to one Ninja per team. The host can move anyone or shuffle it all.</p>
       </div>
       <!-- 👀 spectators strip — players who haven't picked a team yet -->
       <div class="cn-spect" id="cnSpect">
@@ -1436,7 +1436,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=85', 'charanimes.js?v=85', 'animes.js?v=85', 'nsfwdata.js?v=85'];
+        var files = ['characters.js?v=86', 'charanimes.js?v=86', 'animes.js?v=86', 'nsfwdata.js?v=86'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1451,9 +1451,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=85"></script>
-  <script src="music.js?v=85"></script>
-  <script src="lang.js?v=85"></script>
-  <script src="app.js?v=85"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3d0aa5cdd159a42',t:'MTc4OTczNzgwOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=86"></script>
+  <script src="music.js?v=86"></script>
+  <script src="lang.js?v=86"></script>
+  <script src="app.js?v=86"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3d0cdfba9acd893',t:'MTc4OTczOTI2OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

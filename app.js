@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '85';
+    const SAKU_BUILD = '86';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -2296,13 +2296,17 @@
       if (queueList.length === 0) { qSection.style.display = 'none'; }
       else {
         qSection.style.display = 'block';
+        // 🥷🎴 in Ninja Scrolls the queue never auto-seats — it spectates until setup
+        const qNote = document.getElementById('queueAutoNote');
+        if (qNote) qNote.textContent = (currentRoom && currentRoom.game === 'codenames') ? '— spectators: pick a team when the setup opens' : '— joins automatically when a seat opens';
         qList.innerHTML = '';
         queueList.forEach((qp, i) => {
           const card = document.createElement('div');
           card.className = 'player-card queue-card';
           const head = document.createElement('div');
           head.className = 'player-head';
-          head.innerHTML = `<span class="queue-pos">#${i + 1}</span>${avatarCircle(qp.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${escapeHtml(String(qp.name || ''))}</div><div class="status">${qp.id === playerId ? '(You) — ' : ''}${qp.away ? '<span class="afk-tag">AFK — spectating</span>' : 'waiting for a seat'}</div></div>`;
+          const waitTxt = (currentRoom && currentRoom.game === 'codenames') ? 'spectating — pick a team when the setup opens' : 'waiting for a seat';
+          head.innerHTML = `<span class="queue-pos">#${i + 1}</span>${avatarCircle(qp.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${escapeHtml(String(qp.name || ''))}</div><div class="status">${qp.id === playerId ? '(You) — ' : ''}${qp.away ? '<span class="afk-tag">AFK — spectating</span>' : waitTxt}</div></div>`;
           card.appendChild(head);
           if (isHost && qp.id !== playerId) {
             const actions = document.createElement('div');
@@ -2378,6 +2382,9 @@
         } finally { queuePromoting = false; }
         return;
       }
+      // 🥷🎴 Ninja Scrolls: nobody gets auto-seated — players are spectators by
+      // default and join a team by THEIR OWN choice (even from a full room's queue)
+      if (currentRoom.game === 'codenames') return;
       if (!isHost || (!inLobby && !force)) return;
       const slots = maxP - seatedCount;
       if (slots <= 0) return;
@@ -4005,25 +4012,38 @@
     }
     function cnTeamsGate() {
       const room = currentRoom || {};
-      const seated = Object.keys(room.players || {});
       const teams = cnTeams();
       const tt = (k) => (window.t ? t(k) : k);
-      if (seated.length < 4) return { ok: false, msg: tt('Ninja Scrolls needs at least 4 players (2+ per team)!') };
-      if (teams.red.members.length < 2 || teams.blue.members.length < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
-      if (seated.some(pid => !cnTeamOf(pid))) return { ok: false, msg: tt('Everyone must pick a team (🔴 or 🔵)!') };
+      const redN = teams.red.members.length, blueN = teams.blue.members.length;
+      // 🥷🎴 players are SPECTATORS by default — only team members count as ready,
+      // so a benched player (or a queued one) never blocks the start
+      if (redN + blueN < 4) return { ok: false, msg: tt('Ninja Scrolls needs at least 4 players in teams (2+ per team)!') };
+      if (redN < 2 || blueN < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
       if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — tap the 🔑 next to a teammate!') };
-      return { ok: true, msg: tt('Teams are ready — the host can deal!') };
+      const spect = Object.keys(room.players || {}).filter(pid => !cnTeamOf(pid)).length + Object.keys(room.queue || {}).length;
+      return { ok: true, msg: tt('Teams are ready — the host can deal!') + (spect ? ' ' + tt('(others spectate 👀)') : '') };
     }
     async function cnSetTeam(pid, team) {
       if (!currentRoom || !roomCode || currentRoom.state !== 'teams') return;
       if (pid !== playerId && !isHost) return;                    // host moves anyone, players only move themselves
       if (team && CN_TEAMS.indexOf(team) === -1) return;
+      const upd = {};
+      // 🥷🎴 a QUEUED spectator joining a team takes a free seat BY THEIR OWN CHOICE
+      // (never automatic) — seat + team in one atomic update
+      if (team && pid === playerId && !(currentRoom.players || {})[pid]) {
+        const q = (currentRoom.queue || {})[pid];
+        if (!q) return; // not in this room at all
+        const slots = (currentRoom.maxPlayers || 8) - Object.keys(currentRoom.players || {}).length;
+        if (slots <= 0) { showNotification(window.t ? t('All seats are taken — keep spectating until a seat frees up!') : 'All seats are taken — keep spectating until a seat frees up!'); return; }
+        upd['players/' + pid] = { id: pid, ready: true, name: q.name || playerName, isHost: false, avatar: q.avatar || myAvatar() || '' };
+        upd['queue/' + pid] = null;
+      }
       const teams = cnTeams();
       const cur = cnTeamOf(pid);
       if (cur === team) team = null;                              // re-tap the same team = back to the bench
-      const upd = {};
       if (cur) {
         upd['cn/teams/' + cur + '/members/' + pid] = null;
+        upd['players/' + pid + '/ready'] = false;                 // benched = spectator again
         if (teams[cur].spy === pid && team !== cur) {
           const rest = teams[cur].members.filter(m => m !== pid);
           upd['cn/teams/' + cur + '/spy'] = rest.length ? rest[0] : null;
@@ -4031,6 +4051,7 @@
       }
       if (team) {
         upd['cn/teams/' + team + '/members/' + pid] = true;
+        upd['players/' + pid + '/ready'] = true;                  // 🥷🎴 joining a team = being READY
         if (!teams[team].spy && teams[team].members.length === 0) upd['cn/teams/' + team + '/spy'] = pid; // first member grabs the key
       }
       await database.ref('rooms/' + roomCode).update(upd);
@@ -4060,7 +4081,9 @@
     }
     async function cnBackToLobbyFromTeams() {
       if (!isHost || !currentRoom || currentRoom.state !== 'teams') return;
-      await database.ref('rooms/' + roomCode).update({ state: 'lobby', cn: null });
+      const upd = { state: 'lobby', cn: null };
+      Object.keys(currentRoom.players || {}).forEach(pid => { upd['players/' + pid + '/ready'] = false; }); // team=ready flags reset on cancel
+      await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
     }
     // Remove vanished players from rosters (+ hand their key to the next member)
@@ -4349,12 +4372,15 @@
         if (!spy) spiesEl.innerHTML = '<p class="cn-empty">' + tt('(none yet)') + '</p>';
         else spiesEl.appendChild(mkRow(spy, true));
       });
-      // bench = seated players who picked no team
+      // bench = seated players who picked no team (spectators by default 🥷🎴)
       const benchEl = document.getElementById('cnBench');
       benchEl.innerHTML = '';
       const unseated = seated.filter(pid => !cnTeamOf(pid));
+      // 🥷🎴 + the ⏳ queue: spectators too — they join a team by THEIR OWN choice
+      const queue = currentRoom.queue || {};
+      const queuedIds = Object.keys(queue).sort((a, b) => ((queue[a] || {}).joinedAt || 0) - ((queue[b] || {}).joinedAt || 0));
       const spectWrap = document.getElementById('cnSpect');
-      if (spectWrap) spectWrap.style.display = unseated.length ? 'flex' : 'none';
+      if (spectWrap) spectWrap.style.display = (unseated.length || queuedIds.length) ? 'flex' : 'none';
       unseated.forEach(pid => {
         const p = players[pid] || {};
         const chip = document.createElement('div');
@@ -4368,6 +4394,13 @@
             chip.appendChild(b);
           });
         }
+        benchEl.appendChild(chip);
+      });
+      queuedIds.forEach(pid => {
+        const q = queue[pid] || {};
+        const chip = document.createElement('div');
+        chip.className = 'cn-member cn-queued' + (pid === playerId ? ' me' : '');
+        chip.innerHTML = avatarCircle(q.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(q.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span><span class="cn-qtag">' + tt('spectating') + '</span>';
         benchEl.appendChild(chip);
       });
       // my join buttons adapt (Join ↔ Leave)
