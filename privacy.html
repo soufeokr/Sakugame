@@ -4,49 +4,608 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy Policy &amp; Terms of Use — Sakugame</title>
-<meta name="description" content="Privacy policy and terms of use of Sakugame, a non-commercial fan project.">
+<meta name="description" content="Privacy policy and terms of use of Sakugame, a free non-commercial fan project.">
+<meta name="theme-color" content="#0b0b15">
+<meta name="robots" content="index, follow">
 <style>
-  body { margin: 0; background: #0b0b15; color: #dfe9ff; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body { margin: 0; background: #0b0b15; color: #dfe9ff; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; font-size: 16.5px; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 28px 18px 60px; }
-  .brand { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 26px; }
+  .brand { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
   .brand img { width: 46px; height: 46px; border-radius: 50%; }
   .brand span { font-size: 1.7rem; font-weight: 900; letter-spacing: 0.06em; background: linear-gradient(90deg, #02a9ff, #a5d2ff, #e6f3ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-  h1 { font-size: 1.45rem; color: #02a9ff; text-align: center; margin-bottom: 26px; }
+  .langs { display: flex; gap: 8px; justify-content: center; width: 100%; margin: 10px 0 24px; }
+  .langs button { background: transparent; border: 1px solid rgba(2, 169, 255, 0.35); color: #8ba0c8; font: inherit; font-size: 0.85rem; padding: 6px 16px; border-radius: 999px; cursor: pointer; }
+  .langs button[aria-pressed="true"] { border-color: #02a9ff; color: #02a9ff; background: rgba(2, 169, 255, 0.12); }
+  .langs button:hover { border-color: #02a9ff; }
+  h1 { font-size: 1.45rem; color: #02a9ff; text-align: center; margin: 0 0 6px; }
+  .updated { text-align: center; color: #8ba0c8; font-size: 0.82rem; margin: 0 0 22px; }
+  .part { font-size: 1.15rem; color: #02a9ff; margin: 30px 0 14px; padding-top: 20px; border-top: 1px solid rgba(2, 169, 255, 0.2); }
   .card { background: #141428; border: 1px solid rgba(2, 169, 255, 0.25); border-radius: 16px; padding: 20px 22px; margin-bottom: 18px; }
   .card h2 { font-size: 1.02rem; color: #7fd3ff; margin: 0 0 8px; }
   .card p { margin: 0 0 10px; font-size: 0.92rem; color: #c9d6f2; }
   .card p:last-child { margin-bottom: 0; }
-  .note { text-align: center; color: #8ba0c8; font-size: 0.8rem; margin-top: 26px; }
+  .card ul { margin: 0 0 10px; padding-left: 1.1rem; font-size: 0.92rem; color: #c9d6f2; }
+  .card li { margin: 0.3rem 0; }
+  .card ul:last-child { margin-bottom: 0; }
+  .card.summary { border-left: 3px solid #02a9ff; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 0.86rem; display: block; overflow-x: auto; }
+  th, td { border: 1px solid #26264a; padding: 8px 10px; text-align: left; vertical-align: top; color: #c9d6f2; }
+  th { background: #101024; color: #7fd3ff; font-weight: 600; }
   a { color: #4fb9fb; }
+  a:focus-visible, button:focus-visible { outline: 2px solid #02a9ff; outline-offset: 3px; border-radius: 4px; }
+  .note { text-align: center; color: #8ba0c8; font-size: 0.8rem; margin-top: 26px; }
   .back { display: block; text-align: center; margin-top: 28px; font-weight: 700; text-decoration: none; }
+  [data-lang] { display: none; }
+  [data-lang].on { display: block; }
+  @media (max-width: 520px) { body { font-size: 16px; } h1 { font-size: 1.3rem; } .card { padding: 16px 16px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="brand"><img src="icons/logo-master.png" alt="Sakugame logo"><span>SAKUGAME</span></div>
-  <h1>Privacy Policy &amp; Terms of Use and Service</h1>
+  <div class="brand"><img src="icons/logo-master.png" alt="Sakugame logo"><span>SAKUGAME</span>
+    <nav class="langs" aria-label="Language">
+      <button type="button" data-set="en" aria-pressed="true">English</button>
+      <button type="button" data-set="fr" aria-pressed="false">Français</button>
+      <button type="button" data-set="es" aria-pressed="false">Español</button>
+    </nav>
+  </div>
+
+<!-- ===================== ENGLISH ===================== -->
+<section data-lang="en" class="on">
+
+  <h1>Privacy Policy &amp; Terms of Use</h1>
+  <p class="updated">Last updated: 19 September 2026</p>
+
+  <div class="card summary">
+    <p><strong>Short version.</strong> Sakugame is a free fan project with no ads and no trackers. You don't need an email address to play. What's stored is a username, a hashed password, an optional avatar, an optional AniList username and your game stats. Nothing is sold or shared for advertising. You can delete your account at any time from the Account tab.</p>
+  </div>
+
+  <h2 class="part">Part 1 — Privacy Policy</h2>
 
   <div class="card">
-    <h2>🌸 A fan project, not a business</h2>
-    <p>Sakugame is a free, non-commercial fan-made website. It is not affiliated with, sponsored by, or endorsed by any anime studio, publisher, licensor, or by AniList.</p>
+    <h2>🛡️ Who runs Sakugame</h2>
+    <p>Sakugame is run by a private individual, as a personal and non-commercial project. Under French law, a non-professional publisher may withhold their identity from the public provided it has been given to their host, which is the case here.</p>
+    <p>Contact: <a href="/cdn-cgi/l/email-protection#e3908c96858a828d868891cd93918ca3979697828e828a8fcd808c8e"><span class="__cf_email__" data-cfemail="e1928e948788808f848a93cf91938ea1959495808c80888dcf828e8c">[email&#160;protected]</span></a> — or Discord <strong>@soufiane_jv</strong>.</p>
+    <p>Hosting providers:</p>
+    <ul>
+      <li><strong>GitHub Pages</strong> — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA (site files).</li>
+      <li><strong>Google Firebase</strong> — Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland (accounts, live games, database).</li>
+    </ul>
   </div>
 
   <div class="card">
-    <h2>🖼️ Artwork &amp; character data</h2>
-    <p>All anime titles, character names and illustrations displayed on this site are © their respective copyright holders (studios, publishers and licensors).</p>
-    <p>Character names and images are sourced from the public <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> database and served through its API/CDN, for identification and fan use only.</p>
-    <p>If you are a rights holder and would like any content removed, contact us and it will be taken down promptly.</p>
+    <h2>📦 What data is handled</h2>
+    <table>
+      <tr><th>Data</th><th>Where it comes from</th></tr>
+      <tr><td>Username and password (stored hashed, never in plain text)</td><td>Created by you</td></tr>
+      <tr><td>Optional profile picture (resized to 96×96 by your browser)</td><td>Uploaded by you</td></tr>
+      <tr><td>AniList username and the anime lists attached to it, if you enable syncing</td><td>Provided by you, fetched from the public AniList API</td></tr>
+      <tr><td>Game stats (wins, losses)</td><td>Generated by the game</td></tr>
+      <tr><td>Chat messages sent during a game</td><td>Written by you</td></tr>
+      <tr><td>Game data: room code, players present, settings, turns</td><td>Generated by the game</td></tr>
+      <tr><td>Technical data: IP address, timestamps, device type, connection logs</td><td>Collected automatically by Firebase</td></tr>
+    </table>
+    <p>No real email address is needed to create an account. No payment data is collected — the site is entirely free.</p>
   </div>
 
   <div class="card">
-    <h2>👤 Your data</h2>
-    <p>Sakugame stores a username, a hashed password, an optional avatar and AniList username, and basic game statistics. No real email address is required, and there are no ads or trackers.</p>
-    <p>You may request the deletion of your account data at any time via the contact below.</p>
+    <h2>⚖️ Why, and on what legal basis</h2>
+    <ul>
+      <li><strong>Running your account and the games</strong> (username, password, room data, stats) — performance of the service you ask for by creating an account.</li>
+      <li><strong>AniList sync and profile picture</strong> — your consent. Both are optional and can be withdrawn at any time by clearing the AniList field or removing your picture.</li>
+      <li><strong>18+ content filter, moderation, service security</strong> — legitimate interest in keeping the service safe and usable.</li>
+      <li><strong>Technical logs</strong> — legitimate interest in keeping the site secure and working.</li>
+    </ul>
+    <p>The anime list fetched from AniList reflects your personal tastes. It is only used to build the character pool for your games, is never published as such, and is not analysed for any other purpose.</p>
   </div>
 
-  <p class="note">Full privacy policy &amp; terms coming soon — this page is a placeholder being completed.<br>Contact: Discord <strong>@soufiane_jv</strong> (see the Support tab on the site).</p>
+  <div class="card">
+    <h2>👥 Who else can see it</h2>
+    <ul>
+      <li><strong>Google (Firebase)</strong>, as a technical processor: database, authentication and real-time hosting.</li>
+      <li><strong>GitHub</strong>, as the host of the site files.</li>
+      <li><strong>AniList</strong>: when a character or cover is displayed, your browser contacts AniList's servers directly, so they receive your IP address. AniList applies its own privacy policy.</li>
+      <li><strong>Other players</strong> see your username, avatar and chat messages.</li>
+    </ul>
+    <p>No data is sold, rented or passed to advertisers, data brokers or ad networks. The site carries no advertising and no analytics.</p>
+  </div>
 
-  <a class="back" href="/">← Back to Sakugame</a>
+  <div class="card">
+    <h2>✈️ Transfers outside the European Union</h2>
+    <p>Google and GitHub are US companies and may process some data outside the EU. These transfers rely on the European Commission's standard contractual clauses and, where applicable, on those companies' certification under the EU–US Data Privacy Framework.</p>
+  </div>
+
+  <div class="card">
+    <h2>⏳ How long data is kept</h2>
+    <ul>
+      <li><strong>Account</strong> (username, password, avatar, AniList link, stats): until you delete your account.</li>
+      <li><strong>Inactive accounts</strong>: may be removed after 24 months without a login.</li>
+      <li><strong>Rooms and chat messages</strong>: deleted when the game ends or shortly after the room closes.</li>
+      <li><strong>Technical logs</strong>: kept by Firebase for a limited period, in the range of weeks to months.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🗑️ Deleting your account</h2>
+    <p><strong>Account → Danger zone → Delete my account</strong>. Deletion is permanent and removes the username, password, avatar, AniList link and stats.</p>
+    <p>What may remain afterwards: messages already sent in an ongoing game, and Firebase technical logs until they expire. Write to me if you want those removed sooner.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧾 Your rights</h2>
+    <p>You have the right to access, correct, erase, restrict, object to and port your data, and to withdraw your consent at any time.</p>
+    <p>To use these rights, write to <a href="/cdn-cgi/l/email-protection#a7d4c8d2c1cec6c9c2ccd589d7d5c8e7d3d2d3c6cac6cecb89c4c8ca"><span class="__cf_email__" data-cfemail="cab9a5bfaca3aba4afa1b8e4bab8a58abebfbeaba7aba3a6e4a9a5a7">[email&#160;protected]</span></a> from the username concerned, or message me on Discord. I usually reply within a few days. Since accounts have no email attached, you may be asked to show you control the account, for example by logging into it while we talk.</p>
+    <p>If you believe your rights are not being respected, you can lodge a complaint with the French data protection authority, the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>), or with your own national authority.</p>
+  </div>
+
+  <div class="card">
+    <h2>🍪 Cookies &amp; local storage</h2>
+    <p>Sakugame uses no advertising cookies and no analytics. It only uses your browser's local storage and Firebase's technical cookies, to keep you logged in and remember your preferences: language, 18+ filter, saved game configurations. These are strictly necessary to run the service, so no consent banner is required. Clearing your browser data removes them.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔒 Security</h2>
+    <p>Passwords are stored hashed. Traffic runs over HTTPS and data access is restricted by Firebase security rules. No online service is bulletproof, so use a password you don't use anywhere else. If a data breach is likely to put you at risk, you will be told and the supervisory authority will be notified.</p>
+  </div>
+
+  <div class="card">
+    <h2>👶 Minors</h2>
+    <p>Sakugame is open from age 13. In France and the EU, users under 15 need permission from a parent or guardian to create an account.</p>
+    <p>The site includes player chat and a filter that hides 18+ content, available in the Account tab. A parent or guardian can ask for a minor's account to be deleted by writing to the contact address.</p>
+  </div>
+
+  <div class="card">
+    <h2>📝 Changes</h2>
+    <p>This page may change as the site evolves. The date at the top shows the latest version. Significant changes will be announced on the site.</p>
+  </div>
+
+  <h2 class="part">Part 2 — Terms of Use</h2>
+
+  <div class="card">
+    <h2>📜 Scope</h2>
+    <p>These terms cover the use of Sakugame, a free anime-themed guessing game site. Using the site means accepting them. If you don't accept them, don't use the site.</p>
+  </div>
+
+  <div class="card">
+    <h2>🌸 A fan project, with no affiliation</h2>
+    <p>Sakugame is a personal, non-commercial project with no affiliation to any anime studio, publisher, rights holder or to AniList.</p>
+    <p>Titles, character names and artwork shown belong to their respective rights holders. They come from the public <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> database and its API, and are used for identification in a fan context only.</p>
+    <p>Any rights holder wanting content removed can write to <a href="/cdn-cgi/l/email-protection#d3a0bca6b5bab2bdb6b8a1fda3a1bc93a7a6a7b2beb2babffdb0bcbe"><span class="__cf_email__" data-cfemail="e99a869c8f8088878c829bc7999b86a99d9c9d8884888085c78a8684">[email&#160;protected]</span></a> and it will be taken down promptly.</p>
+  </div>
+
+  <div class="card">
+    <h2>👤 Your account</h2>
+    <p>An account is created with a username and a password. You are responsible for keeping your password confidential and for activity carried out from your account. Choose a username that doesn't harm others or impersonate anyone.</p>
+  </div>
+
+  <div class="card">
+    <h2>🚫 Rules of conduct</h2>
+    <p>The following are not allowed anywhere on the site, including chat, usernames and avatars:</p>
+    <ul>
+      <li>harassment, threats, insults, hateful or discriminatory speech;</li>
+      <li>sexual, violent or illegal content, and any content involving minors inappropriately;</li>
+      <li>posting other people's personal information;</li>
+      <li>spam, advertising, malicious links;</li>
+      <li>cheating, exploiting bugs, bots, scraping, and any attempt to disrupt or overload the service.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>✍️ Content you post</h2>
+    <p>You remain responsible for what you write and upload. Any content breaking the rules above may be removed without notice. Problem behaviour can be reported to the contact address or on Discord.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔌 Availability</h2>
+    <p>The site is provided as is, free of charge, with no guarantee of availability, of being error-free, or of data being preserved. It may be interrupted, changed, reset or permanently shut down at any time, without notice or compensation. Stats and accounts may be lost during a technical update.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Enforcement</h2>
+    <p>If these terms are broken, your account may be suspended or deleted and access to the service restricted. You can dispute a decision by writing to the contact address.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧯 Liability</h2>
+    <p>As the service is free and non-commercial, the publisher cannot be held liable for indirect damages arising from use of the site, its unavailability, loss of data, or content posted by other players. Nothing here excludes liability that cannot be limited by law, in particular for gross negligence or wilful misconduct.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Third-party links &amp; services</h2>
+    <p>The site links to AniList, GitHub and Discord, which apply their own terms and privacy policies. Their content is not under the control of Sakugame's publisher.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔄 Changes to these terms</h2>
+    <p>These terms may be updated. Continuing to use the site after a new version is published means accepting it.</p>
+  </div>
+
+  <div class="card">
+    <h2>🏛️ Governing law</h2>
+    <p>These terms are governed by French law. Failing an amicable settlement, the French courts have jurisdiction. If you are a consumer resident in another EU country, the protective provisions of your country of residence still apply.</p>
+  </div>
+
+  <a class="back" href="./">← Back to Sakugame</a>
+</section>
+
+<!-- ===================== FRANÇAIS ===================== -->
+<section data-lang="fr">
+
+  <h1>Politique de confidentialité et conditions d'utilisation</h1>
+  <p class="updated">Dernière mise à jour : 19 septembre 2026</p>
+
+  <div class="card summary">
+    <p><strong>En bref.</strong> Sakugame est un projet de fan gratuit, sans publicité et sans traqueur. Aucune adresse e-mail n'est demandée pour jouer. Les données conservées se limitent à un pseudo, un mot de passe chiffré, un avatar facultatif, un pseudo AniList facultatif et des statistiques de jeu. Rien n'est vendu ni partagé à des fins publicitaires. Vous pouvez supprimer votre compte à tout moment depuis l'onglet Compte.</p>
+  </div>
+
+  <h2 class="part">Partie 1 — Politique de confidentialité</h2>
+
+  <div class="card">
+    <h2>🛡️ Qui édite Sakugame</h2>
+    <p>Sakugame est édité par un particulier, à titre personnel et non commercial. Conformément à l'article 6 de la loi pour la confiance dans l'économie numérique, un éditeur non professionnel peut ne pas publier son identité, à condition de l'avoir communiquée à son hébergeur. C'est le cas ici.</p>
+    <p>Contact : <a href="/cdn-cgi/l/email-protection#acdfc3d9cac5cdc2c9c7de82dcdec3ecd8d9d8cdc1cdc5c082cfc3c1"><span class="__cf_email__" data-cfemail="98ebf7edfef1f9f6fdf3eab6e8eaf7d8ecedecf9f5f9f1f4b6fbf7f5">[email&#160;protected]</span></a> — ou Discord <strong>@soufiane_jv</strong>.</p>
+    <p>Hébergeurs :</p>
+    <ul>
+      <li><strong>GitHub Pages</strong> — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (pages du site).</li>
+      <li><strong>Google Firebase</strong> — Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irlande (comptes, parties en temps réel, base de données).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>📦 Quelles données sont traitées</h2>
+    <table>
+      <tr><th>Donnée</th><th>Origine</th></tr>
+      <tr><td>Pseudo et mot de passe (stocké sous forme chiffrée, jamais en clair)</td><td>Créé par vous</td></tr>
+      <tr><td>Photo de profil facultative (redimensionnée en 96×96 par votre navigateur)</td><td>Envoyée par vous</td></tr>
+      <tr><td>Pseudo AniList et listes d'animés associées, si vous activez la synchronisation</td><td>Fourni par vous, récupéré via l'API publique AniList</td></tr>
+      <tr><td>Statistiques de jeu (victoires, défaites)</td><td>Générée par le jeu</td></tr>
+      <tr><td>Messages de chat envoyés pendant une partie</td><td>Écrits par vous</td></tr>
+      <tr><td>Données de partie : code de salon, pseudos présents, réglages, tours de jeu</td><td>Générée par le jeu</td></tr>
+      <tr><td>Données techniques : adresse IP, horodatages, type d'appareil, journaux de connexion</td><td>Collectée automatiquement par Firebase</td></tr>
+    </table>
+    <p>Aucune adresse e-mail réelle n'est nécessaire pour créer un compte. Aucune donnée bancaire n'est collectée : le site est entièrement gratuit.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚖️ Pourquoi, et sur quelle base légale</h2>
+    <ul>
+      <li><strong>Faire fonctionner votre compte et les parties</strong> (pseudo, mot de passe, données de salon, statistiques) — exécution du service que vous demandez en créant un compte.</li>
+      <li><strong>Synchronisation AniList et photo de profil</strong> — votre consentement. Ces deux fonctions sont facultatives et vous pouvez les retirer à tout moment en vidant le champ AniList ou en supprimant votre image.</li>
+      <li><strong>Filtre de contenu 18+, modération, sécurité du service</strong> — intérêt légitime à maintenir un service sûr et utilisable.</li>
+      <li><strong>Journaux techniques</strong> — intérêt légitime à assurer la sécurité et le bon fonctionnement du site.</li>
+    </ul>
+    <p>La liste d'animés récupérée via AniList reflète vos goûts personnels. Elle n'est utilisée que pour constituer le pool de personnages de vos parties, n'est jamais publiée telle quelle et n'est pas analysée à d'autres fins.</p>
+  </div>
+
+  <div class="card">
+    <h2>👥 Qui d'autre y a accès</h2>
+    <ul>
+      <li><strong>Google (Firebase)</strong>, en tant que sous-traitant technique : hébergement de la base de données, de l'authentification et du temps réel.</li>
+      <li><strong>GitHub</strong>, en tant qu'hébergeur des fichiers du site.</li>
+      <li><strong>AniList</strong> : lorsque le site affiche un personnage ou une jaquette, votre navigateur contacte directement les serveurs d'AniList, qui reçoivent donc votre adresse IP. AniList applique sa propre politique de confidentialité.</li>
+      <li><strong>Les autres joueurs</strong> voient votre pseudo, votre avatar et vos messages de chat.</li>
+    </ul>
+    <p>Aucune donnée n'est vendue, louée, ni transmise à des annonceurs, des courtiers en données ou des régies publicitaires. Le site ne contient ni publicité ni outil de mesure d'audience.</p>
+  </div>
+
+  <div class="card">
+    <h2>✈️ Transferts hors Union européenne</h2>
+    <p>Google et GitHub sont des sociétés américaines et peuvent traiter certaines données en dehors de l'Union européenne. Ces transferts sont encadrés par les clauses contractuelles types de la Commission européenne et, le cas échéant, par la certification de ces sociétés au titre du cadre de protection des données UE–États-Unis.</p>
+  </div>
+
+  <div class="card">
+    <h2>⏳ Combien de temps les données sont conservées</h2>
+    <ul>
+      <li><strong>Compte</strong> (pseudo, mot de passe, avatar, AniList, statistiques) : jusqu'à ce que vous supprimiez votre compte.</li>
+      <li><strong>Comptes inactifs</strong> : susceptibles d'être supprimés après 24 mois sans connexion.</li>
+      <li><strong>Salons et messages de chat</strong> : supprimés à la fin de la partie ou peu après la fermeture du salon.</li>
+      <li><strong>Journaux techniques</strong> : conservés par Firebase pour une durée limitée, de l'ordre de quelques semaines à quelques mois.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🗑️ Supprimer votre compte</h2>
+    <p>Onglet <strong>Compte → Zone de danger → Supprimer mon compte</strong>. La suppression est définitive et efface le pseudo, le mot de passe, l'avatar, le lien AniList et les statistiques.</p>
+    <p>Peuvent subsister après suppression : les messages déjà envoyés dans une partie en cours, et les journaux techniques de Firebase jusqu'à leur expiration automatique. Écrivez-moi si vous souhaitez leur retrait immédiat.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧾 Vos droits</h2>
+    <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité de vos données, ainsi que du droit de retirer votre consentement à tout moment.</p>
+    <p>Pour les exercer, écrivez à <a href="/cdn-cgi/l/email-protection#a0d3cfd5c6c9c1cec5cbd28ed0d2cfe0d4d5d4c1cdc1c9cc8ec3cfcd"><span class="__cf_email__" data-cfemail="1e6d716b78777f707b756c306e6c715e6a6b6a7f737f7772307d7173">[email&#160;protected]</span></a> depuis le pseudo concerné, ou contactez-moi sur Discord. Je réponds généralement sous quelques jours. Comme aucun e-mail n'est rattaché aux comptes, il pourra vous être demandé de prouver que vous contrôlez bien le compte concerné, par exemple en vous y connectant pendant l'échange.</p>
+    <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL : <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>🍪 Cookies et stockage local</h2>
+    <p>Sakugame n'utilise aucun cookie publicitaire ni aucun outil de mesure d'audience. Le site utilise uniquement le stockage local de votre navigateur et les cookies techniques de Firebase, pour vous maintenir connecté et retenir vos préférences : langue, filtre 18+, configurations de partie enregistrées. Ces éléments sont strictement nécessaires au fonctionnement du service et ne nécessitent donc pas de bandeau de consentement. Vider les données de votre navigateur les efface.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔒 Sécurité</h2>
+    <p>Les mots de passe sont stockés sous forme chiffrée. Les échanges avec le site se font en HTTPS et l'accès aux données est restreint par les règles de sécurité Firebase. Aucun service en ligne n'est infaillible : choisissez un mot de passe que vous n'utilisez nulle part ailleurs. En cas de violation de données susceptible de présenter un risque pour vous, vous en serez informé et la CNIL sera notifiée.</p>
+  </div>
+
+  <div class="card">
+    <h2>👶 Mineurs</h2>
+    <p>Sakugame est accessible à partir de 13 ans. En France et dans l'Union européenne, les moins de 15 ans doivent disposer de l'autorisation d'un parent ou tuteur pour créer un compte.</p>
+    <p>Le site propose un chat entre joueurs et un filtre permettant de masquer les contenus 18+, activable dans l'onglet Compte. Un parent ou tuteur peut demander la suppression du compte d'un mineur en écrivant à l'adresse de contact.</p>
+  </div>
+
+  <div class="card">
+    <h2>📝 Modifications</h2>
+    <p>Cette page peut être modifiée pour suivre l'évolution du site. La date de dernière mise à jour figure en haut. En cas de changement important, une information sera affichée sur le site.</p>
+  </div>
+
+  <h2 class="part">Partie 2 — Conditions d'utilisation</h2>
+
+  <div class="card">
+    <h2>📜 Objet</h2>
+    <p>Ces conditions encadrent l'utilisation de Sakugame, un site de jeux de devinettes sur le thème de l'animation japonaise, proposé gratuitement. Utiliser le site vaut acceptation de ces conditions. Si vous ne les acceptez pas, n'utilisez pas le site.</p>
+  </div>
+
+  <div class="card">
+    <h2>🌸 Un projet de fan, sans affiliation</h2>
+    <p>Sakugame est un projet personnel, non commercial et sans affiliation avec un studio d'animation, un éditeur, un ayant droit ou avec AniList.</p>
+    <p>Les titres, noms de personnages et illustrations affichés appartiennent à leurs ayants droit respectifs. Ils proviennent de la base publique <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> et de son API, et ne sont utilisés qu'à des fins d'identification dans le cadre d'un usage de fan.</p>
+    <p>Tout ayant droit souhaitant le retrait d'un contenu peut écrire à <a href="/cdn-cgi/l/email-protection#36455943505f5758535d441846445976424342575b575f5a1855595b"><span class="__cf_email__" data-cfemail="03706c76656a626d6668712d73716c43777677626e626a6f2d606c6e">[email&#160;protected]</span></a> : le contenu sera retiré dans les meilleurs délais.</p>
+  </div>
+
+  <div class="card">
+    <h2>👤 Votre compte</h2>
+    <p>Un compte se crée avec un pseudo et un mot de passe. Vous êtes responsable de la confidentialité de votre mot de passe et de l'activité menée depuis votre compte. Choisissez un pseudo qui ne porte pas atteinte à autrui et n'usurpe l'identité de personne.</p>
+  </div>
+
+  <div class="card">
+    <h2>🚫 Règles de conduite</h2>
+    <p>Sont interdits sur le site, dans le chat, dans les pseudos et les avatars :</p>
+    <ul>
+      <li>le harcèlement, les menaces, les insultes, les propos haineux ou discriminatoires ;</li>
+      <li>les contenus sexuels, violents ou illicites, et tout contenu impliquant des mineurs de manière inappropriée ;</li>
+      <li>la publication de données personnelles d'autrui ;</li>
+      <li>le spam, la publicité, les liens malveillants ;</li>
+      <li>la triche, l'exploitation de failles, les robots, l'extraction automatisée de données, ainsi que toute tentative de perturber ou de surcharger le service.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>✍️ Contenus que vous publiez</h2>
+    <p>Vous restez responsable de ce que vous écrivez et envoyez. Tout contenu contraire aux règles ci-dessus peut être supprimé sans préavis. Un comportement problématique peut être signalé à l'adresse de contact ou sur Discord.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔌 Disponibilité du service</h2>
+    <p>Le site est fourni en l'état, gratuitement, sans garantie de disponibilité, d'absence d'erreur ni de conservation des données. Il peut être interrompu, modifié, réinitialisé ou définitivement arrêté à tout moment, sans préavis ni indemnité. Les statistiques et les comptes peuvent être perdus lors d'une mise à jour technique.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Sanctions</h2>
+    <p>En cas de non-respect de ces conditions, votre compte peut être suspendu ou supprimé, et l'accès au service restreint. Vous pouvez contester une décision en écrivant à l'adresse de contact.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧯 Responsabilité</h2>
+    <p>Le service étant gratuit et non commercial, la responsabilité de l'éditeur ne saurait être engagée pour les dommages indirects liés à l'utilisation du site, à son indisponibilité, à la perte de données ou aux contenus publiés par d'autres joueurs. Aucune stipulation de ce document n'écarte la responsabilité qui ne peut être limitée par la loi, notamment en cas de faute lourde ou intentionnelle.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Liens et services tiers</h2>
+    <p>Le site renvoie vers AniList, GitHub et Discord, qui appliquent leurs propres conditions et politiques de confidentialité. Leur contenu n'est pas sous le contrôle de l'éditeur de Sakugame.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔄 Évolution des conditions</h2>
+    <p>Ces conditions peuvent être mises à jour. La poursuite de l'utilisation du site après publication d'une nouvelle version vaut acceptation de celle-ci.</p>
+  </div>
+
+  <div class="card">
+    <h2>🏛️ Droit applicable</h2>
+    <p>Ces conditions sont régies par le droit français. À défaut de résolution amiable, les tribunaux français sont compétents. Si vous êtes consommateur et résidez dans un autre pays de l'Union européenne, les dispositions protectrices de votre pays de résidence restent applicables.</p>
+  </div>
+
+  <a class="back" href="./">← Retour à Sakugame</a>
+</section>
+
+<!-- ===================== ESPAÑOL ===================== -->
+<section data-lang="es">
+
+  <h1>Política de privacidad y condiciones de uso</h1>
+  <p class="updated">Última actualización: 19 de septiembre de 2026</p>
+
+  <div class="card summary">
+    <p><strong>En resumen.</strong> Sakugame es un proyecto de fans gratuito, sin publicidad y sin rastreadores. No hace falta correo electrónico para jugar. Solo se guardan un nombre de usuario, una contraseña cifrada, un avatar opcional, un usuario de AniList opcional y tus estadísticas. Nada se vende ni se comparte con fines publicitarios. Puedes eliminar tu cuenta cuando quieras desde la pestaña Cuenta.</p>
+  </div>
+
+  <h2 class="part">Parte 1 — Política de privacidad</h2>
+
+  <div class="card">
+    <h2>🛡️ Quién gestiona Sakugame</h2>
+    <p>Sakugame está gestionado por un particular, como proyecto personal y no comercial. Según la ley francesa, un editor no profesional puede no publicar su identidad siempre que se la haya comunicado a su proveedor de alojamiento, como ocurre aquí.</p>
+    <p>Contacto: <a href="/cdn-cgi/l/email-protection#5e2d312b38373f303b352c702e2c311e2a2b2a3f333f3732703d3133"><span class="__cf_email__" data-cfemail="04776b71626d656a616f762a74766b447071706569656d682a676b69">[email&#160;protected]</span></a> — o Discord <strong>@soufiane_jv</strong>.</p>
+    <p>Proveedores de alojamiento:</p>
+    <ul>
+      <li><strong>GitHub Pages</strong> — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, EE. UU. (archivos del sitio).</li>
+      <li><strong>Google Firebase</strong> — Google Ireland Limited, Gordon House, Barrow Street, Dublín 4, Irlanda (cuentas, partidas en tiempo real, base de datos).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>📦 Qué datos se tratan</h2>
+    <table>
+      <tr><th>Dato</th><th>Origen</th></tr>
+      <tr><td>Nombre de usuario y contraseña (guardada cifrada, nunca en texto plano)</td><td>Creado por ti</td></tr>
+      <tr><td>Foto de perfil opcional (tu navegador la reduce a 96×96)</td><td>Subida por ti</td></tr>
+      <tr><td>Usuario de AniList y sus listas de anime, si activas la sincronización</td><td>Facilitado por ti, obtenido de la API pública de AniList</td></tr>
+      <tr><td>Estadísticas de juego (victorias, derrotas)</td><td>Generado por el juego</td></tr>
+      <tr><td>Mensajes de chat enviados durante una partida</td><td>Escritos por ti</td></tr>
+      <tr><td>Datos de partida: código de sala, jugadores, ajustes, turnos</td><td>Generado por el juego</td></tr>
+      <tr><td>Datos técnicos: dirección IP, marcas de tiempo, tipo de dispositivo, registros de conexión</td><td>Recogidos automáticamente por Firebase</td></tr>
+    </table>
+    <p>No hace falta un correo electrónico real para crear una cuenta. No se recogen datos bancarios: el sitio es totalmente gratuito.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚖️ Para qué, y con qué base legal</h2>
+    <ul>
+      <li><strong>Hacer funcionar tu cuenta y las partidas</strong> (usuario, contraseña, datos de sala, estadísticas) — ejecución del servicio que solicitas al crear una cuenta.</li>
+      <li><strong>Sincronización con AniList y foto de perfil</strong> — tu consentimiento. Ambas son opcionales y puedes retirarlas cuando quieras vaciando el campo de AniList o eliminando tu imagen.</li>
+      <li><strong>Filtro de contenido +18, moderación y seguridad</strong> — interés legítimo en mantener un servicio seguro y utilizable.</li>
+      <li><strong>Registros técnicos</strong> — interés legítimo en la seguridad y el buen funcionamiento del sitio.</li>
+    </ul>
+    <p>La lista de anime obtenida de AniList refleja tus gustos personales. Solo se usa para formar el conjunto de personajes de tus partidas, nunca se publica como tal y no se analiza con ningún otro fin.</p>
+  </div>
+
+  <div class="card">
+    <h2>👥 Quién más tiene acceso</h2>
+    <ul>
+      <li><strong>Google (Firebase)</strong>, como encargado del tratamiento: base de datos, autenticación y tiempo real.</li>
+      <li><strong>GitHub</strong>, como proveedor de alojamiento de los archivos del sitio.</li>
+      <li><strong>AniList</strong>: al mostrar un personaje o una portada, tu navegador contacta directamente con los servidores de AniList, que reciben tu dirección IP. AniList aplica su propia política de privacidad.</li>
+      <li><strong>Los demás jugadores</strong> ven tu nombre de usuario, tu avatar y tus mensajes de chat.</li>
+    </ul>
+    <p>Ningún dato se vende, se alquila ni se cede a anunciantes, intermediarios de datos o redes publicitarias. El sitio no tiene publicidad ni herramientas de analítica.</p>
+  </div>
+
+  <div class="card">
+    <h2>✈️ Transferencias fuera de la Unión Europea</h2>
+    <p>Google y GitHub son empresas estadounidenses y pueden tratar algunos datos fuera de la UE. Estas transferencias se amparan en las cláusulas contractuales tipo de la Comisión Europea y, en su caso, en la certificación de dichas empresas en el Marco de Privacidad de Datos UE–EE. UU.</p>
+  </div>
+
+  <div class="card">
+    <h2>⏳ Cuánto tiempo se conservan los datos</h2>
+    <ul>
+      <li><strong>Cuenta</strong> (usuario, contraseña, avatar, enlace AniList, estadísticas): hasta que elimines tu cuenta.</li>
+      <li><strong>Cuentas inactivas</strong>: pueden eliminarse tras 24 meses sin conexión.</li>
+      <li><strong>Salas y mensajes de chat</strong>: se eliminan al terminar la partida o poco después de cerrarse la sala.</li>
+      <li><strong>Registros técnicos</strong>: los conserva Firebase durante un periodo limitado, del orden de semanas a meses.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🗑️ Eliminar tu cuenta</h2>
+    <p><strong>Cuenta → Zona de peligro → Eliminar mi cuenta</strong>. La eliminación es definitiva y borra el nombre de usuario, la contraseña, el avatar, el enlace con AniList y las estadísticas.</p>
+    <p>Puede quedar después: los mensajes ya enviados en una partida en curso, y los registros técnicos de Firebase hasta que expiren. Escríbeme si quieres que se retiren antes.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧾 Tus derechos</h2>
+    <p>Tienes derecho a acceder, rectificar, suprimir, limitar, oponerte y portar tus datos, así como a retirar tu consentimiento en cualquier momento.</p>
+    <p>Para ejercerlos, escribe a <a href="/cdn-cgi/l/email-protection#a1d2ced4c7c8c0cfc4cad38fd1d3cee1d5d4d5c0ccc0c8cd8fc2cecc"><span class="__cf_email__" data-cfemail="8dfee2f8ebe4ece3e8e6ffa3fdffe2cdf9f8f9ece0ece4e1a3eee2e0">[email&#160;protected]</span></a> indicando el usuario afectado, o contáctame por Discord. Suelo responder en unos días. Como las cuentas no tienen correo asociado, puede pedírsete que demuestres que controlas la cuenta, por ejemplo conectándote a ella durante el intercambio.</p>
+    <p>Si consideras que tus derechos no se respetan, puedes reclamar ante la autoridad francesa de protección de datos, la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>), o ante la autoridad de tu país.</p>
+  </div>
+
+  <div class="card">
+    <h2>🍪 Cookies y almacenamiento local</h2>
+    <p>Sakugame no usa cookies publicitarias ni herramientas de analítica. Solo utiliza el almacenamiento local de tu navegador y las cookies técnicas de Firebase para mantenerte conectado y recordar tus preferencias: idioma, filtro +18 y configuraciones de partida guardadas. Son estrictamente necesarias para el funcionamiento del servicio, por lo que no requieren banner de consentimiento. Al borrar los datos de tu navegador desaparecen.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔒 Seguridad</h2>
+    <p>Las contraseñas se guardan cifradas. La conexión con el sitio usa HTTPS y el acceso a los datos está limitado por las reglas de seguridad de Firebase. Ningún servicio en línea es infalible: usa una contraseña que no utilices en ningún otro sitio. Si se produce una brecha que pueda suponer un riesgo para ti, se te informará y se notificará a la autoridad competente.</p>
+  </div>
+
+  <div class="card">
+    <h2>👶 Menores</h2>
+    <p>Sakugame está abierto a partir de los 13 años. En Francia y la UE, los menores de 15 años necesitan autorización de un padre, madre o tutor para crear una cuenta.</p>
+    <p>El sitio incluye un chat entre jugadores y un filtro para ocultar contenido +18, disponible en la pestaña Cuenta. Un padre, madre o tutor puede solicitar la eliminación de la cuenta de un menor escribiendo a la dirección de contacto.</p>
+  </div>
+
+  <div class="card">
+    <h2>📝 Modificaciones</h2>
+    <p>Esta página puede cambiar a medida que evolucione el sitio. La fecha de arriba indica la última versión. Los cambios importantes se anunciarán en el sitio.</p>
+  </div>
+
+  <h2 class="part">Parte 2 — Condiciones de uso</h2>
+
+  <div class="card">
+    <h2>📜 Objeto</h2>
+    <p>Estas condiciones regulan el uso de Sakugame, un sitio gratuito de juegos de adivinanzas sobre anime. Usar el sitio implica aceptarlas. Si no las aceptas, no uses el sitio.</p>
+  </div>
+
+  <div class="card">
+    <h2>🌸 Un proyecto de fans, sin afiliación</h2>
+    <p>Sakugame es un proyecto personal, no comercial y sin afiliación con ningún estudio de animación, editorial, titular de derechos ni con AniList.</p>
+    <p>Los títulos, nombres de personajes e ilustraciones mostrados pertenecen a sus respectivos titulares de derechos. Proceden de la base pública <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> y de su API, y se usan únicamente con fines de identificación en un contexto de fans.</p>
+    <p>Cualquier titular de derechos que desee la retirada de un contenido puede escribir a <a href="/cdn-cgi/l/email-protection#f1829e849798909f949a83df81839eb1858485909c90989ddf929e9c"><span class="__cf_email__" data-cfemail="53203c26353a323d3638217d23213c13272627323e323a3f7d303c3e">[email&#160;protected]</span></a> y se retirará a la mayor brevedad.</p>
+  </div>
+
+  <div class="card">
+    <h2>👤 Tu cuenta</h2>
+    <p>La cuenta se crea con un nombre de usuario y una contraseña. Eres responsable de mantener tu contraseña en secreto y de la actividad realizada desde tu cuenta. Elige un nombre que no perjudique a nadie ni suplante a otra persona.</p>
+  </div>
+
+  <div class="card">
+    <h2>🚫 Normas de conducta</h2>
+    <p>No se permite, en ninguna parte del sitio, incluidos el chat, los nombres de usuario y los avatares:</p>
+    <ul>
+      <li>acoso, amenazas, insultos, discursos de odio o discriminatorios;</li>
+      <li>contenido sexual, violento o ilícito, y cualquier contenido que implique a menores de forma inapropiada;</li>
+      <li>publicar datos personales de otras personas;</li>
+      <li>spam, publicidad o enlaces maliciosos;</li>
+      <li>hacer trampas, aprovechar fallos, usar bots, extraer datos automáticamente o intentar perturbar o sobrecargar el servicio.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>✍️ Contenido que publicas</h2>
+    <p>Sigues siendo responsable de lo que escribes y subes. Todo contenido que incumpla las normas anteriores puede eliminarse sin previo aviso. Los comportamientos problemáticos pueden comunicarse a la dirección de contacto o por Discord.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔌 Disponibilidad</h2>
+    <p>El sitio se ofrece tal cual, de forma gratuita, sin garantía de disponibilidad, de ausencia de errores ni de conservación de los datos. Puede interrumpirse, modificarse, reiniciarse o cerrarse definitivamente en cualquier momento, sin previo aviso ni indemnización. Las estadísticas y las cuentas pueden perderse durante una actualización técnica.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Sanciones</h2>
+    <p>En caso de incumplimiento de estas condiciones, tu cuenta puede suspenderse o eliminarse y el acceso al servicio puede restringirse. Puedes impugnar una decisión escribiendo a la dirección de contacto.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧯 Responsabilidad</h2>
+    <p>Al tratarse de un servicio gratuito y no comercial, el editor no responde de los daños indirectos derivados del uso del sitio, de su indisponibilidad, de la pérdida de datos o de los contenidos publicados por otros jugadores. Nada de lo aquí dispuesto excluye la responsabilidad que la ley no permite limitar, en particular en caso de culpa grave o dolo.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Enlaces y servicios de terceros</h2>
+    <p>El sitio enlaza con AniList, GitHub y Discord, que aplican sus propias condiciones y políticas de privacidad. Su contenido no está bajo el control del editor de Sakugame.</p>
+  </div>
+
+  <div class="card">
+    <h2>🔄 Cambios en estas condiciones</h2>
+    <p>Estas condiciones pueden actualizarse. Seguir usando el sitio tras la publicación de una nueva versión implica aceptarla.</p>
+  </div>
+
+  <div class="card">
+    <h2>🏛️ Ley aplicable</h2>
+    <p>Estas condiciones se rigen por la ley francesa. A falta de acuerdo amistoso, serán competentes los tribunales franceses. Si eres consumidor y resides en otro país de la UE, seguirán aplicándose las disposiciones protectoras de tu país de residencia.</p>
+  </div>
+
+  <a class="back" href="./">← Volver a Sakugame</a>
+</section>
+
 </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a39795329fea697e',t:'MTc4OTEzOTI1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function(){
+  var sections = document.querySelectorAll('[data-lang]');
+  var buttons  = document.querySelectorAll('.langs button');
+  function setLang(code){
+    sections.forEach(function(s){ s.classList.toggle('on', s.dataset.lang === code); });
+    buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.set === code)); });
+    document.documentElement.lang = code;
+    try { localStorage.setItem('saku-legal-lang', code); } catch(e){}
+  }
+  var saved;
+  try { saved = localStorage.getItem('saku-legal-lang') || localStorage.getItem('saku-lang'); } catch(e){}
+  var nav = (navigator.language || 'en').slice(0,2);
+  var start = ['en','fr','es'].indexOf(saved) > -1 ? saved
+            : (['en','fr','es'].indexOf(nav) > -1 ? nav : 'en');
+  setLang(start);
+  buttons.forEach(function(b){ b.addEventListener('click', function(){ setLang(b.dataset.set); }); });
+})();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3d507c5ecbae1ed',t:'MTc4OTc4MzU3OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

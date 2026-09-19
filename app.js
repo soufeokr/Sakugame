@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '89';
+    const SAKU_BUILD = '92';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4111,11 +4111,26 @@
 
     // ---- 🥷🎴 DRAG & DROP: slide YOUR OWN name tag between the boxes ----
     let cnDnd = null;
-    function cnMakeDraggable(el) {
+    function cnMakeDraggable(el, pid) {
       if (!el || el._cnDnd) return; el._cnDnd = true;
       el.classList.add('cn-me-drag');
+      el._cnDragPid = pid || playerId; // your own tag — or ANY tag when you're the host
       el.title = window.t ? t('Drag me to a box!') : 'Drag me to a box!';
       el.addEventListener('pointerdown', cnDragStart);
+    }
+    // 👑✕ host admin chips on a tag: make host & kick (queued visitors: kick only)
+    function cnAdminBtns(container, p, pid, queued) {
+      if (!isHost || pid === playerId) return;
+      const mk = (cls, title, svg, fn) => {
+        const b = document.createElement('button');
+        b.className = 'player-admin-btn ' + cls; b.title = title; b.innerHTML = svg;
+        b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+        container.appendChild(b);
+      };
+      const crownSvg = '<svg viewBox="0 0 24 24" width="15" height="15"><path d="M2 8 L7 12.5 L12 4 L17 12.5 L22 8 L20 18 L4 18 Z" fill="#fff"/></svg>';
+      const xSvg = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#fff" stroke-width="3.2" stroke-linecap="round" fill="none"/></svg>';
+      if (!queued) mk('crown-btn', 'Make host', crownSvg, () => confirmTransferHost(pid));
+      mk('kick-btn', 'Kick from the room', xSvg, () => queued ? window.kickQueued && kickQueued(pid) : confirmKickPlayer(pid));
     }
     function cnDropZones() {
       const zones = [];
@@ -4129,7 +4144,10 @@
     }
     function cnDragStart(e) {
       if (cnDnd || !cnInSetup()) return;
+      if (e.target && e.target.closest && e.target.closest('button')) return; // 👑✕ admin chips are taps, not drags
       const src = e.currentTarget;
+      const dragPid = src._cnDragPid || playerId;
+      if (dragPid !== playerId && !isHost) return; // you drag YOURSELF — the host drags ANYONE
       const startX = e.clientX, startY = e.clientY;
       const r = src.getBoundingClientRect();
       const zones = cnDropZones();
@@ -4157,20 +4175,42 @@
         if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
         src.classList.remove('cn-drag-src');
         cnDnd = null;
-        if (moved && over) cnDropOn(over);
+        if (moved && over) cnDropOn(over, dragPid);
       };
       cnDnd = src;
       document.addEventListener('pointermove', move);
       document.addEventListener('pointerup', up);
       document.addEventListener('pointercancel', up);
     }
-    function cnDropOn(zone) {
-      const myTeam = cnTeamOf(playerId);
+    function cnDropOn(zone, pid) {
+      pid = pid || playerId;
       const teams = cnTeams();
-      if (zone.bench) { if (myTeam) cnSetTeam(playerId, myTeam); return; } // drop back to the 👀 bench = leave
-      if (!zone.spy && myTeam === zone.team && teams[zone.team].spy !== playerId) return; // already my Shoguns box
-      if (zone.spy && myTeam === zone.team && teams[zone.team].spy === playerId) return;    // already my 🔑
-      cnJoinRole(zone.team, !!zone.spy);
+      if (pid === playerId) {
+        const myTeam = cnTeamOf(playerId);
+        if (zone.bench) { if (myTeam) cnSetTeam(playerId, myTeam); return; } // drop back to the 👀 bench = leave
+        if (!zone.spy && myTeam === zone.team && teams[zone.team].spy !== playerId) return; // already my Shogun box
+        if (zone.spy && myTeam === zone.team && teams[zone.team].spy === playerId) return;    // already my 🔑
+        cnJoinRole(zone.team, !!zone.spy);
+        return;
+      }
+      // 🥷🎴 the HOST drags any SEATED player into place — but a QUEUED spectator can
+      // never be seated by anyone else (their own choice, always)
+      if (!isHost) return;
+      if (!(currentRoom.players || {})[pid]) {
+        if ((currentRoom.queue || {})[pid]) showNotification(window.t ? t('Queued visitors join by themselves!') : 'Queued visitors join by themselves!');
+        return;
+      }
+      const theirTeam = cnTeamOf(pid);
+      if (zone.bench) { if (theirTeam) cnSetTeam(pid, theirTeam); return; }
+      if (zone.spy) {
+        if (teams[zone.team].spy === pid) return;
+        if (teams[zone.team].spy) { showNotification(window.t ? t('That 🔑 is taken!') : 'That 🔑 is taken!'); return; }
+        if (theirTeam === zone.team) cnSetSpy(zone.team, pid);
+        else cnSetTeam(pid, zone.team, true); // host: team+🔑 atomically too
+      } else {
+        if (theirTeam === zone.team) { if (teams[zone.team].spy === pid) cnSetSpy(zone.team, null); }
+        else cnSetTeam(pid, zone.team);
+      }
     }
     function cnMove(pid, team) { cnSetTeam(pid, team); }          // host chips
     async function cnSetSpy(team, pid) {
@@ -4446,8 +4486,10 @@
           row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
             '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
             (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('NINJA') + '</span>' : '');
-          // 🥷🎴 rows are read-only for others — but MINE is a draggable tag
-          if (pid === playerId) cnMakeDraggable(row);
+          // 🥷🎴 everyone is read-only… except: YOU drag your tag, the HOST drags ANYONE
+          if (p.isHost) row.innerHTML += ' <span class="host-badge cn-host-crown">' + ic('crown') + '</span>';
+          if (pid === playerId || isHost) cnMakeDraggable(row, pid);
+          cnAdminBtns(row, p, pid, false);
           return row;
         };
         const guessers = members.filter(m => m !== spy);
@@ -4469,9 +4511,9 @@
         const p = players[pid] || {};
         const chip = document.createElement('div');
         chip.className = 'cn-member' + (pid === playerId ? ' me' : '');
-        chip.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>';
-        // 🥷🎴 no host chips — I drag MY OWN tag into whatever spot I want
-        if (pid === playerId) cnMakeDraggable(chip);
+        chip.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' + (p.isHost ? ' <span class="host-badge cn-host-crown">' + ic('crown') + '</span>' : '');
+        if (pid === playerId || isHost) cnMakeDraggable(chip, pid); // you → your tag · host → any tag
+        cnAdminBtns(chip, p, pid, false);
         benchEl.appendChild(chip);
       });
       queuedIds.forEach(pid => {
@@ -4479,11 +4521,29 @@
         const chip = document.createElement('div');
         chip.className = 'cn-member cn-queued' + (pid === playerId ? ' me' : '');
         chip.innerHTML = avatarCircle(q.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(q.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span><span class="cn-qtag">' + tt('spectating') + '</span>';
-        if (pid === playerId) cnMakeDraggable(chip); // ⏳ queued too: drag in = seat+your spot in one move
+        if (pid === playerId) cnMakeDraggable(chip, pid); // ⏳ queued: I alone can drag myself in (BY CHOICE)
+        cnAdminBtns(chip, null, pid, true); // host can kick a queued visitor
         benchEl.appendChild(chip);
       });
       // my join buttons adapt (Join ↔ Leave)
       const myTeam = cnTeamOf(playerId);
+      // 4 Join buttons (tap way — dragging works too 🥷🎴)
+      const jr = document.getElementById('cnJoinRed'), jb = document.getElementById('cnJoinBlue');
+      const myRed = myTeam === 'red', myBlue = myTeam === 'blue';
+      if (jr) {
+        jr.textContent = (myRed && teams.red.spy !== playerId) ? tt('Leave') + ' 🔴' : tt('Join') + ' 🔴';
+        jb.textContent = (myBlue && teams.blue.spy !== playerId) ? tt('Leave') + ' 🔵' : tt('Join') + ' 🔵';
+        jr.classList.toggle('selected', myRed && teams.red.spy !== playerId);
+        jb.classList.toggle('selected', myBlue && teams.blue.spy !== playerId);
+      }
+      ['red', 'blue'].forEach(t2 => { // 🔑 NINJA buttons: Join as / Leave / Taken
+        const b = document.getElementById(t2 === 'red' ? 'cnJoinSpiesRed' : 'cnJoinSpiesBlue');
+        if (!b) return;
+        const mine = teams[t2].spy === playerId, taken = !!teams[t2].spy && !mine;
+        b.textContent = mine ? tt('Leave') + ' 🔑' : taken ? tt('Taken') : tt('Join as 🔑');
+        b.disabled = taken;
+        b.classList.toggle('selected', mine);
+      });
       // gating + host controls
       const gate = cnTeamsGate();
       document.getElementById('cnTeamsStatus').textContent = gate.msg;

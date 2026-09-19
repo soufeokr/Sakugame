@@ -288,6 +288,11 @@
   .cn-drag-src { opacity: 0.35; }
   .cn-box.cn-over, .cn-spect.cn-over { border-color: var(--accent) !important; box-shadow: 0 0 14px rgba(2, 169, 255, 0.5); }
   .cn-ghost { pointer-events: none; }
+  /* 👑✕ host admin chips on any name tag + the host's own crown */
+  .cn-member .player-admin-btn { flex: none; width: 22px; height: 22px; border-radius: 7px; margin-left: 4px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .cn-member .player-admin-btn svg { width: 12px; height: 12px; }
+  .cn-host-crown { flex: none; padding: 1px 5px; }
+  .cn-host-crown .ic { width: 0.72rem; height: 0.72rem; vertical-align: -0.08em; }
 
   .mk-cn { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
   .mk-cn .mk-char { padding: 4px; font-size: 0.56rem; border: 2px solid rgba(255, 255, 255, 0.08); }
@@ -300,13 +305,18 @@
   .mk-cn .mk-char.rev-red .mk-photo { opacity: 0.3; filter: saturate(0.6); }
 
   @media (max-width: 640px) {
-    /* 📱 how-to on phone: mockup first, big readable steps, swipe to navigate */
-    .howto-modal { padding: 8px; }
-    .howto-panel { padding: 12px; max-height: 94vh; border-radius: 14px; }
+    /* 📱 how-to on phone: ONE fixed-size window hugging the top bar, swipe to navigate;
+       the slide scrolls INSIDE — the window itself never resizes between steps */
+    .howto-modal { padding: 8px; padding-top: calc(54px + env(safe-area-inset-top, 0px) + 8px); align-items: flex-start; }
+    .howto-panel { padding: 12px; border-radius: 14px; height: calc(100dvh - 54px - env(safe-area-inset-top, 0px) - 16px); max-height: none; overflow: hidden; display: flex; flex-direction: column; }
+    .howto-head { flex: none; }
+    .howto-body { flex: 1 1 auto; min-height: 0; margin: 10px 0; }
+    .howto-slide { height: 100%; overflow-y: auto; align-content: flex-start; }
+    .howto-foot { flex: none; }
     .howto-head { gap: 8px; flex-wrap: wrap; padding-bottom: 10px; }
     .howto-head h3 { font-size: 1.1rem; }
     .howto-close .ic { width: 1.5rem; height: 1.5rem; }
-    .howto-body { gap: 6px; margin: 12px 0; }
+    .howto-body { gap: 6px; }
     .howto-slide { flex-direction: column; align-items: stretch; min-height: 0; gap: 12px; }
     .howto-arrow { display: none; } /* swipe + dots are the phone navigation */
     .ht-scene { min-width: 0; }
