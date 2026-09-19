@@ -279,6 +279,16 @@
   .mk-hc-num.cold { color: #29b6f6; }
   /* Ninja Scrolls — spymaster clue bar + true-colored key cards */
   .mk-cluebar { background: rgba(2, 169, 255, 0.10); border: 1px solid rgba(2, 169, 255, 0.4); color: #dfe9ff; border-radius: 10px; padding: 7px 10px; font-size: 0.74rem; font-weight: 700; text-align: center; margin-bottom: 9px; }
+
+  /* 🥷🎴 drag your own name tag between the boxes (mouse + finger, Pointer Events) */
+  .cn-me-drag { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
+  .cn-me-drag img { -webkit-user-drag: none; pointer-events: none; }
+  .cn-me-drag:active { cursor: grabbing; }
+  .cn-me-drag .cn-member-name { text-decoration: underline dotted rgba(255, 255, 255, 0.45); text-underline-offset: 3px; }
+  .cn-drag-src { opacity: 0.35; }
+  .cn-box.cn-over, .cn-spect.cn-over { border-color: var(--accent) !important; box-shadow: 0 0 14px rgba(2, 169, 255, 0.5); }
+  .cn-ghost { pointer-events: none; }
+
   .mk-cn { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
   .mk-cn .mk-char { padding: 4px; font-size: 0.56rem; border: 2px solid rgba(255, 255, 255, 0.08); }
   .mk-cn .mk-char .mk-name { font-size: 0.56rem; }
@@ -290,10 +300,24 @@
   .mk-cn .mk-char.rev-red .mk-photo { opacity: 0.3; filter: saturate(0.6); }
 
   @media (max-width: 640px) {
-    .howto-slide { flex-direction: column; align-items: stretch; min-height: 0; }
+    /* 📱 how-to on phone: mockup first, big readable steps, swipe to navigate */
+    .howto-modal { padding: 8px; }
+    .howto-panel { padding: 12px; max-height: 94vh; border-radius: 14px; }
+    .howto-head { gap: 8px; flex-wrap: wrap; padding-bottom: 10px; }
+    .howto-head h3 { font-size: 1.1rem; }
+    .howto-close .ic { width: 1.5rem; height: 1.5rem; }
+    .howto-body { gap: 6px; margin: 12px 0; }
+    .howto-slide { flex-direction: column; align-items: stretch; min-height: 0; gap: 12px; }
+    .howto-arrow { display: none; } /* swipe + dots are the phone navigation */
+    .ht-scene { min-width: 0; }
+    .ht-scene .mock { padding: 14px; overflow-x: hidden; }
     .ht-text { min-width: 0; }
-    .howto-arrow { height: 44px; width: 34px; }
-    .howto-cta { max-width: none; flex: 1; }
+    .ht-text h4 { font-size: 1.1rem; margin: 2px 0 4px; }
+    .ht-text p { font-size: 0.98rem; line-height: 1.5; color: #c9d4ef; }
+    .ht-step { margin-top: 8px; font-size: 0.8rem; }
+    .howto-dots { gap: 10px; }
+    .howto-dot { width: 13px; height: 13px; }
+    .howto-cta { max-width: none; flex: 1; padding: 13px; }
     .howto-foot { flex-wrap: wrap; justify-content: center; }
   }
   .panel { max-width: 700px; margin: 40px auto; background: var(--card); padding: 35px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }

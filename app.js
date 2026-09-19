@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '88';
+    const SAKU_BUILD = '89';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -244,6 +244,17 @@
       if (!HOWTO[g]) return;
       HT.game = g; HT.idx = 0;
       renderHowTo();
+      // 📱 swipe left/right = prev/next slide (passive listeners — scrolling stays silky)
+      const hs = document.getElementById('howtoSlide');
+      if (hs && !hs._swipeBound) {
+        hs._swipeBound = true;
+        let sx = 0, sy = 0;
+        hs.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+        hs.addEventListener('touchend', (e) => {
+          const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) howtoNav(dx < 0 ? 1 : -1);
+        }, { passive: true });
+      }
       document.getElementById('howtoModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
     }
@@ -4037,11 +4048,11 @@
       // so a benched player (or a queued one) never blocks the start
       if (redN + blueN < 4) return { ok: false, msg: tt('Ninja Scrolls needs at least 4 players in teams (2+ per team)!') };
       if (redN < 2 || blueN < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
-      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — someone must join their SPIES spot!') };
+      if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — drag a name tag into a NINJA spot!') };
       const spect = Object.keys(room.players || {}).filter(pid => !cnTeamOf(pid)).length + Object.keys(room.queue || {}).length;
       return { ok: true, msg: tt('Teams are ready — the host can deal!') + (spect ? ' ' + tt('(others spectate 👀)') : '') };
     }
-    async function cnSetTeam(pid, team) {
+    async function cnSetTeam(pid, team, spy) {
       if (!currentRoom || !roomCode || !cnInSetup()) return;
       if (pid !== playerId && !isHost) return;                    // host moves anyone, players only move themselves
       if (team && CN_TEAMS.indexOf(team) === -1) return;
@@ -4057,6 +4068,9 @@
         upd['queue/' + pid] = null;
       }
       const teams = cnTeams();
+      if (spy === true && teams[team] && teams[team].spy && teams[team].spy !== pid) {
+        showNotification(window.t ? t('That 🔑 is taken!') : 'That 🔑 is taken!'); return; // first drop wins
+      }
       const cur = cnTeamOf(pid);
       if (cur === team) team = null;                              // re-tap the same team = back to the bench
       if (cur) {
@@ -4067,29 +4081,96 @@
       if (team) {
         upd['cn/teams/' + team + '/members/' + pid] = true;
         upd['players/' + pid + '/ready'] = true;                  // 🥷🎴 joining a team = being READY
+        if (spy === true) upd['cn/teams/' + team + '/spy'] = pid;  // 🔑 same write = zero visual hop
+        else if (spy === false && teams[team].spy === pid) upd['cn/teams/' + team + '/spy'] = null;
       }
       await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
     }
     function cnJoinTeam(team) { cnJoinRole(team, false); }
-    // 🥷🎴 ONE join button per box: AGENTS = Shogun, SPIES = the team's Ninja (🔑).
-    // Re-tap anywhere = step off to the bench.
+    // 🥷🎴 join a slot directly — SHOGUNS box = guesser, NINJA box = the 🔑.
+    // Every path is ONE room update so the tag never hops agent→Ninja.
     async function cnJoinRole(team, asSpy) {
       if (!currentRoom || !roomCode || !cnInSetup()) return;
       const teams = cnTeams();
       const myTeam = cnTeamOf(playerId);
       const meSpy = teams[team].spy === playerId;
       if (asSpy) {
-        if (meSpy) return cnSetTeam(playerId, team);            // re-tap the 🔑 = leave to the bench
-        if (teams[team].spy) return;                             // key already taken (button shows disabled)
-        if (myTeam !== team) await cnSetTeam(playerId, team);    // seat+team first (queued self-join included)
-        await cnSetSpy(team, playerId);                          // …then grab the key
+        if (meSpy) return cnSetTeam(playerId, team);              // drop back onto my NINJA box = bench
+        if (teams[team].spy) { showNotification(window.t ? t('That 🔑 is taken!') : 'That 🔑 is taken!'); return; }
+        if (myTeam === team) return cnSetSpy(team, playerId);     // already in the team: single write to the key
+        return cnSetTeam(playerId, team, true);                   // 🔑 ATOMIC: seat/team/Ninja in one update
       } else {
         if (myTeam === team) {
-          if (meSpy) await cnSetSpy(team, null);                 // Ninja → plain Shogun
-          else await cnSetTeam(playerId, team);                  // re-tap = bench
-        } else await cnSetTeam(playerId, team);
+          if (meSpy) return cnSetSpy(team, null);                 // Ninja → plain Shogun (single write)
+          return cnSetTeam(playerId, team);                       // re-tap = bench
+        }
+        return cnSetTeam(playerId, team);
       }
+    }
+
+    // ---- 🥷🎴 DRAG & DROP: slide YOUR OWN name tag between the boxes ----
+    let cnDnd = null;
+    function cnMakeDraggable(el) {
+      if (!el || el._cnDnd) return; el._cnDnd = true;
+      el.classList.add('cn-me-drag');
+      el.title = window.t ? t('Drag me to a box!') : 'Drag me to a box!';
+      el.addEventListener('pointerdown', cnDragStart);
+    }
+    function cnDropZones() {
+      const zones = [];
+      const z = (id, team, spy, bench) => { const el = document.getElementById(id); if (el) zones.push({ el: el, team: team, spy: spy, bench: bench, rect: el.getBoundingClientRect() }); };
+      z('cnSpect', null, null, true); // the 👀 bench strip
+      CN_TEAMS.forEach(team => {
+        z(team === 'red' ? 'cnBoxAgentsRed' : 'cnBoxAgentsBlue', team, false, false);
+        z(team === 'red' ? 'cnBoxSpiesRed' : 'cnBoxSpiesBlue', team, true, false);
+      });
+      return zones;
+    }
+    function cnDragStart(e) {
+      if (cnDnd || !cnInSetup()) return;
+      const src = e.currentTarget;
+      const startX = e.clientX, startY = e.clientY;
+      const r = src.getBoundingClientRect();
+      const zones = cnDropZones();
+      let moved = false, over = null;
+      const hit = (zn, ev) => { const b = zn.rect; return ev.clientX >= b.left && ev.clientX <= b.right && ev.clientY >= b.top && ev.clientY <= b.bottom; };
+      const ghost = src.cloneNode(true);
+      ghost.style.cssText = 'position:fixed;left:' + r.left + 'px;top:' + r.top + 'px;width:' + r.width + 'px;margin:0;z-index:9999;pointer-events:none;opacity:0.9;transform:scale(1.05) rotate(1.5deg);filter:drop-shadow(0 6px 14px rgba(0,0,0,0.55));';
+      const move = (ev) => {
+        if (!moved) {
+          if (Math.abs(ev.clientX - startX) + Math.abs(ev.clientY - startY) < 8) return; // tiny jiggle = not a drag
+          document.body.appendChild(ghost);
+          src.classList.add('cn-drag-src');
+          moved = true;
+        }
+        ghost.style.left = (r.left + ev.clientX - startX) + 'px';
+        ghost.style.top = (r.top + ev.clientY - startY) + 'px';
+        over = null;
+        zones.forEach(zn => { const h = hit(zn, ev); zn.el.classList.toggle('cn-over', h); if (h) over = zn; });
+      };
+      const up = () => {
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', up);
+        document.removeEventListener('pointercancel', up);
+        zones.forEach(zn => zn.el.classList.remove('cn-over'));
+        if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
+        src.classList.remove('cn-drag-src');
+        cnDnd = null;
+        if (moved && over) cnDropOn(over);
+      };
+      cnDnd = src;
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', up);
+      document.addEventListener('pointercancel', up);
+    }
+    function cnDropOn(zone) {
+      const myTeam = cnTeamOf(playerId);
+      const teams = cnTeams();
+      if (zone.bench) { if (myTeam) cnSetTeam(playerId, myTeam); return; } // drop back to the 👀 bench = leave
+      if (!zone.spy && myTeam === zone.team && teams[zone.team].spy !== playerId) return; // already my Shoguns box
+      if (zone.spy && myTeam === zone.team && teams[zone.team].spy === playerId) return;    // already my 🔑
+      cnJoinRole(zone.team, !!zone.spy);
     }
     function cnMove(pid, team) { cnSetTeam(pid, team); }          // host chips
     async function cnSetSpy(team, pid) {
@@ -4365,7 +4446,8 @@
           row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
             '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
             (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('NINJA') + '</span>' : '');
-          // 🥷🎴 read-only row — joining/leaving happens via the 4 Join buttons only
+          // 🥷🎴 rows are read-only for others — but MINE is a draggable tag
+          if (pid === playerId) cnMakeDraggable(row);
           return row;
         };
         const guessers = members.filter(m => m !== spy);
@@ -4388,7 +4470,8 @@
         const chip = document.createElement('div');
         chip.className = 'cn-member' + (pid === playerId ? ' me' : '');
         chip.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>';
-        // 🥷🎴 no host chips — spectators join a team THEMSELVES (host can shuffle members)
+        // 🥷🎴 no host chips — I drag MY OWN tag into whatever spot I want
+        if (pid === playerId) cnMakeDraggable(chip);
         benchEl.appendChild(chip);
       });
       queuedIds.forEach(pid => {
@@ -4396,26 +4479,11 @@
         const chip = document.createElement('div');
         chip.className = 'cn-member cn-queued' + (pid === playerId ? ' me' : '');
         chip.innerHTML = avatarCircle(q.avatar || '', 'ava-chat') + '<span class="cn-member-name">' + escapeHtml(String(q.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span><span class="cn-qtag">' + tt('spectating') + '</span>';
+        if (pid === playerId) cnMakeDraggable(chip); // ⏳ queued too: drag in = seat+your spot in one move
         benchEl.appendChild(chip);
       });
       // my join buttons adapt (Join ↔ Leave)
       const myTeam = cnTeamOf(playerId);
-      const jr = document.getElementById('cnJoinRed'), jb = document.getElementById('cnJoinBlue');
-      const myRed = myTeam === 'red', myBlue = myTeam === 'blue';
-      // 🥷🎴 AGENTS button = plain Shogun spot (Leave only if I'm a plain agent there)
-      jr.textContent = (myRed && teams.red.spy !== playerId) ? tt('Leave') + ' 🔴' : tt('Join') + ' 🔴';
-      jb.textContent = (myBlue && teams.blue.spy !== playerId) ? tt('Leave') + ' 🔵' : tt('Join') + ' 🔵';
-      jr.classList.toggle('selected', myRed && teams.red.spy !== playerId);
-      jb.classList.toggle('selected', myBlue && teams.blue.spy !== playerId);
-      // 🔑 SPIES button = the team's Ninja spot — first tap wins, one key per team
-      ['red', 'blue'].forEach(t2 => {
-        const b = document.getElementById(t2 === 'red' ? 'cnJoinSpiesRed' : 'cnJoinSpiesBlue');
-        if (!b) return;
-        const mine = teams[t2].spy === playerId, taken = !!teams[t2].spy && !mine;
-        b.textContent = mine ? tt('Leave') + ' 🔑' : taken ? tt('Taken') : tt('Join as 🔑');
-        b.disabled = taken;
-        b.classList.toggle('selected', mine);
-      });
       // gating + host controls
       const gate = cnTeamsGate();
       document.getElementById('cnTeamsStatus').textContent = gate.msg;
