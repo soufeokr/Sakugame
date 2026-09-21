@@ -1262,9 +1262,16 @@
   .cn-board { display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 8px; }
   .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.08); background: var(--card); transition: transform 0.15s, box-shadow 0.15s; }
   .cn-card img { display: block; width: 100%; aspect-ratio: 1/1.1; object-fit: cover; }
-  .cn-name { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(10, 10, 24, 0.88); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cn-name { position: absolute; left: 0; right: 0; top: 0; background: rgba(10, 10, 24, 0.88); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cn-card.can-pick { cursor: pointer; border-color: rgba(41, 182, 246, 0.55); }
   .cn-card.can-pick:hover { transform: scale(1.04); box-shadow: 0 0 12px rgba(41, 182, 246, 0.5); z-index: 2; }
+  /* 🥷🎴 2-step pick: public suggestion dots (bottom-left) + green validate circle (bottom-right) */
+  .cn-sugs { position: absolute; left: 3px; bottom: 3px; display: flex; gap: 2px; z-index: 3; pointer-events: none; }
+  .cn-sug { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55); }
+  .cn-sug .avatar, .cn-sug .avatar img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; font-size: 0.5rem; }
+  .cn-validate { position: absolute; right: 3px; bottom: 3px; z-index: 4; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; background: var(--success); color: #fff; font-weight: 900; font-size: 15px; line-height: 1; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 9px rgba(46, 204, 113, 0.6); }
+  .cn-validate:hover { transform: scale(1.14); }
+  .cn-validate.locked { opacity: 0.55; filter: saturate(0.6); }
   /* spymaster key view: colored borders + corner dot */
   .cn-card.cn-key-red { border-color: rgba(229, 57, 53, 0.85); }
   .cn-card.cn-key-blue { border-color: rgba(30, 136, 229, 0.85); }

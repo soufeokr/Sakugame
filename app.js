@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '92';
+    const SAKU_BUILD = '93';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4309,6 +4309,7 @@
         'cn/clue': null,
         'cn/guessesLeft': 0,
         'cn/revealed': null,
+        'cn/sug': null,
         'cn/rem': first === 'red' ? { red: 9, blue: 8 } : { red: 8, blue: 9 },
         'cn/winner': null,
         'cn/log': null
@@ -4345,7 +4346,7 @@
         return nm === lower || nm.split(/[\s,\-'’\.]+/).filter(Boolean).indexOf(lower) !== -1;
       });
       if (forbidden) { showNotification(window.t ? t('The clue can\'t be part of a visible character name!') : 'The clue can\'t be part of a visible character name!'); return; }
-      database.ref('rooms/' + roomCode).update({ 'cn/clue': { word: w, n: n, by: playerId, at: Date.now() }, 'cn/phase': 'guess', 'cn/guessesLeft': n });
+      database.ref('rooms/' + roomCode).update({ 'cn/clue': { word: w, n: n, by: playerId, at: Date.now() }, 'cn/phase': 'guess', 'cn/guessesLeft': n, 'cn/sug': null });
       touchActivity();
       cnPushLog('clue-' + myTeam, cnEmoji(myTeam) + ' 🕵️ <b>' + escapeHtml(cnNameOf(playerId)) + '</b> ' + (window.t ? t('clues:') : 'clues:') + ' <b>"' + escapeHtml(w) + '" ×' + n + '</b>');
       document.getElementById('cnClueWord').value = '';
@@ -4363,6 +4364,7 @@
       const rem = Object.assign({ red: 9, blue: 8 }, cn.rem || {});
       const left = cn.guessesLeft || 0;
       const t = (k) => (window.t ? window.t(k) : k);
+      res.upd['cn/sug'] = null; // 🥷🎴 a committed pick clears every suggestion dot
       const charName = escapeHtml(String(((cn.board[idx] || {}).name) || '?'));
       res.upd['cn/revealed/' + idx] = color;
       const endTurn = () => { res.upd['cn/turn'] = other; res.upd['cn/phase'] = 'clue'; res.upd['cn/clue'] = null; res.upd['cn/guessesLeft'] = 0; };
@@ -4398,21 +4400,20 @@
       if (myTeam !== cn.turn) return false;
       return cnTeams(cn)[myTeam].spy !== playerId;
     }
-    function cnGuess(idx) {
+    // 🥷🎴 TWO-STEP pick, right on the card: tap = SUGGEST (your avatar dot shows
+    // to everybody), the green ✓ = the real pick. Suggesting needs YOUR turn —
+    // same rule as picking (wrong team / Ninja / off-turn: nothing happens).
+    function cnSuggest(idx) {
       const cn = (currentRoom && currentRoom.cn) || {};
       if (!cnCanIGuess(cn)) {
-        if (cn.phase === 'guess' && currentRoom && cnTeamOf(playerId, cn) === cn.turn) showNotification(window.t ? t('The Ninja watches — teammates pick the cards!') : 'The Ninja watches — teammates pick the cards!');
+        if (cn.phase === 'guess' && currentRoom && cnTeamOf(playerId, cn) === cn.turn) showNotification(window.t ? t('The Ninja watches — teammates suggest the cards!') : 'The Ninja watches — teammates suggest the cards!');
         return;
       }
       const rev = cn.revealed || {};
       if (rev[String(idx)]) return;
-      const charName = String((((cn.board || [])[idx]) || {}).name || '?');
-      showInteraction(ic('key') + ' ' + (window.t ? t('Pick this card?') : 'Pick this card?'),
-        (window.t ? t('Lock in') : 'Lock in') + ' <b>' + escapeHtml(charName) + '</b>?<br><small>' + (window.t ? t('A wrong color ends the turn — and 🖤 the assassin loses the game instantly!') : 'A wrong color ends the turn — and 🖤 the assassin loses the game instantly!') + '</small>',
-        [
-          { label: '✅ ' + (window.t ? t('Pick it!') : 'Pick it!'), onclick: () => { doCnGuess(idx); }, class: 'success' },
-          { label: window.t ? t('Cancel') : 'Cancel', onclick: () => { closeInteraction(); }, class: 'secondary' }
-        ]);
+      const mine = !!((((cn.sug || {})[String(idx)]) || {})[playerId]);
+      database.ref('rooms/' + roomCode + '/cn/sug/' + idx + '/' + playerId).set(mine ? null : true); // re-tap = unsuggest
+      touchActivity();
     }
     async function doCnGuess(idx) {
       const cn = (currentRoom && currentRoom.cn) || {};
@@ -4429,7 +4430,7 @@
       if (!cnCanIGuess(cn)) return;
       const myTeam = cnTeamOf(playerId, cn);
       const other = myTeam === 'red' ? 'blue' : 'red';
-      await database.ref('rooms/' + roomCode).update({ 'cn/turn': other, 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0 });
+      await database.ref('rooms/' + roomCode).update({ 'cn/turn': other, 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0, 'cn/sug': null });
       touchActivity();
       cnPushLog('info', '⏭ ' + cnEmoji(myTeam) + ' <b>' + escapeHtml(cnNameOf(playerId)) + '</b> ' + (window.t ? t('passes — next team!') : 'passes — next team!'));
     }
@@ -4458,7 +4459,7 @@
         const teamsNow = cnTeams(cn);
         const turnGuessers = teamsNow[cn.turn].members.filter(pid => players[pid] && pid !== teamsNow[cn.turn].spy);
         if (turnGuessers.length === 0) {
-          await database.ref('rooms/' + roomCode).update({ 'cn/turn': otherT(cn.turn), 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0 });
+          await database.ref('rooms/' + roomCode).update({ 'cn/turn': otherT(cn.turn), 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0, 'cn/sug': null });
         }
       }
     }
@@ -4618,13 +4619,36 @@
           d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy"><div class="cn-stamp cn-stamp-' + rv + '">' + (rv === 'black' ? '💀' : '✓') + '</div><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div>';
         } else {
           if (spyView && col) d.classList.add('cn-key-' + col);
-          if (canPick && !spyView) {
+          const suggesters = Object.keys((cn.sug || {})[String(i)] || {}).filter(spid => (currentRoom.players || {})[spid]);
+          const pickable = canPick && !spyView;
+          if (pickable) {
             d.classList.add('can-pick');
-            d.addEventListener('click', () => cnGuess(i));
+            d.addEventListener('click', () => cnSuggest(i)); // tap = (un)suggest, not a commit
           }
           d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy">' +
             (spyView && col ? '<div class="cn-dot cn-dot-' + col + '" title="' + col + '"></div>' : '') +
             '<div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div>';
+          // 👤 suggestion dots — public! no suggestions = no circles at all
+          if (suggesters.length) {
+            const dots = document.createElement('div');
+            dots.className = 'cn-sugs';
+            suggesters.slice(0, 4).forEach(spid => {
+              const p = (currentRoom.players || {})[spid] || {};
+              const s2 = document.createElement('span');
+              s2.className = 'cn-sug';
+              s2.title = String(p.name || '?');
+              s2.innerHTML = avatarCircle(p.avatar || '', 'ava-sug');
+              dots.appendChild(s2);
+            });
+            d.appendChild(dots);
+            // ✅ green commit circle (bottom-right, per mockup) — any picking teammate confirms
+            const vb = document.createElement('button');
+            vb.className = 'cn-validate' + (pickable ? '' : ' locked');
+            vb.title = window.t ? t('Pick this card!') : 'Pick this card!';
+            vb.textContent = '✓';
+            vb.addEventListener('click', (e) => { e.stopPropagation(); doCnGuess(i); });
+            d.appendChild(vb);
+          }
         }
         grid.appendChild(d);
       });
