@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '93';
+    const SAKU_BUILD = '98';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -98,11 +98,13 @@
     // keep working whatever the load state. buildHowto() re-runs on data arrival.
     var HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
     var HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
+    var HT_SNAP_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (((typeof SNAP_PICS !== 'undefined' ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {}).b)) || HT_BLUR_IMG : '';
     var HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
     var HT_BOARD = '', HT_BOARD_OUT = '';
     function htRefreshDataRefs() {
       HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
       HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
+      HT_SNAP_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (((typeof SNAP_PICS !== 'undefined' ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {}).b)) || HT_BLUR_IMG : '';
       HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
       if (typeof HT_NAMES !== 'undefined') {
         HT_BOARD = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, i === 3 ? 'secret' : ''); }).join('') + '</div>';
@@ -208,14 +210,24 @@
           s: htScene('<div class="mk-lives">' + ic('heart') + ic('heart') + '<span class="mk-dead">' + ic('heart') + '</span></div>' + htQ('It\'s Mikasa Ackerman!', 'GUESS') + '<div class="mk-note">High risk, high reward — bold guesses win races.</div>') }
       ]},
       blur: { title: 'Blur Guess', icon: 'layers', players: 'solo or up to 8', slides: [
-        { t: 'Pick your mode', d: 'Play solo to train, or with up to 8 players. Two modes: blurred anime characters, or blurred anime covers from 500 classics.',
-          s: htScene(htBadges([['Round 1/10', 'dim'], ['Blur stage 1/5', 'ok'], ['12s', 'warn']]) + (HT_BLUR_IMG ? '<img class="mk-img b3 mk-bigimg" src="' + HT_BLUR_IMG + '" alt="anime cover demo">' : '<div class="mk-note">500 covers in the pool!</div>') + '<div class="mk-who">Who is this?!</div>' + htQ('Type the name…', 'GUESS!') + '<div class="mk-chips" style="justify-content:center">' + htChip('Characters mode', 'ok') + htChip('Anime covers mode') + '</div>') },
+        { t: 'Pick your mode', d: 'Play solo to train, or with up to 8 players. Two modes: blurred anime characters, or blurred anime covers from 1500 anime.',
+          s: htScene(htBadges([['Round 1/10', 'dim'], ['Blur stage 1/5', 'ok'], ['12s', 'warn']]) + (HT_BLUR_IMG ? '<img class="mk-img b3 mk-bigimg" src="' + HT_BLUR_IMG + '" alt="anime cover demo">' : '<div class="mk-note">1500 covers in the pool!</div>') + '<div class="mk-who">Who is this?!</div>' + htQ('Type the name…', 'GUESS!') + '<div class="mk-chips" style="justify-content:center">' + htChip('Characters mode', 'ok') + htChip('Anime covers mode') + '</div>') },
         { t: 'Five stages, five payouts', d: 'The image unblurs over 5 stages, and the payout melts as it clears: stage 1 pays 5 pts… stage 5 pays only 1 pt. Trust your gut early!',
           s: htScene(HT_BLUR_IMG ? '<div class="mk-stages"><div><img class="mk-img b3" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">5 pts</span></div><div><img class="mk-img b2" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">3 pts</span></div><div><img class="mk-img b1" src="' + HT_BLUR_IMG + '" alt=""><span class="mk-badge2">1 pt</span></div></div><div class="mk-note">Stage 1 → 3 of 5 — already nameable?</div>' : '<div class="mk-note">Stage 1 = 5 pts … stage 5 = 1 pt.</div>') },
         { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1 for the next players). A stage-1 first guess is the jackpot: 5 + 3 = 8 points!',
           s: htScene(htQ('My answer: ' + HT_BLUR_NAME, 'SUBMIT') + '<div class="mk-chips">' + htChip('Correct! +8 pts', 'ok') + htChip('5 base + 3 speed bonus', 'dim') + '</div>') },
         { t: 'Build your streak', d: 'Rounds chain and the leaderboard remembers everything. In multiplayer, the most consistent eye wins — learn studios, eras and art styles!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 24 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 19 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 14 pts</p></div>') }
+      ]},
+      snapshot: { title: 'Snapshot!', icon: 'image', players: 'solo or up to 8', slides: [
+        { t: 'Name that anime!', d: 'Play solo to train, or race up to 8 players at once! Every round, up to 4 stills from ONE anime (out of 700+ shows) join the frame one by one — first one to type the right title banks the points!',
+          s: htScene(htBadges([['Round 1/10', 'dim'], ['Stills 1/4', 'ok'], ['8s', 'warn']]) + (HT_SNAP_IMG ? '<img class="mk-img b3 mk-bigimg" src="' + HT_SNAP_IMG + '" alt="anime still demo">' : '<div class="mk-note">4 stills per round!</div>') + '<div class="mk-who">Which anime is this?!</div>' + htQ('Type the anime title…', 'GUESS!')) },
+        { t: 'Four stills, four payouts', d: 'Stage 1 shows ONE deep-cut still (brutal!)… then three easier ones at 8-second beats, ending with the official art AND a hint. Payout melts as it gets easy: stage 1 = 4 pts, stage 4 = 1 pt. Trust your gut early!',
+          s: htScene(HT_SNAP_IMG ? '<div class="mk-stages"><div><img class="mk-img b3" src="' + HT_SNAP_IMG + '" alt=""><span class="mk-badge2">4 pts</span></div><div><img class="mk-img b2" src="' + HT_SNAP_IMG + '" alt=""><span class="mk-badge2">2 pts</span></div><div><img class="mk-img b1" src="' + HT_SNAP_IMG + '" alt=""><span class="mk-badge2">1 pt</span></div></div><div class="mk-note">Hard frame → other frames → official art + hint.</div>' : '<div class="mk-note">Stage 1 = 4 pts … stage 4 = 1 pt.</div>') },
+        { t: 'Stuck? Wait for the hint', d: 'The 4th still lands with genres (max 3), the year, and the title\'s first letter with its letter count. Any known alias works as an answer — SNK, AoT, the full romaji… (typing the second word alone, like "Titan", does NOT count!)',
+          s: htScene(htBadges([['Stills 4/4', 'warn'], ['Hint time!', 'ok']]) + '<div class="mk-chips" style="justify-content:center">' + htChip('Action, Drama', 'dim') + htChip('2013', 'dim') + htChip('starts with "A" — 16 letters', 'ok') + '</div>' + htQ('Attack on Titan', 'GUESS!') + '<div class="mk-note">Full title or any full alias counts — single words from the title don\'t.</div>') },
+        { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1). A stage-1 first guess is the jackpot: 4 + 3 = 7 points! The host picks 4-20 rounds — most points at the end wins.',
+          s: htScene(htQ('Attack on Titan', 'SUBMIT') + '<div class="mk-chips">' + htChip('Correct! +7 pts', 'ok') + htChip('4 base + 3 speed bonus', 'dim') + '</div>' + '<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 21 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 17 pts</p></div>') }
       ]},
       hotcold: { title: 'Cold Case', icon: 'target', players: '2-6 players', slides: [
         { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
@@ -1039,7 +1051,7 @@
     //   opponent gets a ❌ color, finds give points, ranking at the end.
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
-    const GAME_LABELS = { guesswho: 'Detective Showdown', undercover: 'Undercover', battle: 'Detective Royale', race: 'Wanted!', blur: 'Blur Guess', hotcold: 'Cold Case', codenames: 'Ninja Scrolls' };
+    const GAME_LABELS = { guesswho: 'Detective Showdown', undercover: 'Undercover', battle: 'Detective Royale', race: 'Wanted!', blur: 'Blur Guess', hotcold: 'Cold Case', codenames: 'Ninja Scrolls', snapshot: 'Snapshot!' };
     let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
     let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
@@ -1072,6 +1084,9 @@
     const BLUR_ROUNDS_MAX = 80;        // rounds slider max
     const BLUR_STAGE_SEC_MIN = 5, BLUR_STAGE_SEC_MAX = 30; // ⏱ timer slider bounds
     let hostBgRounds = BLUR_ROUNDS_DEFAULT; // rounds option on the create-room screen
+    let hostSnRounds = 10;              // 📸 Snapshot! rounds option (4–20)
+    let hostBgDiff = 'all';             // 🎚️ Blur covers difficulty band
+    let hostSnDiff = 'all';             // 🎚️ Snapshot! difficulty band
     let hostBgStageSec = BLUR_STAGE_SEC;    // timer option on the create-room screen
     let hostBgMode = 'characters';          // 'characters' | 'covers' on the create-room screen
     let bgWatchBusy = false;           // host watchdog guard
@@ -1226,7 +1241,7 @@
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
     const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen' };
-    const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen'];
+    const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
     let R_fromRouter = false;  // screen change came from a route render — don't push history
@@ -1455,14 +1470,15 @@
         mix: clampN(document.getElementById('hostMixSlider').value, 0, 80, 12),
         pool: hostPool,
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
-        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec
+        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec, bgDiff: hostBgDiff,
+        snRounds: hostSnRounds, snDiff: hostSnDiff // 📸 Snapshot! options
       };
     }
     // Restore a snapshot into the whole form (clamped + guarded)
     function applyRoomConfig(cfg) {
       if (!cfg || typeof cfg !== 'object') return;
-      const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'];
-      if (['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'].indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
+      const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'];
+      if (['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'].indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
       // 🔒 visibility radios
       const vis = cfg.visibility === 'public' ? 'public' : 'private';
       roomVisibility = vis;
@@ -1496,6 +1512,10 @@
       hostBgStageSec = clampN(cfg.bgStageSec, 5, 30, BLUR_STAGE_SEC);
       document.getElementById('hostBgStageSecSlider').value = hostBgStageSec; updateBgStageSecSlider();
       selectHostBgMode(cfg.bgMode === 'covers' ? 'covers' : 'characters');
+      // 📸 snapshot
+      hostSnRounds = clampN(cfg.snRounds, 4, 20, 10);
+      document.getElementById('hostSnRoundsSlider').value = hostSnRounds; updateSnRoundsSlider();
+      selectBgDiff(cfg.bgDiff); selectSnDiff(cfg.snDiff); // 🎚️ bands
       // 🕵️ undercover
       selectUcMrWhite(!!cfg.ucMw);
     }
@@ -1606,7 +1626,8 @@
         raceQuestions: clampN(s.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS),
         bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
         bgRounds: clampN(s.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT),
-        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC)
+        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC), bgDiff: sakuDiffSan(s.bgDiff),
+        snRounds: clampN(s.snRounds, 4, 20, 10), snDiff: sakuDiffSan(s.snDiff)
       };
     }
     // …and loading writes the saved settings straight into the current room
@@ -1634,7 +1655,7 @@
           updates['settings/characterCount'] = clampN(cfg.charCount, 12, 80, 24);
           updates['settings/mixCount'] = clampN(cfg.mix, 0, 80, Math.floor(clampN(cfg.charCount, 12, 80, 24) / 2));
         }
-        if (g === 'battle' || g === 'race' || g === 'blur') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
+        if (g === 'battle' || g === 'race' || g === 'blur' || g === 'snapshot') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
         if (g === 'codenames') updates.maxPlayers = Math.min(8, Math.max(Math.max(4, playerCount), clampN(cfg.multiMax, 4, 8, 6))); // CN needs 2+ per team
         if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
         if (g === 'hotcold' && cfg.hcMode) updates['settings/hcMode'] = cfg.hcMode === 'individual' ? 'individual' : 'shared'; // legacy presets keep the room's current mode
@@ -1648,6 +1669,8 @@
           updates['settings/bgStageSec'] = clampN(cfg.bgStageSec, 5, 30, BLUR_STAGE_SEC);
           updates['settings/bgMode'] = cfg.bgMode === 'covers' ? 'covers' : 'characters';
         }
+        if (g === 'blur') updates['settings/bgDiff'] = sakuDiffSan(cfg.bgDiff);
+        if (g === 'snapshot') { updates['settings/snRounds'] = clampN(cfg.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(cfg.snDiff); } // 📸
       }
       try {
         await database.ref('rooms/' + roomCode).update(updates);
@@ -1678,8 +1701,9 @@
       // 🎮 highlight the matching mini card
       document.querySelectorAll('#hostGamePick .game-pick-card').forEach(function (c) { c.classList.toggle('selected', c.dataset.game === hostGame); });
       const isUc = hostGame === 'undercover';
-      const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur' || hostGame === 'codenames';
+      const isMulti = hostGame === 'battle' || hostGame === 'race' || hostGame === 'blur' || hostGame === 'codenames' || hostGame === 'snapshot';
       const isBlur = hostGame === 'blur';
+      const isSnap = hostGame === 'snapshot';
       const isCn = hostGame === 'codenames';
       // 🏠 Room tab: only ONE player-count control matches the game
       document.getElementById('hostGwPlayersHint').style.display = hostGame === 'guesswho' ? 'block' : 'none';
@@ -1699,21 +1723,24 @@
       // ❤️/❓ sliders are Race-only, 🌫️ options are Blur-only
       document.querySelectorAll('.race-only-settings').forEach(el => { el.style.display = hostGame === 'race' ? 'block' : 'none'; });
       document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = isBlur ? 'block' : 'none'; });
+      document.querySelectorAll('.snap-only-settings').forEach(el => { el.style.display = isSnap ? 'block' : 'none'; });
       if (isMulti) {
-        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : hostGame === 'codenames' ? 'Ninja Scrolls' : 'Blur Guess';
+        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : hostGame === 'codenames' ? 'Ninja Scrolls' : hostGame === 'snapshot' ? 'Snapshot!' : 'Blur Guess';
         document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
           ? 'Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Eliminate cards on each opponent\'s colored board, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
           : hostGame === 'race'
             ? 'One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. Hunters take turns ASKING — but GUESSING is free for everyone, at any moment (wrong = -1 life)! First to find the mystery character wins!'
             : hostGame === 'codenames'
               ? 'Two teams face a 5×5 grid of characters. Each NINJA sees the secret colors and gives ONE word + a number; their team taps that many cards. Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
-              : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
+              : hostGame === 'snapshot'
+                ? '4 stills from ONE anime join the frame one by one — name the anime as early as you can! Each still is EASIER than the last (the 4th is the official art, WITH a hint). 1st still = 4 pts … last = 1 pt, and the fastest guesses score a +3/+2/+1 speed bonus. Playable SOLO too!'
+                : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
       }
       try { syncGamePickBtn(); } catch (e) {} // keep the 📱 picker button synced with the selection
     }
     // 📱 compact game picker (phone): a small button opens a window listing all games
-    const GAME_PICK_ORDER = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames'];
-    const GAME_PLAYERS_TXT = { guesswho: '2 players', battle: '3-8 players', race: '3-8 players', blur: '1-8 players', undercover: '3-8 players', hotcold: '2-6 players', codenames: '4-8 players' };
+    const GAME_PICK_ORDER = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'];
+    const GAME_PLAYERS_TXT = { guesswho: '2 players', battle: '3-8 players', race: '3-8 players', blur: '1-8 players', undercover: '3-8 players', hotcold: '2-6 players', codenames: '4-8 players', snapshot: '1-8 players' };
     let gamePickCtx = 'host'; // 'host' = create-room button · 'modal' = lobby ⚙️ settings bar
     function openGamePickModal(mode) {
       gamePickCtx = (mode === 'modal') ? 'modal' : 'host';
@@ -1785,6 +1812,20 @@
       hostBgRounds = parseInt(document.getElementById('hostBgRoundsSlider').value);
       document.getElementById('hostBgRoundsValue').textContent = hostBgRounds;
     }
+    function updateSnRoundsSlider() {
+      hostSnRounds = parseInt(document.getElementById('hostSnRoundsSlider').value);
+      document.getElementById('hostSnRoundsValue').textContent = hostSnRounds;
+    }
+    function selectBgDiff(d) { hostBgDiff = sakuDiffSan(d); paintDiffRadios('hostBgDiff', hostBgDiff); }   // 🎚️ create-room radios
+    function selectSnDiff(d) { hostSnDiff = sakuDiffSan(d); paintDiffRadios('hostSnDiff', hostSnDiff); }
+    async function changeBgDiff(d) { // 🎚️ lobby modal → write straight to the room
+      d = sakuDiffSan(d); paintDiffRadios('modalBgDiff', d);
+      if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgDiff').set(d); touchActivity(); }
+    }
+    async function changeSnDiff(d) {
+      d = sakuDiffSan(d); paintDiffRadios('modalSnDiff', d);
+      if (isHost && currentRoom && currentRoom.game === 'snapshot') { await database.ref('rooms/' + roomCode + '/settings/snDiff').set(d); touchActivity(); }
+    }
     function updateBgStageSecSlider() {
       hostBgStageSec = parseInt(document.getElementById('hostBgStageSecSlider').value);
       document.getElementById('hostBgStageSecValue').textContent = hostBgStageSec + 's';
@@ -1834,7 +1875,9 @@
             roomData.settings.bgRounds = hostBgRounds;
             roomData.settings.bgStageSec = hostBgStageSec;
             roomData.settings.bgMode = hostBgMode;
+            roomData.settings.bgDiff = hostBgDiff;
           }
+          if (game === 'snapshot') { roomData.settings.snRounds = hostSnRounds; roomData.settings.snDiff = hostSnDiff; } // 📸
         }
         await database.ref('rooms/' + roomCode).set(roomData);
         try { rememberLastFor(game); } catch (e) {} // 💾 auto-remember this game's setup
@@ -1922,6 +1965,7 @@
         else if (g === 'battle' && document.getElementById('battleScreen').classList.contains('active')) updateBattle();
         else if (g === 'race' && document.getElementById('raceScreen').classList.contains('active')) updateRace();
         else if (g === 'blur' && document.getElementById('blurScreen').classList.contains('active')) updateBlur();
+        else if (g === 'snapshot' && document.getElementById('snapshotScreen').classList.contains('active')) updateSnapshot();
         else if (g === 'hotcold' && document.getElementById('hotcoldScreen').classList.contains('active')) updateHotcold();
         else if (g === 'guesswho' && document.getElementById('gameScreen').classList.contains('active')) updateGame();
       } catch (e) { /* best effort — the observer already covered static text */ }
@@ -2012,6 +2056,15 @@
             if (participates && !document.getElementById(screenId).classList.contains('active')) showScreen(screenId);
             if (participates) { if (isBattle) updateBattle(); else updateRace(); }
             if (isHost && currentRoom.state === 'playing') { if (isBattle) battleWatchdog(); else raceWatchdog(); }
+          }
+        } else if (currentRoom.game === 'snapshot') {
+          const sn = currentRoom.sn || {};
+          if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
+            const meP = (currentRoom.players || {})[playerId] || {};
+            const participates = sn.gameId && meP.outInGame !== sn.gameId;
+            if (participates && !document.getElementById('snapshotScreen').classList.contains('active')) showScreen('snapshotScreen');
+            if (participates) updateSnapshot();
+            if (isHost && currentRoom.state === 'playing') { snWatchdog(); ensureSnHostTimer(); }
           }
         } else if (currentRoom.game === 'blur') {
           const bg = currentRoom.bg || {};
@@ -2273,10 +2326,11 @@
       const isMultiGame = currentRoom.game === 'undercover' || currentRoom.game === 'battle' || currentRoom.game === 'race';
       const isBlurGame = currentRoom.game === 'blur';
       const isHcGame = currentRoom.game === 'hotcold'; // 🔥 2-6 seats (multiplayer rework)
+      const isSnGame = currentRoom.game === 'snapshot'; // 📸 2-8 anime-still guessers
       const isCnGame = currentRoom.game === 'codenames'; // 🗝 4-8 (2+ per team)
       // 🗝 Ninja Scrolls: the START button appears as soon as the TEAMS are
       // valid — un-teamed players are spectators (never blockers), joining = ready
-      const canStart = isCnGame ? cnTeamsGate().ok : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️ Blur Guess is playable SOLO
+      const canStart = isCnGame ? cnTeamsGate().ok : isSnGame ? (allReady && playerCount >= 1) : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️😉 Blur & Snapshot! are playable SOLO
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
       // My own "you're waiting" banner + hide Ready while queued
       const qBanner = document.getElementById('queueBanner');
@@ -2444,6 +2498,7 @@
       else if (g === 'battle') gd = currentRoom.br;
       else if (g === 'race') gd = currentRoom.rc;
       else if (g === 'blur') gd = currentRoom.bg;
+      else if (g === 'snapshot') gd = currentRoom.sn;
       else if (g === 'hotcold') gd = currentRoom.hc;
       else if (g === 'codenames') gd = currentRoom.cn;
       if (!gd || !gd.gameId) return; // 2P Detective Showdown ends via its own buttons
@@ -2749,6 +2804,7 @@
     async function multiDeal(game) {
       if (!isHost || !currentRoom) return;
       if (game === 'blur') { await blurDeal(); return; }
+      if (game === 'snapshot') { await snDeal(); return; }
       if (game === 'race') {
         const pids = Object.keys(currentRoom.players || {});
         const targetPid = pids[Math.floor(Math.random() * pids.length)];
@@ -3370,6 +3426,26 @@
       return Math.min(BLUR_STAGE_SEC_MAX, Math.max(BLUR_STAGE_SEC_MIN, v || BLUR_STAGE_SEC)) * 1000;
     }
 
+    // 🎚️ DIFFICULTY by popularity: quartiles of the 1500-anime ranked pool.
+    // easy = rank 1-375 | normal = 376-750 | hard = 751-1125 | extreme = 1126-1500
+    const SN_DIFFS = ['all', 'easy', 'normal', 'hard', 'extreme'];
+    function sakuDiffSan(d) { return SN_DIFFS.indexOf(d) >= 0 ? d : 'all'; }
+    function sakuDiffBand(rank) { const r = (rank | 0) || 1500; return r <= 375 ? 'easy' : r <= 750 ? 'normal' : r <= 1125 ? 'hard' : 'extreme'; }
+    function sakuDiffOf(entry) { return sakuDiffBand((entry && (entry.r | 0)) || 1500); }
+    function sakuFilterDiff(pool, diff) {
+      const d = sakuDiffSan(diff);
+      if (d === 'all') return pool || [];
+      return (pool || []).filter(c => c && sakuDiffOf(c) === d);
+    }
+    // radio painting helper (create-room + lobby modal both use it)
+    function paintDiffRadios(pref, d) {
+      d = sakuDiffSan(d);
+      ['All', 'Easy', 'Normal', 'Hard', 'Extreme'].forEach(k => {
+        const el = document.getElementById(pref + k);
+        if (el) el.classList.toggle('selected', k.toLowerCase() === d);
+      });
+    }
+
     // Blur Guess has NO "character count" board: the candidate list is the
     // FULL source pool — every generic character, or the 500 anime covers in
     // 🎬 covers mode. settings/pool 'watched' narrows BOTH variants to anime
@@ -3380,7 +3456,7 @@
       const bg = r.bg || {};
       const mode = bg.mode || s.bgMode || 'characters';
       if (mode === 'covers') {
-        const covers = sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []);
+        const covers = sakuFilterDiff(sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []), s.bgDiff); // 🎚️ popularity band
         if (s.pool !== 'watched') return covers;
         const wset = roomWatchSet(r);
         return covers.filter(c => c && c.id != null && c.name && wset.ids[c.id]);
@@ -3927,6 +4003,11 @@
         const inp = document.getElementById('bgGuessInput');
         if (inp) inp.value = '';
         hideBgSuggest();
+        // 🚄 warm the NEXT round's image right away (not just during the reveal)
+        if (typeof Image !== 'undefined') {
+          const nxtEarly = (bg.rounds || [])[(bg.roundIdx || 0) + 1];
+          if (nxtEarly && nxtEarly.image) { const preEarly = new Image(); preEarly.src = nxtEarly.image; }
+        }
         // ⌨️ PC: put the caret in the search bar right away (after the DOM settles)
         if (typeof setTimeout === 'function') setTimeout(bgMaybeFocusGuess, 90); else bgMaybeFocusGuess();
       }
@@ -4031,6 +4112,417 @@
     // ---- team setup (state 'teams') ----
     // 🥷🎴 the special merged lobby: the team setup is open while the room sits in
     // 'lobby' (current flow) — legacy rooms created via cnOpenTeams use 'teams'
+    // ======================================================================
+    // ===== 📸 SNAPSHOT! — guess the anime from a still (RinBot-style) =====
+    // ======================================================================
+    // 4 discrete reveal stages released on a clock: extreme crop → wide crop →
+    // full picture → written hint. Earlier guess = more points (4→1), the
+    // fastest solvers grab a speed bonus (+3/+2/+1). Free-text answers:
+    // accents, punctuation and near-spelling tolerated (same matcher as Blur).
+    const SNAP_STAGES = 4;
+    const SNAP_STAGE_SEC = 8;        // seconds per crop stage
+    const SNAP_REVEAL_SEC = 6;       // answer shown this long between rounds
+    const SNAP_BONUS = [3, 2, 1, 0]; // 🏅 speed bonus by solve order
+    let snHostTimer = null, snWatchBusy = false, snTickTimer = null;
+
+    const snParticipants = (room) => { const r = room || currentRoom; const sn = (r && r.sn) || {}; return Object.keys((r && r.players) || {}).filter(pid => (((r.players[pid]) || {}).outInGame || null) !== sn.gameId); };
+    function snapMetaOf(id) { return (typeof SNAP_PICS !== 'undefined' && SNAP_PICS) ? (SNAP_PICS[id] || null) : null; }
+    function snapPool() { return sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []); }
+    function snapHintOf(entry) {
+      const name = String(entry.name || '?').trim();
+      const meta = snapMetaOf(entry.id) || {};
+      const bits = [];
+      if (meta.g && meta.g.length) bits.push(meta.g.slice(0, 3).join(', '));
+      if (meta.y || entry.year) bits.push(String(meta.y || entry.year));
+      const letters = (name.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim().match(/\S/g) || []).length;
+      bits.push((window.t ? t('starts with') : 'starts with') + ' "' + (name[0] || '?').toUpperCase() + '" — ' + letters + ' ' + (window.t ? t('letters') : 'letters'));
+      return bits.join(' · ');
+    }
+    // 🏔️ difficulty ladder: stage 1 = a hard deep-cut episode frame (from later in
+    // the run — less iconic), stages 2-3 = other random frames (+ official cover
+    // when frames run out), stage 4 = the official art = the EASY pic (+ hint).
+    function snapRoundEntry(entry) {
+      const meta = snapMetaOf(entry.id) || {};
+      const easy = meta.b || entry.image || '';
+      const thumbs = (meta.p || []).slice();
+      const half = Math.floor(thumbs.length / 2);
+      const late = shuffleArray(thumbs.slice(half));   // deeper into the show
+      const early = shuffleArray(thumbs.slice(0, half));
+      const frames = late.concat(early).slice(0, 3);   // hardest picks first
+      if (frames.length < 3 && entry.image && entry.image !== easy) frames.push(entry.image); // official cover fills stage 3
+      let pics = frames.slice().concat(easy ? [easy] : []).filter(Boolean);
+      pics = pics.filter((u, i) => u && pics.indexOf(u) === i); // paranoia: 4 distinct stills
+      return { al: entry.id, n: String(entry.name || '?'), pics: pics, h: snapHintOf(entry) };
+    }
+    // the still set for one anime: Kitsu episode frames + AniList banner + cover (all distinct)
+    function snapStillsOf(entry) {
+      const meta = snapMetaOf(entry && entry.id) || {};
+      const st = (meta.p || []).slice();
+      if (meta.b && st.indexOf(meta.b) < 0) st.push(meta.b);
+      if (entry && entry.image && st.indexOf(entry.image) < 0) st.push(entry.image);
+      return st;
+    }
+    // how many stills the frame shows at a stage (stage 1→1 still … stage 4→4 stills)
+    function snapShotsFor(pics, stage) { return (pics || []).slice(0, Math.min(Math.max(1, stage || 1), SNAP_STAGES, (pics || []).length)); }
+
+    async function snDeal() {
+      const s = currentRoom.settings || {};
+      const totalRounds = Math.min(20, Math.max(4, s.snRounds || 10));
+      const gameId = Date.now();
+      // brief "dealing" marker so everyone shows the snapshot screen right away
+      await database.ref('rooms/' + roomCode).update({ restarts: null, 'sn/gameId': gameId, 'sn/phase': 'setup' });
+      const snap = await database.ref('rooms/' + roomCode).once('value');
+      const fresh = snap.val() || {};
+      const pool = sakuFilterDiff(snapPool(), (currentRoom.settings || {}).snDiff).filter(c => c && c.id != null && c.name && snapStillsOf(c).length >= SNAP_STAGES);
+      const rounds = shuffleArray(pool.slice()).slice(0, Math.min(totalRounds, pool.length)).map(snapRoundEntry);
+      if (!rounds.length) {
+        await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, sn: null });
+        showNotification('Not enough anime for Snapshot! in this difficulty — try an easier band.');
+        return;
+      }
+      const scores = {};
+      Object.keys(fresh.players || {}).forEach(p => { scores[p] = 0; });
+      const upd = { state: 'playing', characters: null, selections: null, 'sn/gameId': gameId, 'sn/phase': 'playing',
+        'sn/rounds': rounds, 'sn/roundIdx': 0, 'sn/stage': 1, 'sn/found': null, 'sn/scores': scores,
+        'sn/deadline': Date.now() + SNAP_STAGE_SEC * 1000 };
+      upd['sn/log/' + gameLogPushKey('sn')] = { k: 'info', txt: '📸 Snapshot! — ' + rounds.length + ' ' + (window.t ? t('rounds! Guess the anime from its stills — earlier = more points!') : 'rounds! Guess the anime from its stills — earlier = more points!') };
+      await database.ref('rooms/' + roomCode).update(upd);
+    }
+
+    function snCurrentRound() { const sn = (currentRoom && currentRoom.sn) || {}; return (sn.rounds || [])[sn.roundIdx || 0] || null; }
+    function snapAliasesOf(al) {
+      const e = snapPool().find(c => c && c.id === al);
+      return (e && e.al) ? e.al.slice() : [];
+    }
+    // Title matching: full main name OR any FULL alias OR close-enough spelling
+    // of any 5+ letter name/alias. (Word-level accepts are NOT used for titles —
+    // "Titan" alone shouldn't win "Attack on Titan". Year's posts OK: "FMA 2009"?)
+    function snMatches(text, round) {
+      if (!text || !round) return false;
+      const g = bgNorm(text);
+      if (!g) return false;
+      const names = [round.n].concat(snapAliasesOf(round.al));
+      return names.some(nm => {
+        const target = bgNorm(nm);
+        if (!target) return false;
+        if (g === target) return true;
+        if (g.length >= 5 && target.length >= 5 && bgCloseEnough(g, target)) return true;
+        return false;
+      });
+    }
+    function bgCloseEnough(a, b) { // ≤1 edit apart (same tolerance as Blur's matcher)
+      if (Math.abs(a.length - b.length) > 1) return false;
+      const dp = a.length <= b.length ? [a, b] : [b, a];
+      const s = dp[0], l = dp[1];
+      let i = 0, j = 0, edits = 0;
+      while (i < s.length && j < l.length) {
+        if (s[i] === l[j]) { i++; j++; }
+        else { edits++; if (edits > 1) return false; if (s.length === l.length) { i++; } j++; }
+      }
+      return (edits + (s.length - i) + (l.length - j)) <= 1;
+    }
+
+    function snGuess() {
+      const sn = (currentRoom && currentRoom.sn) || {};
+      if (sn.phase !== 'playing' || (sn.found || {})[playerId]) return;
+      const inp = document.getElementById('snGuessInput'); if (!inp) return;
+      const text = inp.value.trim(); if (!text) return;
+      const rd = snCurrentRound();
+      if (snMatches(text, rd)) {
+        const prior = Object.keys(sn.found || {}).length;               // 0 = first solver
+        const base = Math.max(1, (SNAP_STAGES + 1) - (sn.stage || 1)); // stage 1 → 4 … 4 → 1
+        const bonus = SNAP_BONUS[Math.min(prior, 3)];
+        const pts = base + bonus;
+        const upd = {};
+        upd['found/' + playerId] = { stage: sn.stage || 1, rank: prior + 1, base: base, bonus: bonus, pts: pts };
+        upd['scores/' + playerId] = ((sn.scores || {})[playerId] || 0) + pts;
+        database.ref('rooms/' + roomCode + '/sn').update(upd);
+        inp.value = '';
+        showNotification((window.t ? t('Correct!') : 'Correct!') + ' +' + pts + ' pts (' + base + ' base' + (bonus ? ' + ' + bonus + ' 🏅' : '') + ')', 4000);
+        touchActivity();
+      } else {
+        showNotification(window.t ? t('Nope! Keep trying — a bigger crop is coming…') : 'Nope! Keep trying — a bigger crop is coming…', 2500);
+      }
+    }
+
+    // reveal content shared by the watchdog transition and the host's ⏭ button
+    function snRevealLogUpdate(sn) {
+      const players = currentRoom.players || {};
+      const rd = (sn.rounds || [])[sn.roundIdx || 0] || {};
+      const found = sn.found || {};
+      const gains = snParticipants().filter(pid => found[pid])
+        .sort((a, b) => (found[a].rank || 9) - (found[b].rank || 9))
+        .map(pid => ((players[pid] || {}).name || '?') + ' +' + found[pid].pts + ' (stage ' + found[pid].stage + ')');
+      const upd = { phase: 'reveal', deadline: Date.now() + SNAP_REVEAL_SEC * 1000 };
+      upd['log/' + gameLogPushKey('sn')] = { k: 'find', txt: (window.t ? t('Round') : 'Round') + ' ' + ((sn.roundIdx || 0) + 1) + '/' + (sn.rounds || []).length + ': it was <b>' + escapeHtml(String(rd.n || '?')) + '</b>!' };
+      upd['log/' + gameLogPushKey('sn')] = { k: gains.length ? 'ans' : 'info', txt: gains.length ? gains.join(' · ') : (window.t ? t('Nobody found it that time!') : 'Nobody found it that time!') };
+      return upd;
+    }
+    function snSkip() {
+      if (!isHost || !currentRoom) { showNotification('Host only!'); return; }
+      const sn = currentRoom.sn || {};
+      if (sn.phase !== 'playing') return;
+      database.ref('rooms/' + roomCode + '/sn').update(snRevealLogUpdate(sn));
+      touchActivity();
+    }
+
+    // HOST watchdog: stage ticks, early reveals, next round, game over — same
+    // write-guard pattern as blurWatchdog so ticks can never double-advance.
+    function snWatchdog() {
+      if (snWatchBusy || abortingEmptyGame || !isHost) return;
+      const sn = (currentRoom && currentRoom.sn) || {};
+      if (!sn.gameId || sn.phase === 'setup') return;
+      const players = currentRoom.players || {};
+      const parts = snParticipants();
+      if (parts.length === 0) return; // everyone backed out → auto-abort resets
+      const found = sn.found || {};
+      const now = Date.now();
+      const stepMs = SNAP_STAGE_SEC * 1000;
+      const endBusy = () => { snWatchBusy = false; };
+      const poke = () => { touchActivity(); };
+      if (sn.phase === 'playing') {
+        const allFound = parts.every(pid => found[pid]);
+        if (!allFound && now < (sn.deadline || 0)) return;
+        if (!allFound && (sn.stage || 1) < SNAP_STAGES) {
+          snWatchBusy = true;
+          database.ref('rooms/' + roomCode + '/sn').update({ stage: (sn.stage || 1) + 1, deadline: now + stepMs })
+            .then(poke).catch(() => {}).then(endBusy, endBusy);
+          return;
+        }
+        snWatchBusy = true; // all found or last stage elapsed → reveal
+        database.ref('rooms/' + roomCode + '/sn').update(snRevealLogUpdate(sn))
+          .then(poke).catch(() => {}).then(endBusy, endBusy);
+        return;
+      }
+      if (sn.phase === 'reveal' && now >= (sn.deadline || 0)) {
+        const nextIdx = (sn.roundIdx || 0) + 1;
+        snWatchBusy = true;
+        if (nextIdx >= (sn.rounds || []).length) {
+          const winPid = parts.slice().sort((a, b) => ((sn.scores || {})[b] || 0) - ((sn.scores || {})[a] || 0))[0];
+          const upd2 = { state: 'finished', 'sn/phase': 'over' };
+          upd2['sn/log/' + gameLogPushKey('sn')] = { k: 'find', txt: '🏆 ' + ((players[winPid] || {}).name || '?') + ' ' + (window.t ? t('wins Snapshot! with') : 'wins Snapshot! with') + ' ' + ((sn.scores || {})[winPid] || 0) + ' pts!' };
+          database.ref('rooms/' + roomCode).update(upd2).then(poke).catch(() => {}).then(endBusy, endBusy);
+        } else {
+          database.ref('rooms/' + roomCode + '/sn').update({ roundIdx: nextIdx, stage: 1, found: null, phase: 'playing', deadline: now + stepMs })
+            .then(poke).catch(() => {}).then(endBusy, endBusy);
+        }
+      }
+    }
+    function ensureSnHostTimer() {
+      if (snHostTimer) return;
+      snHostTimer = setInterval(() => {
+        const active = isHost && currentRoom && currentRoom.game === 'snapshot' && currentRoom.state === 'playing';
+        if (!active) { clearInterval(snHostTimer); snHostTimer = null; return; }
+        snWatchdog();
+      }, 1000);
+    }
+    function updateSnapshotTimer() { // 1s client tick for the countdown badge
+      if (snTickTimer) return;
+      snTickTimer = setInterval(() => {
+        const on = currentRoom && currentRoom.game === 'snapshot' && document.getElementById('snapshotScreen').classList.contains('active');
+        if (!on) { clearInterval(snTickTimer); snTickTimer = null; return; }
+        const sn = currentRoom.sn || {};
+        const left = Math.max(0, Math.ceil(((sn.deadline || 0) - Date.now()) / 1000));
+        const el = document.getElementById('snTimerBadge');
+        if (el) el.textContent = (sn.phase === 'reveal' ? (window.t ? t('next round in') : 'next round in') + ' ' : '') + left + 's';
+      }, 500);
+    }
+
+    function updateSnapshot() {
+      const sn = (currentRoom && currentRoom.sn) || {};
+      if (!sn.gameId) return;
+      const players = currentRoom.players || {};
+      const tt = (k) => (window.t ? t(k) : k);
+      const rd = snCurrentRound() || {};
+      const stage = sn.stage || 1;
+      // 🚄 eager preload: Kitsu stills are slow to fetch on demand mid-stage —
+      // warm this round's 4 frames + the next round's as soon as it begins.
+      const snPk = (sn.gameId || 0) + ':' + (sn.roundIdx || 0);
+      if (snPk !== snLastPreload && typeof Image !== 'undefined') {
+        snLastPreload = snPk;
+        [sn.roundIdx || 0, (sn.roundIdx || 0) + 1].forEach(pi => {
+          const prd = (sn.rounds || [])[pi] || {};
+          (prd.pics || []).forEach(u => { if (u) { const pre = new Image(); pre.src = u; } });
+        });
+      }
+      document.getElementById('snRoundBadge').innerHTML = '<svg class="ic"><use href="#i-layers"/></svg> ' + tt('Round') + ' ' + ((sn.roundIdx || 0) + 1) + '/' + (sn.rounds || []).length;
+      document.getElementById('snStageBadge').textContent = tt('Stills') + ' ' + stage + '/' + SNAP_STAGES;
+      updateSnapshotTimer();
+      // the still board — one more frame pops in per stage, then all 4 during the reveal
+      const shown = sn.phase === 'reveal' ? SNAP_STAGES : Math.min(stage, SNAP_STAGES);
+      const pics = (rd.pics || []);
+      const shots = document.getElementById('snShots');
+      for (let i = 0; i < SNAP_STAGES; i++) {
+        const slot = shots.children[i];
+        if (!slot) break;
+        const im = slot.querySelector('img');
+        const u = pics[i] || '';
+        if (im.getAttribute('data-u') !== u) { im.setAttribute('data-u', u); im.src = u; }
+        slot.classList.toggle('on', !!u && i < shown);
+      }
+      shots.classList.toggle('n1', shown === 1);
+      document.getElementById('snImgWrap').classList.toggle('revealed', sn.phase === 'reveal');
+      const hintEl = document.getElementById('snHint');
+      hintEl.style.display = (sn.phase === 'reveal' || stage >= SNAP_STAGES) ? 'block' : 'none';
+      hintEl.textContent = sn.phase === 'reveal' ? ('🎬 ' + (rd.n || '?')) : ('💡 ' + (rd.h || ''));
+      // status line
+      const st = document.getElementById('snStatus');
+      const parts = snParticipants();
+      const myFind = (sn.found || {})[playerId];
+      const thinking = parts.filter(pid => !(sn.found || {})[pid]).map(pid => (players[pid] || {}).name || '?');
+      if (sn.phase === 'over') st.textContent = tt('Game over — check the results!');
+      else if (sn.phase === 'reveal') {
+        const gains = parts.filter(pid => (sn.found || {})[pid])
+          .sort((a, b) => (sn.found[a].rank || 9) - (sn.found[b].rank || 9))
+          .map(pid => ((players[pid] || {}).name || '?') + ' +' + sn.found[pid].pts);
+        st.innerHTML = ic('check') + ' ' + tt('It was') + ' <b>' + escapeHtml(String(rd.n || '?')) + '</b>!' + (gains.length ? ' ' + gains.join(' · ') : ' ' + tt('Nobody found it!'));
+      } else if (myFind) {
+        st.innerHTML = ic('check') + ' <b>+' + myFind.pts + ' pts!</b> ' + tt('Still thinking:') + ' ' + (thinking.length ? escapeHtml(thinking.join(', ')) : tt('nobody — next round!'));
+      } else {
+        st.innerHTML = '<svg class="ic"><use href="#i-film"/></svg> <b>' + tt('Which anime is this?!') + '</b> ' + tt('one more still lands every few seconds…');
+      }
+      // guess bar visible till I solve it
+      const bar = document.getElementById('snGuessBar');
+      const iPart = parts.indexOf(playerId) >= 0;
+      const barOn = (sn.phase === 'playing' && iPart && !myFind);
+      bar.style.display = barOn ? 'flex' : 'none';
+      if (!barOn) hideSnSuggest();
+      if (updateSnapshot._lastRoundIdx !== (sn.roundIdx || 0)) { // new still → fresh typing box
+        updateSnapshot._lastRoundIdx = sn.roundIdx || 0;
+        const inp = document.getElementById('snGuessInput');
+        if (inp && barOn) inp.value = '';
+        if (updateSnapshot._lastRoundIdx > 0) hideSnSuggest();
+      }
+      // score chips
+      const chips = document.getElementById('snChips');
+      chips.innerHTML = '';
+      parts.slice().sort((a, b) => ((sn.scores || {})[b] || 0) - ((sn.scores || {})[a] || 0)).forEach((pid, i) => {
+        const p = players[pid] || {};
+        const found = (sn.found || {})[pid];
+        const chip = document.createElement('div');
+        chip.className = 'bg-chip' + (found ? ' found' : '') + (i === 0 && ((sn.scores || {})[pid] || 0) > 0 ? ' lead' : '');
+        chip.innerHTML = (i === 0 && ((sn.scores || {})[pid] || 0) > 0 ? '<svg class="ic"><use href="#i-crown"/></svg>' : '') + avatarCircle(p.avatar || '', 'ava-chat') + '<b>' + escapeHtml(String(p.name || '?')) + '</b><span>' + ((sn.scores || {})[pid] || 0) + '</span>' + (found ? '<em>✓</em>' : '');
+        chips.appendChild(chip);
+      });
+      document.getElementById('snSkipBtn').style.display = isHost && sn.phase === 'playing' ? '' : 'none';
+      if (sn.phase === 'over') renderMultiEnd('snapshot'); else document.getElementById('multiEndScreen').classList.remove('show');
+      renderSnLog(sn);
+    }
+    function renderSnLog(sn) {
+      const logEl = document.getElementById('snLog');
+      if (!logEl) return;
+      const log = gameLogList(sn);
+      if (log.length === 0) { logEl.innerHTML = '<p style="text-align:center;color:var(--muted);">' + (window.t ? t('Nothing yet') : 'Nothing yet') + '</p>'; return; }
+      logEl.innerHTML = '';
+      log.slice(-60).reverse().forEach(e => {
+        const d = document.createElement('div');
+        d.className = 'br-log-' + ({ find: 'find', ans: 'ans', info: 'info' }[e.k] || 'info');
+        d.innerHTML = e.txt;
+        logEl.appendChild(d);
+      });
+    }
+
+    // ⌨️ Snapshot! autocomplete — same dropdown UX as Blur (reused .bg-sug classes)
+    let snSugHits = [], snSugIndex = -1;
+    let snLastPreload = '';           // "gameId:roundIdx" already pre-warmed (Image cache)
+    function hideSnSuggest() {
+      const box = document.getElementById('snSuggest');
+      if (box) { box.classList.remove('show'); box.innerHTML = ''; }
+      snSugHits = []; snSugIndex = -1;
+    }
+    function snFindSuggestions(q) {
+      const g = bgNorm(q);
+      if (!g) return [];
+      const pool = sakuFilterDiff(snapPool(), ((currentRoom || {}).settings || {}).snDiff); // 🎚️ band-matched suggestions
+      const hits = [];
+      pool.forEach((c, i) => {
+        if (!c || !c.name) return;
+        const gn = bgNorm(c.name);
+        let rank = -1, via = '';
+        if (gn === g) rank = 0;
+        else if (gn.startsWith(g)) rank = 1;
+        else if (gn.indexOf(g) >= 0) rank = 2;
+        else (c.al || []).some(a => {
+          const ga = bgNorm(a);
+          if (!ga) return false;
+          if (ga === g) { rank = 0; via = 'aka ' + a; return true; }
+          if (ga.startsWith(g)) { rank = 1; via = 'aka ' + a; return true; }
+          if (rank < 0 && ga.indexOf(g) >= 0) { rank = 2; via = 'aka ' + a; }
+          return false;
+        });
+        if (rank >= 0) hits.push({ c, rank, via, i });
+      });
+      hits.sort((a, b) => (a.rank - b.rank) || (a.i - b.i));
+      return hits.slice(0, 8);
+    }
+    function snPickSuggestion(h) {
+      const inp = document.getElementById('snGuessInput');
+      if (!inp || !h) return;
+      inp.value = h.c.name;
+      hideSnSuggest();
+      snGuess();
+    }
+    function snClearGuessInput() { // ✕ at the end of the typing space
+      const inp = document.getElementById('snGuessInput');
+      if (!inp) return;
+      inp.value = '';
+      hideSnSuggest();
+      try { inp.focus(); } catch (_e) {}
+    }
+    function updateSnSuggest() {
+      const inp = document.getElementById('snGuessInput');
+      const box = document.getElementById('snSuggest');
+      if (!inp || !box) return;
+      const sn = (currentRoom && currentRoom.sn) || {};
+      if (sn.phase !== 'playing' || (sn.found || {})[playerId]) { hideSnSuggest(); return; }
+      const q = inp.value;
+      if (!bgNorm(q)) { hideSnSuggest(); return; }
+      const hits = snFindSuggestions(q);
+      if (!hits.length) { hideSnSuggest(); return; }
+      snSugHits = hits; snSugIndex = -1;
+      box.innerHTML = '';
+      hits.forEach(h => {
+        const row = document.createElement('div');
+        row.className = 'bg-sug-row';
+        const img = document.createElement('img');
+        img.className = 'bg-sug-img'; img.src = h.c.image || ''; img.alt = ''; img.loading = 'lazy';
+        const nm = document.createElement('span');
+        nm.className = 'bg-sug-name'; nm.textContent = h.c.name;
+        row.appendChild(img); row.appendChild(nm);
+        if (h.via) {
+          const tag = document.createElement('span');
+          tag.className = 'bg-sug-via'; tag.textContent = h.via;
+          row.appendChild(tag);
+        }
+        // 📱 tap-guard (scroll-friendly): pick only when the finger lifts within 12px
+        row.addEventListener('pointerdown', (e) => { e.preventDefault(); row._psY = e.clientY; row._psX = e.clientX; });
+        row.addEventListener('pointerup', (e) => {
+          if (row._psY == null) return;
+          const moved = Math.abs(e.clientY - row._psY) + Math.abs(e.clientX - row._psX);
+          row._psY = null; row._psX = null;
+          if (moved < 12) snPickSuggestion(h);
+        });
+        box.appendChild(row);
+      });
+      box.classList.add('show');
+    }
+    function snPaintSugSel() {
+      const box = document.getElementById('snSuggest');
+      if (!box) return;
+      for (let i = 0; i < box.children.length; i++) box.children[i].classList.toggle('active', i === snSugIndex);
+      const row = box.children[snSugIndex];
+      if (row && row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+    }
+    function snSugMove(d) {
+      if (!snSugHits.length) return;
+      snSugIndex = (snSugIndex + d + snSugHits.length) % snSugHits.length;
+      snPaintSugSel();
+    }
+    function snSugAccept() { // Enter = highlighted suggestion, else the typed text
+      if (snSugIndex >= 0 && snSugHits[snSugIndex]) snPickSuggestion(snSugHits[snSugIndex]);
+      else { hideSnSuggest(); snGuess(); }
+    }
+
     function cnInSetup() { return !!currentRoom && currentRoom.game === 'codenames' && (currentRoom.state === 'lobby' || currentRoom.state === 'teams'); }
 
     async function cnOpenTeams() {
@@ -4671,7 +5163,7 @@
       const screen = document.getElementById('multiEndScreen');
       const activeScreen = document.querySelector('.screen.active');
       const sid = activeScreen ? activeScreen.id : '';
-      if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen' && sid !== 'codenamesScreen') { screen.classList.remove('show'); return; }
+      if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen' && sid !== 'codenamesScreen' && sid !== 'snapshotScreen') { screen.classList.remove('show'); return; }
       const players = currentRoom.players || {};
       const title = document.getElementById('meTitle');
       const sub = document.getElementById('meSub');
@@ -4699,6 +5191,21 @@
           row.style.setProperty('--c', brColorOf(pid));
           row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${(br.points || {})[pid] || 0} pts${found ? '' : ' · never found'}</span>`;
           if (secChar) { const s = document.createElement('small'); s.style.color = 'var(--muted)'; s.style.width = '100%'; s.textContent = (found ? 'secret: ' : 'secret was: ') + (secChar.name || '?'); row.appendChild(s); row.style.flexWrap = 'wrap'; }
+          list.appendChild(row);
+        });
+      } else if (kind === 'snapshot') {
+        const sn = currentRoom.sn || {};
+        const scores = sn.scores || {};
+        const ranking = snParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
+        const winner = ranking[0];
+        const meWin = winner === playerId;
+        title.textContent = meWin ? 'You win Snapshot!' : 'Snapshot! over!';
+        sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
+        ranking.forEach((pid, i) => {
+          const p = players[pid] || {};
+          const row = document.createElement('div');
+          row.className = 'me-row' + (pid === playerId ? ' me' : '');
+          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${scores[pid] || 0} pts</span>`;
           list.appendChild(row);
         });
       } else if (kind === 'blur') {
@@ -4924,6 +5431,18 @@
         bgGuessInput.addEventListener('input', updateBgSuggest);
         bgGuessInput.addEventListener('blur', () => setTimeout(hideBgSuggest, 150)); // small delay so taps on suggestions land first
       }
+      const snGuessInput = document.getElementById('snGuessInput');
+      if (snGuessInput) {
+        snGuessInput.addEventListener('keydown', (e) => {
+          const boxOpen = document.getElementById('snSuggest') && document.getElementById('snSuggest').classList.contains('show');
+          if (e.key === 'ArrowDown') { if (boxOpen) { e.preventDefault(); snSugMove(1); } }
+          else if (e.key === 'ArrowUp') { if (boxOpen) { e.preventDefault(); snSugMove(-1); } }
+          else if (e.key === 'Escape') { hideSnSuggest(); }
+          else if (e.key === 'Enter') { e.preventDefault(); snSugAccept(); }
+        });
+        snGuessInput.addEventListener('input', updateSnSuggest);
+        snGuessInput.addEventListener('blur', () => setTimeout(hideSnSuggest, 150));
+      }
     });
 
     function openRoomSettings(tab) {
@@ -4931,8 +5450,9 @@
       const game = currentRoom.game || 'guesswho';
       const isUc = game === 'undercover';
       const isRace = game === 'race';
-      const isMulti = game === 'battle' || game === 'race' || game === 'blur';
+      const isMulti = game === 'battle' || game === 'race' || game === 'blur' || game === 'snapshot';
       const isBlur = game === 'blur';
+      const isSnap = game === 'snapshot';
       const gsel = document.getElementById('modalGameSelect');
       if (gsel) gsel.value = game;
       syncModalGameCards();
@@ -4962,7 +5482,7 @@
       // ⚙️ Game tab
       document.getElementById('modalPoolGroup').style.display = isUc ? 'none' : 'block';
       // Blur Guess & Hot & Cold draw from the FULL source pool — no character count board needed
-      document.getElementById('modalGwSettings').style.display = (isUc || isBlur || game === 'hotcold' || game === 'codenames') ? 'none' : 'block'; // CN board is always a fixed 5×5 — never a char count
+      document.getElementById('modalGwSettings').style.display = (isUc || isBlur || isSnap || game === 'hotcold' || game === 'codenames') ? 'none' : 'block'; // CN board is always a fixed 5×5 — never a char count
       document.getElementById('modalUwSettings').style.display = isUc ? 'block' : 'none';
       const raceBox = document.getElementById('modalRaceSettings');
       if (raceBox) {
@@ -4990,6 +5510,17 @@
           const m = s.bgMode === 'covers' ? 'covers' : 'characters';
           document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
           document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
+          paintDiffRadios('modalBgDiff', s.bgDiff); // 🎚️
+        }
+      }
+      const snBox = document.getElementById('modalSnapSettings');
+      if (snBox) {
+        snBox.style.display = isSnap ? 'block' : 'none';
+        if (isSnap) {
+          const N = clampN((currentRoom.settings || {}).snRounds, 4, 20, 10);
+          document.getElementById('modalSnRoundsSlider').value = N;
+          document.getElementById('modalSnRoundsValue').textContent = N;
+          paintDiffRadios('modalSnDiff', (currentRoom.settings || {}).snDiff); // 🎚️
         }
       }
       if (isUc) {
@@ -5207,6 +5738,12 @@
       document.getElementById('modalBgStageSecValue').textContent = v + 's';
       if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgStageSec').set(v); touchActivity(); }
     }
+    // Snapshot! room settings (lobby modal): number of rounds
+    async function updateModalSnRounds() {
+      const v = clampN(document.getElementById('modalSnRoundsSlider').value, 4, 20, 10);
+      document.getElementById('modalSnRoundsValue').textContent = v;
+      if (isHost && currentRoom && currentRoom.game === 'snapshot') { await database.ref('rooms/' + roomCode + '/settings/snRounds').set(v); touchActivity(); }
+    }
     async function changeBgMode(mode) {
       const m = mode === 'covers' ? 'covers' : 'characters';
       document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
@@ -5217,7 +5754,7 @@
     // Seats for a game given the room's current size: duels stay 2, Hot &
     // Cold keeps 2-6, the real multi games keep 3-8 (defaults 6 / 2 when unset).
     function seatsForGame(g) {
-      if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur' || g === 'codenames') return ((currentRoom.maxPlayers || 0) >= 3) ? currentRoom.maxPlayers : 6;
+      if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur' || g === 'codenames' || g === 'snapshot') return ((currentRoom.maxPlayers || 0) >= 3) ? Math.max(3, currentRoom.maxPlayers || 0) : 6;
       if (g === 'hotcold') return Math.min(6, Math.max(2, currentRoom.maxPlayers || 2));
       return 2;
     }
@@ -5261,7 +5798,9 @@
         updates['settings/bgRounds'] = s.bgRounds || BLUR_ROUNDS_DEFAULT;
         updates['settings/bgStageSec'] = s.bgStageSec || BLUR_STAGE_SEC;
         updates['settings/bgMode'] = s.bgMode || 'characters';
+        updates['settings/bgDiff'] = sakuDiffSan(s.bgDiff);
       }
+      if (newGame === 'snapshot') { updates['settings/snRounds'] = clampN(s.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(s.snDiff); } // 📸
       // Fewer seats in the new mode → extra players wait in the ⏳ queue
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
       const ordered = seated.filter(p => p.isHost).concat(seated.filter(p => !p.isHost)); // host keeps a seat
@@ -6483,6 +7022,13 @@
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await multiDeal('blur');
+        return;
+      }
+      if (g === 'snapshot') {
+        if (playerCount < 1) { showNotification('Need at least 1 player to start!'); return; } // 📸 playable SOLO too
+        if (!allReady) { showNotification('All players must be ready!'); return; }
+        touchActivity();
+        await multiDeal('snapshot');
         return;
       }
       if (g === 'hotcold') {

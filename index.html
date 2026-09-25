@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="93">
+<meta name="saku-build" content="98">
 <title>Sakugame</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json">
@@ -59,11 +59,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=93" sizes="any">
+<link rel="icon" href="favicon.ico?v=98" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=93">
+<link rel="stylesheet" href="style.css?v=98">
 </head>
 <body>
 
@@ -317,6 +317,13 @@
             <p>4-8 players, 2 teams! The Ninja gives a ONE-word clue — tap your agents' cards, dodge the assassin, and find all your agents first!</p>
           </div>
         </div>
+        <div class="game-card" onclick="openHowTo('snapshot')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('snapshot')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-image"/></svg></div>
+          <div class="game-card-content">
+            <h3>Snapshot!</h3>
+            <p>Solo or up to 8 players! 4 random stills from ONE anime join the frame one by one, each EASIER than the last (the 4th is the official art). Name the anime as early as you can: stage 1 pays 4 pts, and the fastest correct guesses add a +3/+2/+1 speed bonus!</p>
+          </div>
+        </div>
       </div>
       <button class="full back-btn" style="display:none" onclick="goHome()">← Back to Home</button>
     </div>
@@ -387,8 +394,12 @@
                 <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
                 <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-8 players</small></div>
               </div>
+              <div class="game-pick-card" data-game="snapshot" onclick="selectHostGame('snapshot')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-image"/></svg></div>
+                <div class="game-pick-content"><h4>Snapshot!</h4><small>1-8 players</small></div>
+              </div>
             </div>
-            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Detective Showdown (2 players)</option><option value="battle">Detective Royale (3-8 players)</option><option value="race">Wanted! (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Cold Case (2-6 players)</option><option value="codenames">Ninja Scrolls (4-8 players)</option></select>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Detective Showdown (2 players)</option><option value="battle">Detective Royale (3-8 players)</option><option value="race">Wanted! (3-8 players)</option><option value="blur">Blur Guess (solo or up to 8 players)</option><option value="undercover">Undercover (3-8 players)</option><option value="hotcold">Cold Case (2-6 players)</option><option value="codenames">Ninja Scrolls (4-8 players)</option><option value="snapshot">Snapshot! (solo or up to 8 players)</option></select>
             <!-- 📱 phone only: compact game picker — opens the selection window -->
             <button type="button" id="gamePickOpenBtn" onclick="openGamePickModal()"><span id="gamePickOpenLabel"><svg class="ic"><use href="#i-gamepad"/></svg> Choose a game…</span><span class="gpo-chev">▾</span></button>
           </div>
@@ -484,6 +495,17 @@
               <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div></label>
             </div>
           </div>
+          <div class="input-group blur-only-settings" style="display: none;">
+            <label>Difficulty</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostBgDiffAll" onclick="selectBgDiff('all')"><div>Everything</div></label>
+              <label class="radio-option" id="hostBgDiffEasy" onclick="selectBgDiff('easy')"><div>Easy</div></label>
+              <label class="radio-option" id="hostBgDiffNormal" onclick="selectBgDiff('normal')"><div>Normal</div></label>
+              <label class="radio-option" id="hostBgDiffHard" onclick="selectBgDiff('hard')"><div>Hard</div></label>
+              <label class="radio-option" id="hostBgDiffExtreme" onclick="selectBgDiff('extreme')"><div>Extreme</div></label>
+            </div>
+            <p style="color: var(--muted); font-size: 0.78rem; margin: 4px 0 0;">how popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500</p>
+          </div>
           <div class="slider-container blur-only-settings" style="display: none;">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="hostBgRoundsValue">10</strong></div>
             <input type="range" id="hostBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateBgRoundsSlider()">
@@ -491,6 +513,21 @@
           <div class="slider-container blur-only-settings" style="display: none;">
             <div class="slider-label"><span><svg class="ic"><use href="#i-clock"/></svg> Stage timer <small style="color: var(--muted); font-weight: 400;">(seconds per unblur step)</small></span><strong id="hostBgStageSecValue">12s</strong></div>
             <input type="range" id="hostBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateBgStageSecSlider()">
+          </div>
+          <div class="slider-container snap-only-settings" style="display: none;">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <small style="color: var(--muted); font-weight: 400;">(anime stills to guess)</small></span><strong id="hostSnRoundsValue">10</strong></div>
+            <input type="range" id="hostSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateSnRoundsSlider()">
+          </div>
+          <div class="input-group snap-only-settings" style="display: none;">
+            <label>Difficulty</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostSnDiffAll" onclick="selectSnDiff('all')"><div>Everything</div></label>
+              <label class="radio-option" id="hostSnDiffEasy" onclick="selectSnDiff('easy')"><div>Easy</div></label>
+              <label class="radio-option" id="hostSnDiffNormal" onclick="selectSnDiff('normal')"><div>Normal</div></label>
+              <label class="radio-option" id="hostSnDiffHard" onclick="selectSnDiff('hard')"><div>Hard</div></label>
+              <label class="radio-option" id="hostSnDiffExtreme" onclick="selectSnDiff('extreme')"><div>Extreme</div></label>
+            </div>
+            <p style="color: var(--muted); font-size: 0.78rem; margin: 4px 0 0;">how popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500</p>
           </div>
           <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
           <p class="race-only-settings" style="display: none; color: var(--muted); font-size: 0.85rem; line-height: 1.5;">If <b>all hunters</b> run out of lives, the TARGET wins! Running out of questions means you can only guess… or pass.</p>
@@ -797,6 +834,43 @@
     </div>
   </div>
 
+  <!-- 📸 SNAPSHOT! (1-8 players): 4 random stills from ONE anime pop in over 4 stages — name the anime, fastest first! -->
+  <div class="screen" id="snapshotScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="uc-badge" id="snRoundBadge"><svg class="ic"><use href="#i-layers"/></svg> Round 1/10</div>
+          <div class="uc-badge" id="snStageBadge">Stills 1/4</div>
+          <div class="uc-badge" id="snTimerBadge">8s</div>
+        </div>
+        <div class="bg-img-wrap sn-frame" id="snImgWrap">
+          <div class="sn-shots" id="snShots">
+            <div class="sn-slot on"><img src="" alt="Anime still" draggable="false"></div>
+            <div class="sn-slot"><img src="" alt="" draggable="false"></div>
+            <div class="sn-slot"><img src="" alt="" draggable="false"></div>
+            <div class="sn-slot"><img src="" alt="" draggable="false"></div>
+          </div>
+          <div class="sn-hint" id="snHint" style="display: none;"></div>
+        </div>
+        <div class="bg-status" id="snStatus">Which anime is this?!</div>
+        <div class="question-form" id="snGuessBar">
+          <div class="bg-guess-wrap hc-has-rnd">
+            <input type="text" id="snGuessInput" placeholder="Type the anime title… (any known alias works: SNK, AoT…)" maxlength="80" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <button class="hc-clr" type="button" onclick="snClearGuessInput()" title="Clear"><svg class="ic"><use href="#i-x"/></svg></button>
+            <div class="bg-suggest" id="snSuggest"></div>
+          </div>
+          <button class="success" onclick="snGuess()">Guess!</button>
+        </div>
+        <div class="bg-chips" id="snChips"></div>
+        <div class="game-controls">
+          <button class="warning" id="snSkipBtn" onclick="snSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span></button>
+          <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+        </div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> Rounds</h3><div class="br-log" id="snLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🌡️ GUESS WHO — HOT & COLD (2-6 players): every seeker hunts their own path, Σ guesses = the classement -->
   <!-- 🗝 CODE NAMES (4-8 players, 2 teams) — live game screen -->
   <div class="screen" id="codenamesScreen">
@@ -994,6 +1068,10 @@
                 <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
                 <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-8 players</small></div>
               </div>
+              <div class="game-pick-card" data-game="snapshot" onclick="modalCardGame('snapshot')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-image"/></svg></div>
+                <div class="game-pick-content"><h4>Snapshot!</h4><small>1-8 players</small></div>
+              </div>
             </div>
             <select id="modalGameSelect" style="display: none;" onchange="modalGameChanged()">
               <option value="guesswho">Detective Showdown (2 players)</option>
@@ -1003,6 +1081,7 @@
               <option value="undercover">Undercover (3-8 players)</option>
               <option value="hotcold">Cold Case (2-6 players)</option>
               <option value="codenames">Ninja Scrolls (4-8 players)</option>
+              <option value="snapshot">Snapshot! (solo or up to 8 players)</option>
             </select>
           </div>
           <div class="input-group">
@@ -1101,6 +1180,17 @@
               <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div></label>
             </div>
           </div>
+          <div class="input-group">
+            <label>Difficulty</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="modalBgDiffAll" onclick="changeBgDiff('all')"><div>Everything</div></label>
+              <label class="radio-option" id="modalBgDiffEasy" onclick="changeBgDiff('easy')"><div>Easy</div></label>
+              <label class="radio-option" id="modalBgDiffNormal" onclick="changeBgDiff('normal')"><div>Normal</div></label>
+              <label class="radio-option" id="modalBgDiffHard" onclick="changeBgDiff('hard')"><div>Hard</div></label>
+              <label class="radio-option" id="modalBgDiffExtreme" onclick="changeBgDiff('extreme')"><div>Extreme</div></label>
+            </div>
+            <p style="color: var(--muted); font-size: 0.78rem; margin: 4px 0 0;">how popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500</p>
+          </div>
           <div class="slider-container">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <small style="color: var(--muted); font-weight: 400;">(pictures to guess)</small></span><strong id="modalBgRoundsValue">10</strong></div>
             <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
@@ -1110,6 +1200,25 @@
             <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
           </div>
           <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round clears over 5 stages — earlier guess = more points. No character count: the pool is Random (everything) or Watched (only anime seen by synced accounts). Applies from the next game.</p>
+        </div>
+        <div class="settings-section" id="modalSnapSettings" style="display: none;">
+          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Snapshot!</h3>
+          <div class="slider-container">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <small style="color: var(--muted); font-weight: 400;">(anime stills to guess)</small></span><strong id="modalSnRoundsValue">10</strong></div>
+            <input type="range" id="modalSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateModalSnRounds()">
+          </div>
+          <div class="input-group">
+            <label>Difficulty</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="modalSnDiffAll" onclick="changeSnDiff('all')"><div>Everything</div></label>
+              <label class="radio-option" id="modalSnDiffEasy" onclick="changeSnDiff('easy')"><div>Easy</div></label>
+              <label class="radio-option" id="modalSnDiffNormal" onclick="changeSnDiff('normal')"><div>Normal</div></label>
+              <label class="radio-option" id="modalSnDiffHard" onclick="changeSnDiff('hard')"><div>Hard</div></label>
+              <label class="radio-option" id="modalSnDiffExtreme" onclick="changeSnDiff('extreme')"><div>Extreme</div></label>
+            </div>
+            <p style="color: var(--muted); font-size: 0.78rem; margin: 4px 0 0;">how popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500</p>
+          </div>
+          <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Each round shows up to 4 stills from one anime, harder → easier (the last is the official art, with a hint) — earlier guess = more points. Pool: the website's anime list (episode stills + official art). Applies from the next game.</p>
         </div>
         <button class="full success" onclick="closeSettings()">Save & Close</button>
       </div>
@@ -1428,7 +1537,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=93', 'charanimes.js?v=93', 'animes.js?v=93', 'nsfwdata.js?v=93'];
+        var files = ['characters.js?v=98', 'charanimes.js?v=98', 'animes.js?v=98', 'nsfwdata.js?v=98', 'snappics.js?v=98'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1443,9 +1552,9 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=93"></script>
-  <script src="music.js?v=93"></script>
-  <script src="lang.js?v=93"></script>
-  <script src="app.js?v=93"></script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3e82ff20838d081',t:'MTc4OTk4NDQ1Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="undercover.js?v=98"></script>
+  <script src="music.js?v=98"></script>
+  <script src="lang.js?v=98"></script>
+  <script src="app.js?v=98"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a405e6f38bc6e237',t:'MTc5MDI5NjAzNg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
