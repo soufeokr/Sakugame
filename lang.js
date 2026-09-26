@@ -167,6 +167,12 @@ var I18N = {
   "Ninja Scrolls": { fr: "Ninja Scrolls", es: "Ninja Scrolls" },
   // ===== 📸 SNAPSHOT! (b94) =====
   // 🎚️ difficulty bands (b98)
+  // 🛠️ admin mode (b99)
+  "Type the passcode again to DISABLE admin mode:": { fr: "Retape le mot de passe pour DÉSACTIVER le mode admin :", es: "Escribe la contraseña otra vez para DESACTIVAR el modo admin:" },
+  "Admin passcode:": { fr: "Mot de passe admin :", es: "Contraseña de admin:" },
+  "Wrong passcode.": { fr: "Mauvais mot de passe.", es: "Contraseña incorrecta." },
+  "🛠️ Admin mode ON — you can now launch any of your hosted games solo.": { fr: "🛠️ Mode admin activé — tu peux lancer en solo n'importe quelle partie dont tu es l'hôte.", es: "🛠️ Modo admin activado — ahora puedes lanzar en solitario cualquier partida de la que seas anfitrión." },
+  "Admin mode off.": { fr: "Mode admin désactivé.", es: "Modo admin desactivado." },
   "Difficulty": { fr: "Difficulté", es: "Dificultad" },
   "Everything": { fr: "Tout", es: "Todo" },
   "Easy": { fr: "Facile", es: "Fácil" },

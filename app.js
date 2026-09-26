@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '98';
+    const SAKU_BUILD = '99';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -536,6 +536,7 @@
       const user = firebase.auth().currentUser;
       document.getElementById('authFormView').style.display = user ? 'none' : 'block';
       document.getElementById('authProfileView').style.display = user ? 'block' : 'none';
+      paintAdminBtn();
       if (user) {
         let lastTab = 'game';
         try { lastTab = localStorage.getItem('sakugame_acct_tab') || 'game'; } catch (e) { }
@@ -1236,6 +1237,30 @@
       showNotification(on ? t('18+ content hidden.') : t('18+ content visible.'));
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setNsfwSwitchStates); else setNsfwSwitchStates();
+
+    // ================= 🛠️ ADMIN MODE (solo launches for display checks) =================
+    // Unlock it from the Account tab (🔒 Admin) with this passcode — change it to
+    // your own, it only ever lives on the browser you unlock (localStorage).
+    const SAKU_ADMIN_CODE = 'sakuga981';
+    function sakuIsAdmin() { try { return localStorage.getItem('sakuAdmin') === '1'; } catch (e) { return false; } }
+    function paintAdminBtn() {
+      const btn = document.getElementById('adminToggleBtn');
+      if (btn) btn.textContent = sakuIsAdmin() ? '🔓 Admin mode ON — tap to disable' : '🔒 Admin mode is off';
+    }
+    function sakuAdminToggle() {
+      if (typeof prompt !== 'function') return;
+      const ask = sakuIsAdmin() ? 'Type the passcode again to DISABLE admin mode:' : 'Admin passcode:';
+      const p = String(prompt((window.t ? t(ask) : ask)) || '').trim();
+      if (!p) return;
+      if (p !== SAKU_ADMIN_CODE) { showNotification(window.t ? t('Wrong passcode.') : 'Wrong passcode.'); return; }
+      try { localStorage.setItem('sakuAdmin', sakuIsAdmin() ? '0' : '1'); } catch (e) {}
+      paintAdminBtn();
+      const on = sakuIsAdmin();
+      showNotification(on ? (window.t ? t('🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : '🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : (window.t ? t('Admin mode off.') : 'Admin mode off.'));
+      // the lobby's Start button gate depends on it — repaint if we're in one
+      if (on && currentRoom && currentRoom.state === 'lobby' && document.getElementById('lobbyScreen').classList.contains('active')) updateLobby();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintAdminBtn); else paintAdminBtn();
     // ================= 🧭 PAGE ROUTER (hash URLs + browser Back/Forward) =================
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
@@ -2330,7 +2355,7 @@
       const isCnGame = currentRoom.game === 'codenames'; // 🗝 4-8 (2+ per team)
       // 🗝 Ninja Scrolls: the START button appears as soon as the TEAMS are
       // valid — un-teamed players are spectators (never blockers), joining = ready
-      const canStart = isCnGame ? cnTeamsGate().ok : isSnGame ? (allReady && playerCount >= 1) : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️😉 Blur & Snapshot! are playable SOLO
+      const canStart = (isHost && sakuIsAdmin() && allReady) ? true : isCnGame ? cnTeamsGate().ok : isSnGame ? (allReady && playerCount >= 1) : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️😉 Blur & Snapshot! are playable SOLO · 🛠️ admins launch anything solo
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
       // My own "you're waiting" banner + hide Ready while queued
       const qBanner = document.getElementById('queueBanner');
@@ -4815,7 +4840,7 @@
     async function cnStartGame() {
       if (!isHost || !currentRoom || !cnInSetup()) return;
       const gate = cnTeamsGate();
-      if (!gate.ok) { if (gate.msg) showNotification(gate.msg); return; }
+      if (!gate.ok && !sakuIsAdmin()) { if (gate.msg) showNotification(gate.msg); return; }
       await cnDeal();
       touchActivity();
     }
@@ -6142,7 +6167,7 @@
         const snap = await database.ref('rooms/' + roomCode).once('value');
         const fresh = snap.val() || currentRoom || {};
         const pids = Object.keys(fresh.players || {});
-        if (pids.length < 2) { showNotification('Hot & Cold needs at least 2 players!'); return; }
+        if (pids.length < 2 && !sakuIsAdmin()) { showNotification('Hot & Cold needs at least 2 players!'); return; }
         // shared asked with only 2 players → the match runs individual
         if (((fresh.settings || {}).hcMode || 'shared') !== 'individual' && hcModeOfRoom(fresh) === 'individual') {
           showNotification('Shared guesses need 3+ players — this match runs in Individual!', 4000);
@@ -6996,14 +7021,14 @@
       const playerCount = Object.keys(currentRoom.players || {}).length;
       const g = currentRoom.game;
       if (g === 'undercover') {
-        if (playerCount < 3) { showNotification('Undercover needs at least 3 players!'); return; }
+        if (playerCount < 3 && !sakuIsAdmin()) { showNotification('Undercover needs at least 3 players!'); return; }
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await startUndercoverGame();
         return;
       }
       if (g === 'battle' || g === 'race') {
-        if (playerCount < 3) { showNotification((GAME_LABELS[g] || 'This game') + ' needs at least 3 players!'); return; }
+        if (playerCount < 3 && !sakuIsAdmin()) { showNotification((GAME_LABELS[g] || 'This game') + ' needs at least 3 players!'); return; }
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await multiDeal(g);
@@ -7012,7 +7037,7 @@
       if (g === 'codenames') {
         // 🥷🎴 merged special lobby: teams already picked on THIS screen — just deal
         const gate = cnTeamsGate();
-        if (!gate.ok) { showNotification(gate.msg || 'Ninja Scrolls needs at least 4 players in teams (2+ per team)!'); return; }
+        if (!gate.ok && !sakuIsAdmin()) { showNotification(gate.msg || 'Ninja Scrolls needs at least 4 players in teams (2+ per team)!'); return; }
         touchActivity();
         await cnStartGame();
         return;
@@ -7032,14 +7057,14 @@
         return;
       }
       if (g === 'hotcold') {
-        if (playerCount < 2) { showNotification('Need 2 players to start!'); return; }
+        if (playerCount < 2 && !sakuIsAdmin()) { showNotification('Need 2 players to start!'); return; }
         if (!allReady) { showNotification('All players must be ready!'); return; }
         touchActivity();
         await hotcoldDeal();
         return;
       }
       if (!allReady) { showNotification('All players must be ready!'); return; }
-      if (playerCount < 2) { showNotification('Need 2 players to start!'); return; }
+      if (playerCount < 2 && !sakuIsAdmin()) { showNotification('Need 2 players to start!'); return; }
       touchActivity();
       await generateCharacterPool();
     }
@@ -7687,9 +7712,9 @@
     async function startUndercoverGame() {
       if (!currentRoom) return;
       const pids = Object.keys(currentRoom.players || {});
-      if (pids.length < 3) { showNotification('Undercover needs at least 3 players!'); return; }
+      if (pids.length < 3 && !sakuIsAdmin()) { showNotification('Undercover needs at least 3 players!'); return; }
       const useMw = !!(currentRoom.settings && currentRoom.settings.mrWhite);
-      if (useMw && pids.length < 4) { showNotification('Mr. White needs at least 4 players — disable it in the settings or wait for more players.'); return; }
+      if (useMw && pids.length < 4 && !sakuIsAdmin()) { showNotification('Mr. White needs at least 4 players — disable it in the settings or wait for more players.'); return; }
       const pairs = await getAllUndercoverPairs();
       const pair = pairs.length ? pairs[Math.floor(Math.random() * pairs.length)] : { a: 'Naruto', b: 'Sasuke', type: 'c', imgA: null, imgB: null };
       const flip = Math.random() < 0.5;
@@ -7697,7 +7722,7 @@
       const shuffled = shuffleArray(pids);
       shuffled.forEach(pid => { roles[pid] = 'civilian'; });
       roles[shuffled[0]] = 'undercover';
-      if (useMw) roles[shuffled[1]] = 'mrwhite';
+      if (useMw && shuffled[1]) roles[shuffled[1]] = 'mrwhite'; // 🛠️ admin solo runs have no 2nd player
       // Turn-by-turn speaking order (fixed for the whole game);
       // Mr. White must NEVER speak first → he is bumped off the first slot.
       const order = shuffled.slice();

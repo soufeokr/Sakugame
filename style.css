@@ -671,6 +671,9 @@
   #bottomBar .username-change-btn { position: static; z-index: auto; margin-left: auto; box-shadow: none; padding: 8px 18px; font-size: 0.85rem; }
   #bottomBar .username-change-btn:hover { transform: none; }
 
+  /* 🧪 Bêta badge — pinned to the far LEFT of the bottom bar on PC & phones */
+  #betaBadge { flex-shrink: 0; margin-right: auto; font-size: 0.66rem; font-weight: 900; letter-spacing: 2.2px; text-transform: uppercase; line-height: 1; color: var(--accent); background: rgba(2, 169, 255, 0.10); border: 1px solid rgba(2, 169, 255, 0.45); border-radius: 999px; padding: 4px 10px 3px 12px; user-select: none; cursor: default; }
+
   /* Host admin buttons (👑 / ✕): hidden by default — they appear when the host
      hovers the player card (PC) or taps it (phone, adds .show-actions) */
   .player-card { position: relative; }
