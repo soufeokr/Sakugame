@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '99';
+    const SAKU_BUILD = '100';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -5133,7 +5133,7 @@
         d.className = 'cn-card';
         if (rv) {
           d.classList.add('cn-rev', 'cn-rev-' + rv);
-          d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy"><div class="cn-stamp cn-stamp-' + rv + '">' + (rv === 'black' ? '💀' : '✓') + '</div><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div>';
+          d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy"><div class="cn-stamp cn-stamp-' + rv + '">' + (rv === 'black' ? '💀' : '✓') + '</div><div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';
         } else {
           if (spyView && col) d.classList.add('cn-key-' + col);
           const suggesters = Object.keys((cn.sug || {})[String(i)] || {}).filter(spid => (currentRoom.players || {})[spid]);
@@ -5144,9 +5144,10 @@
           }
           d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy">' +
             (spyView && col ? '<div class="cn-dot cn-dot-' + col + '" title="' + col + '"></div>' : '') +
-            '<div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div>';
+            '<div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';
           // 👤 suggestion dots — public! no suggestions = no circles at all
           if (suggesters.length) {
+            const side = d.querySelector('.cn-side') || d;
             const dots = document.createElement('div');
             dots.className = 'cn-sugs';
             suggesters.slice(0, 4).forEach(spid => {
@@ -5157,14 +5158,14 @@
               s2.innerHTML = avatarCircle(p.avatar || '', 'ava-sug');
               dots.appendChild(s2);
             });
-            d.appendChild(dots);
-            // ✅ green commit circle (bottom-right, per mockup) — any picking teammate confirms
+            side.appendChild(dots);
+            // ✅ green commit circle (bottom-right of the card, per mockup) — any picking teammate confirms
             const vb = document.createElement('button');
             vb.className = 'cn-validate' + (pickable ? '' : ' locked');
             vb.title = window.t ? t('Pick this card!') : 'Pick this card!';
             vb.textContent = '✓';
             vb.addEventListener('click', (e) => { e.stopPropagation(); doCnGuess(i); });
-            d.appendChild(vb);
+            side.appendChild(vb);
           }
         }
         grid.appendChild(d);
