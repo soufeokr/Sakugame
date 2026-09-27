@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '100';
+    const SAKU_BUILD = '101';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -5143,7 +5143,6 @@
             d.addEventListener('click', () => cnSuggest(i)); // tap = (un)suggest, not a commit
           }
           d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy">' +
-            (spyView && col ? '<div class="cn-dot cn-dot-' + col + '" title="' + col + '"></div>' : '') +
             '<div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';
           // 👤 suggestion dots — public! no suggestions = no circles at all
           if (suggesters.length) {

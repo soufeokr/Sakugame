@@ -1273,7 +1273,7 @@
   .cn-clue-wait { color: var(--muted); font-size: 0.9rem; }
 
   /* ---- the 5×5 board ---- */
-  .cn-board { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)) !important; gap: 8px; }
+  .cn-board { display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 8px; }
   /* 🥷🎴 horizontal card per mockup: image LEFT · right column = name (with
      a thin rule under it), suggestion circles, green ✓ circle bottom-right */
   .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.08); background: var(--card); transition: transform 0.15s, box-shadow 0.15s; display: flex; height: 80px; }
@@ -1290,10 +1290,11 @@
   .cn-validate:hover { transform: scale(1.14); }
   .cn-validate.locked { opacity: 0.55; filter: saturate(0.6); }
   /* spymaster key view: colored borders + corner dot */
-  .cn-card.cn-key-red { border-color: rgba(229, 57, 53, 0.85); }
-  .cn-card.cn-key-blue { border-color: rgba(30, 136, 229, 0.85); }
-  .cn-card.cn-key-beige { border-color: rgba(176, 164, 138, 0.55); }
-  .cn-card.cn-key-black { border-color: rgba(255, 255, 255, 0.85); }
+  /* 🥷🎴 Ninja key view: the WHOLE card background carries the card color (mockup) */
+  .cn-card.cn-key-red { background: rgba(229, 57, 53, 0.55); border-color: rgba(229, 57, 53, 0.85); }
+  .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.55); border-color: rgba(30, 136, 229, 0.85); }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.35); border-color: rgba(176, 164, 138, 0.55); }
+  .cn-card.cn-key-black { background: rgba(8, 8, 12, 0.92); border-color: rgba(255, 255, 255, 0.85); }
   .cn-dot { position: absolute; top: 5px; left: 8px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid #0f0f1a; z-index: 2; }
   .cn-dot-red { background: #e53935; }
   .cn-dot-blue { background: #1e88e5; }
@@ -1330,7 +1331,7 @@
   .me-row.cn-end-row { font-size: 0.9rem; }
 
   @media (max-width: 640px) {
-    .cn-board { gap: 5px; }
+    .cn-board { grid-template-columns: repeat(2, 1fr) !important; gap: 5px; }
     .cn-name { font-size: 0.5rem; padding: 2px 3px; }
     .cn-teams { grid-template-columns: 1fr; }
     .cn-turn { font-size: 0.88rem; }
@@ -1366,10 +1367,10 @@
   .cn-card.cn-rev-blue { border-color: #02a9ff !important; box-shadow: 0 0 18px 4px rgba(2, 169, 255, 0.8), inset 0 0 26px rgba(2, 169, 255, 0.25); }
   .cn-card.cn-rev-beige { border-color: #e8d9b8 !important; box-shadow: 0 0 14px 3px rgba(232, 217, 184, 0.55), inset 0 0 22px rgba(232, 217, 184, 0.18); }
   .cn-card.cn-rev-black { border-color: #b8b8d8 !important; box-shadow: 0 0 18px 4px rgba(120, 110, 220, 0.65), inset 0 0 26px rgba(0, 0, 0, 0.65); }
-  .cn-card.cn-key-red { border-color: #ff5252 !important; box-shadow: 0 0 12px 2px rgba(255, 82, 82, 0.7); }
-  .cn-card.cn-key-blue { border-color: #02a9ff !important; box-shadow: 0 0 12px 2px rgba(2, 169, 255, 0.7); }
-  .cn-card.cn-key-beige { border-color: #e8d9b8 !important; box-shadow: 0 0 10px 2px rgba(232, 217, 184, 0.45); }
-  .cn-card.cn-key-black { border-color: #8a8ab8 !important; box-shadow: 0 0 14px 2px rgba(120, 110, 220, 0.6); }
+  .cn-card.cn-key-red { background: rgba(239, 83, 80, 0.6) !important; border-color: #ff5252 !important; box-shadow: none; }
+  .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.6) !important; border-color: #02a9ff !important; box-shadow: none; }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.45) !important; border-color: #e8d9b8 !important; box-shadow: none; }
+  .cn-card.cn-key-black { background: rgba(5, 5, 10, 0.95) !important; border-color: #8a8ab8 !important; box-shadow: none; }
   .cn-card.can-pick:hover { box-shadow: 0 0 16px 3px rgba(255, 243, 176, 0.55) !important; transform: translateY(-3px); }
 
   /* ===== 📱 Phone disposition — home: two big side-by-side cards (per mockup) ===== */
