@@ -1285,8 +1285,8 @@
   /* 🥷🎴 2-step pick: public suggestion dots (bottom-left) + green validate circle (bottom-right) */
   .cn-sugs { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px; padding: 6px 8px; pointer-events: none; }
   .cn-sug { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55); }
-  .cn-sug .avatar, .cn-sug .avatar img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; font-size: 0.5rem; }
-  .cn-validate { position: absolute; right: 6px; bottom: 6px; z-index: 4; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; background: var(--success); color: #fff; font-weight: 900; font-size: 15px; line-height: 1; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 9px rgba(46, 204, 113, 0.6); }
+  .cn-sug .ava, .cn-sug .ava img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; font-size: 0.5rem; } /* 🪲 class is .ava — the old .avatar selector never matched, pfps showed a sliver */
+  .cn-validate { position: absolute; right: 6px; bottom: 6px; z-index: 4; width: 26px; height: 26px; min-width: 0; min-height: 0; /* 🪲 phones: global button min-height:44px was squashing this into an ellipse */ border-radius: 50%; border: 2px solid #fff; background: var(--success); color: #fff; font-weight: 900; font-size: 15px; line-height: 1; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 9px rgba(46, 204, 113, 0.6); }
   .cn-validate:hover { transform: scale(1.14); }
   .cn-validate.locked { opacity: 0.55; filter: saturate(0.6); }
   /* spymaster key view: colored borders + corner dot */
@@ -1338,16 +1338,16 @@
   .me-row.cn-end-row { font-size: 0.9rem; }
 
   @media (max-width: 640px) {
-    /* 📱 3×8 on phones: compact vertical tiles (image top · name bar bottom ·
+    /* 📱 4×6 on phones too: compact vertical tiles (image top · name bar bottom ·
        dots bottom-left · green ✓ bottom-right over the image) */
-    .cn-board { grid-template-columns: repeat(3, 1fr) !important; gap: 5px; }
+    .cn-board { grid-template-columns: repeat(4, 1fr) !important; gap: 5px; }
     .cn-card { display: block; height: auto; }
     .cn-card img { width: 100%; height: auto; aspect-ratio: 1 / 1.1; }
     .cn-side { display: block; position: absolute; inset: 0; }
-    .cn-name { position: absolute; left: 0; right: 0; bottom: 0; font-size: 0.5rem; padding: 2px 3px; }
-    .cn-sugs { position: absolute; left: 3px; bottom: 24px; padding: 0; gap: 2px; max-width: 50px; }
-    .cn-sug { width: 14px; height: 14px; border-width: 1.5px; }
-    .cn-validate { right: 3px; bottom: 24px; width: 24px; height: 24px; font-size: 14px; }
+    .cn-name { position: absolute; left: 0; right: 0; bottom: 0; font-size: 0.48rem; padding: 2px 2px; }
+    .cn-sugs { position: absolute; left: 2px; bottom: 22px; padding: 0; gap: 2px; max-width: 60px; }
+    .cn-sug { width: 16px; height: 16px; border-width: 1.5px; }
+    .cn-validate { right: 3px; bottom: 22px; width: 24px; height: 24px; font-size: 14px; }
     .cn-teams { grid-template-columns: 1fr; }
     .cn-turn { font-size: 0.88rem; }
     .cn-cluebar { font-size: 0.92rem; }
@@ -1373,7 +1373,12 @@
   .cn-member.cn-spy-slot { border-width: 2px; }
   .cn-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
   .cn-start-big { width: 100%; max-width: 560px; display: block; margin: 16px auto 4px; padding: 16px 20px; font-size: 1.15rem; font-weight: 900; border-radius: 16px; }
-  @media (max-width: 700px) { .cn-cols { grid-template-columns: 1fr; } }
+  /* 📱 team setup stays 2×columns on phones (like PC) — halves the scroll */
+  @media (max-width: 700px) {
+    .cn-cols { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cn-box { padding: 8px; }
+    .cn-cols .cn-team-title { font-size: 0.92rem; padding: 6px 8px; margin-bottom: 8px; }
+  }
 
   /* ===== 🗝 CODE NAMES — glowy color reveals (battle-royale style) ===== */
   @keyframes cnGlowPulse { 0% { filter: brightness(1.5) saturate(1.3); } 100% { filter: none; } }
