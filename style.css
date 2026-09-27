@@ -1358,8 +1358,13 @@
   .cn-spect { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(10, 20, 45, 0.55); border: 1px dashed rgba(127, 176, 240, 0.35); border-radius: 14px; padding: 10px 14px; margin-bottom: 18px; }
   .cn-spect-title { font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
   .cn-spect-strip { display: flex; gap: 8px; flex-wrap: wrap; }
-  .cn-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
-  .cn-cols .cn-team { background: transparent; border: none; padding: 0; }
+  .cn-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+  .cn-cols .cn-team { background: transparent; border: none; padding: 0; display: flex; flex-direction: column; }
+  /* 📦 the 4 team boxes are ALWAYS the same height: both columns stretch to the
+     same size, and each column's SHOGUN/NINJA boxes split it 1:1 (compact floor
+     stays min-height: 120px; content simply grows them together) */
+  .cn-cols .cn-team > .cn-box { flex: 1; }
+  .cn-cols .cn-team > .cn-box:last-child { margin-bottom: 0; }
   .cn-cols .cn-team-title { text-align: center; font-size: 1.15rem; margin-bottom: 12px; padding: 8px 12px; border-radius: 12px; background: rgba(13, 25, 54, 0.7); }
   .cn-box { background: rgba(13, 25, 54, 0.6); border-radius: 16px; padding: 12px; border: 2px solid rgba(127, 176, 240, 0.22); margin-bottom: 14px; min-height: 120px; }
   .cn-team.blue .cn-box { border-color: rgba(2, 169, 255, 0.55); box-shadow: inset 0 0 26px rgba(2, 169, 255, 0.07); }
