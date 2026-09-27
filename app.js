@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '101';
+    const SAKU_BUILD = '102';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -158,7 +158,7 @@
       return '<div class="mk-hc-row">' + img + '<div class="mk-hc-name">' + escapeHtml(name) + '</div><div class="mk-hc-num ' + cls + '">' + score + '</div></div>';
     }
     const HT_CN_NAMES10 = ['Levi', 'Zoro Roronoa', 'Naruto Uzumaki', 'Eren Yeager', 'Mikasa Ackerman', 'Ichigo Kurosaki', 'Rem', 'Saitama', 'Light Yagami', 'Usagi Tsukino']; // 🎯 10 DISTINCT cards + genuine sword-fighters for the demo clue ("sword, 2" → Levi & Zoro) — exact AniList pool names so every card carries its photo
-    function htCnBoard(clsFor) { // Ninja Scrolls' real 5×5 card board
+    function htCnBoard(clsFor) { // Ninja Scrolls' real 4×6 card board
       return '<div class="mk-cn">' + HT_CN_NAMES10.map(function (n, i) { return htCharReal(n, clsFor ? (clsFor(i) || '') : ''); }).join('') + '</div>';
     }
 
@@ -238,10 +238,10 @@
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]},
       codenames: { title: 'Ninja Scrolls', icon: 'key', players: '4-8 players', slides: [
-        { t: 'Two teams, 25 characters', d: 'Split into RED and BLUE (2+ each). A 5×5 grid of anime characters is dealt; each card secretly belongs to a team, to the neutral bystanders… or to the 💀 assassin. Only the two NINJAS see the color key.',
-          s: htScene(htBadges([['🔴 0/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a SHOGUN — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 5×5 board — names only, all colors hidden.</div>') },
-        { t: 'One word + one number', d: 'On your team\'s turn its Ninja gives ONE word and a count — "sword, 2" — pointing at that many characters. Teammates tap up to that many cards. Every correct pick keeps the turn alive!',
-          s: htScene(htBadges([['🔴 2/9', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">Clue: ⚔ "sword, 2" — tap up to 2 cards!</div>' + htCnBoard(function (i) { return [0, 1].indexOf(i) >= 0 ? 'rev-red' : ''; }) + '<div class="mk-note">Levi & Zoro live by the sword — that\'s your RED pair! A spot-on clue like this flips both at once.</div>') },
+        { t: 'Two teams, 24 characters', d: 'Split into RED and BLUE (2+ each). A 4×6 grid of anime characters is dealt — 🔵 8, 🔴 7, 8 bystanders… and ONE 💀 assassin. BLUE always starts (it owns the extra agent!). Only the two NINJAS see the color key.',
+          s: htScene(htBadges([['🔴 0/7', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a SHOGUN — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 4×6 board — names only, all colors hidden.</div>') },
+        { t: 'One word, then tap the targets', d: 'On your team\'s turn its Ninja gives ONE word — "sword" — then TAPS the cards it targets (2 taps = 2 picks allowed). Teammates flip up to that many cards. Every correct pick keeps the turn alive… and finishing the count with only good picks earns a +1 BONUS, chainable until a wrong pick or a pass!',
+          s: htScene(htBadges([['🔴 2/7', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">Clue: ⚔ "sword, 2" — tap up to 2 cards!</div>' + htCnBoard(function (i) { return [0, 1].indexOf(i) >= 0 ? 'rev-red' : ''; }) + '<div class="mk-note">Levi & Zoro live by the sword — that\'s your RED pair! A spot-on clue like this flips both at once.</div>') },
         { t: 'Wrong card? Turn over. Black card? Game over.', d: 'Picking a bystander ends your turn right away. Picking an OPPONENT agent helps them win instead! And the single 💀 black card = INSTANT LOSS for the team that picks it. First team to find all its agents wins!',
           s: htScene('<div class="mk-cluebar">NINJA key — only you see every color</div>' + htCnBoard(function (i) { return ['key-red', 'key-red', 'key-blue', 'key-beige', 'key-red', 'key-blue', 'key-black', 'key-blue', 'key-beige', 'key-red'][i]; }) + '<div class="mk-note">💀 The white-ringed card = assassin — instant loss! Beige = bystander, ends your turn. (Levi & Zoro are red — matching the clue!)</div>') }
       ]}
@@ -1742,7 +1742,7 @@
       const watchUi = isBlur || hostGame === 'hotcold';
       document.getElementById('hostPoolSrcGwGroup').style.display = watchUi ? 'none' : 'block';
       document.getElementById('hostPoolSrcWatchGroup').style.display = watchUi ? 'block' : 'none';
-      document.getElementById('hostGwSettings').style.display = (isUc || isBlur || hostGame === 'hotcold' || isCn) ? 'none' : 'block'; // CN board is always a 5×5 = 25
+      document.getElementById('hostGwSettings').style.display = (isUc || isBlur || hostGame === 'hotcold' || isCn) ? 'none' : 'block'; // CN board is always a 4×6 = 24
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
       // ❤️/❓ sliders are Race-only, 🌫️ options are Blur-only
@@ -1756,7 +1756,7 @@
           : hostGame === 'race'
             ? 'One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. Hunters take turns ASKING — but GUESSING is free for everyone, at any moment (wrong = -1 life)! First to find the mystery character wins!'
             : hostGame === 'codenames'
-              ? 'Two teams face a 5×5 grid of characters. Each NINJA sees the secret colors and gives ONE word + a number; their team taps that many cards. Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
+              ? 'Two teams face a 4×6 grid of characters. Each NINJA sees the secret colors, gives ONE word and TAPS the targeted cards to set the guess count. Good picks chain +1 bonus guesses! Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
               : hostGame === 'snapshot'
                 ? '4 stills from ONE anime join the frame one by one — name the anime as early as you can! Each still is EASIER than the last (the 4th is the official art, WITH a hint). 1st still = 4 pts … last = 1 pt, and the fastest guesses score a +3/+2/+1 speed bonus. Playable SOLO too!'
                 : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
@@ -4769,15 +4769,14 @@
     }
 
     // ---- the deal: 25 cards + secret color key ----
-    function cnBuildKey(first) {
-      const other = first === 'red' ? 'blue' : 'red';
+    function cnBuildKey(first) { // b102: fixed 4×6 = 24 cards — 🔵 BLUE always starts (8 agents), 🔴 RED has 7, 8 bystanders, 1 💀
       // 🎲 shuffleArray returns a COPY — keep it! (the old code dropped the
-      // shuffled result, so every board stacked the 9 agents first, then the
-      // 8, then the bystanders and 💀 — fully random positions now)
+      // shuffled result, so every board stacked agents first, then bystanders
+      // and 💀 — fully random positions now)
       const cols = shuffleArray([].concat(
-        Array(9).fill(first),
-        Array(8).fill(other),
-        Array(7).fill('beige'),
+        Array(8).fill('blue'),
+        Array(7).fill('red'),
+        Array(8).fill('beige'),
         ['black']
       ));
       const key = {}; cols.forEach((c, i) => { key[String(i)] = c; });
@@ -4795,25 +4794,25 @@
       };
       const allChars = []; accountData.forEach(a => allChars.push.apply(allChars, sakuCleanChars((a && a.characters) || [])));
       if (source === 'favorites' && accountData.length > 0) {
-        const n = accountData.length, per = Math.floor(25 / n);
-        accountData.forEach((acc, i) => pick(sakuCleanChars((acc && acc.characters) || []), per + (i < (25 - per * n) ? 1 : 0)));
-        if (out.length < 25) pick(allChars, 25 - out.length);
+        const n = accountData.length, per = Math.floor(24 / n);
+        accountData.forEach((acc, i) => pick(sakuCleanChars((acc && acc.characters) || []), per + (i < (24 - per * n) ? 1 : 0)));
+        if (out.length < 24) pick(allChars, 24 - out.length);
       } else if (source === 'mix' && accountData.length > 0) {
-        const wantG = Math.max(0, Math.min(25, settings.mixCount != null ? Math.round(25 * settings.mixCount / (settings.characterCount || 24)) : 12));
+        const wantG = Math.max(0, Math.min(24, settings.mixCount != null ? Math.round(24 * settings.mixCount / (settings.characterCount || 24)) : 12));
         pick(generic, wantG);
-        if (out.length < 25) pick(allChars, 25 - out.length);
-        if (out.length < 25) pick(generic, 25 - out.length); // short favorites → generic tops up (never the reverse dupe)
+        if (out.length < 24) pick(allChars, 24 - out.length);
+        if (out.length < 24) pick(generic, 24 - out.length); // short favorites → generic tops up (never the reverse dupe)
       } else if (source === 'watched' && accountData.length > 0) {
-        pick(watchedPoolChars(room), 25);
+        pick(watchedPoolChars(room), 24);
       }
-      if (out.length < 25) pick(generic, 25 - out.length); // top-up or the plain full-generic board
-      return out.slice(0, 25);
+      if (out.length < 24) pick(generic, 24 - out.length); // top-up or the plain full-generic board
+      return out.slice(0, 24);
     }
     async function cnDeal() {
       if (!isHost || !currentRoom || !roomCode) return;
       const board = cnPickBoard(currentRoom);
-      if (board.length < 25) { showNotification(window.t ? t('Not enough characters in the pool for a 5×5 board!') : 'Not enough characters in the pool for a 5×5 board!'); return; }
-      const first = Math.random() < 0.5 ? 'red' : 'blue';
+      if (board.length < 24) { showNotification(window.t ? t('Not enough characters in the pool for a 4×6 board!') : 'Not enough characters in the pool for a 4×6 board!'); return; }
+      const first = 'blue'; // 🔵 always starts — it owns the extra agent (8 v 7)
       const key = cnBuildKey(first);
       const upd = {
         state: 'playing',
@@ -4827,15 +4826,14 @@
         'cn/guessesLeft': 0,
         'cn/revealed': null,
         'cn/sug': null,
-        'cn/rem': first === 'red' ? { red: 9, blue: 8 } : { red: 8, blue: 9 },
+        'cn/rem': { red: 7, blue: 8 },
+        'cn/bonus': null, // 🎁 chainable +1 bonus guess active?
         'cn/winner': null,
         'cn/log': null
       };
       await database.ref('rooms/' + roomCode).update(upd);
       touchActivity();
-      cnPushLog('info', '🗝 ' + (window.t ? t('Board dealt!') : 'Board dealt!') + ' ' + (first === 'red'
-        ? (window.t ? t('🔴 RED starts (9 agents) — 🔵 BLUE has 8!') : '🔴 RED starts (9 agents) — 🔵 BLUE has 8!')
-        : (window.t ? t('🔵 BLUE starts (9 agents) — 🔴 RED has 8!') : '🔵 BLUE starts (9 agents) — 🔴 RED has 8!')));
+      cnPushLog('info', '🗝 ' + (window.t ? t('Board dealt!') : 'Board dealt!') + ' ' + (window.t ? t('🔵 BLUE starts (8 agents) — 🔴 RED has 7!') : '🔵 BLUE starts (8 agents) — 🔴 RED has 7!'));
     }
     async function cnStartGame() {
       if (!isHost || !currentRoom || !cnInSetup()) return;
@@ -4856,7 +4854,7 @@
       const w = (document.getElementById('cnClueWord').value || '').trim();
       const n = parseInt((document.getElementById('cnClueNum').value || '0'), 10);
       if (!/^\S{1,24}$/.test(w)) { showNotification(window.t ? t('The clue must be a single word!') : 'The clue must be a single word!'); return; }
-      if (!(n >= 1 && n <= 9)) { showNotification(window.t ? t('Choose how many cards it targets (1-9)!') : 'Choose how many cards it targets (1-9)!'); return; }
+      if (!(n >= 1 && n <= 9)) { showNotification(window.t ? t('Tap the targeted cards to set the count!') : 'Tap the targeted cards to set the count!'); return; }
       const lower = w.toLowerCase();
       const forbidden = (cn.board || []).some(c => {
         const nm = String((c && c.name) || '').toLowerCase();
@@ -4878,13 +4876,13 @@
       const rev = cn.revealed || {};
       if (rev[String(idx)]) { res.err = 'taken'; return res; }
       const turn = cn.turn, other = turn === 'red' ? 'blue' : 'red';
-      const rem = Object.assign({ red: 9, blue: 8 }, cn.rem || {});
+      const rem = Object.assign({ red: 7, blue: 8 }, cn.rem || {});
       const left = cn.guessesLeft || 0;
       const t = (k) => (window.t ? window.t(k) : k);
       res.upd['cn/sug'] = null; // 🥷🎴 a committed pick clears every suggestion dot
       const charName = escapeHtml(String(((cn.board[idx] || {}).name) || '?'));
       res.upd['cn/revealed/' + idx] = color;
-      const endTurn = () => { res.upd['cn/turn'] = other; res.upd['cn/phase'] = 'clue'; res.upd['cn/clue'] = null; res.upd['cn/guessesLeft'] = 0; };
+      const endTurn = () => { res.upd['cn/turn'] = other; res.upd['cn/phase'] = 'clue'; res.upd['cn/clue'] = null; res.upd['cn/guessesLeft'] = 0; res.upd['cn/bonus'] = null; };
       const win = (team2, reason) => {
         res.upd['cn/phase'] = 'over'; res.upd['cn/winner'] = { team: team2, reason: reason }; res.upd['state'] = 'finished'; res.upd['cn/guessesLeft'] = 0;
         res.logs.push({ k: 'win', txt: '🏆 ' + cnEmoji(team2) + ' ' + t('team WINS the Ninja Scrolls game!') });
@@ -4894,7 +4892,13 @@
         res.upd['cn/rem/' + turn] = (rem[turn] || 0) - 1;
         res.logs.push({ k: 'find-' + turn, txt: '✅ ' + cnEmoji(turn) + ' ' + guesserHtml + ' → ' + charName });
         if (res.upd['cn/rem/' + turn] <= 0) { win(turn, 'agents'); }
-        else if (left - 1 <= 0) { endTurn(); }
+        else if (left - 1 <= 0) {
+          // 🎁 every guess burned so far was GOOD → chainable +1 bonus: pick
+          // again for another +1, or Pass to stop voluntarily (wrong = turn over)
+          res.upd['cn/guessesLeft'] = 1;
+          res.upd['cn/bonus'] = true;
+          res.logs.push({ k: 'bonus', txt: '🎁 ' + cnEmoji(turn) + ' ' + t('earned a +1 bonus guess — keep going or pass!') });
+        }
         else { res.upd['cn/guessesLeft'] = left - 1; }
       } else if (color === 'black') {
         res.logs.push({ k: 'black', txt: '🖤 ' + guesserHtml + ' ' + t('hit the ASSASSIN') + ' (' + charName + ') — ' + t('instant loss!') });
@@ -4947,7 +4951,7 @@
       if (!cnCanIGuess(cn)) return;
       const myTeam = cnTeamOf(playerId, cn);
       const other = myTeam === 'red' ? 'blue' : 'red';
-      await database.ref('rooms/' + roomCode).update({ 'cn/turn': other, 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0, 'cn/sug': null });
+      await database.ref('rooms/' + roomCode).update({ 'cn/turn': other, 'cn/phase': 'clue', 'cn/clue': null, 'cn/guessesLeft': 0, 'cn/sug': null, 'cn/bonus': null });
       touchActivity();
       cnPushLog('info', '⏭ ' + cnEmoji(myTeam) + ' <b>' + escapeHtml(cnNameOf(playerId)) + '</b> ' + (window.t ? t('passes — next team!') : 'passes — next team!'));
     }
@@ -5096,6 +5100,8 @@
         banner.innerHTML = cnEmoji(turn) + ' ' + (turnSpy === playerId
           ? tt('Your turn — give a clue!')
           : tt('⏳ clue time —') + ' 🕵️ <b>' + escapeHtml(cnNameOf(turnSpy)) + '</b> ' + tt('is thinking…'));
+      } else if (cn.bonus) {
+        banner.innerHTML = '🎁 ' + cnEmoji(turn) + ' <b>' + tt('+1 BONUS guess!') + '</b> ' + tt('A right pick chains another +1 — or Pass to stop.');
       } else {
         const n = cn.guessesLeft || 0;
         banner.innerHTML = cnEmoji(turn) + ' ' + tt('pick phase —') + ' <b>' + n + '</b> ' + (n > 1 ? tt('card(s) left to pick') : tt('card left to pick'));
@@ -5112,6 +5118,13 @@
       const waitMsg = document.getElementById('cnWaitMsg');
       clueRow.style.display = (cn.phase === 'clue' && iAmSpyTurn) ? 'flex' : 'none';
       guessRow.style.display = (cn.phase === 'guess' && iCanGuess) ? 'flex' : 'none';
+      // 🥷🎴 ninja tap-to-count: keep the selection only while it makes sense
+      const cluePick = cn.phase === 'clue' && iAmSpyTurn;
+      if (!cluePick) { if (cnClueSel.size) cnClueSel = new Set(); }
+      else if (cnGameIdForSel !== (cn.gameId || 0)) { cnClueSel = new Set(); cnGameIdForSel = cn.gameId || 0; }
+      syncCnClueNum();
+      const clueHint = document.getElementById('cnClueHint');
+      if (clueHint) clueHint.style.display = clueRow.style.display === 'none' ? 'none' : 'block';
       let waitTxt = '';
       if (cn.phase === 'clue' && !iAmSpyTurn) waitTxt = myTeam === turn ? tt('Waiting for YOUR Ninja to give the clue…') : tt('Waiting for the other team\'s clue…');
       if (cn.phase === 'guess' && !iCanGuess) waitTxt = myTeam === turn ? tt('Your team is picking — Ninja, stay silent! 🤫') : tt('The other team is picking…');
@@ -5119,10 +5132,17 @@
       waitMsg.style.display = waitTxt ? 'block' : 'none';
       // board + log
       const spyView = teams.red.spy === playerId || teams.blue.spy === playerId;
-      renderCnBoard(cn, spyView, iCanGuess);
+      renderCnBoard(cn, spyView, iCanGuess, cluePick);
       renderCnLog(cn);
     }
-    function renderCnBoard(cn, spyView, canPick) {
+    // 🥷🎴 clue taps: the Ninja TAPS the targeted cards — the ×N sets itself
+    let cnClueSel = new Set();        // tapped card indices (client-side only)
+    let cnGameIdForSel = 0;           // last gameId the selection belongs to
+    function syncCnClueNum() {
+      const num = document.getElementById('cnClueNum');
+      if (num) num.value = String(cnClueSel.size);
+    }
+    function renderCnBoard(cn, spyView, canPick, cluePick) {
       const grid = document.getElementById('cnBoard');
       grid.innerHTML = '';
       const rev = cn.revealed || {};
@@ -5141,6 +5161,16 @@
           if (pickable) {
             d.classList.add('can-pick');
             d.addEventListener('click', () => cnSuggest(i)); // tap = (un)suggest, not a commit
+          }
+          // 🥷🎴 clue phase: the Ninja taps THEIR OWN team's cards to set the count
+          if (cluePick && col === cn.turn) {
+            d.classList.add('cn-clueable');
+            if (cnClueSel.has(i)) d.classList.add('cn-clue-sel');
+            d.addEventListener('click', () => {
+              if (cnClueSel.has(i)) cnClueSel.delete(i); else cnClueSel.add(i);
+              d.classList.toggle('cn-clue-sel');
+              syncCnClueNum();
+            });
           }
           d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy">' +
             '<div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';

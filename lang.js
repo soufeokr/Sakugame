@@ -63,14 +63,13 @@ var I18N = {
   "Join as 🔑": { fr: "Rejoindre en 🔑", es: "Unirse como 🔑" },
   "Taken": { fr: "Pris", es: "Ocupado" },
   "Teams are ready — the host can deal!": { fr: "Les équipes sont prêtes — l'hôte peut distribuer !", es: "¡Los equipos están listos — el anfitrión puede repartir!" },
-  "Not enough characters in the pool for a 5×5 board!": { fr: "Pas assez de personnages dans la réserve pour un plateau 5×5 !", es: "¡No hay suficientes personajes para un tablero 5×5!" },
+  "Not enough characters in the pool for a 4×6 board!": { fr: "Pas assez de personnages dans la réserve pour un plateau 4×6 !", es: "¡No hay suficientes personajes para un tablero 4×6!" },
   "Board dealt!": { fr: "Plateau distribué !", es: "¡Tablero repartido!" },
-  "🔴 RED starts (9 agents) — 🔵 BLUE has 8!": { fr: "🔴 ROUGE commence (9 agents) — 🔵 BLEU en a 8 !", es: "🔴 ROJO empieza (9 agentes) — 🔵 AZUL tiene 8!" },
-  "🔵 BLUE starts (9 agents) — 🔴 RED has 8!": { fr: "🔵 BLEU commence (9 agents) — 🔴 ROUGE en a 8 !", es: "🔵 AZUL empieza (9 agentes) — 🔴 ROJO tiene 8!" },
+  "🔵 BLUE starts (8 agents) — 🔴 RED has 7!": { fr: "🔵 BLEU commence (8 agents) — 🔴 ROUGE en a 7 !", es: "🔵 AZUL empieza (8 agentes) — 🔴 ROJO tiene 7!" },
   "Wait for your team's turn!": { fr: "Attends le tour de ton équipe !", es: "¡Espera el turno de tu equipo!" },
   "Only the Ninja can give the clue!": { fr: "Seul le Ninja peut donner l'indice !", es: "¡Solo el Ninja puede dar la pista!" },
   "The clue must be a single word!": { fr: "L'indice doit être un seul mot !", es: "¡La pista debe ser una sola palabra!" },
-  "Choose how many cards it targets (1-9)!": { fr: "Choisis combien de cartes il vise (1-9) !", es: "¡Elige cuántas cartas designa (1-9)!" },
+"Tap the targeted cards to set the count!": { fr: "Touche les cartes visées pour définir le nombre !", es: "¡Toca las cartas objetivo para fijar el número!" },
   "The clue can't be part of a visible character name!": { fr: "L'indice ne peut pas faire partie du nom d'un personnage visible !", es: "¡La pista no puede ser parte del nombre de un personaje visible!" },
   "clues:": { fr: "annonce :", es: "pista:" },
   "team WINS the Ninja Scrolls game!": { fr: "REMPORTE le Ninja Scrolls !", es: "¡GANA el Ninja Scrolls!" },
@@ -167,6 +166,11 @@ var I18N = {
   "Ninja Scrolls": { fr: "Ninja Scrolls", es: "Ninja Scrolls" },
   // ===== 📸 SNAPSHOT! (b94) =====
   // 🎚️ difficulty bands (b98)
+  // 🥷🎴 Ninja Scrolls 4×6 + tap-to-count + +1 bonus (b102)
+  "Tap YOUR team's cards — the number sets itself!": { fr: "Touche les cartes de TON équipe — le nombre se règle tout seul !", es: "¡Toca las cartas de TU equipo — el número se ajusta solo!" },
+  "+1 BONUS guess!": { fr: "+1 BONUS d'essai !", es: "¡+1 intento BONUS!" },
+  "A right pick chains another +1 — or Pass to stop.": { fr: "Un bon tirage en enchaîne un autre — ou Passe pour arrêter.", es: "Un acierto encadena otro +1 — o Pasa para parar." },
+  "earned a +1 bonus guess — keep going or pass!": { fr: "gagne un essai BONUS +1 — continue ou passe !", es: "¡gana un intento BONUS +1 — sigue o pasa!" },
   // 🛠️ admin mode (b99)
   "Type the passcode again to DISABLE admin mode:": { fr: "Retape le mot de passe pour DÉSACTIVER le mode admin :", es: "Escribe la contraseña otra vez para DESACTIVAR el modo admin:" },
   "Admin passcode:": { fr: "Mot de passe admin :", es: "Contraseña de admin:" },
