@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '105';
+    const SAKU_BUILD = '106';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1738,6 +1738,7 @@
       document.getElementById('hostGwPlayersHint').style.display = hostGame === 'guesswho' ? 'block' : 'none';
       document.getElementById('hostHcMaxBlock').style.display = hostGame === 'hotcold' ? 'block' : 'none';
       document.getElementById('hostMultiMaxBlock').style.display = isMulti ? 'block' : 'none';
+      document.getElementById('hostMultiMaxSlider').min = hostGame === 'codenames' ? 4 : 3; // 🥷🎴 CN needs 2+ per team
       document.getElementById('hostUcMaxBlock').style.display = isUc ? 'block' : 'none';
       // ⚙️ Game tab: pool for all but Undercover; Detective Showdown board settings for
       // guesswho/battle/race (Blur & Hot & Cold draw from the FULL pool — no count)
@@ -5522,7 +5523,7 @@
       const game = currentRoom.game || 'guesswho';
       const isUc = game === 'undercover';
       const isRace = game === 'race';
-      const isMulti = game === 'battle' || game === 'race' || game === 'blur' || game === 'snapshot';
+      const isMulti = game === 'battle' || game === 'race' || game === 'blur' || game === 'codenames' || game === 'snapshot';
       const isBlur = game === 'blur';
       const isSnap = game === 'snapshot';
       const gsel = document.getElementById('modalGameSelect');
@@ -5545,8 +5546,11 @@
       if (multiBox) {
         multiBox.style.display = isMulti ? 'block' : 'none';
         if (isMulti) {
-          const mp = Math.min(12, Math.max(3, currentRoom.maxPlayers || 6));
-          document.getElementById('modalMultiMaxSlider').value = mp;
+          const mpFloor = game === 'codenames' ? 4 : 3; // 🥷🎴 CN needs 2+ per team
+          const mp = Math.min(12, Math.max(mpFloor, currentRoom.maxPlayers || 6));
+          const mpSlider = document.getElementById('modalMultiMaxSlider');
+          mpSlider.min = mpFloor;
+          mpSlider.value = mp;
           document.getElementById('modalMultiMaxValue').textContent = mp;
         }
       }
@@ -5631,7 +5635,9 @@
       const slider = document.getElementById('modalMultiMaxSlider');
       if (!slider || !isHost || !currentRoom) return;
       const playerCount = Object.keys(currentRoom.players || {}).length;
-      if (parseInt(slider.value) < playerCount) slider.value = playerCount; // can't go below who's already in
+      const mpFloor = currentRoom.game === 'codenames' ? 4 : 3; // 🥷🎴 CN needs 2+ per team
+      const mpMin = Math.max(mpFloor, playerCount);
+      if (parseInt(slider.value) < mpMin) slider.value = mpMin; // can't go below who's already in (or 4 seats for CN)
       document.getElementById('modalMultiMaxValue').textContent = slider.value;
       await database.ref('rooms/' + roomCode + '/maxPlayers').set(parseInt(slider.value));
       touchActivity();
@@ -8161,6 +8167,22 @@
       ]);
     }
 
+    // HOST-ONLY: ⏭ skip — during clues it jumps straight to the vote, during
+    // the vote it tallies the votes already cast (abstainers just don't count;
+    // a tie or empty ballot eliminates nobody, same as a normal tied vote).
+    async function hostSkipUndercover() {
+      if (!isHost || !currentRoom || currentRoom.game !== 'undercover' || currentRoom.state !== 'playing') return;
+      const uc = currentRoom.uc || {};
+      if (uc.phase === 'clues') {
+        await database.ref('rooms/' + roomCode).update({ 'uc/phase': 'voting', 'uc/votes': null, 'uc/turnIdx': 0 });
+        touchActivity(); showNotification('⏭️ Skipped to the vote!');
+      } else if (uc.phase === 'voting') {
+        showNotification('⏭️ Vote skipped — tallying now!');
+        await resolveUndercoverVote();
+        touchActivity();
+      }
+    }
+
     async function doUcWordReroll() {
       const uc = (currentRoom && currentRoom.uc) || {};
       const pairs = await getAllUndercoverPairs();
@@ -8303,6 +8325,17 @@
       // Host-only "🎲 New words" button (not during Mr. White's guess or after the game)
       const rb = document.getElementById('ucNewWordsBtn');
       if (rb) rb.style.display = (isHost && currentRoom.state === 'playing' && ['clues', 'voting', 'reveal'].indexOf(uc.phase) !== -1) ? 'inline-block' : 'none';
+      // Host-only "⏭️ Skip" button: during descriptions it reads "Skip to the
+      // vote", during the vote itself it flips to "Skip the vote"
+      const sk = document.getElementById('ucSkipBtn');
+      if (sk) {
+        const canSkip = isHost && currentRoom.state === 'playing' && (uc.phase === 'clues' || uc.phase === 'voting');
+        sk.style.display = canSkip ? 'inline-block' : 'none';
+        if (canSkip) {
+          const skTxt = document.getElementById('ucSkipBtnTxt');
+          if (skTxt) skTxt.textContent = uc.phase === 'clues' ? 'Skip to the vote' : 'Skip the vote';
+        }
+      }
 
       // Private word card — roles stay SECRET: civilians and the undercover
       // see the exact same card (label, border, hint), only Mr. White is told
