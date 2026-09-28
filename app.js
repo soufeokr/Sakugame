@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '104';
+    const SAKU_BUILD = '105';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1039,7 +1039,8 @@
 
     // ===== UNDERCOVER MODE state =====
     let hostGame = 'guesswho';     // game selected on the create-room screen
-    let ucMaxPlayers = 5;          // max players for an Undercover room (3-8)
+    let ucMaxPlayers = 5;          // max players for an Undercover room (3-12)
+    let ucUndercovers = 1;         // 🕵️ how many Undercovers sneak in (1-4, default 1 — the engine re-clamps at word-deal time)
     let ucMrWhite = false;         // Mr. White option on the create-room screen
     let ucStatCountedFor = null;   // "roomCode_gameId" already counted (stats, once per game)
     let ucWatchBusy = false;       // re-entrancy guard for the host watchdog
@@ -1053,8 +1054,8 @@
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
     const GAME_LABELS = { guesswho: 'Detective Showdown', undercover: 'Undercover', battle: 'Detective Royale', race: 'Wanted!', blur: 'Blur Guess', hotcold: 'Cold Case', codenames: 'Ninja Scrolls', snapshot: 'Snapshot!' };
-    let multiMaxPlayers = 6;       // max players for battle/race rooms (3-8)
-    let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-6)
+    let multiMaxPlayers = 6;       // max players for battle/race rooms (3-12)
+    let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-12)
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
     let hostHcHideRank = false;   // 📊 Hot & Cold: hide the live points ranking until match end
     function setHostHcMode(m) {
@@ -1490,7 +1491,7 @@
       return {
         game: (document.getElementById('gameSelect') || {}).value || hostGame || 'guesswho',
         visibility: roomVisibility || 'private', source: hostSource || 'generic',
-        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode, hcHideRank: !!hostHcHideRank,
+        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, ucCount: ucUndercovers, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode, hcHideRank: !!hostHcHideRank,
         charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
         mix: clampN(document.getElementById('hostMixSlider').value, 0, 80, 12),
         pool: hostPool,
@@ -1513,14 +1514,16 @@
         if (lab) lab.classList.toggle('selected', inp.value === vis);
       });
       // 👥 player counts
-      multiMaxPlayers = clampN(cfg.multiMax, 3, 8, 6);
+      multiMaxPlayers = clampN(cfg.multiMax, 3, 12, 6);
       document.getElementById('hostMultiMaxSlider').value = multiMaxPlayers; updateMultiMaxPlayers();
-      hcMaxPlayers = clampN(cfg.hcMax, 2, 6, 4);
+      hcMaxPlayers = clampN(cfg.hcMax, 2, 12, 4);
       document.getElementById('hostHcMaxSlider').value = hcMaxPlayers; updateHcMaxPlayers();
       if (cfg.hcMode) setHostHcMode(cfg.hcMode === 'individual' ? 'individual' : 'shared');
       setHostHcRank(!!cfg.hcHideRank);
-      ucMaxPlayers = clampN(cfg.ucMax, 3, 8, 5);
+      ucMaxPlayers = clampN(cfg.ucMax, 3, 12, 5);
       document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
+      ucUndercovers = clampN(cfg.ucCount, 1, 4, 1);
+      document.getElementById('hostUcUndercoversSlider').value = ucUndercovers; updateUcUndercovers();
       // 🃏 pool + Detective Showdown board
       if (['generic', 'favorites', 'mix', 'watched'].indexOf(cfg.source) >= 0) selectHostSource(cfg.source);
       document.getElementById('hostCharCountSlider').value = clampN(cfg.charCount, 12, 80, 24); updateHostCharCount();
@@ -1639,11 +1642,11 @@
     function collectModalConfig() {
       const g = (currentRoom || {}).game || 'guesswho';
       const s = (currentRoom || {}).settings || {};
-      const maxP = clampN((currentRoom || {}).maxPlayers, 3, 8, g === 'undercover' ? 5 : 6);
+      const maxP = clampN((currentRoom || {}).maxPlayers, 3, 12, g === 'undercover' ? 5 : 6);
       return {
         game: g, visibility: (currentRoom || {}).visibility === 'public' ? 'public' : 'private',
         source: currentSource() || 'generic',
-        ucMax: maxP, ucMw: !!s.mrWhite, multiMax: maxP, hcMax: clampN((currentRoom || {}).maxPlayers, 2, 6, 4),
+        ucMax: maxP, ucMw: !!s.mrWhite, ucCount: clampN(s.ucCount, 1, 4, 1), multiMax: maxP, hcMax: clampN((currentRoom || {}).maxPlayers, 2, 12, 4),
         charCount: clampN(s.characterCount, 12, 80, 24),
         mix: clampN(s.mixCount, 0, 80, Math.floor(clampN(s.characterCount, 12, 80, 24) / 2)),
         pool: currentPoolMode(), hcHideRank: !!s.hcHideRank,
@@ -1670,8 +1673,9 @@
       const playerCount = Object.keys(currentRoom.players || {}).length;
       const updates = { visibility: cfg.visibility === 'public' ? 'public' : 'private' };
       if (g === 'undercover') {
-        updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.ucMax, 3, 8, 5)));
+        updates.maxPlayers = Math.min(12, Math.max(Math.max(3, playerCount), clampN(cfg.ucMax, 3, 12, 5)));
         updates['settings/mrWhite'] = !!cfg.ucMw;
+        updates['settings/ucCount'] = clampN(cfg.ucCount, 1, 4, 1); // 🕵️ re-clamped against the final headcount when the words are dealt
       } else {
         if (g === 'hotcold' || g === 'blur') {
           if (cfg.pool) updates['settings/pool'] = cfg.pool === 'watched' ? 'watched' : 'random';
@@ -1680,9 +1684,9 @@
           updates['settings/characterCount'] = clampN(cfg.charCount, 12, 80, 24);
           updates['settings/mixCount'] = clampN(cfg.mix, 0, 80, Math.floor(clampN(cfg.charCount, 12, 80, 24) / 2));
         }
-        if (g === 'battle' || g === 'race' || g === 'blur' || g === 'snapshot') updates.maxPlayers = Math.min(8, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 8, 6)));
-        if (g === 'codenames') updates.maxPlayers = Math.min(8, Math.max(Math.max(4, playerCount), clampN(cfg.multiMax, 4, 8, 6))); // CN needs 2+ per team
-        if (g === 'hotcold') updates.maxPlayers = Math.min(6, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 6, 4)));
+        if (g === 'battle' || g === 'race' || g === 'blur' || g === 'snapshot') updates.maxPlayers = Math.min(12, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 12, 6)));
+        if (g === 'codenames') updates.maxPlayers = Math.min(12, Math.max(Math.max(4, playerCount), clampN(cfg.multiMax, 4, 12, 6))); // CN needs 2+ per team
+        if (g === 'hotcold') updates.maxPlayers = Math.min(12, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 12, 4)));
         if (g === 'hotcold' && cfg.hcMode) updates['settings/hcMode'] = cfg.hcMode === 'individual' ? 'individual' : 'shared'; // legacy presets keep the room's current mode
         if (g === 'hotcold' && cfg.hcHideRank != null) updates['settings/hcHideRank'] = !!cfg.hcHideRank;
         if (g === 'race') {
@@ -1765,7 +1769,7 @@
     }
     // 📱 compact game picker (phone): a small button opens a window listing all games
     const GAME_PICK_ORDER = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'];
-    const GAME_PLAYERS_TXT = { guesswho: '2 players', battle: '3-8 players', race: '3-8 players', blur: '1-8 players', undercover: '3-8 players', hotcold: '2-6 players', codenames: '4-8 players', snapshot: '1-8 players' };
+    const GAME_PLAYERS_TXT = { guesswho: '2 players', battle: '3-12 players', race: '3-12 players', blur: '1-12 players', undercover: '3-12 players', hotcold: '2-12 players', codenames: '4-12 players', snapshot: '1-12 players' };
     let gamePickCtx = 'host'; // 'host' = create-room button · 'modal' = lobby ⚙️ settings bar
     function openGamePickModal(mode) {
       gamePickCtx = (mode === 'modal') ? 'modal' : 'host';
@@ -1806,6 +1810,12 @@
       ucMaxPlayers = parseInt(document.getElementById('hostUcMaxSlider').value);
       document.getElementById('hostUcMaxValue').textContent = ucMaxPlayers;
     }
+    // 🕵️ how many Undercovers the host wants (create-room screen) — 1-4, the
+    // engine re-clamps it against the final headcount when the game starts
+    function updateUcUndercovers() {
+      ucUndercovers = clampN(parseInt(document.getElementById('hostUcUndercoversSlider').value, 10), 1, 4, 1);
+      document.getElementById('hostUcUndercoversValue').textContent = ucUndercovers;
+    }
     function updateMultiMaxPlayers() {
       multiMaxPlayers = parseInt(document.getElementById('hostMultiMaxSlider').value);
       document.getElementById('hostMultiMaxValue').textContent = multiMaxPlayers;
@@ -1814,14 +1824,14 @@
       hcMaxPlayers = parseInt(document.getElementById('hostHcMaxSlider').value, 10) || 4;
       document.getElementById('hostHcMaxValue').textContent = hcMaxPlayers;
     }
-    // 🌡️ Hot & Cold seat count (lobby settings modal): 2-6, never below the
+    // 🌡️ Hot & Cold seat count (lobby settings modal): 2-12, never below the
     // number of players already seated
     async function updateModalHcMaxPlayers() {
-      const v = clampN(parseInt(document.getElementById('modalHcMaxSlider').value, 10), 2, 6, 4);
+      const v = clampN(parseInt(document.getElementById('modalHcMaxSlider').value, 10), 2, 12, 4);
       document.getElementById('modalHcMaxValue').textContent = v;
       if (isHost && currentRoom && currentRoom.game === 'hotcold') {
         const pc = Object.keys(currentRoom.players || {}).length;
-        await database.ref('rooms/' + roomCode + '/maxPlayers').set(Math.min(6, Math.max(Math.max(2, pc), v)));
+        await database.ref('rooms/' + roomCode + '/maxPlayers').set(Math.min(12, Math.max(Math.max(2, pc), v)));
         touchActivity();
       }
     }
@@ -1884,17 +1894,17 @@
           state: 'lobby', chat: {}, createdAt: Date.now(), lastActivity: Date.now()
         };
         if (isUc) {
-          roomData.maxPlayers = ucMaxPlayers;
-          roomData.settings = { mrWhite: ucMrWhite };
+          roomData.maxPlayers = clampN(ucMaxPlayers, 3, 12, 5);
+          roomData.settings = { mrWhite: ucMrWhite, ucCount: clampN(ucUndercovers, 1, 4, 1) };
         } else {
-          if (game === 'hotcold') roomData.maxPlayers = Math.min(6, Math.max(2, hcMaxPlayers));
+          if (game === 'hotcold') roomData.maxPlayers = Math.min(12, Math.max(2, hcMaxPlayers));
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, mixCount: clampN(hostMixCount, 0, charCount, Math.floor(charCount / 2)), source: hostSource };
           if (game === 'hotcold') roomData.settings.hcMode = hostHcMode; // 🔀 shared | individual guesses
           if (game === 'hotcold') roomData.settings.hcHideRank = !!hostHcHideRank; // 📊 hide the live ranking until match end
           if (isWatchGame) roomData.settings.pool = hostPool; // 🎲 random (full pool) | watched (synced accounts' seen anime)
-          if (isMulti) roomData.maxPlayers = multiMaxPlayers;
-          if (game === 'codenames') roomData.maxPlayers = Math.min(8, Math.max(4, multiMaxPlayers)); // 2+ per team
+          if (isMulti) roomData.maxPlayers = clampN(multiMaxPlayers, 3, 12, 6);
+          if (game === 'codenames') roomData.maxPlayers = Math.min(12, Math.max(4, multiMaxPlayers)); // 2+ per team
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
           if (game === 'blur') {
             roomData.settings.bgRounds = hostBgRounds;
@@ -2045,12 +2055,13 @@
         if (!meSeated) {
           const meQ = (currentRoom.queue || {})[playerId] || null;
           const inGameNow = !!(currentRoom.state && currentRoom.state !== 'lobby');
-          const specEl = document.getElementById('spectateScreen');
           if (meWaiting && meQ && !meQ.away && inGameNow) {
-            if (specEl && !specEl.classList.contains('active')) showScreen('spectateScreen');
-            try { renderSpectate(); } catch (e) {}
-          } else if (specEl && specEl.classList.contains('active')) {
-            showScreen('lobbyScreen');
+            // 👀 b105: queued visitors FOLLOW the live game on its real screen
+            // (read-only — secret words/cards never render for them)
+            try { followGameAsSpectator(); } catch (e) {}
+          } else if (imOnSpectateScreen()) {
+            showScreen('lobbyScreen'); // game ended or visitor parked away
+            specFollowScreen = null;
           }
           return;
         }
@@ -2766,7 +2777,7 @@
         const hostP = players.find(p => p.isHost) || players[0];
         const names = players.slice(0, 4).map(p => (p.name || '?')).join(', ') + (players.length > 4 ? ' +' + (players.length - 4) : '');
         let rules = '';
-        if (r.game === 'undercover') rules = 'max ' + maxP + ' · Mr. White ' + ((r.settings && r.settings.mrWhite) ? 'ON' : 'OFF');
+        if (r.game === 'undercover') rules = 'max ' + maxP + ' · Mr. White ' + ((r.settings && r.settings.mrWhite) ? 'ON' : 'OFF') + ' · ' + (((r.settings || {}).ucCount || 1) > 1 ? (r.settings.ucCount + ' undercovers') : '1 undercover');
         else if (r.game === 'battle') rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
         else if (r.game === 'race') rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
         else if (r.game === 'codenames') rules = '5×5 grid · 2 teams · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
@@ -3027,6 +3038,7 @@
     async function battleGuess(charId) {
       const br = (currentRoom && currentRoom.br) || {};
       const players = currentRoom.players || {};
+      if (!players[playerId]) return; // 👀 spectators watch, never guess
       const target = brEnsureActiveBoard();
       if (!target || !players[target]) { showNotification('No opponent board to guess on!'); return; }
       if ((br.found || {})[target]) { showNotification(tPO('secret_already', { n: (players[target].name || '?') })); return; }
@@ -3857,6 +3869,7 @@
 
     function blurGuess() {
       const bg = (currentRoom && currentRoom.bg) || {};
+      if (!((currentRoom.players || {})[playerId])) return; // 👀 spectators watch, never guess
       if (bg.phase !== 'playing' || (bg.found || {})[playerId]) return;
       const inp = document.getElementById('bgGuessInput'); if (!inp) return;
       const text = inp.value.trim(); if (!text) return;
@@ -4049,7 +4062,7 @@
       const gin = document.getElementById('bgGuessInput');
       if (gin) gin.placeholder = bgModeNow === 'covers' ? 'Type the anime name…' : "Type the character's name… (any name: Deku, Burdock…)";
       const myFind = (bg.found || {})[playerId];
-      const barVisible = bg.phase === 'playing' && !myFind;
+      const barVisible = bg.phase === 'playing' && !myFind && !!((currentRoom.players || {})[playerId]); // 👀 spectators just watch
       document.getElementById('bgGuessBar').style.display = barVisible ? 'flex' : 'none';
       if (!barVisible) hideBgSuggest();
       // status line
@@ -4111,7 +4124,7 @@
         return true;
       });
     }
-    // ================================ 🗝 CODE NAMES (4-8 players, 2 teams) ================================
+    // ================================ 🗝 CODE NAMES (4-12 players, 2 teams) ================================
     // A 5×5 grid of 25 characters. Red vs Blue; each team has ONE Ninja
     // who sees the secret color key and gives ONE-WORD + NUMBER clues (each
     // Ninja sees the key — Shoguns see plain cards, colors revealed on tap).
@@ -4249,6 +4262,7 @@
 
     function snGuess() {
       const sn = (currentRoom && currentRoom.sn) || {};
+      if (!((currentRoom.players || {})[playerId])) return; // 👀 spectators watch, never guess
       if (sn.phase !== 'playing' || (sn.found || {})[playerId]) return;
       const inp = document.getElementById('snGuessInput'); if (!inp) return;
       const text = inp.value.trim(); if (!text) return;
@@ -5358,13 +5372,16 @@
         else if (statusEl) statusEl.textContent = 'Waiting for the host…';
       } else if (statusEl) statusEl.textContent = 'Ready for a new game: ' + clicked + '/' + eligible.length;
       if (btn) {
-        if (restarts[playerId]) { btn.textContent = 'Waiting…'; btn.disabled = true; }
+        const spec = eligible.indexOf(playerId) === -1; // 👀 queued visitors never vote to replay
+        if (spec) { btn.textContent = '👀 Spectating'; btn.disabled = true; }
+        else if (restarts[playerId]) { btn.textContent = 'Waiting…'; btn.disabled = true; }
         else { btn.textContent = 'Play Again'; btn.disabled = false; }
       }
     }
     let multiLaunching = false;
     function multiRestart() {
       if (!currentRoom || !roomCode) return;
+      if (meParticipants().indexOf(playerId) === -1) return; // 👀 spectators can't vote to replay
       database.ref('rooms/' + roomCode + '/restarts/' + playerId).set(true);
       touchActivity();
       showNotification('Play Again clicked! Waiting for others…');
@@ -5518,7 +5535,7 @@
       if (hcBox) {
         hcBox.style.display = game === 'hotcold' ? 'block' : 'none';
         if (game === 'hotcold') {
-          const hm = Math.min(6, Math.max(2, currentRoom.maxPlayers || 4));
+          const hm = Math.min(12, Math.max(2, currentRoom.maxPlayers || 4));
           document.getElementById('modalHcMaxSlider').value = hm;
           document.getElementById('modalHcMaxValue').textContent = hm;
           syncHcSettingsUI(); // 🌡️ Guess mode + Ranking pairs mirror the live settings
@@ -5528,7 +5545,7 @@
       if (multiBox) {
         multiBox.style.display = isMulti ? 'block' : 'none';
         if (isMulti) {
-          const mp = Math.min(8, Math.max(3, currentRoom.maxPlayers || 6));
+          const mp = Math.min(12, Math.max(3, currentRoom.maxPlayers || 6));
           document.getElementById('modalMultiMaxSlider').value = mp;
           document.getElementById('modalMultiMaxValue').textContent = mp;
         }
@@ -5585,6 +5602,10 @@
         const mwOn = !!(currentRoom.settings && currentRoom.settings.mrWhite);
         document.getElementById('modalUcMwOff').classList.toggle('selected', !mwOn);
         document.getElementById('modalUcMwOn').classList.toggle('selected', mwOn);
+        // 🕵️ Undercovers count (1-4 — the engine re-clamps against the headcount)
+        const ucN = clampN((currentRoom.settings || {}).ucCount, 1, 4, 1);
+        document.getElementById('modalUcUndercoversSlider').value = ucN;
+        document.getElementById('modalUcUndercoversValue').textContent = ucN;
       } else {
         document.getElementById('modalCharCountSlider').value = currentRoom.settings ? currentRoom.settings.characterCount : 24;
         const s0 = currentRoom.settings || {};
@@ -5762,6 +5783,21 @@
         touchActivity();
       }
     }
+    // 🕵️ Undercovers count (lobby settings modal): 1-4, but always leave at
+    // least 2 innocent civilians — the engine re-checks both anyway at deal time
+    async function updateModalUndercovers() {
+      const slider = document.getElementById('modalUcUndercoversSlider');
+      const pc = currentRoom ? Object.keys(currentRoom.players || {}).length : 3;
+      const mwOn = !!(currentRoom && currentRoom.settings && currentRoom.settings.mrWhite);
+      const cap = Math.max(1, Math.min(4, pc - (mwOn ? 2 : 2))); // innocents need seats too
+      const v = clampN(parseInt(slider.value, 10), 1, cap, 1);
+      slider.value = v;
+      document.getElementById('modalUcUndercoversValue').textContent = v;
+      if (isHost && currentRoom && currentRoom.game === 'undercover') {
+        await database.ref('rooms/' + roomCode + '/settings/ucCount').set(v);
+        touchActivity();
+      }
+    }
     async function changeUcMrWhite(on) {
       const mwOn = !!on;
       document.getElementById('modalUcMwOff').classList.toggle('selected', !mwOn);
@@ -5807,10 +5843,10 @@
     }
 
     // Seats for a game given the room's current size: duels stay 2, Hot &
-    // Cold keeps 2-6, the real multi games keep 3-8 (defaults 6 / 2 when unset).
+    // Cold keeps 2-12, the real multi games keep 3-12 (defaults 6 / 2 when unset).
     function seatsForGame(g) {
       if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur' || g === 'codenames' || g === 'snapshot') return ((currentRoom.maxPlayers || 0) >= 3) ? Math.max(3, currentRoom.maxPlayers || 0) : 6;
-      if (g === 'hotcold') return Math.min(6, Math.max(2, currentRoom.maxPlayers || 2));
+      if (g === 'hotcold') return Math.min(12, Math.max(2, currentRoom.maxPlayers || 2));
       return 2;
     }
 
@@ -6270,6 +6306,46 @@
     }
 
     // Public, read-only snapshot of the running game (never a secret in sight)
+    // 👀 =============== SPECTATOR FOLLOWS THE GAME (b105) ===============
+    let specFollowScreen = null; // which game screen the spectator is parked on
+    const SPEC_GAME_SCREENS = ['undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'snapshotScreen', 'codenamesScreen', 'hotcoldScreen'];
+    function imOnSpectateScreen() {
+      const spec = document.getElementById('spectateScreen');
+      if (spec && spec.classList.contains('active')) return true;
+      return SPEC_GAME_SCREENS.some(id => {
+        const el = document.getElementById(id);
+        return el && el.classList.contains('active');
+      });
+    }
+    // Route a queued visitor onto the REAL game screen, read-only. Guess Who
+    // 1v1 duels (and setup phases like team picking) keep the classic summary
+    // panel — nothing on those screens is safe to show before the game starts.
+    function followGameAsSpectator() {
+      const g = currentRoom.game;
+      const live = currentRoom.state === 'playing' || currentRoom.state === 'finished';
+      const map = {
+        undercover: ['undercoverScreen', updateUndercover],
+        battle: ['battleScreen', updateBattle],
+        race: ['raceScreen', updateRace],
+        blur: ['blurScreen', updateBlur],
+        snapshot: ['snapshotScreen', updateSnapshot],
+        codenames: ['codenamesScreen', updateCodenames],
+        hotcold: ['hotcoldScreen', updateHotcold]
+      };
+      const ent = map[g] || null;
+      if (!live || !ent) {
+        specFollowScreen = null;
+        const spec = document.getElementById('spectateScreen');
+        if (spec && !spec.classList.contains('active')) showScreen('spectateScreen');
+        try { renderSpectate(); } catch (e) {}
+        return;
+      }
+      specFollowScreen = ent[0];
+      const el = document.getElementById(ent[0]);
+      if (el && !el.classList.contains('active')) showScreen(ent[0]);
+      try { ent[1](); } catch (e) {}
+    }
+
     function renderSpectate() {
       const r = currentRoom || {};
       const players = r.players || {};
@@ -6688,7 +6764,7 @@
       const rBadge = document.getElementById('hcRoundBadge');
       if (rBadge) rBadge.innerHTML = ic('target') + ' Round ' + round + '/' + order.length;
       const roleBadge = document.getElementById('hcRoleBadge');
-      if (roleBadge) roleBadge.innerHTML = iHider ? (ic('eye') + ' You are the HIDER') : (ic('search') + ' You are a SEEKER');
+      if (roleBadge) roleBadge.innerHTML = iHider ? (ic('eye') + ' You are the HIDER') : (((currentRoom.players || {})[playerId]) ? (ic('search') + ' You are a SEEKER') : '👀 Spectating');
 
       // the hider's secret strip (seekers never see it)
       const strip = document.getElementById('hcSecretStrip');
@@ -6998,7 +7074,9 @@
         else if (statusEl) statusEl.textContent = 'Waiting for the host…';
       } else if (statusEl) statusEl.textContent = 'Ready for a new game: ' + clicked + '/' + eligible.length;
       if (btn) {
-        if (restarts[playerId]) { btn.textContent = 'Waiting…'; btn.disabled = true; }
+        const spec = eligible.indexOf(playerId) === -1; // 👀 queued visitors never vote to replay
+        if (spec) { btn.textContent = '👀 Spectating'; btn.disabled = true; }
+        else if (restarts[playerId]) { btn.textContent = 'Waiting…'; btn.disabled = true; }
         else { btn.textContent = 'Play Again'; btn.disabled = false; }
       }
     }
@@ -7751,12 +7829,27 @@
       const roles = {};
       const shuffled = shuffleArray(pids);
       shuffled.forEach(pid => { roles[pid] = 'civilian'; });
-      roles[shuffled[0]] = 'undercover';
-      if (useMw && shuffled[1]) roles[shuffled[1]] = 'mrwhite'; // 🛠️ admin solo runs have no 2nd player
-      // Turn-by-turn speaking order (fixed for the whole game);
-      // Mr. White must NEVER speak first → he is bumped off the first slot.
-      const order = shuffled.slice();
-      if (useMw && order[0] === shuffled[1]) order.push(order.shift());
+      // 🕵️ how many UNDERCOVERS? settings.ucCount (1 default — 2+ recommended
+      // with 7+ players). Always leave ≥1 civilian + the Mr. White seat.
+      const ucMaxCount = Math.max(1, pids.length - (useMw ? 2 : 2));
+      const ucCount = Math.min(ucMaxCount, Math.max(1, parseInt((currentRoom.settings && currentRoom.settings.ucCount) || 1, 10) || 1));
+      for (let i = 0; i < ucCount; i++) roles[shuffled[i]] = 'undercover';
+      // 🎭 Mr. White: a DISTINCT civilian seat — picked at random from the
+      // non-undercover players (old code used shuffled[1]: he ALWAYS played 2nd
+      // and got sniffed out instantly!)
+      let mwPid = null;
+      if (useMw) {
+        const civOnly = shuffled.slice(ucCount);
+        if (civOnly.length) mwPid = civOnly[Math.floor(Math.random() * civOnly.length)];
+        if (mwPid) roles[mwPid] = 'mrwhite';
+      }
+      // Turn-by-turn speaking order: fully random shuffle; Mr. White only avoids
+      // the FIRST slot — and lands at a RANDOM other one (nope, not always 2nd).
+      const order = shuffleArray(pids);
+      if (mwPid && order[0] === mwPid && order.length > 1) {
+        order.shift();
+        order.splice(1 + Math.floor(Math.random() * (order.length - 1)), 0, mwPid);
+      }
       const gameId = (currentRoom.uc && currentRoom.uc.gameId) ? currentRoom.uc.gameId + 1 : 1;
       ucActionKey = '';
       await database.ref('rooms/' + roomCode).update({
@@ -8007,6 +8100,7 @@
       if (!currentRoom || !currentRoom.uc || currentRoom.state !== 'playing') return;
       const uc = currentRoom.uc;
       if (uc.phase !== 'clues' || (uc.out || {})[playerId]) return;
+      if (!(uc.roles || {})[playerId]) return; // 👀 spectators never send clues
       if (uc.clues && uc.clues[playerId]) return;
       // Turn-by-turn rule: you can only describe your word on your turn
       if (uc.order) {
@@ -8035,6 +8129,7 @@
       if (!currentRoom || !currentRoom.uc || currentRoom.state !== 'playing') return;
       const uc = currentRoom.uc;
       if (uc.phase !== 'voting') return;
+      if (!(uc.roles || {})[playerId]) return; // 👀 spectators never vote
       if ((uc.out || {})[playerId]) return;
       if (uc.votes && uc.votes[playerId]) return;
       await database.ref('rooms/' + roomCode + '/uc/votes/' + playerId).set(suspectPid);
@@ -8221,6 +8316,11 @@
         roleLabel.textContent = 'You are MR. WHITE';
         wordEl.textContent = '— no word —';
         roleHint.textContent = 'You have NO word! Listen to the clues and improvise.';
+      } else if (!myRole) {
+        // 👀 Spectator (queued visitor): words stay SECRET — never render them
+        roleLabel.textContent = 'Spectating';
+        wordEl.textContent = '👀';
+        roleHint.textContent = 'You\'re watching from the queue — grab a seat next round to play!';
       } else {
         roleLabel.textContent = 'Your secret word';
         // your word is uwWord if you're the undercover — but you are NOT told that!
@@ -8228,7 +8328,7 @@
         roleHint.textContent = 'Describe your word without saying it! One player might have a slightly different word… is it you?';
       }
       const imgEl = document.getElementById('ucMyWordImg');
-      const myImg = myRole === 'undercover' ? (uc.uwWordImg || null) : (myRole === 'mrwhite' ? null : (uc.wordImg || null));
+      const myImg = myRole === 'undercover' ? (uc.uwWordImg || null) : ((myRole === 'mrwhite' || !myRole) ? null : (uc.wordImg || null));
       if (myImg) {
         imgEl.src = myImg; imgEl.style.display = 'block';
         if (ucWordHidden) imgEl.classList.add('blurred'); else imgEl.classList.remove('blurred');
@@ -8250,7 +8350,7 @@
       pids.forEach(pid => {
         const p = players[pid] || {};
         const tile = document.createElement('div');
-        tile.className = 'uc-player-tile' + (out[pid] ? ' dead' : '') + (pid === playerId ? ' me' : '');
+        tile.className = 'uc-player-tile' + (out[pid] ? ' dead' : '') + (pid === playerId ? ' me' : '') + (speaker === pid ? ' speaking' : '');
         let status = '';
         if (out[pid]) status = 'out';
         else if (players[pid] && players[pid].dcAt) status = 'away…';
@@ -8261,7 +8361,7 @@
         }
         else if (uc.phase === 'voting') status = votes[pid] ? 'voted' : 'voting…';
         tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div><div class="uc-tile-status">' + status + '</div>';
-        if (currentRoom.state === 'playing' && uc.phase === 'voting' && !iAmOut && !iVoted && !out[pid] && pid !== playerId) {
+        if (myRole && currentRoom.state === 'playing' && uc.phase === 'voting' && !iAmOut && !iVoted && !out[pid] && pid !== playerId) {
           tile.classList.add('votable');
           const btn = document.createElement('button');
           btn.className = 'danger uc-vote-btn';
@@ -8304,8 +8404,8 @@
 
       renderUcAction();
 
-      // End of game: overlay + stats
-      if (currentRoom.state === 'finished' && uc.winner) {
+      // End of game: overlay + stats (players only — 👀 spectators just read the board)
+      if (myRole && currentRoom.state === 'finished' && uc.winner) {
         const gid = String(roomCode) + '_' + String(uc.gameId || 1);
         if (ucStatCountedFor !== gid) {
           ucStatCountedFor = gid;
@@ -8335,7 +8435,7 @@
       if (key !== ucActionKey) {
         ucActionKey = key;
         area.innerHTML = '';
-        if (currentRoom.state === 'playing' && uc.phase === 'clues' && !iAmOut && !clues[playerId] && (!speaker || speaker === playerId)) {
+        if (myRole && currentRoom.state === 'playing' && uc.phase === 'clues' && !iAmOut && !clues[playerId] && (!speaker || speaker === playerId)) {
           area.innerHTML = '<div class="uc-action-form"><input type="text" id="ucClueInput" maxlength="80" placeholder="Describe your word in one short clue… (don\'t say it!)"><button class="success" onclick="submitUndercoverClue()">Send Clue</button></div>';
           const inp = document.getElementById('ucClueInput');
           inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitUndercoverClue(); });
@@ -8356,6 +8456,7 @@
       const wait = document.getElementById('ucWaitingLine');
       if (wait) {
         if (currentRoom.state !== 'playing' || uc.phase === 'over') wait.textContent = '';
+        else if (!myRole) wait.textContent = '👀 Spectating from the queue…';
         else if (iAmOut) wait.textContent = 'You are out — watch how it ends!';
         else if (uc.phase === 'clues') {
           if (clues[playerId]) {

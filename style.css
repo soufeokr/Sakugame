@@ -572,6 +572,7 @@
   .uc-players { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
   .uc-player-tile { background: #0f0f1a; border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; text-align: center; }
   .uc-player-tile.me { border-color: var(--accent); }
+  .uc-player-tile.speaking { border-color: var(--accent); box-shadow: 0 0 16px rgba(2, 169, 255, 0.7), inset 0 0 0 1px var(--accent); transform: translateY(-3px); transition: box-shadow 0.2s, transform 0.2s; }
   .uc-player-tile.dead { opacity: 0.45; }
   .uc-player-tile.votable:hover { border-color: var(--danger); }
   .uc-tile-name { font-weight: 800; font-size: 0.92rem; word-break: break-word; }
