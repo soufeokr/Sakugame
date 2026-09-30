@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '106';
+    const SAKU_BUILD = '107';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -5379,6 +5379,65 @@
         else { btn.textContent = 'Play Again'; btn.disabled = false; }
       }
     }
+    // ℹ️ Info bubbles (b107): flip the bubble UP when the chip sits near the
+    // bottom of the scroll/viewport — pure-CSS bubbles, JS only picks a side.
+    // Mouse hover on desktop, tap-to-focus on touch screens.
+    function sakuInfoFlip(btn) {
+      if (!btn) return;
+      try {
+        const r = btn.getBoundingClientRect();
+        const room = (window.innerHeight || 800) - r.bottom;
+        btn.classList.toggle('flip', room < 150);
+      } catch (e) {}
+    }
+    if (typeof document !== 'undefined' && document.addEventListener) {
+      document.addEventListener('mouseover', function (e) {
+        const b = e.target && e.target.closest ? e.target.closest('.info-btn') : null;
+        if (b) sakuInfoFlip(b);
+      }, true);
+      document.addEventListener('focusin', function (e) {
+        const b = e.target && e.target.closest ? e.target.closest('.info-btn') : null;
+        if (b) sakuInfoFlip(b);
+      }, true);
+    }
+
+    // 🍪 One-time local-storage notice (b107) — strictly-necessary storage
+    // only, so a simple informational banner (no consent wall needed).
+    function dismissSakuConsent() {
+      try { localStorage.setItem('sakugame_storage_notice_v1', 'ok'); } catch (e) {}
+      const c = document.getElementById('sakuConsent');
+      if (c) c.style.display = 'none';
+    }
+    function maybeShowSakuConsent() {
+      let seen = null;
+      try { seen = localStorage.getItem('sakugame_storage_notice_v1'); } catch (e) {}
+      if (seen === 'ok') return;
+      const c = document.getElementById('sakuConsent');
+      if (c) setTimeout(function () { c.style.display = 'flex'; }, 1200); // let the room load first
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', maybeShowSakuConsent); else maybeShowSakuConsent();
+
+    // 📊 Privacy-first analytics (b107): an anonymous hit counter only —
+    // NO cookies, NO identifiers, NO personal data, and Do-Not-Track honored.
+    // Needs a public write rule on /publicStats (see DEPLOY.md); fails silent.
+    (function sakuHitCount() {
+      try {
+        const h = (location && location.hostname) || '';
+        if (h === 'localhost' || h === '127.0.0.1' || h === '') return; // dev/build previews don't count
+        const dnt = (navigator.doNotTrack || (window.doNotTrack || ''));
+        if (dnt === '1' || dnt === 'yes') return;
+        const day = new Date().toISOString().slice(0, 10);
+        const inc = function (path) {
+          try {
+            const pr = database.ref(path).transaction(v => (v || 0) + 1);
+            if (pr && pr.catch) pr.catch(function () {});
+          } catch (e) {}
+        };
+        inc('publicStats/views/' + day);
+        inc('publicStats/viewsTotal');
+      } catch (e) {}
+    })();
+
     let multiLaunching = false;
     function multiRestart() {
       if (!currentRoom || !roomCode) return;

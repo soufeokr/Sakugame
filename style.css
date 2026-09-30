@@ -380,11 +380,18 @@
   .slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
 /* ℹ️ info chips — little descriptions moved to hover bubbles (b106).
    Pure CSS: hover on desktop, tap-to-focus on touch screens. */
-.info-btn { position: relative; display: inline-flex; width: 17px; height: 17px; min-height: 0; min-width: 0; padding: 0; margin-left: 6px; border: 1px solid var(--muted); border-radius: 50%; background: transparent; color: var(--muted); align-items: center; justify-content: center; cursor: help; vertical-align: -3px; flex: 0 0 auto; opacity: 0.85; }
+.info-btn { position: relative; display: inline-flex; width: 18px; height: 18px; min-height: 0; min-width: 0; padding: 0; margin-left: 6px; border: 1px solid var(--muted); border-radius: 50%; background: transparent; color: var(--muted); align-items: center; justify-content: center; cursor: help; vertical-align: -3px; flex: 0 0 auto; opacity: 0.9; }
 .info-btn:hover, .info-btn:focus-visible { border-color: var(--accent); color: var(--accent); opacity: 1; outline: none; }
 .info-btn .ic { width: 10px; height: 10px; }
 .info-bubble { position: absolute; top: calc(100% + 7px); left: 0; z-index: 70; width: max-content; max-width: min(250px, 72vw); padding: 8px 10px; background: var(--bg); border: 1px solid var(--accent2); border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); color: var(--text); font-size: 0.78rem; font-weight: 400; line-height: 1.45; text-align: left; white-space: normal; opacity: 0; visibility: hidden; transform: translateY(-3px); transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease; pointer-events: none; }
+.info-btn.flip .info-bubble { top: auto; bottom: calc(100% + 7px); transform: translateY(3px); }
 .info-btn:hover .info-bubble, .info-btn:focus .info-bubble, .info-btn:focus-within .info-bubble { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* 🍪 one-time local-storage notice (b107) — floats above the bottom bar */
+.saku-consent { position: fixed; left: 16px; bottom: 78px; z-index: 1900; display: flex; flex-direction: column; gap: 10px; width: min(340px, calc(100vw - 32px)); padding: 14px 16px; background: var(--card); border: 1px solid var(--accent2); border-left: 4px solid var(--accent); border-radius: 14px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55); animation: sakuConsentIn 0.35s ease; }
+.saku-consent-txt { font-size: 0.82rem; line-height: 1.5; color: var(--text); text-align: left; }
+.saku-consent .success { min-height: 40px; }
+@keyframes sakuConsentIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 /* ⓘ chips sitting inside section titles inherit their color rhythm */
 h3 .info-btn, h4 .info-btn { vertical-align: 1px; }
   input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: #2a2a4a; outline: none; -webkit-appearance: none; }
