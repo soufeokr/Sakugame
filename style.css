@@ -1232,12 +1232,21 @@ h3 .info-btn, h4 .info-btn { vertical-align: 1px; }
   .dc-icon svg { width: 26px; height: 20px; fill: #ffffff; }
   .dc-label { color: var(--muted); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
   .dc-handle { font-weight: 800; font-size: 1.02rem; color: var(--text, #eee); overflow-wrap: anywhere; }
+  .dc-join {
+    width: auto; display: inline-flex; align-items: center; gap: 6px; flex: none;
+    background: #5865F2; color: #ffffff; text-decoration: none; border-radius: 10px; padding: 8px 13px;
+    font-family: inherit; font-weight: 800; font-size: 0.78rem; transition: background 0.2s, transform 0.15s;
+  }
+  .dc-join:hover { background: #4752c4; transform: translateY(-1px); }
+  .dc-join:active { transform: scale(0.97); }
+  .dc-join .ic { width: 0.85rem; height: 0.85rem; }
   .dc-copy {
     width: auto; display: inline-flex; align-items: center; gap: 6px; flex: none;
-    background: #5865F2; border: none; color: #ffffff; border-radius: 10px; padding: 8px 12px;
+    background: rgba(88,101,242,0.14); border: 1.5px solid rgba(88,101,242,0.55); color: var(--text, #eee);
+    border-radius: 10px; padding: 7px 12px;
     font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: background 0.2s, transform 0.15s;
   }
-  .dc-copy:hover { background: #4752c4; transform: translateY(-1px); }
+  .dc-copy:hover { background: rgba(88,101,242,0.26); transform: translateY(-1px); }
   .dc-copy .ic { width: 0.85rem; height: 0.85rem; }
 
   /* ================================ 🗝 CODE NAMES ================================ */

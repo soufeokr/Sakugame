@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '107';
+    const SAKU_BUILD = '109';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -523,13 +523,15 @@
       });
       try { localStorage.setItem('sakugame_acct_tab', tab); } catch (e) { }
     }
+    const DISCORD_INVITE_URL = 'https://discord.gg/Uh26KzWMzm';
+
     function copyDiscord() {
-      const h = '@soufiane_jv';
+      const h = DISCORD_INVITE_URL;
       try {
         navigator.clipboard.writeText(h).then(
-          () => showNotification(window.t ? t('Discord username copied!') : 'Discord username copied!'),
-          () => showNotification('Discord: ' + h));
-      } catch (e) { showNotification('Discord: ' + h); }
+          () => showNotification(window.t ? t('Discord invite copied!') : 'Discord invite copied!'),
+          () => showNotification('Discord invite: ' + h));
+      } catch (e) { showNotification('Discord invite: ' + h); }
     }
 
     async function openAuthModal() {

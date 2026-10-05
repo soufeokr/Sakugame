@@ -978,7 +978,7 @@ var I18N = {
   "A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!": { fr: "Une question, un bug à signaler ou une idée pour améliorer les jeux ? Écrivez-moi sur Discord — je lis tout !", es: "¿Una pregunta, un bug que reportar o una idea para mejorar los juegos? ¡Escríbeme por Discord — lo leo todo!" },
   "Discord → Add Friend → paste my username — I usually answer within a day.": { fr: "Discord → Ajouter un ami → collez mon pseudo — je réponds généralement sous 24 h.", es: "Discord → Añadir amigo → pega mi usuario — normalmente respondo en un día." },
   "Copy": { fr: "Copier", es: "Copiar" },
-  "Discord username copied!": { fr: "Pseudo Discord copié !", es: "¡Usuario de Discord copiado!" },
+  "Discord invite copied!": { fr: "Invitation Discord copiée !", es: "¡Invitación de Discord copiada!" },
   // ---- v32-37 additions (Cold Case, multiplayer 2-6) ----
   "Cold Case": { fr: "Cold Case", es: "Cold Case" }, // PROTECT (game/role name — stays in English)
   "2-6 players": { fr: "2-6 joueurs", es: "2-6 jugadores" },
