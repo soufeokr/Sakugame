@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '111';
+    const SAKU_BUILD = '112';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4172,10 +4172,10 @@
     // full picture → written hint. Earlier guess = more points (4→1), the
     // fastest solvers grab a speed bonus (+3/+2/+1). Free-text answers:
     // accents, punctuation and near-spelling tolerated (same matcher as Blur).
-    const SNAP_STAGES = 4;             // ladder FLOOR (deal eligibility) — not the cap any more (b111)
-    const SNAP_STAGES_SOLO = 10;        // 🎞️ standalone anime: long ladder, up to ~10 stills
-    const SNAP_STAGES_FAM = 6;          // 🧩 grouped family: siblings already bring variety → shorter ladder
-    function snapStagesOf(rd) { return Math.max(SNAP_STAGES, Math.min(SNAP_STAGES_SOLO, ((rd && (rd.stages || (rd.pics || []).length)) || SNAP_STAGES))); }
+    const SNAP_STAGES = 4;              // fixed ladder: 3 mystery frames + the official-art reveal
+    const SNAP_BANK_SOLO = 10;           // 🎞️ b112: frame BANK a solo anime samples from (was: always the same 3)
+    const SNAP_BANK_FAM = 6;             // 🧩 family rounds sample from a 6-frame bank (siblings already add variety)
+    function snapStagesOf(rd) { return Math.max(SNAP_STAGES, ((rd && (rd.stages || (rd.pics || []).length)) || SNAP_STAGES)); }
     const SNAP_STAGE_SEC = 8;        // seconds per crop stage
     const SNAP_REVEAL_SEC = 6;       // answer shown this long between rounds
     const SNAP_BONUS = [3, 2, 1, 0]; // 🏅 speed bonus by solve order
@@ -4239,9 +4239,10 @@
     // 🏔️ difficulty ladder: stage 1 = a hard deep-cut episode frame (from later in
     // the run — less iconic), stages 2-3 = other random frames (+ official cover
     // when frames run out), stage 4 = the official art = the EASY pic (+ hint).
-    // b111 — variable-length ladder: up to SNAP_STAGES_SOLO stills (floor SNAP_STAGES
-    // guaranteed by the deal filter). famThumbs (grouped-family mode) = deep-cut
-    // frames from SIBLING seasons shown first; own frames after; official art last.
+    // b112 — fixed 4-still ladder, but the 3 frames are SAMPLED from a wide bank
+    // each deal (solo: all episode thumbs, up to 10 · family: merged with the
+    // sibling seasons' frames, up to 6) — replaying the same anime no longer
+    // shows the same pictures. Official art always last (hint moment).
     function snapRoundEntry(entry, famThumbs) {
       const meta = snapMetaOf(entry.id) || {};
       const easy = meta.b || entry.image || '';
@@ -4250,11 +4251,10 @@
       const late = shuffleArray(thumbs.slice(half));   // deeper into the show
       const early = shuffleArray(thumbs.slice(0, half));
       const fam = (famThumbs || []).filter(u => u && u !== easy && u !== entry.image && thumbs.indexOf(u) < 0);
-      const frames = fam.concat(late, early);          // hardest picks first
-      const cap = fam.length ? SNAP_STAGES_FAM : SNAP_STAGES_SOLO;
-      const reserve = (entry.image && entry.image !== easy ? 1 : 0) + (easy ? 1 : 0); // cover + official art stay LAST
-      let pics = frames.slice(0, Math.max(SNAP_STAGES - reserve, cap - reserve));
-      if (entry.image && entry.image !== easy) pics.push(entry.image);
+      const bank = (fam.length ? fam.concat(late, early).slice(0, SNAP_BANK_FAM) : late.concat(early).slice(0, SNAP_BANK_SOLO)); // 🏦 the bank
+      const frames = bank.length <= SNAP_STAGES - 1 ? bank.slice() : shuffleArray(bank.slice()).slice(0, SNAP_STAGES - 1); // 🎲 3 of 10 (or 6)
+      let pics = frames.slice();
+      if (entry.image && entry.image !== easy && pics.length < SNAP_STAGES - 1) pics.push(entry.image); // cover plugs a thin bank
       if (easy) pics.push(easy);
       pics = pics.filter((u, i) => u && pics.indexOf(u) === i);
       return { al: entry.id, n: String(entry.name || '?'), pics: pics, h: snapHintOf(entry), stages: pics.length };
@@ -4279,7 +4279,7 @@
       const snap = await database.ref('rooms/' + roomCode).once('value');
       const fresh = snap.val() || {};
       let pool = sakuFilterDiff(snapPool(), (currentRoom.settings || {}).snDiff).filter(c => c && c.id != null && c.name && snapStillsOf(c).length >= SNAP_STAGES);
-      const grpOn = !!((currentRoom.settings || {}).snGroup); // 🧩 b110
+      const grpOn = !!((currentRoom.settings || {}).snGroup); // 🧩 b110 grouping · b112 frame bank
       let grpNorms = null;
       if (grpOn) {
         grpNorms = pool.map(c => bgNorm(c.name));
@@ -4294,7 +4294,7 @@
         const ownThumbs = (snapMetaOf(e.id) || {}).p || [];
         const famThumbs = sibs.length ? shuffleArray(sibs.flatMap(s => ((snapMetaOf(s.id) || {}).p || [])).filter(u => u && ownThumbs.indexOf(u) < 0)) : []; // b111: sibling seasons feed the ladder
         const r = snapRoundEntry(e, famThumbs);
-        r.gk = key; r.n = snapGroupLabelOf(e, pool); r.h = snapHintOf(e, r.n); // family id · family name · family letters
+        r.gk = key; r.n = snapGroupLabelOf(e, pool); r.h = snapHintOf(e, r.n); // family id · family name · family letters (b112)
         return r;
       });
       if (!rounds.length) {
