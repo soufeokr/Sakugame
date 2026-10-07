@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '109';
+    const SAKU_BUILD = '110';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1091,6 +1091,7 @@
     let hostSnRounds = 10;              // 📸 Snapshot! rounds option (4–20)
     let hostBgDiff = 'all';             // 🎚️ Blur covers difficulty band
     let hostSnDiff = 'all';             // 🎚️ Snapshot! difficulty band
+    let hostSnGroup = 0;                // 🧩 Snapshot! unite seasons & parts of one franchise
     let hostBgStageSec = BLUR_STAGE_SEC;    // timer option on the create-room screen
     let hostBgMode = 'characters';          // 'characters' | 'covers' on the create-room screen
     let bgWatchBusy = false;           // host watchdog guard
@@ -1499,7 +1500,7 @@
         pool: hostPool,
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
         bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec, bgDiff: hostBgDiff,
-        snRounds: hostSnRounds, snDiff: hostSnDiff // 📸 Snapshot! options
+        snRounds: hostSnRounds, snDiff: hostSnDiff, snGroup: hostSnGroup ? 1 : 0 // 📸 Snapshot! options
       };
     }
     // Restore a snapshot into the whole form (clamped + guarded)
@@ -1545,7 +1546,7 @@
       // 📸 snapshot
       hostSnRounds = clampN(cfg.snRounds, 4, 20, 10);
       document.getElementById('hostSnRoundsSlider').value = hostSnRounds; updateSnRoundsSlider();
-      selectBgDiff(cfg.bgDiff); selectSnDiff(cfg.snDiff); // 🎚️ bands
+      selectBgDiff(cfg.bgDiff); selectSnDiff(cfg.snDiff); selectSnGroup(cfg.snGroup); // 🎚️ bands · 🧩 family
       // 🕵️ undercover
       selectUcMrWhite(!!cfg.ucMw);
     }
@@ -1657,7 +1658,7 @@
         bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
         bgRounds: clampN(s.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT),
         bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC), bgDiff: sakuDiffSan(s.bgDiff),
-        snRounds: clampN(s.snRounds, 4, 20, 10), snDiff: sakuDiffSan(s.snDiff)
+        snRounds: clampN(s.snRounds, 4, 20, 10), snDiff: sakuDiffSan(s.snDiff), snGroup: s.snGroup ? 1 : 0
       };
     }
     // …and loading writes the saved settings straight into the current room
@@ -1701,7 +1702,7 @@
           updates['settings/bgMode'] = cfg.bgMode === 'covers' ? 'covers' : 'characters';
         }
         if (g === 'blur') updates['settings/bgDiff'] = sakuDiffSan(cfg.bgDiff);
-        if (g === 'snapshot') { updates['settings/snRounds'] = clampN(cfg.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(cfg.snDiff); } // 📸
+        if (g === 'snapshot') { updates['settings/snRounds'] = clampN(cfg.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(cfg.snDiff); updates['settings/snGroup'] = cfg.snGroup ? 1 : 0; } // 📸
       }
       try {
         await database.ref('rooms/' + roomCode).update(updates);
@@ -1744,12 +1745,12 @@
       document.getElementById('hostUcMaxBlock').style.display = isUc ? 'block' : 'none';
       // ⚙️ Game tab: pool for all but Undercover; Detective Showdown board settings for
       // guesswho/battle/race (Blur & Hot & Cold draw from the FULL pool — no count)
-      document.getElementById('hostPoolGroup').style.display = isUc ? 'none' : 'block';
+      document.getElementById('hostPoolGroup').style.display = (isUc || isSnap) ? 'none' : 'block'; // b110: snapshot has no character pool
       // 👀🎲 HC/Blur get the simplified Random/Watched pair; Detective Showdown games keep Generic/Favorites/Mix
       const watchUi = isBlur || hostGame === 'hotcold';
       document.getElementById('hostPoolSrcGwGroup').style.display = watchUi ? 'none' : 'block';
       document.getElementById('hostPoolSrcWatchGroup').style.display = watchUi ? 'block' : 'none';
-      document.getElementById('hostGwSettings').style.display = (isUc || isBlur || hostGame === 'hotcold' || isCn) ? 'none' : 'block'; // CN board is always a 4×6 = 24
+      document.getElementById('hostGwSettings').style.display = (isUc || isBlur || isSnap || hostGame === 'hotcold' || isCn) ? 'none' : 'block'; // CN board is always a 4×6 = 24
       document.getElementById('hostUcSettings').style.display = isUc ? 'block' : 'none';
       document.getElementById('hostMultiSettings').style.display = isMulti ? 'block' : 'none';
       // ❤️/❓ sliders are Race-only, 🌫️ options are Blur-only
@@ -1864,6 +1865,17 @@
       d = sakuDiffSan(d); paintDiffRadios('modalSnDiff', d);
       if (isHost && currentRoom && currentRoom.game === 'snapshot') { await database.ref('rooms/' + roomCode + '/settings/snDiff').set(d); touchActivity(); }
     }
+    // 🧩 Snapshot! family grouping radios (b110)
+    function paintSnGroup(pref, on) {
+      const off = document.getElementById(pref + 'Off'), one = document.getElementById(pref + 'On');
+      if (off) off.classList.toggle('selected', !on);
+      if (one) one.classList.toggle('selected', !!on);
+    }
+    async function changeSnGroup(v) {
+      v = v ? 1 : 0; paintSnGroup('modalSnGroup', v);
+      if (isHost && currentRoom && currentRoom.game === 'snapshot') { await database.ref('rooms/' + roomCode + '/settings/snGroup').set(v); touchActivity(); }
+    }
+    function selectSnGroup(v) { hostSnGroup = v ? 1 : 0; paintSnGroup('hostSnGroup', hostSnGroup); }
     function updateBgStageSecSlider() {
       hostBgStageSec = parseInt(document.getElementById('hostBgStageSecSlider').value);
       document.getElementById('hostBgStageSecValue').textContent = hostBgStageSec + 's';
@@ -1915,7 +1927,7 @@
             roomData.settings.bgMode = hostBgMode;
             roomData.settings.bgDiff = hostBgDiff;
           }
-          if (game === 'snapshot') { roomData.settings.snRounds = hostSnRounds; roomData.settings.snDiff = hostSnDiff; } // 📸
+          if (game === 'snapshot') { roomData.settings.snRounds = hostSnRounds; roomData.settings.snDiff = hostSnDiff; roomData.settings.snGroup = hostSnGroup ? 1 : 0; } // 📸
         }
         await database.ref('rooms/' + roomCode).set(roomData);
         try { rememberLastFor(game); } catch (e) {} // 💾 auto-remember this game's setup
@@ -4169,6 +4181,48 @@
     const snParticipants = (room) => { const r = room || currentRoom; const sn = (r && r.sn) || {}; return Object.keys((r && r.players) || {}).filter(pid => (((r.players[pid]) || {}).outInGame || null) !== sn.gameId); };
     function snapMetaOf(id) { return (typeof SNAP_PICS !== 'undefined' && SNAP_PICS) ? (SNAP_PICS[id] || null) : null; }
     function snapPool() { return sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []); }
+
+    // 🧩 GROUP SEASONS & PARTS mode (settings/snGroup) — one identity per franchise:
+    // rounds never repeat a family, any sibling title wins, the reveal shows the
+    // family name. Pure by-title normalization (no dataset flags) + one alias map.
+    const SN_GROUP_MAP = { // normalized titles whose names share NO visible root
+      'nisemonogatari': 'Bakemonogatari', 'nekomonogatari': 'Bakemonogatari',
+      'nekomonogatari kuro': 'Bakemonogatari', 'nekomonogatari shiro': 'Bakemonogatari',
+      'hanamonogatari': 'Bakemonogatari', 'tsukimonogatari': 'Bakemonogatari',
+      'owarimonogatari': 'Bakemonogatari', 'koyomimonogatari': 'Bakemonogatari',
+      'kizumonogatari': 'Bakemonogatari', 'bakemonogatari': 'Bakemonogatari'
+    };
+    // right-edge season decorations (normalized text): "…season 3", "…part 2",
+    // "…II", "…shippuuden", "…the movie", bare trailing numbers ("… 4"), years…
+    const SN_GROUP_SUFFIX_RE = /(?:\s+(?:the\s+final\s+season|final\s+season|season\s+\d+[a-z]?|season\s+[ivxl]+|\d+(?:st|nd|rd|th)\s+season|(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)\s+season|part\s+\d+|part\s+[ivxl]+|cour\s+\d+|shippu?u?den|the\s+movie|movie|recap|ova|ovas|special|specials|hen|[ivxl]{2,9}|\d+))+$/;
+    function snapGroupNorm(name) { // "Boku no Hero Academia 4" -> "boku no hero academia" (never empty — "86" stays "86")
+      const raw = bgNorm(name);
+      if (!raw) return '';
+      const t = raw.replace(SN_GROUP_SUFFIX_RE, '').trim();
+      return t.length >= 2 ? t : raw;
+    }
+    function snapGroupKey(name, poolNorms) { // family id: alias map > longest-self-vs-pool prefix > trimmed self
+      const t = snapGroupNorm(name);
+      if (!t) return '';
+      if (SN_GROUP_MAP[t]) return bgNorm(SN_GROUP_MAP[t]);
+      const prefs = (poolNorms || []).filter(n => n && n.length >= 3 && n.length < t.length && t.indexOf(n) === 0 && t.charAt(n.length) === ' ');
+      if (prefs.length) { prefs.sort((a, b) => a.length - b.length); return prefs[0]; } // shortest prefix = the saga root
+      return t;
+    }
+    function snapGroupLabelOf(entry, pool) { // the DISPLAY name of the family ("Nisemonogatari" -> "Bakemonogatari")
+      const name = String((entry && entry.name) || '');
+      const norm = snapGroupNorm(name);
+      if (SN_GROUP_MAP[norm]) return SN_GROUP_MAP[norm];
+      const norms = (pool || []).map(c => bgNorm(c.name));
+      const idx = norms.indexOf(snapGroupKey(name, norms));
+      if (idx >= 0) return String(pool[idx].name); // a saga-root title exists in the pool — use its exact name
+      const t0 = bgNorm(name); // suffix-only trim → rebuild on the original casing
+      if (!t0 || norm === t0) return name;
+      const cut = t0.split(' ').length - norm.split(' ').length;
+      const label = name.split(/\s+/).slice(0, Math.max(1, name.split(/\s+/).length - cut)).join(' ').replace(/[\s:;,.\-–—(]+$/, '');
+      return label || name;
+    }
+    function snapPoolNorms() { return snapPool().map(c => bgNorm(c && c.name)).filter(Boolean); }
     function snapHintOf(entry) {
       const name = String(entry.name || '?').trim();
       const meta = snapMetaOf(entry.id) || {};
@@ -4214,8 +4268,20 @@
       await database.ref('rooms/' + roomCode).update({ restarts: null, 'sn/gameId': gameId, 'sn/phase': 'setup' });
       const snap = await database.ref('rooms/' + roomCode).once('value');
       const fresh = snap.val() || {};
-      const pool = sakuFilterDiff(snapPool(), (currentRoom.settings || {}).snDiff).filter(c => c && c.id != null && c.name && snapStillsOf(c).length >= SNAP_STAGES);
-      const rounds = shuffleArray(pool.slice()).slice(0, Math.min(totalRounds, pool.length)).map(snapRoundEntry);
+      let pool = sakuFilterDiff(snapPool(), (currentRoom.settings || {}).snDiff).filter(c => c && c.id != null && c.name && snapStillsOf(c).length >= SNAP_STAGES);
+      const grpOn = !!((currentRoom.settings || {}).snGroup); // 🧩 b110
+      let grpNorms = null;
+      if (grpOn) {
+        grpNorms = pool.map(c => bgNorm(c.name));
+        const seenFam = {};
+        pool = pool.filter(c => { const k = snapGroupKey(c.name, grpNorms); if (!k || seenFam[k]) return false; seenFam[k] = 1; return true; });
+        grpNorms = pool.map(c => bgNorm(c.name));
+      }
+      const rounds = shuffleArray(pool.slice()).slice(0, Math.min(totalRounds, pool.length)).map(e => {
+        const r = snapRoundEntry(e);
+        if (grpOn) { r.gk = snapGroupKey(e.name, grpNorms); r.n = snapGroupLabelOf(e, pool); } // family id + family display name
+        return r;
+      });
       if (!rounds.length) {
         await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, sn: null });
         showNotification('Not enough anime for Snapshot! in this difficulty — try an easier band.');
@@ -4243,6 +4309,13 @@
       const g = bgNorm(text);
       if (!g) return false;
       const names = [round.n].concat(snapAliasesOf(round.al));
+      if (round.gk) { // 🧩 b110 — grouped family: every sibling title/alias of the franchise wins
+        const norms = snapPoolNorms();
+        snapPool().forEach(c => {
+          if (!c || !c.name || c.id === round.al) return;
+          if (snapGroupKey(c.name, norms) === round.gk) { names.push(String(c.name)); (c.al || []).forEach(n => names.push(String(n))); }
+        });
+      }
       return names.some(nm => {
         const target = bgNorm(nm);
         if (!target) return false;
@@ -5617,7 +5690,7 @@
       }
       document.getElementById('modalUcMaxBlock').style.display = isUc ? 'block' : 'none';
       // ⚙️ Game tab
-      document.getElementById('modalPoolGroup').style.display = isUc ? 'none' : 'block';
+      document.getElementById('modalPoolGroup').style.display = (isUc || isSnap) ? 'none' : 'block'; // b110: Snapshot draws anime stills, never the character pool
       // Blur Guess & Hot & Cold draw from the FULL source pool — no character count board needed
       document.getElementById('modalGwSettings').style.display = (isUc || isBlur || isSnap || game === 'hotcold' || game === 'codenames') ? 'none' : 'block'; // CN board is always a fixed 5×5 — never a char count
       document.getElementById('modalUwSettings').style.display = isUc ? 'block' : 'none';
@@ -5658,6 +5731,7 @@
           document.getElementById('modalSnRoundsSlider').value = N;
           document.getElementById('modalSnRoundsValue').textContent = N;
           paintDiffRadios('modalSnDiff', (currentRoom.settings || {}).snDiff); // 🎚️
+          paintSnGroup('modalSnGroup', (currentRoom.settings || {}).snGroup); // 🧩
         }
       }
       if (isUc) {
@@ -5958,7 +6032,7 @@
         updates['settings/bgMode'] = s.bgMode || 'characters';
         updates['settings/bgDiff'] = sakuDiffSan(s.bgDiff);
       }
-      if (newGame === 'snapshot') { updates['settings/snRounds'] = clampN(s.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(s.snDiff); } // 📸
+      if (newGame === 'snapshot') { updates['settings/snRounds'] = clampN(s.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(s.snDiff); updates['settings/snGroup'] = s.snGroup ? 1 : 0; } // 📸
       // Fewer seats in the new mode → extra players wait in the ⏳ queue
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
       const ordered = seated.filter(p => p.isHost).concat(seated.filter(p => !p.isHost)); // host keeps a seat

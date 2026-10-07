@@ -340,6 +340,9 @@
   .input-group input, .input-group select { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #2a2a4a; border-radius: 10px; background: #1a1a2e; color: white; font-family: inherit; }
   .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
   .radio-group { display: flex; gap: 20px; }
+  /* b110 🎚️ many-chip rows (difficulty, family grouping): wrap — never overflow the modal */
+  .radio-group.diff-row { flex-wrap: wrap; gap: 8px; }
+  .radio-group.diff-row .radio-option { flex: 1 1 30%; margin-bottom: 0; padding: 10px 6px; min-width: 86px; }
   .radio-option { flex: 1; background: #1a1a2e; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #2a2a4a; text-align: center; transition: all 0.2s; }
   .radio-option:hover { border-color: var(--accent); }
   .radio-option.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); }
@@ -512,7 +515,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 1px; }
   .card-info { padding: 8px; text-align: center; background: #0f0f1a; }
   .card-name { font-weight: 700; font-size: 0.8rem; line-height: 1.2; color: var(--text); }
   .game-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 130; align-items: center; justify-content: center; padding: 20px; } /* b110: above .winning-screen (120), below .interaction-window (140) */
   .modal.show { display: flex; }
   .modal-content { background: var(--card); padding: 35px; border-radius: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; text-align: center; }
   .modal-close { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: var(--muted); transition: all 0.2s; }
@@ -852,7 +855,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 1px; }
   /* 📏 Uniform settings windows — the create-room card and the lobby ⚙️ modal
      keep ONE size whatever options get picked (inner scroll for short content) */
   #hostRoomScreen .panel { height: min(88vh, 900px); overflow-y: auto; }
-  #settingsModal .modal-content { height: min(88vh, 820px); }
+  #settingsModal .modal-content { height: min(88vh, 820px); overflow-x: hidden; } /* b110: no horizontal scrollbar ever */
   /* 👀 AniList "count as watched" status checkboxes — lead on its own line, boxes all on one */
   .ws-row { display: flex; gap: 10px; flex-wrap: nowrap; overflow-x: auto; align-items: center; margin-top: 4px; padding-bottom: 3px; font-size: 0.8rem; color: var(--muted); }
   .ws-lead { display: block; font-weight: 600; font-size: 0.82rem; color: var(--muted); margin-top: 8px; }

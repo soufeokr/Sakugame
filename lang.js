@@ -979,6 +979,10 @@ var I18N = {
   "Discord → Add Friend → paste my username — I usually answer within a day.": { fr: "Discord → Ajouter un ami → collez mon pseudo — je réponds généralement sous 24 h.", es: "Discord → Añadir amigo → pega mi usuario — normalmente respondo en un día." },
   "Copy": { fr: "Copier", es: "Copiar" },
   "Discord invite copied!": { fr: "Invitation Discord copiée !", es: "¡Invitación de Discord copiada!" },
+  "Group seasons & parts": { fr: "Saisons regroupées", es: "Temporadas agrupadas" },
+  "Separate": { fr: "Séparées", es: "Separadas" },
+  "Unite": { fr: "Unies", es: "Unidas" },
+  "Unite every season & part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.": { fr: "Unis chaque saison et partie d''un anime sous une seule identité — Naruto + Shippuden = Naruto · toutes les parties Monogatari = Bakemonogatari · toutes les saisons de My Hero Academia = My Hero Academia. Aucune famille ne se répète dans une partie et toute variante du nom est acceptée.", es: "Une cada temporada y parte de un anime bajo una sola identidad — Naruto + Shippuden = Naruto · todas las partes Monogatari = Bakemonogatari · todas las temporadas de My Hero Academia = My Hero Academia. Las familias no se repiten en una partida y cualquier variante del nombre vale." },
   // ---- v32-37 additions (Cold Case, multiplayer 2-6) ----
   "Cold Case": { fr: "Cold Case", es: "Cold Case" }, // PROTECT (game/role name — stays in English)
   "2-6 players": { fr: "2-6 joueurs", es: "2-6 jugadores" },
