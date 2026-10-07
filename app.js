@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '110';
+    const SAKU_BUILD = '111';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4172,7 +4172,10 @@
     // full picture → written hint. Earlier guess = more points (4→1), the
     // fastest solvers grab a speed bonus (+3/+2/+1). Free-text answers:
     // accents, punctuation and near-spelling tolerated (same matcher as Blur).
-    const SNAP_STAGES = 4;
+    const SNAP_STAGES = 4;             // ladder FLOOR (deal eligibility) — not the cap any more (b111)
+    const SNAP_STAGES_SOLO = 10;        // 🎞️ standalone anime: long ladder, up to ~10 stills
+    const SNAP_STAGES_FAM = 6;          // 🧩 grouped family: siblings already bring variety → shorter ladder
+    function snapStagesOf(rd) { return Math.max(SNAP_STAGES, Math.min(SNAP_STAGES_SOLO, ((rd && (rd.stages || (rd.pics || []).length)) || SNAP_STAGES))); }
     const SNAP_STAGE_SEC = 8;        // seconds per crop stage
     const SNAP_REVEAL_SEC = 6;       // answer shown this long between rounds
     const SNAP_BONUS = [3, 2, 1, 0]; // 🏅 speed bonus by solve order
@@ -4223,8 +4226,8 @@
       return label || name;
     }
     function snapPoolNorms() { return snapPool().map(c => bgNorm(c && c.name)).filter(Boolean); }
-    function snapHintOf(entry) {
-      const name = String(entry.name || '?').trim();
+    function snapHintOf(entry, labelOverride) { // b111: grouped rounds hint the FAMILY name's letters
+      const name = String(labelOverride || entry.name || '?').trim();
       const meta = snapMetaOf(entry.id) || {};
       const bits = [];
       if (meta.g && meta.g.length) bits.push(meta.g.slice(0, 3).join(', '));
@@ -4236,18 +4239,25 @@
     // 🏔️ difficulty ladder: stage 1 = a hard deep-cut episode frame (from later in
     // the run — less iconic), stages 2-3 = other random frames (+ official cover
     // when frames run out), stage 4 = the official art = the EASY pic (+ hint).
-    function snapRoundEntry(entry) {
+    // b111 — variable-length ladder: up to SNAP_STAGES_SOLO stills (floor SNAP_STAGES
+    // guaranteed by the deal filter). famThumbs (grouped-family mode) = deep-cut
+    // frames from SIBLING seasons shown first; own frames after; official art last.
+    function snapRoundEntry(entry, famThumbs) {
       const meta = snapMetaOf(entry.id) || {};
       const easy = meta.b || entry.image || '';
       const thumbs = (meta.p || []).slice();
       const half = Math.floor(thumbs.length / 2);
       const late = shuffleArray(thumbs.slice(half));   // deeper into the show
       const early = shuffleArray(thumbs.slice(0, half));
-      const frames = late.concat(early).slice(0, 3);   // hardest picks first
-      if (frames.length < 3 && entry.image && entry.image !== easy) frames.push(entry.image); // official cover fills stage 3
-      let pics = frames.slice().concat(easy ? [easy] : []).filter(Boolean);
-      pics = pics.filter((u, i) => u && pics.indexOf(u) === i); // paranoia: 4 distinct stills
-      return { al: entry.id, n: String(entry.name || '?'), pics: pics, h: snapHintOf(entry) };
+      const fam = (famThumbs || []).filter(u => u && u !== easy && u !== entry.image && thumbs.indexOf(u) < 0);
+      const frames = fam.concat(late, early);          // hardest picks first
+      const cap = fam.length ? SNAP_STAGES_FAM : SNAP_STAGES_SOLO;
+      const reserve = (entry.image && entry.image !== easy ? 1 : 0) + (easy ? 1 : 0); // cover + official art stay LAST
+      let pics = frames.slice(0, Math.max(SNAP_STAGES - reserve, cap - reserve));
+      if (entry.image && entry.image !== easy) pics.push(entry.image);
+      if (easy) pics.push(easy);
+      pics = pics.filter((u, i) => u && pics.indexOf(u) === i);
+      return { al: entry.id, n: String(entry.name || '?'), pics: pics, h: snapHintOf(entry), stages: pics.length };
     }
     // the still set for one anime: Kitsu episode frames + AniList banner + cover (all distinct)
     function snapStillsOf(entry) {
@@ -4258,7 +4268,7 @@
       return st;
     }
     // how many stills the frame shows at a stage (stage 1→1 still … stage 4→4 stills)
-    function snapShotsFor(pics, stage) { return (pics || []).slice(0, Math.min(Math.max(1, stage || 1), SNAP_STAGES, (pics || []).length)); }
+    function snapShotsFor(pics, stage) { return (pics || []).slice(0, Math.min(Math.max(1, stage || 1), (pics || []).length)); } // b111: ladder = full supply
 
     async function snDeal() {
       const s = currentRoom.settings || {};
@@ -4278,8 +4288,13 @@
         grpNorms = pool.map(c => bgNorm(c.name));
       }
       const rounds = shuffleArray(pool.slice()).slice(0, Math.min(totalRounds, pool.length)).map(e => {
-        const r = snapRoundEntry(e);
-        if (grpOn) { r.gk = snapGroupKey(e.name, grpNorms); r.n = snapGroupLabelOf(e, pool); } // family id + family display name
+        if (!grpOn) return snapRoundEntry(e); // solo: snapRoundEntry's default long ladder
+        const key = snapGroupKey(e.name, grpNorms);
+        const sibs = pool.filter(s => s.id !== e.id && snapGroupKey(s.name, grpNorms) === key);
+        const ownThumbs = (snapMetaOf(e.id) || {}).p || [];
+        const famThumbs = sibs.length ? shuffleArray(sibs.flatMap(s => ((snapMetaOf(s.id) || {}).p || [])).filter(u => u && ownThumbs.indexOf(u) < 0)) : []; // b111: sibling seasons feed the ladder
+        const r = snapRoundEntry(e, famThumbs);
+        r.gk = key; r.n = snapGroupLabelOf(e, pool); r.h = snapHintOf(e, r.n); // family id · family name · family letters
         return r;
       });
       if (!rounds.length) {
@@ -4345,7 +4360,7 @@
       const rd = snCurrentRound();
       if (snMatches(text, rd)) {
         const prior = Object.keys(sn.found || {}).length;               // 0 = first solver
-        const base = Math.max(1, (SNAP_STAGES + 1) - (sn.stage || 1)); // stage 1 → 4 … 4 → 1
+        const base = Math.max(1, (snapStagesOf(snCurrentRound()) + 1) - (sn.stage || 1)); // b111: stage 1 → L … L → 1
         const bonus = SNAP_BONUS[Math.min(prior, 3)];
         const pts = base + bonus;
         const upd = {};
@@ -4398,7 +4413,7 @@
       if (sn.phase === 'playing') {
         const allFound = parts.every(pid => found[pid]);
         if (!allFound && now < (sn.deadline || 0)) return;
-        if (!allFound && (sn.stage || 1) < SNAP_STAGES) {
+        if (!allFound && (sn.stage || 1) < snapStagesOf(snCurrentRound())) { // b111
           snWatchBusy = true;
           database.ref('rooms/' + roomCode + '/sn').update({ stage: (sn.stage || 1) + 1, deadline: now + stepMs })
             .then(poke).catch(() => {}).then(endBusy, endBusy);
@@ -4461,13 +4476,15 @@
         });
       }
       document.getElementById('snRoundBadge').innerHTML = '<svg class="ic"><use href="#i-layers"/></svg> ' + tt('Round') + ' ' + ((sn.roundIdx || 0) + 1) + '/' + (sn.rounds || []).length;
-      document.getElementById('snStageBadge').textContent = tt('Stills') + ' ' + stage + '/' + SNAP_STAGES;
+      const stageCount = snapStagesOf(rd); // b111
+      document.getElementById('snStageBadge').textContent = tt('Stills') + ' ' + stage + '/' + stageCount;
       updateSnapshotTimer();
-      // the still board — one more frame pops in per stage, then all 4 during the reveal
-      const shown = sn.phase === 'reveal' ? SNAP_STAGES : Math.min(stage, SNAP_STAGES);
+      // the still board — one more frame pops in per stage, then ALL during the reveal (b111: slots grow to the ladder)
+      const shown = sn.phase === 'reveal' ? stageCount : Math.min(stage, stageCount);
       const pics = (rd.pics || []);
       const shots = document.getElementById('snShots');
-      for (let i = 0; i < SNAP_STAGES; i++) {
+      while (shots.children.length < stageCount) { const d = document.createElement('div'); d.className = 'sn-slot'; d.innerHTML = '<img alt="">'; shots.appendChild(d); }
+      for (let i = 0; i < stageCount; i++) {
         const slot = shots.children[i];
         if (!slot) break;
         const im = slot.querySelector('img');
@@ -4478,7 +4495,7 @@
       shots.classList.toggle('n1', shown === 1);
       document.getElementById('snImgWrap').classList.toggle('revealed', sn.phase === 'reveal');
       const hintEl = document.getElementById('snHint');
-      hintEl.style.display = (sn.phase === 'reveal' || stage >= SNAP_STAGES) ? 'block' : 'none';
+      hintEl.style.display = (sn.phase === 'reveal' || stage >= stageCount) ? 'block' : 'none'; // b111
       hintEl.textContent = sn.phase === 'reveal' ? ('🎬 ' + (rd.n || '?')) : ('💡 ' + (rd.h || ''));
       // status line
       const st = document.getElementById('snStatus');
