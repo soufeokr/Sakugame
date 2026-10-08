@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="113">
+<meta name="saku-build" content="114">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=113" sizes="any">
+<link rel="icon" href="favicon.ico?v=114" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=113">
+<link rel="stylesheet" href="style.css?v=114">
 </head>
 <body>
 
@@ -218,7 +218,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Bêta</span>
+    <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Beta</span>
     <!-- 💻 PC-only language picker (menu opens upward) — phones keep their top-bar flag button -->
     <div id="pcLangWrap" data-noi18n>
       <button type="button" class="tb-btn" id="pcLangBtn" onclick="phoneBarToggle('pcLangMenu')" title="Language" aria-label="Language"><span id="pcLangFlag" class="tb-flag"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg></span></button>
@@ -325,7 +325,7 @@
           <div class="game-card-img"><svg class="ic"><use href="#i-target"/></svg></div>
           <div class="game-card-content">
             <h3>Cold Case</h3>
-            <p>2-12 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess feeds your cumulative total — biggest total wins!</p>
+            <p>2-12 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess counts — find each secret in the fewest total guesses to win!</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('codenames')">
@@ -1029,7 +1029,7 @@
             </div>
           </div>
           <div class="hc-side">
-            <div class="br-log-wrap" id="hcRankWrap"><h3 id="hcRankTitle"><svg class="ic"><use href="#i-trophy"/></svg> Classement</h3><small class="hc-rank-hint">Every guess counts — fewest wins!</small><div class="br-log hc-log hc-cls" id="hcRank"><p style="text-align:center;color:var(--muted);">No guesses yet</p></div></div>
+            <div class="br-log-wrap" id="hcRankWrap"><h3 id="hcRankTitle"><svg class="ic"><use href="#i-trophy"/></svg> Ranking</h3><small class="hc-rank-hint">Every guess counts — fewest wins!</small><div class="br-log hc-log hc-cls" id="hcRank"><p style="text-align:center;color:var(--muted);">No guesses yet</p></div></div>
             <div class="br-log-wrap" id="hcLogWrap"><h3 id="hcLogTitle"><svg class="ic"><use href="#i-note"/></svg> Guesses</h3><div class="br-log hc-log" id="hcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
           </div>
         </div>
@@ -1469,7 +1469,7 @@
     <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
       <div class="modal-close" onclick="closePairsModal()">×</div>
       <h2><svg class="ic"><use href="#i-note"/></svg> Undercover Word Pairs</h2>
-      <p style="color: var(--muted); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Add your own pairs — saved online instantly and used by <strong>every</strong> Undercover room (on top of the built-in pairs). Type a name, click <strong>Search AniList</strong> and pick the right result to attach the official name &amp; picture. You must be logged in.</p>
+      <p style="color: var(--muted); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Add your own pairs — saved online instantly and used by every Undercover room (on top of the built-in pairs). Type a name, click Search AniList and pick the right result to attach the official name &amp; picture. You must be logged in.</p>
       <div class="input-group">
         <label>Pair type</label>
         <div class="radio-group">
@@ -1581,7 +1581,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=113', 'charanimes.js?v=113', 'animes.js?v=113', 'nsfwdata.js?v=113', 'snappics.js?v=113'];
+        var files = ['characters.js?v=114', 'charanimes.js?v=114', 'animes.js?v=114', 'nsfwdata.js?v=114', 'snappics.js?v=114'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1596,10 +1596,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=113"></script>
-  <script src="music.js?v=113"></script>
-  <script src="lang.js?v=113"></script>
-  <script src="app.js?v=113"></script>
+  <script src="undercover.js?v=114"></script>
+  <script src="music.js?v=114"></script>
+  <script src="lang.js?v=114"></script>
+  <script src="app.js?v=114"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1607,5 +1607,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a47450ca4b35d0a3',t:'MTc5MTQ1MzgwNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a47883f44835e284',t:'MTc5MTQ5Nzg0Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
