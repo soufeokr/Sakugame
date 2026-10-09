@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="114">
+<meta name="saku-build" content="115">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=114" sizes="any">
+<link rel="icon" href="favicon.ico?v=115" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=114">
+<link rel="stylesheet" href="style.css?v=115">
 </head>
 <body>
 
@@ -429,9 +429,10 @@
             </div>
           </div>
           <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Detective Showdown is a head-to-head duel — <b>2 players</b>, always.</p>
-          <div class="slider-container" id="hostHcMaxBlock" style="display: none;">
-            <div class="slider-label"><span>Max Players</span><strong id="hostHcMaxValue">4</strong></div>
-            <input type="range" id="hostHcMaxSlider" min="2" max="12" value="4" oninput="updateHcMaxPlayers()">
+          <div class="slider-container" id="hostMaxPlayersBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="hostMaxPlayersValue">8</strong></div>
+            <input type="range" id="hostMaxPlayersSlider" min="2" max="12" value="8" oninput="updateMaxPlayers()">
+            <div class="hc-only-settings" style="display: none;">
             <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
             <div class="hc-mode-row">
               <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
@@ -442,14 +443,7 @@
               <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
               <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
             </div>
-          </div>
-          <div class="slider-container" id="hostMultiMaxBlock" style="display: none;">
-            <div class="slider-label"><span>Max Players</span><strong id="hostMultiMaxValue">6</strong></div>
-            <input type="range" id="hostMultiMaxSlider" min="3" max="12" value="6" oninput="updateMultiMaxPlayers()">
-          </div>
-          <div class="slider-container" id="hostUcMaxBlock" style="display: none;">
-            <div class="slider-label"><span>Max Players</span><strong id="hostUcMaxValue">5</strong></div>
-            <input type="range" id="hostUcMaxSlider" min="3" max="12" value="5" oninput="updateUcMaxPlayers()">
+            </div>
           </div>
         </div>
       </div>
@@ -517,13 +511,13 @@
             </div>
           </div>
           <div class="input-group blur-only-settings" style="display: none;">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500.</span></button></label>
-            <div class="radio-group diff-row">
-              <label class="radio-option selected" id="hostBgDiffAll" onclick="selectBgDiff('all')"><div>Everything</div></label>
-              <label class="radio-option" id="hostBgDiffEasy" onclick="selectBgDiff('easy')"><div>Easy</div></label>
-              <label class="radio-option" id="hostBgDiffNormal" onclick="selectBgDiff('normal')"><div>Normal</div></label>
-              <label class="radio-option" id="hostBgDiffHard" onclick="selectBgDiff('hard')"><div>Hard</div></label>
-              <label class="radio-option" id="hostBgDiffExtreme" onclick="selectBgDiff('extreme')"><div>Extreme</div></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="hostBgDiffRow">
+              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('hostBg')">Everything</button>
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostBg','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostBg','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('hostBg','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('hostBg','extreme')">Extreme</button>
             </div>
             
           </div>
@@ -540,18 +534,18 @@
             <input type="range" id="hostSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateSnRoundsSlider()">
           </div>
           <div class="input-group snap-only-settings" style="display: none;">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500.</span></button></label>
-            <div class="radio-group diff-row">
-              <label class="radio-option selected" id="hostSnDiffAll" onclick="selectSnDiff('all')"><div>Everything</div></label>
-              <label class="radio-option" id="hostSnDiffEasy" onclick="selectSnDiff('easy')"><div>Easy</div></label>
-              <label class="radio-option" id="hostSnDiffNormal" onclick="selectSnDiff('normal')"><div>Normal</div></label>
-              <label class="radio-option" id="hostSnDiffHard" onclick="selectSnDiff('hard')"><div>Hard</div></label>
-              <label class="radio-option" id="hostSnDiffExtreme" onclick="selectSnDiff('extreme')"><div>Extreme</div></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="hostSnDiffRow">
+              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('hostSn')">Everything</button>
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostSn','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostSn','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('hostSn','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('hostSn','extreme')">Extreme</button>
             </div>
             
           </div>
           <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
-          <div class="input-group">
+          <div class="input-group snap-only-settings" style="display: none;">
             <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
             <div class="radio-group diff-row">
               <label class="radio-option selected" id="hostSnGroupOff" onclick="selectSnGroup(0)"><div>Separate</div></label>
@@ -1121,10 +1115,11 @@
             </div>
           </div>
           <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Detective Showdown is a head-to-head duel — <b>2 players</b>, always.</p>
-          <div class="slider-container" id="modalHcMaxBlock" style="display: none;">
-            <div class="slider-label"><span>Max Players</span><strong id="modalHcMaxValue">4</strong></div>
-            <input type="range" id="modalHcMaxSlider" min="2" max="12" value="4" oninput="updateModalHcMaxPlayers()">
+          <div class="slider-container" id="modalMaxPlayersBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="modalMaxPlayersValue">8</strong></div>
+            <input type="range" id="modalMaxPlayersSlider" min="2" max="12" value="8" oninput="changeRoomMaxPlayers()">
             <!-- 🌡️ same Guess mode + Ranking toggles as the create-room screen -->
+            <div class="hc-only-settings" style="display: none;">
             <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
             <div class="hc-mode-row">
               <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
@@ -1135,14 +1130,7 @@
               <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
               <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
             </div>
-          </div>
-          <div class="slider-container" id="modalMultiMaxBlock" style="display: none;">
-            <div class="slider-label"><span>Max Players</span><strong id="modalMultiMaxValue">6</strong></div>
-            <input type="range" id="modalMultiMaxSlider" min="3" max="12" value="6" oninput="updateModalMultiMaxPlayers()">
-          </div>
-          <div class="slider-container" id="modalUcMaxBlock" style="display: none;">
-            <div class="slider-label"><span>Max Players</span><strong id="modalUcMaxValue">5</strong></div>
-            <input type="range" id="modalUcMaxSlider" min="3" max="12" value="5" oninput="updateModalUcMaxPlayers()">
+            </div>
           </div>
         </div>
       </div>
@@ -1214,13 +1202,13 @@
             </div>
           </div>
           <div class="input-group">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500.</span></button></label>
-            <div class="radio-group diff-row">
-              <label class="radio-option selected" id="modalBgDiffAll" onclick="changeBgDiff('all')"><div>Everything</div></label>
-              <label class="radio-option" id="modalBgDiffEasy" onclick="changeBgDiff('easy')"><div>Easy</div></label>
-              <label class="radio-option" id="modalBgDiffNormal" onclick="changeBgDiff('normal')"><div>Normal</div></label>
-              <label class="radio-option" id="modalBgDiffHard" onclick="changeBgDiff('hard')"><div>Hard</div></label>
-              <label class="radio-option" id="modalBgDiffExtreme" onclick="changeBgDiff('extreme')"><div>Extreme</div></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="modalBgDiffRow">
+              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('modalBg')">Everything</button>
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalBg','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalBg','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('modalBg','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('modalBg','extreme')">Extreme</button>
             </div>
             
           </div>
@@ -1241,13 +1229,13 @@
             <input type="range" id="modalSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateModalSnRounds()">
           </div>
           <div class="input-group">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500.</span></button></label>
-            <div class="radio-group diff-row">
-              <label class="radio-option selected" id="modalSnDiffAll" onclick="changeSnDiff('all')"><div>Everything</div></label>
-              <label class="radio-option" id="modalSnDiffEasy" onclick="changeSnDiff('easy')"><div>Easy</div></label>
-              <label class="radio-option" id="modalSnDiffNormal" onclick="changeSnDiff('normal')"><div>Normal</div></label>
-              <label class="radio-option" id="modalSnDiffHard" onclick="changeSnDiff('hard')"><div>Hard</div></label>
-              <label class="radio-option" id="modalSnDiffExtreme" onclick="changeSnDiff('extreme')"><div>Extreme</div></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="modalSnDiffRow">
+              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('modalSn')">Everything</button>
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalSn','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalSn','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('modalSn','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('modalSn','extreme')">Extreme</button>
             </div>
             
           </div>
@@ -1581,7 +1569,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=114', 'charanimes.js?v=114', 'animes.js?v=114', 'nsfwdata.js?v=114', 'snappics.js?v=114'];
+        var files = ['characters.js?v=115', 'charanimes.js?v=115', 'animes.js?v=115', 'nsfwdata.js?v=115', 'snappics.js?v=115'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1596,10 +1584,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=114"></script>
-  <script src="music.js?v=114"></script>
-  <script src="lang.js?v=114"></script>
-  <script src="app.js?v=114"></script>
+  <script src="undercover.js?v=115"></script>
+  <script src="music.js?v=115"></script>
+  <script src="lang.js?v=115"></script>
+  <script src="app.js?v=115"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1607,5 +1595,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a47883f44835e284',t:'MTc5MTQ5Nzg0Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a47c401a6814007e',t:'MTc5MTUzNzAwNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

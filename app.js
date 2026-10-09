@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '114';
+    const SAKU_BUILD = '115';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1041,7 +1041,7 @@
 
     // ===== UNDERCOVER MODE state =====
     let hostGame = 'guesswho';     // game selected on the create-room screen
-    let ucMaxPlayers = 5;          // max players for an Undercover room (3-12)
+    let hostMaxPlayers = 8;        // 👥 ONE shared seat count for every game (b115) — per-game floors are enforced when a room is created/updated
     let ucUndercovers = 1;         // 🕵️ how many Undercovers sneak in (1-4, default 1 — the engine re-clamps at word-deal time)
     let ucMrWhite = false;         // Mr. White option on the create-room screen
     let ucStatCountedFor = null;   // "roomCode_gameId" already counted (stats, once per game)
@@ -1056,8 +1056,6 @@
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
     const GAME_LABELS = { guesswho: 'Detective Showdown', undercover: 'Undercover', battle: 'Detective Royale', race: 'Wanted!', blur: 'Blur Guess', hotcold: 'Cold Case', codenames: 'Ninja Scrolls', snapshot: 'Snapshot!' };
-    let multiMaxPlayers = 6;       // max players for battle/race rooms (3-12)
-    let hcMaxPlayers = 4;          // max players for a Hot & Cold room (2-12)
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
     let hostHcHideRank = false;   // 📊 Hot & Cold: hide the live points ranking until match end
     function setHostHcMode(m) {
@@ -1089,8 +1087,8 @@
     const BLUR_STAGE_SEC_MIN = 5, BLUR_STAGE_SEC_MAX = 30; // ⏱ timer slider bounds
     let hostBgRounds = BLUR_ROUNDS_DEFAULT; // rounds option on the create-room screen
     let hostSnRounds = 10;              // 📸 Snapshot! rounds option (4–20)
-    let hostBgDiff = 'all';             // 🎚️ Blur covers difficulty band
-    let hostSnDiff = 'all';             // 🎚️ Snapshot! difficulty band
+    let hostBgDiff = ['easy', 'normal', 'hard', 'extreme']; // 🎚️ Blur difficulty bands (multi-select set)
+    let hostSnDiff = ['easy', 'normal', 'hard', 'extreme']; // 🎚️ Snapshot! difficulty bands (multi-select set)
     let hostSnGroup = 0;                // 🧩 Snapshot! unite seasons & parts of one franchise
     let hostBgStageSec = BLUR_STAGE_SEC;    // timer option on the create-room screen
     let hostBgMode = 'characters';          // 'characters' | 'covers' on the create-room screen
@@ -1494,13 +1492,13 @@
       return {
         game: (document.getElementById('gameSelect') || {}).value || hostGame || 'guesswho',
         visibility: roomVisibility || 'private', source: hostSource || 'generic',
-        ucMax: ucMaxPlayers, ucMw: !!ucMrWhite, ucCount: ucUndercovers, multiMax: multiMaxPlayers, hcMax: hcMaxPlayers, hcMode: hostHcMode, hcHideRank: !!hostHcHideRank,
+        maxPlayers: hostMaxPlayers, ucMw: !!ucMrWhite, ucCount: ucUndercovers, hcMode: hostHcMode, hcHideRank: !!hostHcHideRank,
         charCount: clampN(document.getElementById('hostCharCountSlider').value, 12, 80, 24),
         mix: clampN(document.getElementById('hostMixSlider').value, 0, 80, 12),
         pool: hostPool,
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
-        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec, bgDiff: hostBgDiff,
-        snRounds: hostSnRounds, snDiff: hostSnDiff, snGroup: hostSnGroup ? 1 : 0 // 📸 Snapshot! options
+        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec, bgDiff: sakuDiffSetSan(hostBgDiff),
+        snRounds: hostSnRounds, snDiff: sakuDiffSetSan(hostSnDiff), snGroup: hostSnGroup ? 1 : 0 // 📸 Snapshot! options
       };
     }
     // Restore a snapshot into the whole form (clamped + guarded)
@@ -1517,14 +1515,10 @@
         if (lab) lab.classList.toggle('selected', inp.value === vis);
       });
       // 👥 player counts
-      multiMaxPlayers = clampN(cfg.multiMax, 3, 12, 6);
-      document.getElementById('hostMultiMaxSlider').value = multiMaxPlayers; updateMultiMaxPlayers();
-      hcMaxPlayers = clampN(cfg.hcMax, 2, 12, 4);
-      document.getElementById('hostHcMaxSlider').value = hcMaxPlayers; updateHcMaxPlayers();
+      hostMaxPlayers = clampN(cfg.maxPlayers || cfg.multiMax || cfg.ucMax || cfg.hcMax, 2, 12, 8); // b115: one knob now — legacy presets still load
+      document.getElementById('hostMaxPlayersSlider').value = hostMaxPlayers; updateMaxPlayers();
       if (cfg.hcMode) setHostHcMode(cfg.hcMode === 'individual' ? 'individual' : 'shared');
       setHostHcRank(!!cfg.hcHideRank);
-      ucMaxPlayers = clampN(cfg.ucMax, 3, 12, 5);
-      document.getElementById('hostUcMaxSlider').value = ucMaxPlayers; updateUcMaxPlayers();
       ucUndercovers = clampN(cfg.ucCount, 1, 4, 1);
       document.getElementById('hostUcUndercoversSlider').value = ucUndercovers; updateUcUndercovers();
       // 🃏 pool + Detective Showdown board
@@ -1645,11 +1639,11 @@
     function collectModalConfig() {
       const g = (currentRoom || {}).game || 'guesswho';
       const s = (currentRoom || {}).settings || {};
-      const maxP = clampN((currentRoom || {}).maxPlayers, 3, 12, g === 'undercover' ? 5 : 6);
+      const maxP = clampN((currentRoom || {}).maxPlayers, 2, 12, 8);
       return {
         game: g, visibility: (currentRoom || {}).visibility === 'public' ? 'public' : 'private',
         source: currentSource() || 'generic',
-        ucMax: maxP, ucMw: !!s.mrWhite, ucCount: clampN(s.ucCount, 1, 4, 1), multiMax: maxP, hcMax: clampN((currentRoom || {}).maxPlayers, 2, 12, 4),
+        maxPlayers: maxP, ucMw: !!s.mrWhite, ucCount: clampN(s.ucCount, 1, 4, 1),
         charCount: clampN(s.characterCount, 12, 80, 24),
         mix: clampN(s.mixCount, 0, 80, Math.floor(clampN(s.characterCount, 12, 80, 24) / 2)),
         pool: currentPoolMode(), hcHideRank: !!s.hcHideRank,
@@ -1657,8 +1651,8 @@
         raceQuestions: clampN(s.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS),
         bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
         bgRounds: clampN(s.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT),
-        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC), bgDiff: sakuDiffSan(s.bgDiff),
-        snRounds: clampN(s.snRounds, 4, 20, 10), snDiff: sakuDiffSan(s.snDiff), snGroup: s.snGroup ? 1 : 0
+        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC), bgDiff: sakuDiffSetSan(s.bgDiff),
+        snRounds: clampN(s.snRounds, 4, 20, 10), snDiff: sakuDiffSetSan(s.snDiff), snGroup: s.snGroup ? 1 : 0
       };
     }
     // …and loading writes the saved settings straight into the current room
@@ -1676,7 +1670,7 @@
       const playerCount = Object.keys(currentRoom.players || {}).length;
       const updates = { visibility: cfg.visibility === 'public' ? 'public' : 'private' };
       if (g === 'undercover') {
-        updates.maxPlayers = Math.min(12, Math.max(Math.max(3, playerCount), clampN(cfg.ucMax, 3, 12, 5)));
+        updates.maxPlayers = Math.min(12, Math.max(Math.max(3, playerCount), clampN(cfg.maxPlayers || cfg.ucMax, 3, 12, 8)));
         updates['settings/mrWhite'] = !!cfg.ucMw;
         updates['settings/ucCount'] = clampN(cfg.ucCount, 1, 4, 1); // 🕵️ re-clamped against the final headcount when the words are dealt
       } else {
@@ -1687,9 +1681,7 @@
           updates['settings/characterCount'] = clampN(cfg.charCount, 12, 80, 24);
           updates['settings/mixCount'] = clampN(cfg.mix, 0, 80, Math.floor(clampN(cfg.charCount, 12, 80, 24) / 2));
         }
-        if (g === 'battle' || g === 'race' || g === 'blur' || g === 'snapshot') updates.maxPlayers = Math.min(12, Math.max(Math.max(3, playerCount), clampN(cfg.multiMax, 3, 12, 6)));
-        if (g === 'codenames') updates.maxPlayers = Math.min(12, Math.max(Math.max(4, playerCount), clampN(cfg.multiMax, 4, 12, 6))); // CN needs 2+ per team
-        if (g === 'hotcold') updates.maxPlayers = Math.min(12, Math.max(Math.max(2, playerCount), clampN(cfg.hcMax, 2, 12, 4)));
+        if (g !== 'guesswho') updates.maxPlayers = Math.min(12, Math.max(Math.max(sakuSeatFloor(g), playerCount), clampN(cfg.maxPlayers || cfg.multiMax || cfg.ucMax || cfg.hcMax, sakuSeatFloor(g), 12, 8)));
         if (g === 'hotcold' && cfg.hcMode) updates['settings/hcMode'] = cfg.hcMode === 'individual' ? 'individual' : 'shared'; // legacy presets keep the room's current mode
         if (g === 'hotcold' && cfg.hcHideRank != null) updates['settings/hcHideRank'] = !!cfg.hcHideRank;
         if (g === 'race') {
@@ -1701,8 +1693,8 @@
           updates['settings/bgStageSec'] = clampN(cfg.bgStageSec, 5, 30, BLUR_STAGE_SEC);
           updates['settings/bgMode'] = cfg.bgMode === 'covers' ? 'covers' : 'characters';
         }
-        if (g === 'blur') updates['settings/bgDiff'] = sakuDiffSan(cfg.bgDiff);
-        if (g === 'snapshot') { updates['settings/snRounds'] = clampN(cfg.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(cfg.snDiff); updates['settings/snGroup'] = cfg.snGroup ? 1 : 0; } // 📸
+        if (g === 'blur') updates['settings/bgDiff'] = sakuDiffSetSan(cfg.bgDiff);
+        if (g === 'snapshot') { updates['settings/snRounds'] = clampN(cfg.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSetSan(cfg.snDiff); updates['settings/snGroup'] = cfg.snGroup ? 1 : 0; } // 📸
       }
       try {
         await database.ref('rooms/' + roomCode).update(updates);
@@ -1739,10 +1731,10 @@
       const isCn = hostGame === 'codenames';
       // 🏠 Room tab: only ONE player-count control matches the game
       document.getElementById('hostGwPlayersHint').style.display = hostGame === 'guesswho' ? 'block' : 'none';
-      document.getElementById('hostHcMaxBlock').style.display = hostGame === 'hotcold' ? 'block' : 'none';
-      document.getElementById('hostMultiMaxBlock').style.display = isMulti ? 'block' : 'none';
-      document.getElementById('hostMultiMaxSlider').min = hostGame === 'codenames' ? 4 : 3; // 🥷🎴 CN needs 2+ per team
-      document.getElementById('hostUcMaxBlock').style.display = isUc ? 'block' : 'none';
+      const hpB = document.getElementById('hostMaxPlayersBlock');
+      hpB.style.display = hostGame === 'guesswho' ? 'none' : 'block'; // b115: the SAME slider for every game
+      document.getElementById('hostMaxPlayersSlider').min = sakuSeatFloor(hostGame);
+      document.querySelectorAll('#hostMaxPlayersBlock .hc-only-settings').forEach(el => { el.style.display = hostGame === 'hotcold' ? 'block' : 'none'; });
       // ⚙️ Game tab: pool for all but Undercover; Detective Showdown board settings for
       // guesswho/battle/race (Blur & Hot & Cold draw from the FULL pool — no count)
       document.getElementById('hostPoolGroup').style.display = (isUc || isSnap) ? 'none' : 'block'; // b110: snapshot has no character pool
@@ -1810,9 +1802,9 @@
       }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', syncGamePickBtn); else syncGamePickBtn();
-    function updateUcMaxPlayers() {
-      ucMaxPlayers = parseInt(document.getElementById('hostUcMaxSlider').value);
-      document.getElementById('hostUcMaxValue').textContent = ucMaxPlayers;
+    function updateMaxPlayers() { // 👥 b115: one slider — value is clamped per game at room-creation time
+      hostMaxPlayers = clampN(parseInt(document.getElementById('hostMaxPlayersSlider').value, 10), 2, 12, 8);
+      document.getElementById('hostMaxPlayersValue').textContent = hostMaxPlayers;
     }
     // 🕵️ how many Undercovers the host wants (create-room screen) — 1-4, the
     // engine re-clamps it against the final headcount when the game starts
@@ -1820,24 +1812,16 @@
       ucUndercovers = clampN(parseInt(document.getElementById('hostUcUndercoversSlider').value, 10), 1, 4, 1);
       document.getElementById('hostUcUndercoversValue').textContent = ucUndercovers;
     }
-    function updateMultiMaxPlayers() {
-      multiMaxPlayers = parseInt(document.getElementById('hostMultiMaxSlider').value);
-      document.getElementById('hostMultiMaxValue').textContent = multiMaxPlayers;
-    }
-    function updateHcMaxPlayers() {
-      hcMaxPlayers = parseInt(document.getElementById('hostHcMaxSlider').value, 10) || 4;
-      document.getElementById('hostHcMaxValue').textContent = hcMaxPlayers;
-    }
-    // 🌡️ Hot & Cold seat count (lobby settings modal): 2-12, never below the
-    // number of players already seated
-    async function updateModalHcMaxPlayers() {
-      const v = clampN(parseInt(document.getElementById('modalHcMaxSlider').value, 10), 2, 12, 4);
-      document.getElementById('modalHcMaxValue').textContent = v;
-      if (isHost && currentRoom && currentRoom.game === 'hotcold') {
-        const pc = Object.keys(currentRoom.players || {}).length;
-        await database.ref('rooms/' + roomCode + '/maxPlayers').set(Math.min(12, Math.max(Math.max(2, pc), v)));
-        touchActivity();
-      }
+    // 👥 b115: one shared seat count for every game (lobby ⚙️, 🏠 Room tab) —
+    // the floor is the game's minimum, or who's already seated if that's higher
+    async function changeRoomMaxPlayers() {
+      const slider = document.getElementById('modalMaxPlayersSlider');
+      if (!slider || !currentRoom) return;
+      const playerCount = Object.keys((currentRoom || {}).players || {}).length;
+      const mpMin = Math.max(sakuSeatFloor((currentRoom || {}).game), playerCount);
+      if (parseInt(slider.value, 10) < mpMin) slider.value = mpMin; // can't go below who's already in (or the game's floor)
+      document.getElementById('modalMaxPlayersValue').textContent = slider.value;
+      if (isHost) { await database.ref('rooms/' + roomCode + '/maxPlayers').set(parseInt(slider.value, 10)); touchActivity(); }
     }
     function updateRaceLivesSlider() {
       hostRaceLives = parseInt(document.getElementById('hostRaceLivesSlider').value);
@@ -1855,16 +1839,8 @@
       hostSnRounds = parseInt(document.getElementById('hostSnRoundsSlider').value);
       document.getElementById('hostSnRoundsValue').textContent = hostSnRounds;
     }
-    function selectBgDiff(d) { hostBgDiff = sakuDiffSan(d); paintDiffRadios('hostBgDiff', hostBgDiff); }   // 🎚️ create-room radios
-    function selectSnDiff(d) { hostSnDiff = sakuDiffSan(d); paintDiffRadios('hostSnDiff', hostSnDiff); }
-    async function changeBgDiff(d) { // 🎚️ lobby modal → write straight to the room
-      d = sakuDiffSan(d); paintDiffRadios('modalBgDiff', d);
-      if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgDiff').set(d); touchActivity(); }
-    }
-    async function changeSnDiff(d) {
-      d = sakuDiffSan(d); paintDiffRadios('modalSnDiff', d);
-      if (isHost && currentRoom && currentRoom.game === 'snapshot') { await database.ref('rooms/' + roomCode + '/settings/snDiff').set(d); touchActivity(); }
-    }
+    function selectBgDiff(d) { hostBgDiff = sakuDiffSetSan(d); paintDiffChecks('hostBg', hostBgDiff); }   // 🎚️ create-room checkboxes
+    function selectSnDiff(d) { hostSnDiff = sakuDiffSetSan(d); paintDiffChecks('hostSn', hostSnDiff); }
     // 🧩 Snapshot! family grouping radios (b110)
     function paintSnGroup(pref, on) {
       const off = document.getElementById(pref + 'Off'), one = document.getElementById(pref + 'On');
@@ -1909,25 +1885,23 @@
           state: 'lobby', chat: {}, createdAt: Date.now(), lastActivity: Date.now()
         };
         if (isUc) {
-          roomData.maxPlayers = clampN(ucMaxPlayers, 3, 12, 5);
+          roomData.maxPlayers = Math.min(12, Math.max(3, hostMaxPlayers));
           roomData.settings = { mrWhite: ucMrWhite, ucCount: clampN(ucUndercovers, 1, 4, 1) };
         } else {
-          if (game === 'hotcold') roomData.maxPlayers = Math.min(12, Math.max(2, hcMaxPlayers));
+          roomData.maxPlayers = Math.min(12, Math.max(sakuSeatFloor(game), hostMaxPlayers)); // 👥 b115: one shared knob (+📸 snapshot finally gets a seat count — it never had one!)
           roomData.accounts = hostAccounts.reduce((acc, a) => { acc[a.username] = a; return acc; }, {});
           roomData.settings = { characterCount: charCount, mixCount: clampN(hostMixCount, 0, charCount, Math.floor(charCount / 2)), source: hostSource };
           if (game === 'hotcold') roomData.settings.hcMode = hostHcMode; // 🔀 shared | individual guesses
           if (game === 'hotcold') roomData.settings.hcHideRank = !!hostHcHideRank; // 📊 hide the live ranking until match end
           if (isWatchGame) roomData.settings.pool = hostPool; // 🎲 random (full pool) | watched (synced accounts' seen anime)
-          if (isMulti) roomData.maxPlayers = clampN(multiMaxPlayers, 3, 12, 6);
-          if (game === 'codenames') roomData.maxPlayers = Math.min(12, Math.max(4, multiMaxPlayers)); // 2+ per team
           if (game === 'race') { roomData.settings.raceLives = hostRaceLives; roomData.settings.raceQuestions = hostRaceQuestions; }
           if (game === 'blur') {
             roomData.settings.bgRounds = hostBgRounds;
             roomData.settings.bgStageSec = hostBgStageSec;
             roomData.settings.bgMode = hostBgMode;
-            roomData.settings.bgDiff = hostBgDiff;
+            roomData.settings.bgDiff = sakuDiffSetSan(hostBgDiff);
           }
-          if (game === 'snapshot') { roomData.settings.snRounds = hostSnRounds; roomData.settings.snDiff = hostSnDiff; roomData.settings.snGroup = hostSnGroup ? 1 : 0; } // 📸
+          if (game === 'snapshot') { roomData.settings.snRounds = hostSnRounds; roomData.settings.snDiff = sakuDiffSetSan(hostSnDiff); roomData.settings.snGroup = hostSnGroup ? 1 : 0; } // 📸
         }
         await database.ref('rooms/' + roomCode).set(roomData);
         try { rememberLastFor(game); } catch (e) {} // 💾 auto-remember this game's setup
@@ -3481,22 +3455,81 @@
     // 🎚️ DIFFICULTY by popularity: quartiles of the 1500-anime ranked pool.
     // easy = rank 1-375 | normal = 376-750 | hard = 751-1125 | extreme = 1126-1500
     const SN_DIFFS = ['all', 'easy', 'normal', 'hard', 'extreme'];
-    function sakuDiffSan(d) { return SN_DIFFS.indexOf(d) >= 0 ? d : 'all'; }
+    const SN_DIFF_BANDS = ['easy', 'normal', 'hard', 'extreme']; // selectable bands (b115 multi-select)
+    function sakuDiffSan(d) { return SN_DIFFS.indexOf(d) >= 0 ? d : 'all'; } // legacy single-band validator (old rooms/configs)
+    // b115: difficulty is now a SET of bands. Accepts arrays, legacy 'all' /
+    // single-band strings, garbage -> everything. Minimum one band, never empty.
+    function sakuDiffSetSan(d) {
+      if (Array.isArray(d)) { const u = {}; d.forEach(x => { if (SN_DIFF_BANDS.indexOf(x) >= 0) u[x] = 1; }); const a = SN_DIFF_BANDS.filter(x => u[x]); return a.length ? a : SN_DIFF_BANDS.slice(); }
+      if (d === 'all') return SN_DIFF_BANDS.slice();
+      if (SN_DIFF_BANDS.indexOf(d) >= 0) return [d];
+      return SN_DIFF_BANDS.slice();
+    }
     function sakuDiffBand(rank) { const r = (rank | 0) || 1500; return r <= 375 ? 'easy' : r <= 750 ? 'normal' : r <= 1125 ? 'hard' : 'extreme'; }
     function sakuDiffOf(entry) { return sakuDiffBand((entry && (entry.r | 0)) || 1500); }
     function sakuFilterDiff(pool, diff) {
-      const d = sakuDiffSan(diff);
-      if (d === 'all') return pool || [];
-      return (pool || []).filter(c => c && sakuDiffOf(c) === d);
+      const set = sakuDiffSetSan(diff);
+      if (set.length >= SN_DIFF_BANDS.length) return pool || [];
+      return (pool || []).filter(c => c && set.indexOf(sakuDiffOf(c)) >= 0);
     }
-    // radio painting helper (create-room + lobby modal both use it)
-    function paintDiffRadios(pref, d) {
-      d = sakuDiffSan(d);
-      ['All', 'Easy', 'Normal', 'Hard', 'Extreme'].forEach(k => {
-        const el = document.getElementById(pref + k);
-        if (el) el.classList.toggle('selected', k.toLowerCase() === d);
+    // checkbox painting (create-room + lobby modal use the same row markup)
+    function paintDiffChecks(kind, val) {
+      const set = sakuDiffSetSan(val), row = document.getElementById(kind + 'DiffRow');
+      if (!row) return;
+      row.querySelectorAll('.diff-check').forEach(b => {
+        const d = b.getAttribute('data-d');
+        b.classList.toggle('selected', d === 'all' ? set.length >= SN_DIFF_BANDS.length : set.indexOf(d) >= 0);
       });
     }
+    function sakuDiffKindGet(kind) {
+      if (kind === 'hostBg') return hostBgDiff;
+      if (kind === 'hostSn') return hostSnDiff;
+      const s = (currentRoom || {}).settings || {};
+      return kind === 'modalBg' ? s.bgDiff : s.snDiff;
+    }
+    async function sakuDiffKindSet(kind, set) {
+      set = sakuDiffSetSan(set);
+      paintDiffChecks(kind, set);
+      if (kind === 'hostBg') { hostBgDiff = set; return; }
+      if (kind === 'hostSn') { hostSnDiff = set; return; }
+      const game = kind === 'modalBg' ? 'blur' : 'snapshot';
+      const field = kind === 'modalBg' ? 'bgDiff' : 'snDiff';
+      if (isHost && currentRoom && currentRoom.game === game) { await database.ref('rooms/' + roomCode + '/settings/' + field).set(set); touchActivity(); }
+    }
+    async function toggleDiffBand(kind, band) {
+      if (SN_DIFF_BANDS.indexOf(band) < 0) return;
+      const set = sakuDiffSetSan(sakuDiffKindGet(kind));
+      const i = set.indexOf(band);
+      if (i >= 0) { if (set.length === 1) return; set.splice(i, 1); } // never un-pick the last band
+      else set.push(band);
+      await sakuDiffKindSet(kind, set);
+    };
+    async function toggleDiffAll(kind) { await sakuDiffKindSet(kind, SN_DIFF_BANDS.slice()); }
+
+    // ⓘ bubble placement (b115): every info bubble stays fully inside its own
+    // card — measured live on hover/focus, flipped up when the bottom is tight.
+    function sakuPlaceInfoBubble(btn) {
+      const bb = btn.querySelector('.info-bubble');
+      if (!bb) return;
+      bb.style.left = ''; bb.style.right = ''; bb.style.maxWidth = '';
+      btn.classList.remove('flip');
+      const panel = btn.closest('.modal-content, .panel, .howto-card, .screen') || document.body;
+      const btnR = btn.getBoundingClientRect(), panelR = panel.getBoundingClientRect();
+      if (!btnR.width || !panelR.width) return;
+      const G = 10; // gutter to the panel edge
+      const W = Math.min(250, Math.max(150, panelR.width - 2 * G));
+      bb.style.maxWidth = W + 'px';
+      const btnOffL = btnR.left - panelR.left;
+      let L = Math.round(btnOffL + btnR.width / 2 - W / 2); // try centering on the icon…
+      L = Math.max(G, Math.min(L, panelR.width - G - W));    // …clamped inside the panel
+      bb.style.right = 'auto';
+      bb.style.left = (L - btnOffL) + 'px'; // bubble left is relative to the button
+      const below = panelR.bottom - btnR.bottom;
+      const estH = Math.min(160, 24 + 16 * Math.ceil((bb.textContent || '').length / 34));
+      if (below < estH && (btnR.top - panelR.top) > estH) btn.classList.add('flip');
+    }
+    document.addEventListener('pointerover', function (e) { const b = e.target.closest && e.target.closest('.info-btn'); if (b) sakuPlaceInfoBubble(b); });
+    document.addEventListener('focusin', function (e) { const b = e.target.closest && e.target.closest('.info-btn'); if (b) sakuPlaceInfoBubble(b); });
 
     // Blur Guess has NO "character count" board: the candidate list is the
     // FULL source pool — every generic character, or the 500 anime covers in
@@ -5683,29 +5716,20 @@
       try { syncGamePickBtn(); } catch (e) {} // refresh the compact bar label
       // 🏠 Room tab: exactly one player-count control per game
       document.getElementById('modalGwPlayersHint').style.display = game === 'guesswho' ? 'block' : 'none';
-      const hcBox = document.getElementById('modalHcMaxBlock');
-      if (hcBox) {
-        hcBox.style.display = game === 'hotcold' ? 'block' : 'none';
-        if (game === 'hotcold') {
-          const hm = Math.min(12, Math.max(2, currentRoom.maxPlayers || 4));
-          document.getElementById('modalHcMaxSlider').value = hm;
-          document.getElementById('modalHcMaxValue').textContent = hm;
-          syncHcSettingsUI(); // 🌡️ Guess mode + Ranking pairs mirror the live settings
-        }
-      }
-      const multiBox = document.getElementById('modalMultiMaxBlock');
-      if (multiBox) {
-        multiBox.style.display = isMulti ? 'block' : 'none';
-        if (isMulti) {
-          const mpFloor = game === 'codenames' ? 4 : 3; // 🥷🎴 CN needs 2+ per team
-          const mp = Math.min(12, Math.max(mpFloor, currentRoom.maxPlayers || 6));
-          const mpSlider = document.getElementById('modalMultiMaxSlider');
-          mpSlider.min = mpFloor;
+      const mpBox = document.getElementById('modalMaxPlayersBlock');
+      if (mpBox) { // b115: the SAME slider for every game but the fixed 2-player duel
+        mpBox.style.display = game === 'guesswho' ? 'none' : 'block';
+        if (game !== 'guesswho') {
+          const fl = sakuSeatFloor(game);
+          const mp = Math.min(12, Math.max(fl, currentRoom.maxPlayers || 8));
+          const mpSlider = document.getElementById('modalMaxPlayersSlider');
+          mpSlider.min = fl;
           mpSlider.value = mp;
-          document.getElementById('modalMultiMaxValue').textContent = mp;
+          document.getElementById('modalMaxPlayersValue').textContent = mp;
         }
       }
-      document.getElementById('modalUcMaxBlock').style.display = isUc ? 'block' : 'none';
+      document.querySelectorAll('#modalMaxPlayersBlock .hc-only-settings').forEach(el => { el.style.display = game === 'hotcold' ? 'block' : 'none'; });
+      if (game === 'hotcold') syncHcSettingsUI(); // 🌡️ Guess mode + Ranking pairs mirror the live settings
       // ⚙️ Game tab
       document.getElementById('modalPoolGroup').style.display = (isUc || isSnap) ? 'none' : 'block'; // b110: Snapshot draws anime stills, never the character pool
       // Blur Guess & Hot & Cold draw from the FULL source pool — no character count board needed
@@ -5737,7 +5761,7 @@
           const m = s.bgMode === 'covers' ? 'covers' : 'characters';
           document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
           document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
-          paintDiffRadios('modalBgDiff', s.bgDiff); // 🎚️
+          paintDiffChecks('modalBg', s.bgDiff); // 🎚️
         }
       }
       const snBox = document.getElementById('modalSnapSettings');
@@ -5747,14 +5771,11 @@
           const N = clampN((currentRoom.settings || {}).snRounds, 4, 20, 10);
           document.getElementById('modalSnRoundsSlider').value = N;
           document.getElementById('modalSnRoundsValue').textContent = N;
-          paintDiffRadios('modalSnDiff', (currentRoom.settings || {}).snDiff); // 🎚️
+          paintDiffChecks('modalSn', (currentRoom.settings || {}).snDiff); // 🎚️
           paintSnGroup('modalSnGroup', (currentRoom.settings || {}).snGroup); // 🧩
         }
       }
       if (isUc) {
-        const maxP = currentRoom.maxPlayers || 5;
-        document.getElementById('modalUcMaxSlider').value = maxP;
-        document.getElementById('modalUcMaxValue').textContent = maxP;
         const mwOn = !!(currentRoom.settings && currentRoom.settings.mrWhite);
         document.getElementById('modalUcMwOff').classList.toggle('selected', !mwOn);
         document.getElementById('modalUcMwOn').classList.toggle('selected', mwOn);
@@ -5780,19 +5801,6 @@
         document.getElementById('modalPrivate').classList.remove('selected');
       }
       document.getElementById('settingsModal').classList.add('show');
-    }
-
-    // Max players for battle/race/blur rooms (lobby ⚙️, 🏠 Room tab)
-    async function updateModalMultiMaxPlayers() {
-      const slider = document.getElementById('modalMultiMaxSlider');
-      if (!slider || !isHost || !currentRoom) return;
-      const playerCount = Object.keys(currentRoom.players || {}).length;
-      const mpFloor = currentRoom.game === 'codenames' ? 4 : 3; // 🥷🎴 CN needs 2+ per team
-      const mpMin = Math.max(mpFloor, playerCount);
-      if (parseInt(slider.value) < mpMin) slider.value = mpMin; // can't go below who's already in (or 4 seats for CN)
-      document.getElementById('modalMultiMaxValue').textContent = slider.value;
-      await database.ref('rooms/' + roomCode + '/maxPlayers').set(parseInt(slider.value));
-      touchActivity();
     }
 
     function closeSettings() { document.getElementById('settingsModal').classList.remove('show'); }
@@ -5930,17 +5938,6 @@
       syncMixUI();
     }
 
-    // Undercover room settings (lobby modal)
-    async function updateModalUcMaxPlayers() {
-      const slider = document.getElementById('modalUcMaxSlider');
-      const playerCount = currentRoom ? Object.keys(currentRoom.players || {}).length : 1;
-      if (parseInt(slider.value) < playerCount) slider.value = playerCount; // can't go below who's already in
-      document.getElementById('modalUcMaxValue').textContent = slider.value;
-      if (isHost && currentRoom && currentRoom.game === 'undercover') {
-        await database.ref('rooms/' + roomCode + '/maxPlayers').set(parseInt(slider.value));
-        touchActivity();
-      }
-    }
     // 🕵️ Undercovers count (lobby settings modal): 1-4, but always leave at
     // least 2 innocent civilians — the engine re-checks both anyway at deal time
     async function updateModalUndercovers() {
@@ -6000,11 +5997,13 @@
       if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgMode').set(m); touchActivity(); }
     }
 
-    // Seats for a game given the room's current size: duels stay 2, Hot &
-    // Cold keeps 2-12, the real multi games keep 3-12 (defaults 6 / 2 when unset).
+    // hard player floors per game (b115) - enforced at create / update time
+    function sakuSeatFloor(g) { return { hotcold: 2, undercover: 3, battle: 3, race: 3, blur: 3, snapshot: 3, codenames: 4, guesswho: 2 }[g] || 3; }
+    // Seats for a game given the room's current size: duels stay 2, the rest
+    // floors at its own minimum (defaults 6 / 2 when unset).
     function seatsForGame(g) {
-      if (g === 'undercover' || g === 'battle' || g === 'race' || g === 'blur' || g === 'codenames' || g === 'snapshot') return ((currentRoom.maxPlayers || 0) >= 3) ? Math.max(3, currentRoom.maxPlayers || 0) : 6;
       if (g === 'hotcold') return Math.min(12, Math.max(2, currentRoom.maxPlayers || 2));
+      if (sakuSeatFloor(g) > 2) return ((currentRoom.maxPlayers || 0) >= sakuSeatFloor(g)) ? Math.max(sakuSeatFloor(g), currentRoom.maxPlayers || 0) : 6;
       return 2;
     }
 
@@ -6047,9 +6046,9 @@
         updates['settings/bgRounds'] = s.bgRounds || BLUR_ROUNDS_DEFAULT;
         updates['settings/bgStageSec'] = s.bgStageSec || BLUR_STAGE_SEC;
         updates['settings/bgMode'] = s.bgMode || 'characters';
-        updates['settings/bgDiff'] = sakuDiffSan(s.bgDiff);
+        updates['settings/bgDiff'] = sakuDiffSetSan(s.bgDiff);
       }
-      if (newGame === 'snapshot') { updates['settings/snRounds'] = clampN(s.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSan(s.snDiff); updates['settings/snGroup'] = s.snGroup ? 1 : 0; } // 📸
+      if (newGame === 'snapshot') { updates['settings/snRounds'] = clampN(s.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSetSan(s.snDiff); updates['settings/snGroup'] = s.snGroup ? 1 : 0; } // 📸
       // Fewer seats in the new mode → extra players wait in the ⏳ queue
       const seated = Object.values(currentRoom.players || {}).filter(p => p && p.id);
       const ordered = seated.filter(p => p.isHost).concat(seated.filter(p => !p.isHost)); // host keeps a seat
