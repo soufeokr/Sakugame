@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="115">
+<meta name="saku-build" content="117">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=115" sizes="any">
+<link rel="icon" href="favicon.ico?v=117" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=115">
+<link rel="stylesheet" href="style.css?v=117">
 </head>
 <body>
 
@@ -520,6 +520,14 @@
               <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('hostBg','extreme')">Extreme</button>
             </div>
             
+          </div>
+          <div class="input-group blur-only-settings" style="display: none;">
+            <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
+            <div class="radio-group diff-row">
+              <label class="radio-option selected" id="hostBgGroupOff" onclick="selectBgGroup(0)"><div>Separate</div></label>
+              <label class="radio-option" id="hostBgGroupOn" onclick="selectBgGroup(1)"><div>Unite</div></label>
+            </div>
+            <p style="color: var(--muted); font-size: 0.78rem; line-height: 1.45; margin: 6px 0 0;">Only applies in 🎬 covers mode — characters get no seasons!</p>
           </div>
           <div class="slider-container blur-only-settings" style="display: none;">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many blurred characters or covers to guess in this game.</span></button></span><strong id="hostBgRoundsValue">10</strong></div>
@@ -1212,6 +1220,14 @@
             </div>
             
           </div>
+          <div class="input-group">
+            <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
+            <div class="radio-group diff-row">
+              <label class="radio-option selected" id="modalBgGroupOff" onclick="changeBgGroup(0)"><div>Separate</div></label>
+              <label class="radio-option" id="modalBgGroupOn" onclick="changeBgGroup(1)"><div>Unite</div></label>
+            </div>
+            <p style="color: var(--muted); font-size: 0.78rem; line-height: 1.45; margin: 6px 0 0;">Only applies in 🎬 covers mode — characters get no seasons!</p>
+          </div>
           <div class="slider-container">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many blurred characters or covers to guess in this game.</span></button></span><strong id="modalBgRoundsValue">10</strong></div>
             <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
@@ -1569,7 +1585,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=115', 'charanimes.js?v=115', 'animes.js?v=115', 'nsfwdata.js?v=115', 'snappics.js?v=115'];
+        var files = ['characters.js?v=117', 'charanimes.js?v=117', 'animes.js?v=117', 'nsfwdata.js?v=117', 'snappics.js?v=117'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1584,10 +1600,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=115"></script>
-  <script src="music.js?v=115"></script>
-  <script src="lang.js?v=115"></script>
-  <script src="app.js?v=115"></script>
+  <script src="undercover.js?v=117"></script>
+  <script src="music.js?v=117"></script>
+  <script src="lang.js?v=117"></script>
+  <script src="app.js?v=117"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1595,5 +1611,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a47c401a6814007e',t:'MTc5MTUzNzAwNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a49637c83d274742',t:'MTc5MTgwOTI5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

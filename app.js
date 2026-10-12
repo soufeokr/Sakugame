@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '115';
+    const SAKU_BUILD = '117';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1088,6 +1088,7 @@
     let hostBgRounds = BLUR_ROUNDS_DEFAULT; // rounds option on the create-room screen
     let hostSnRounds = 10;              // 📸 Snapshot! rounds option (4–20)
     let hostBgDiff = ['easy', 'normal', 'hard', 'extreme']; // 🎚️ Blur difficulty bands (multi-select set)
+    let hostBgGroup = 0;    // 🧩 Blur 🎬 covers: group seasons & parts (b116)
     let hostSnDiff = ['easy', 'normal', 'hard', 'extreme']; // 🎚️ Snapshot! difficulty bands (multi-select set)
     let hostSnGroup = 0;                // 🧩 Snapshot! unite seasons & parts of one franchise
     let hostBgStageSec = BLUR_STAGE_SEC;    // timer option on the create-room screen
@@ -1497,7 +1498,7 @@
         mix: clampN(document.getElementById('hostMixSlider').value, 0, 80, 12),
         pool: hostPool,
         raceLives: hostRaceLives, raceQuestions: hostRaceQuestions,
-        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec, bgDiff: sakuDiffSetSan(hostBgDiff),
+        bgMode: hostBgMode, bgRounds: hostBgRounds, bgStageSec: hostBgStageSec, bgDiff: sakuDiffSetSan(hostBgDiff), bgGroup: hostBgGroup ? 1 : 0,
         snRounds: hostSnRounds, snDiff: sakuDiffSetSan(hostSnDiff), snGroup: hostSnGroup ? 1 : 0 // 📸 Snapshot! options
       };
     }
@@ -1540,7 +1541,7 @@
       // 📸 snapshot
       hostSnRounds = clampN(cfg.snRounds, 4, 20, 10);
       document.getElementById('hostSnRoundsSlider').value = hostSnRounds; updateSnRoundsSlider();
-      selectBgDiff(cfg.bgDiff); selectSnDiff(cfg.snDiff); selectSnGroup(cfg.snGroup); // 🎚️ bands · 🧩 family
+      selectBgDiff(cfg.bgDiff); selectSnDiff(cfg.snDiff); selectSnGroup(cfg.snGroup); selectBgGroup(cfg.bgGroup); // 🎚️ bands · 🧩 family
       // 🕵️ undercover
       selectUcMrWhite(!!cfg.ucMw);
     }
@@ -1651,7 +1652,7 @@
         raceQuestions: clampN(s.raceQuestions, 1, 15, RACE_DEFAULT_QUESTIONS),
         bgMode: s.bgMode === 'covers' ? 'covers' : 'characters',
         bgRounds: clampN(s.bgRounds, 5, 80, BLUR_ROUNDS_DEFAULT),
-        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC), bgDiff: sakuDiffSetSan(s.bgDiff),
+        bgStageSec: clampN(s.bgStageSec, 5, 30, BLUR_STAGE_SEC), bgDiff: sakuDiffSetSan(s.bgDiff), bgGroup: s.bgGroup ? 1 : 0,
         snRounds: clampN(s.snRounds, 4, 20, 10), snDiff: sakuDiffSetSan(s.snDiff), snGroup: s.snGroup ? 1 : 0
       };
     }
@@ -1693,7 +1694,7 @@
           updates['settings/bgStageSec'] = clampN(cfg.bgStageSec, 5, 30, BLUR_STAGE_SEC);
           updates['settings/bgMode'] = cfg.bgMode === 'covers' ? 'covers' : 'characters';
         }
-        if (g === 'blur') updates['settings/bgDiff'] = sakuDiffSetSan(cfg.bgDiff);
+        if (g === 'blur') { updates['settings/bgDiff'] = sakuDiffSetSan(cfg.bgDiff); updates['settings/bgGroup'] = cfg.bgGroup ? 1 : 0; }
         if (g === 'snapshot') { updates['settings/snRounds'] = clampN(cfg.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSetSan(cfg.snDiff); updates['settings/snGroup'] = cfg.snGroup ? 1 : 0; } // 📸
       }
       try {
@@ -1841,6 +1842,12 @@
     }
     function selectBgDiff(d) { hostBgDiff = sakuDiffSetSan(d); paintDiffChecks('hostBg', hostBgDiff); }   // 🎚️ create-room checkboxes
     function selectSnDiff(d) { hostSnDiff = sakuDiffSetSan(d); paintDiffChecks('hostSn', hostSnDiff); }
+    // 🧩 Blur 🎬 covers grouping radios (b116) — same painter as Snapshot!'
+    function selectBgGroup(v) { hostBgGroup = v ? 1 : 0; paintSnGroup('hostBgGroup', hostBgGroup); }
+    async function changeBgGroup(v) {
+      v = v ? 1 : 0; paintSnGroup('modalBgGroup', v);
+      if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgGroup').set(v); touchActivity(); }
+    }
     // 🧩 Snapshot! family grouping radios (b110)
     function paintSnGroup(pref, on) {
       const off = document.getElementById(pref + 'Off'), one = document.getElementById(pref + 'On');
@@ -1900,6 +1907,7 @@
             roomData.settings.bgStageSec = hostBgStageSec;
             roomData.settings.bgMode = hostBgMode;
             roomData.settings.bgDiff = sakuDiffSetSan(hostBgDiff);
+            roomData.settings.bgGroup = hostBgGroup ? 1 : 0; // 🧩
           }
           if (game === 'snapshot') { roomData.settings.snRounds = hostSnRounds; roomData.settings.snDiff = sakuDiffSetSan(hostSnDiff); roomData.settings.snGroup = hostSnGroup ? 1 : 0; } // 📸
         }
@@ -3573,7 +3581,14 @@
       const snap = await database.ref('rooms/' + roomCode).once('value');
       const fresh = snap.val() || {};
       const cand = bgCandidateChars();
-      const rounds = shuffleArray(cand.slice()).slice(0, Math.min(totalRounds, cand.length)).map(bgRoundEntry);
+      let picks = shuffleArray(cand.slice());
+      if (s.bgGroup && mode === 'covers') { // 🧩 b116: rounds never repeat a family (Naruto OR Shippuden — not both)
+        const norms = cand.map(c => bgNorm(c.name));
+        const seen = {}; const uniq = [];
+        picks.forEach(c => { const k = snapGroupKey(c.name, norms); if (!seen[k]) { seen[k] = 1; uniq.push(c); } });
+        picks = uniq;
+      }
+      const rounds = picks.slice(0, Math.min(totalRounds, picks.length)).map(bgRoundEntry);
       if (!rounds.length) {
         await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, bg: null });
         showNotification('Not enough pictures for Blur Guess! Check the pool settings — Watched needs synced AniList accounts with watched anime.');
@@ -3762,6 +3777,38 @@
       });
     }
 
+    // 🧩 b116 — Blur 🎬 covers grouping (settings/bgGroup): every sibling title of
+    // the round's family counts as correct (reuses Snapshot!'s normalizer).
+    let bgGroupMemo = { gid: '', map: {} };
+    function bgGroupSiblings(ch) { // all cover titles sharing this round's family
+      if (!ch || !ch.name) return null;
+      const s = (currentRoom || {}).settings || {};
+      if (!s.bgGroup || !bgIsCovers()) return null;
+      const bg = (currentRoom || {}).bg || {};
+      const gid = String(bg.gameId || '');
+      if (gid !== bgGroupMemo.gid) bgGroupMemo = { gid: gid, map: {} };
+      const mk = String(ch.id || ch.name);
+      if (mk in bgGroupMemo.map) return bgGroupMemo.map[mk];
+      const pool = snapPool();
+      if (!pool.length) { bgGroupMemo.map[mk] = null; return null; }
+      const norms = pool.map(c => bgNorm(c.name));
+      const key = snapGroupKey(ch.name, norms);
+      const sibs = [];
+      pool.forEach(c => { if (snapGroupKey(c.name, norms) === key) { sibs.push(c.name); (c.al || []).forEach(a => { if (a) sibs.push(a); }); } });
+      bgGroupMemo.map[mk] = sibs.length ? sibs : null;
+      return bgGroupMemo.map[mk];
+    }
+    function bgMatchesCurrent(text, ch) { // plain match first, then the family variants
+      if (bgMatches(text, ch)) return true;
+      const sibs = bgGroupSiblings(ch);
+      if (!sibs) return false;
+      return sibs.some(nm => bgMatches(text, nm));
+    }
+    function bgRevealName(ch) { // reveal line: family label when covers+group
+      if (bgGroupSiblings(ch) && ch && ch.name) return snapGroupLabelOf(ch, snapPool());
+      return bgIsCovers() ? dTitle((ch && ch.name) || '?') : ((ch && ch.name) || '?');
+    }
+
     // ---------- ⌨️ GUESS AUTOCOMPLETE ----------
     // While typing in the Blur Guess bar, suggest characters whose name,
     // aliases OR ANIME (series) name match the typed text — "bleach" →
@@ -3922,7 +3969,7 @@
       const inp = document.getElementById('bgGuessInput'); if (!inp) return;
       const text = inp.value.trim(); if (!text) return;
       const ch = bgCurrentChar();
-      if (bgMatches(text, ch)) {
+      if (bgMatchesCurrent(text, ch)) {
         const prior = Object.keys(bg.found || {}).length; // 0 = first finder
         const base = Math.max(1, (BLUR_STAGES + 1) - (bg.stage || 1)); // stage 1 → 5 … stage 5 → 1
         const bonus = [3, 2, 1, 0][Math.min(prior, 3)];                // 🏅 speed bonus
@@ -3952,7 +3999,7 @@
         .sort((a, b) => (found[a].rank || 9) - (found[b].rank || 9))
         .map(pid => ((players[pid] || {}).name || '?') + ' +' + found[pid].pts + ' (stage ' + found[pid].stage + ')');
       const upd = { phase: 'reveal', deadline: Date.now() + 6000 };
-      upd['log/' + gameLogPushKey('bg')] = { k: 'find', txt: 'Round ' + ((bg.roundIdx || 0) + 1) + '/' + (bg.rounds || []).length + ': it was ' + (bgIsCovers() ? dTitle(ch.name || '?') : (ch.name || '?')) + (ch.series ? ' (' + ch.series + ')' : '') + '!' };
+      upd['log/' + gameLogPushKey('bg')] = { k: 'find', txt: 'Round ' + ((bg.roundIdx || 0) + 1) + '/' + (bg.rounds || []).length + ': it was ' + bgRevealName(ch) + (ch.series ? ' (' + ch.series + ')' : '') + '!' };
       upd['log/' + gameLogPushKey('bg')] = { k: gains.length ? 'ans' : 'info', txt: gains.length ? gains.join(' · ') : 'Nobody found it that time!' };
       return upd;
     }
@@ -5762,6 +5809,7 @@
           document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
           document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
           paintDiffChecks('modalBg', s.bgDiff); // 🎚️
+          paintSnGroup('modalBgGroup', s.bgGroup); // 🧩
         }
       }
       const snBox = document.getElementById('modalSnapSettings');
@@ -6047,6 +6095,7 @@
         updates['settings/bgStageSec'] = s.bgStageSec || BLUR_STAGE_SEC;
         updates['settings/bgMode'] = s.bgMode || 'characters';
         updates['settings/bgDiff'] = sakuDiffSetSan(s.bgDiff);
+        updates['settings/bgGroup'] = s.bgGroup ? 1 : 0; // 🧩
       }
       if (newGame === 'snapshot') { updates['settings/snRounds'] = clampN(s.snRounds, 4, 20, 10); updates['settings/snDiff'] = sakuDiffSetSan(s.snDiff); updates['settings/snGroup'] = s.snGroup ? 1 : 0; } // 📸
       // Fewer seats in the new mode → extra players wait in the ⏳ queue

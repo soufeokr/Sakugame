@@ -344,12 +344,13 @@
   .radio-group.diff-row { flex-wrap: wrap; gap: 8px; }
   .radio-group.diff-row .radio-option { flex: 1 1 30%; margin-bottom: 0; padding: 10px 6px; min-width: 86px; }
   /* ☐☑ b115 multi-select band pickers (Blur & Snapshot difficulty) */
-  .check-row.diff-row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .diff-check { flex: 1 1 30%; min-width: 86px; padding: 10px 6px; background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 10px; color: var(--text); font-size: 0.85rem; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
-  .diff-check::before { content: ""; width: 13px; height: 13px; border: 2px solid var(--muted); border-radius: 4px; flex: 0 0 auto; transition: all 0.15s; }
+  .check-row.diff-row { display: flex; flex-wrap: nowrap; gap: 6px; } /* b116: all five bands squeezed onto ONE line */
+  .diff-check { flex: 1 1 0; min-width: 0; padding: 9px 3px; background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 10px; color: var(--text); font-size: 0.76rem; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; transition: all 0.15s; }
+  .diff-check::before { content: ""; width: 11px; height: 11px; border: 2px solid var(--muted); border-radius: 3px; flex: 0 0 auto; transition: all 0.15s; }
+  @media (max-width: 620px) { .diff-check { font-size: 0.66rem; padding: 8px 2px; gap: 3px; } .diff-check::before { width: 9px; height: 9px; } }
   .diff-check:hover { border-color: var(--accent); }
   .diff-check.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); }
-  .diff-check.selected::before { border-color: var(--success); background: var(--success) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23051018' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center/9px no-repeat; }
+  .diff-check.selected::before { border-color: var(--success); background-color: var(--success); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23051018' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E"); background-position: center; background-repeat: no-repeat; background-size: 8px; }
   .radio-option { flex: 1; background: #1a1a2e; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #2a2a4a; text-align: center; transition: all 0.2s; }
   .radio-option:hover { border-color: var(--accent); }
   .radio-option.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); }
@@ -392,7 +393,7 @@
    Pure CSS: hover on desktop, tap-to-focus on touch screens. */
 .info-btn { position: relative; display: inline-flex; width: 20px; height: 20px; min-height: 0; min-width: 0; padding: 0; margin-left: 6px; border: 1px solid var(--muted); border-radius: 50%; background: transparent; color: var(--muted); align-items: center; justify-content: center; cursor: help; vertical-align: -0.2em; flex: 0 0 auto; opacity: 0.95; }
 .info-btn:hover, .info-btn:focus-visible { border-color: var(--accent); color: var(--accent); opacity: 1; outline: none; }
-.info-btn .ic { width: 11px; height: 11px; }
+.info-btn .ic { width: 13px; height: 13px; } /* b116: the "i" itself, clear at arm's length */
 .info-bubble { position: absolute; top: calc(100% + 7px); left: 0; z-index: 70; width: max-content; max-width: min(250px, 72vw); padding: 8px 10px; background: var(--bg); border: 1px solid var(--accent2); border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); color: var(--text); font-size: 0.78rem; font-weight: 400; line-height: 1.45; text-align: left; white-space: normal; opacity: 0; visibility: hidden; transform: translateY(-3px); transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease; pointer-events: none; }
 .info-btn.flip .info-bubble { top: auto; bottom: calc(100% + 7px); transform: translateY(3px); }
 .info-btn:hover .info-bubble, .info-btn:focus .info-bubble, .info-btn:focus-within .info-bubble { opacity: 1; visibility: visible; transform: translateY(0); }
@@ -1558,3 +1559,81 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .legal-link { color: var(--accent); font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding-bottom: 2px; border-bottom: 1px dashed rgba(2, 169, 255, 0.45); }
   .legal-link:hover { color: #4fb9fb; border-bottom-color: #4fb9fb; }
   .legal-link .ic { width: 14px; height: 14px; }
+
+  /* ═══════════════ b117 — "ARCADE OUTLINE (soft glow)" reskin ═══════════════
+     Approved from design-variants/variant-c-neon.html. Palette, Nunito and the
+     sakura backdrop are UNCHANGED; surfaces become deep-navy plates with thin
+     cyan outlines. Glow discipline: whisper-light (≤ 12px, ≤ ~.25 alpha) on
+     static/UI elements — luminous outlines (22-24px, ~.3) only on interactive
+     card hover/selected states. Settings surfaces keep the muted profile.
+     This layer overrides base rules by source order — base kept as fallback. */
+
+  /* 🌌 backdrop: faint blueprint grid under the petals */
+  #sakuraBg {
+    background:
+      linear-gradient(rgba(2, 169, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(2, 169, 255, 0.022) 1px, transparent 1px),
+      radial-gradient(1000px 620px at 88% -12%, rgba(2, 169, 255, 0.14), transparent 62%),
+      radial-gradient(820px 620px at -12% 108%, rgba(67, 96, 159, 0.22), transparent 60%),
+      linear-gradient(158deg, #0a0e24 0%, #101b3f 48%, #162653 100%);
+    background-size: 42px 42px, 42px 42px, auto, auto, auto;
+  }
+
+  /* 🏷️ brand — the only glowy text on the site (large display type = safe) */
+  .site-logo { filter: drop-shadow(0 0 6px rgba(2, 169, 255, 0.3)); }
+  .site-logo span { color: var(--accent); letter-spacing: 0.14em; text-shadow: 0 0 9px rgba(2, 169, 255, 0.45); }
+
+  /* 🏠 homepage hero cards */
+  .homepage-btn {
+    background: #131a38; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 14px;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  }
+  .homepage-btn:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55), 0 0 24px rgba(2, 169, 255, 0.3); }
+  .homepage-btn h3 { text-transform: uppercase; letter-spacing: 0.08em; }
+  .homepage-btn .icon { width: 62px; height: 62px; margin: 0 auto 15px; border-radius: 50%; border: 2px solid rgba(2, 169, 255, 0.6); background: rgba(2, 169, 255, 0.08); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45), 0 0 10px rgba(2, 169, 255, 0.22); display: flex; align-items: center; justify-content: center; }
+  .homepage-btn .icon .ic { width: 30px; height: 30px; color: #8fdcff; }
+
+  /* 🎮 play menu options */
+  .play-option { background: #121831; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 12px; }
+  .play-option:hover { border-color: var(--accent); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(2, 169, 255, 0.22); }
+
+  /* 🃏 rules cards — angular cut + luminous rim on hover */
+  .game-card { background: #121831; border: 1.5px solid rgba(2, 169, 255, 0.28); border-radius: 12px; clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%); }
+  .game-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(2, 169, 255, 0.3); }
+  #gamesMenuScreen .game-card { border-radius: 12px; }
+  .game-card-img { background: linear-gradient(135deg, #0d2a55, #081226); border-bottom: 1.5px solid rgba(2, 169, 255, 0.35); }
+  .game-card-img .ic { color: var(--accent); filter: none; }
+
+  /* 🎯 create-room & lobby game pickers */
+  .game-pick-card { background: #121831; border: 1.5px solid rgba(2, 169, 255, 0.22); border-radius: 10px; }
+  .game-pick-card:hover { border-color: rgba(2, 169, 255, 0.85); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(2, 169, 255, 0.22); }
+  .game-pick-card.selected { border-color: var(--accent); background: rgba(2, 169, 255, 0.12); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), 0 0 22px rgba(2, 169, 255, 0.32); }
+  .game-pick-img { background: none; height: auto; padding: 14px 0 4px; }
+  .game-pick-img .ic { width: 26px; height: 26px; color: #6ec9ff; filter: none; }
+
+  /* 🧩 panels & modals — MUTED profile (calm settings, per guideline) */
+  .panel, .settings-section, .modal-content {
+    background: #10162e; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 14px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5), 0 0 20px rgba(2, 169, 255, 0.08);
+  }
+
+  /* 🔘 option radios + difficulty checks — luminous selected ring, whisper glow */
+  .radio-option { background: rgba(2, 169, 255, 0.03); border: 1.5px solid rgba(2, 169, 255, 0.28); border-radius: 8px; }
+  .radio-option.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); color: #8fffb4; box-shadow: 0 0 8px rgba(0, 200, 83, 0.22); }
+  .diff-check { background: transparent; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 7px; }
+  .diff-check.selected { color: #8fffb4; box-shadow: 0 0 8px rgba(0, 200, 83, 0.22); }
+
+  /* 🎚️ sliders — clean bar, rimmed thumb, almost no glow */
+  input[type="range"] { background: rgba(2, 169, 255, 0.12); border: 1px solid rgba(2, 169, 255, 0.3); border-radius: 99px; }
+  input[type="range"]::-webkit-slider-thumb { background: #06121f; border: 3px solid var(--accent); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 4px rgba(2, 169, 255, 0.2); }
+  input[type="range"]::-moz-range-thumb { background: #06121f; border: 3px solid var(--accent); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 4px rgba(2, 169, 255, 0.2); }
+
+  /* ⌨️ text inputs */
+  .input-group input, .input-group select { border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 8px; background: rgba(10, 15, 35, 0.6); }
+  .input-group input:focus, .input-group select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(2, 169, 255, 0.15); }
+
+  /* ✅ action buttons — outlined green plate (matches the approved Create Room) */
+  button.success { background: rgba(0, 200, 83, 0.12); border: 2px solid var(--success); color: #8fffb4; box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 200, 83, 0.22); }
+  button.success:hover { background: rgba(0, 200, 83, 0.2); }
+  .back-btn { background: transparent; border: 1.5px solid rgba(2, 169, 255, 0.3); color: var(--muted); }
+  .back-btn:hover { border-color: rgba(2, 169, 255, 0.7); color: var(--text); }
