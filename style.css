@@ -1637,3 +1637,31 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   button.success:hover { background: rgba(0, 200, 83, 0.2); }
   .back-btn { background: transparent; border: 1.5px solid rgba(2, 169, 255, 0.3); color: var(--muted); }
   .back-btn:hover { border-color: rgba(2, 169, 255, 0.7); color: var(--text); }
+
+  /* ===== b119 · 🌐 language picker on ALL devices + 📍 user menu-bar position (Bottom/Top) ===== */
+  /* The flag button is now part of the bar on every device (it used to be desktop-only);
+     these base rules un-gate it. It sits at the far LEFT of the bar, just before the Beta badge. */
+  #pcLangWrap { display: inline-flex; align-items: center; position: relative; flex: none; }
+  #pcLangWrap .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2,169,255,0.35); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.35); flex: none; }
+  #pcLangWrap .tb-btn:hover { border-color: var(--accent); }
+  #pcLangWrap .tb-flag { display: flex; align-items: center; }
+  #pcLangWrap .tb-flag .flg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+  /* menu opens upward, anchored to the LEFT of the flag (bar is left-anchored now) —
+     top/right neutralized so the shared .tb-menu phone rules can't stretch it */
+  #pcLangMenu { display: none; position: absolute; bottom: calc(100% + 10px); top: auto; left: 0; right: auto; flex-direction: column; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 130; min-width: 170px; margin: 0; gap: 6px; }
+  #pcLangMenu.open { display: flex; }
+  #pcLangMenu .lang-opt { width: 100%; margin: 0; }
+
+  /* 📍 body.bar-top — user setting (profile modal) repins the menu bar to the TOP of every page */
+  body.bar-top { padding-top: 74px; padding-bottom: 20px; }
+  body.bar-top #bottomBar { top: 0; bottom: auto; padding-bottom: 5px; border-top: 0; border-bottom: 2px solid #2a2a4a; box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
+  body.bar-top #pcLangMenu { bottom: auto; top: calc(100% + 10px); }
+  body.bar-top #phoneTopBar { top: 60px; } /* the phone quick strip slides under the moved bar */
+  /* everything that used to hover above the bar's bottom spot falls back to the screen edge */
+  body.bar-top #chatToggleBtn { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  body.bar-top .chat-overlay { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  body.bar-top .game-controls,
+  body.bar-top .uc-controls { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  body.bar-top .saku-consent { bottom: 16px; }
+  @media (max-width: 600px) { body.bar-top { padding-top: 118px; } } /* bar + phone quick strip */
+  @media (min-width: 901px) { body.bar-top .chat-overlay { bottom: 16px; } }

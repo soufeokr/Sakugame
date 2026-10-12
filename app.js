@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '117';
+    const SAKU_BUILD = '119';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1241,6 +1241,24 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setNsfwSwitchStates); else setNsfwSwitchStates();
 
+    // ================= 📍 MENU BAR POSITION (user setting: Bottom / Top) =================
+    // Per-device preference kept in localStorage ('saku-barpos'). 'top' pins the
+    // bottom bar to the top of every page via the body.bar-top CSS overrides.
+    function sakuBarPos() { try { return localStorage.getItem('saku-barpos') === 'top' ? 'top' : 'bottom'; } catch (e) { return 'bottom'; } }
+    function sakuSyncBarPos() {
+      const pos = sakuBarPos();
+      if (document.body) document.body.classList.toggle('bar-top', pos === 'top');
+      const rb = document.getElementById('barPosBottom'), rt = document.getElementById('barPosTop');
+      if (rb) rb.classList.toggle('selected', pos === 'bottom');
+      if (rt) rt.classList.toggle('selected', pos === 'top');
+    }
+    function setBarPos(pos) {
+      try { localStorage.setItem('saku-barpos', pos === 'top' ? 'top' : 'bottom'); } catch (e) {}
+      sakuSyncBarPos();
+      showNotification(t(pos === 'top' ? 'Menu bar pinned to the top.' : 'Menu bar pinned to the bottom.'));
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncBarPos); else sakuSyncBarPos();
+
     // ================= 🛠️ ADMIN MODE (solo launches for display checks) =================
     // Unlock it from the Account tab (🔒 Admin) with this passcode — change it to
     // your own, it only ever lives on the browser you unlock (localStorage).
@@ -2003,6 +2021,25 @@
       } catch (e) { /* best effort — the observer already covered static text */ }
     });
 
+    // ⏹ HOST-ONLY universal panic button (every game): end the live game and
+    // pull EVERYONE back to the lobby — the room listener flips each client
+    // onto lobbyScreen and clears end screens. Game blobs are purged so a
+    // stale board/words/rounds can never ride along into the next game.
+    async function hostEndGame() {
+      if (!isHost || !currentRoom || !roomCode || !currentRoom.state || currentRoom.state === 'lobby') { showNotification('Host only!'); return; }
+      try {
+        await database.ref('rooms/' + roomCode).update({
+          state: 'lobby', characters: null, selections: null,
+          br: null, rc: null, bg: null, uc: null, sn: null, hc: null, cn: null
+        });
+        touchActivity();
+      } catch (e) { showNotification('Could not end the game: ' + e.message); }
+    }
+    function sakuSyncEndGameBtn() { // ⏹ visible to the host only, while a game is live
+      const on = !!(isHost && currentRoom && currentRoom.state && currentRoom.state !== 'lobby');
+      document.querySelectorAll('.saku-endgame').forEach(b => { b.style.display = on ? '' : 'none'; });
+    }
+
     function setupRoomListener() {
       if (roomRef) { roomRef.off(); }
       roomRef = database.ref('rooms/' + roomCode);
@@ -2138,6 +2175,7 @@
           if (currentRoom.state === 'playing' && !document.getElementById('gameScreen').classList.contains('active')) { startGame(); }
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') { updateGame(); }
         }
+        try { sakuSyncEndGameBtn(); } catch (e) {} // ⏹ keep the host-only button in sync with the room
       });
       // Listen for a kick targeted at me
       if (kickRef) { kickRef.off(); }
