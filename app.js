@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '119';
+    const SAKU_BUILD = '120';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -2753,6 +2753,9 @@
       // 📱 mirrored badge on the in-game bar's chat button (phone Detective Showdown)
       const rb = document.getElementById('chatUnreadBadgeRow');
       if (rb) { rb.textContent = chatUnread > 0 ? String(chatUnread) : ''; rb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 🥷🎴 mirrored badge on the Ninja Scrolls chat row button (phone)
+      const cb = document.getElementById('cnChatBadgeRow');
+      if (cb) { cb.textContent = chatUnread > 0 ? String(chatUnread) : ''; cb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
     }
     function toggleChatOverlay() {
       chatOverlayOpen = !chatOverlayOpen;
@@ -5359,6 +5362,7 @@
       const spyView = teams.red.spy === playerId || teams.blue.spy === playerId;
       renderCnBoard(cn, spyView, iCanGuess, cluePick);
       renderCnLog(cn);
+      try { renderCnPhoneHead(cn, teams, rem); } catch (e) {}
     }
     // 🥷🎴 clue taps: the Ninja TAPS the targeted cards — the ×N sets itself
     let cnClueSel = new Set();        // tapped card indices (client-side only)
@@ -5437,6 +5441,39 @@
         d.innerHTML = e.txt;
         logEl.appendChild(d);
       });
+    }
+    // 📱 phone header (b120 · hybrid mock): SHOGUN/NINJA team panels with live remaining counts,
+    // plus a mini history mirroring the full log. Phone-only (CSS) — always rendered, harmless on desktop.
+    function renderCnPhoneHead(cn, teams, rem) {
+      const head = document.getElementById('cnPhoneHead');
+      if (!head) return;
+      const players = (currentRoom && currentRoom.players) || {};
+      const av = (pid) => '<span class="cnph-chip">' + avatarCircle(((players[pid] || {}).avatar) || '', 'ava-cnph') + '</span>';
+      ['blue', 'red'].forEach(t => {
+        const el = document.getElementById(t === 'blue' ? 'cnphBlue' : 'cnphRed');
+        if (!el) return;
+        const tm = (teams && teams[t]) || { spy: null, members: [] };
+        const agents = (tm.members || []).filter(pid => pid !== tm.spy);
+        const anames = agents.map(pid => escapeHtml(String((players[pid] || {}).name || '?'))).join(' · ');
+        el.innerHTML =
+          '<div class="cnph-sec cnph-agents"><h5>SHOGUN</h5><div class="cnph-avrow">' + (agents.map(av).join('') || '<span class="cnph-none">—</span>') + '</div>' + (agents.length ? '<div class="cnph-names">' + anames + '</div>' : '') + '</div>' +
+          '<div class="cnph-count"><b>' + ((rem && rem[t] != null) ? rem[t] : '—') + '</b></div>' +
+          '<div class="cnph-sec cnph-spy"><h5>NINJA</h5><div class="cnph-avrow">' + (tm.spy ? av(tm.spy) : '<span class="cnph-none">—</span>') + '</div>' + (tm.spy ? '<div class="cnph-names">' + escapeHtml(String((players[tm.spy] || {}).name || '?')) + '</div>' : '') + '</div>';
+      });
+      const log2 = document.getElementById('cnphLog');
+      if (log2) {
+        const log = gameLogList(cn);
+        if (!log.length) log2.innerHTML = '<p class="cnph-empty">' + (window.t ? t('Nothing yet') : 'Nothing yet') + '</p>';
+        else {
+          log2.innerHTML = '';
+          log.slice(-40).reverse().forEach(e => {
+            const d = document.createElement('div');
+            d.className = 'br-log-' + ({ 'clue-red': 'cn-c-red', 'clue-blue': 'cn-c-blue', 'find-red': 'cn-f-red', 'find-blue': 'cn-f-blue', 'beige': 'cn-beige', 'black': 'cn-black', 'win': 'find', 'info': 'info' }[e.k] || 'info');
+            d.innerHTML = e.txt;
+            log2.appendChild(d);
+          });
+        }
+      }
     }
     // =============================== 🗝 (Ninja Scrolls ends) ===============================
     function renderMultiEnd(kind) {

@@ -1665,3 +1665,84 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   body.bar-top .saku-consent { bottom: 16px; }
   @media (max-width: 600px) { body.bar-top { padding-top: 118px; } } /* bar + phone quick strip */
   @media (min-width: 901px) { body.bar-top .chat-overlay { bottom: 16px; } }
+
+  /* ===== b120 · 🥷🎴 Ninja Scrolls phone redesign (approved hybrid mock) + lobby/flag fixes ===== */
+  /* new parts live here by default so the DESKTOP look is 100% untouched */
+  .cn-phone-head { display: none; }
+  .cn-turn-wrap { position: relative; }
+  .cn-help-btn { display: none; }
+  #cnChatRowBtn { display: none; } /* phone control-row chat; desktop keeps the floating 💬 */
+
+  /* 🐛 FIX (user report): the NS lobby team columns changed WIDTH when someone joined a box —
+     the grid tracks sized to content. Clamp their minimum so both halves stay exactly 50/50. */
+  .cn-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .cn-cols .cn-box { min-width: 0; }
+  .cn-cols .cn-box-list, .cn-cols .cn-box-list > * { min-width: 0; max-width: 100%; }
+
+  @media (max-width: 900px) {
+    /* ---- FLOW: one column in the mock's order. .board-section is flattened with display:contents
+         so the board, the controls and the button row can interleave with their siblings ---- */
+    #codenamesScreen .uc-main { display: grid; grid-template-columns: 1fr; }
+    #codenamesScreen .board-section { display: contents; }
+    #codenamesScreen .cn-phone-head { grid-row: 1; }
+    #codenamesScreen .cn-role { grid-row: 2; }
+    #codenamesScreen .cn-turn-wrap { grid-row: 3; }
+    #codenamesScreen .cn-board { grid-row: 4; }
+    #codenamesScreen .cn-cluebar { grid-row: 5; }
+    #codenamesScreen .cn-controls { grid-row: 6; }
+    #codenamesScreen .game-controls { grid-row: 7; }
+    #codenamesScreen .uc-header, #codenamesScreen .br-log-wrap { display: none; } /* counts+history moved into the header grid */
+
+    /* ---- top zone: SHOGUN/NINJA team panels flanking the mini history (mock .headrow) ---- */
+    #codenamesScreen .cn-phone-head { display: grid; grid-template-columns: 82px minmax(0, 1fr) 82px; gap: 7px; align-items: stretch; }
+    #codenamesScreen .cnph-team { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    #codenamesScreen .cnph-sec { border-radius: 12px; padding: 6px 4px; text-align: center; }
+    #codenamesScreen .cnph-sec h5 { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; opacity: 0.85; margin-bottom: 4px; font-weight: 800; }
+    #codenamesScreen .cnph-team.blue .cnph-agents { background: linear-gradient(160deg, rgba(30,136,229,0.55), rgba(30,136,229,0.30)); box-shadow: inset 0 0 0 1.5px rgba(140,196,255,0.55), 0 2px 6px rgba(0,0,0,0.35); }
+    #codenamesScreen .cnph-team.red .cnph-agents { background: linear-gradient(160deg, rgba(229,57,53,0.55), rgba(229,57,53,0.30)); box-shadow: inset 0 0 0 1.5px rgba(255,160,140,0.6), 0 2px 6px rgba(0,0,0,0.35); }
+    #codenamesScreen .cnph-team.blue .cnph-spy, #codenamesScreen .cnph-team.blue .cnph-count { background: rgba(30,136,229,0.22); box-shadow: inset 0 0 0 1.5px rgba(140,196,255,0.35); }
+    #codenamesScreen .cnph-team.red .cnph-spy, #codenamesScreen .cnph-team.red .cnph-count { background: rgba(229,57,53,0.22); box-shadow: inset 0 0 0 1.5px rgba(255,160,140,0.4); }
+    #codenamesScreen .cnph-count { border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    #codenamesScreen .cnph-count b { font-size: 1.7rem; font-weight: 900; color: #fff; line-height: 1; }
+    #codenamesScreen .cnph-avrow { display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; }
+    #codenamesScreen .cnph-chip { display: inline-flex; }
+    #codenamesScreen .ava.ava-cnph { width: 22px; height: 22px; border-radius: 50%; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.55); }
+    #codenamesScreen .ava.ava-cnph img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    #codenamesScreen .cnph-names { font-size: 0.52rem; color: #fff; opacity: 0.92; margin-top: 2px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+    #codenamesScreen .cnph-none { opacity: 0.5; font-size: 0.7rem; }
+    #codenamesScreen .cnph-hist { background: rgba(13,25,54,0.8); border-radius: 12px; padding: 6px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.3); min-width: 0; display: flex; flex-direction: column; }
+    #codenamesScreen .cnph-hist h5 { text-align: center; font-size: 0.6rem; letter-spacing: 0.16em; color: rgba(255,255,255,0.7); margin-bottom: 5px; text-transform: uppercase; font-weight: 800; }
+    #codenamesScreen .cnph-hist-list { display: flex; flex-direction: column; gap: 3px; flex: 1; min-height: 0; max-height: 150px; overflow-y: auto; }
+    #codenamesScreen .cnph-hist-list > div { border-radius: 6px; padding: 3px 6px; font-size: 0.58rem; line-height: 1.3; background: rgba(255,255,255,0.05); border-left: 3px solid rgba(255,255,255,0.2); word-break: break-word; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-c-red { border-left-color: #e53935; background: rgba(229,57,53,0.18); }
+    #codenamesScreen .cnph-hist-list .br-log-cn-c-blue { border-left-color: #1e88e5; background: rgba(30,136,229,0.18); }
+    #codenamesScreen .cnph-hist-list .br-log-cn-f-red { border-left-color: #ff8a80; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-f-blue { border-left-color: #82b1ff; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-beige { border-left-color: #b0a48a; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-black { border-left-color: #6a6a80; }
+    #codenamesScreen .cnph-empty { text-align: center; color: var(--muted); font-size: 0.6rem; }
+
+    /* ---- role chip + turn banner + ❓ ---- */
+    #codenamesScreen .cn-role { font-size: 0.72rem; margin: 7px 0 0; }
+    #codenamesScreen .cn-turn { margin: 5px 0 3px; font-size: 0.85rem; padding: 8px 36px 8px 12px; }
+    #codenamesScreen .cn-help-btn { display: flex; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; padding: 0; border-radius: 50%; background: linear-gradient(150deg, #2fd37a, #0e9d54); color: #fff; font-weight: 900; font-size: 0.85rem; border: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+    /* ---- board: exact hybrid geometry (4 cols, small gap, 1/1.02 tiles) ---- */
+    #codenamesScreen .cn-board { gap: 5px; margin-top: 4px; }
+    #codenamesScreen .cn-card { border-radius: 8px; }
+    #codenamesScreen .cn-card img { aspect-ratio: 1 / 1.02; }
+    #codenamesScreen .cn-card .cn-name { font-size: 0.46rem; }
+
+    /* ---- clue bar (mock): dark pill with the word card + ×n ---- */
+    #codenamesScreen .cn-cluebar { margin: 8px 0 0; font-size: 0.95rem; background: #0d0f18; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.14), 0 4px 10px rgba(0,0,0,0.4); }
+
+    /* ---- controls row becomes the mock's 📟 3-button strip (chat / lobby / end) ---- */
+    #codenamesScreen .game-controls { position: static; padding: 0; margin-top: 8px; display: flex; flex-direction: row; flex-wrap: nowrap; gap: 7px; }
+    #codenamesScreen .game-controls button { flex: 1; min-width: 0; height: 46px; border-radius: 12px; font-size: 0.72rem; position: relative; }
+    #codenamesScreen .game-controls .btn-label { display: inline; font-weight: 800; }
+    #codenamesScreen .game-controls .btn-label-phone { display: none; }
+    #codenamesScreen #cnChatRowBtn { display: flex; }
+    /* the floating 💬 would cover the board — the row button replaces it on this screen */
+    #codenamesScreen.active ~ #chatToggleBtn { display: none !important; }
+    #codenamesScreen.active ~ .chat-overlay { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  }
