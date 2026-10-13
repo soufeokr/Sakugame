@@ -522,6 +522,8 @@ var I18N = {
   "Menu bar": { fr: "Barre de menu", es: "Barra de menú" },
   "Bottom": { fr: "Bas", es: "Abajo" },
   "Top": { fr: "Haut", es: "Arriba" },
+  "Display": { fr: "Affichage", es: "Pantalla" },
+  "Nobody to shuffle yet!": { fr: "Personne à mélanger pour l'instant !", es: "¡Aún no hay nadie para mezclar!" },
   "Personalization": { fr: "Personnalisation", es: "Personalización" },
   "Discord account": { fr: "Compte Discord", es: "Cuenta de Discord" },
   "Sync Discord": { fr: "Synchroniser Discord", es: "Sincronizar Discord" },

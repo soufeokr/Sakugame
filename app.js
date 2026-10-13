@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '121';
+    const SAKU_BUILD = '122';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1224,6 +1224,21 @@
         setTimeout(function () { if (sakuKbMeasure() === 0 && document.body) document.body.classList.remove('kb-open'); }, 300);
       });
     }
+
+    // 📱 b122: Ninja Scrolls clue field — same Discord-style lift as the chat input
+    document.addEventListener('focusin', function (e) {
+      if (!window.matchMedia || !window.matchMedia('(max-width: 900px)').matches) return;
+      if (e.target && e.target.id === 'cnClueWord') {
+        if (document.body) document.body.classList.add('kb-open');
+        setTimeout(sakuKbApply, 250);
+        setTimeout(sakuKbApply, 600);
+      }
+    });
+    document.addEventListener('focusout', function (e) {
+      if (e.target && e.target.id === 'cnClueWord') {
+        setTimeout(function () { if (sakuKbMeasure() === 0 && document.body) document.body.classList.remove('kb-open'); }, 300);
+      }
+    });
 
     // ============== 🚫 NSFW (18+) CONTENT FILTER ==============
     // Toggle in Settings → Account (default ON). Hides adult characters & covers
@@ -5065,15 +5080,14 @@
     }
     async function cnRandomTeams() {
       if (!isHost || !currentRoom || !cnInSetup()) return;
-      // 🥷🎴 shuffle only people who CHOSE to play — spectators by default are
-      // never team-forced (not even by the host's shuffle)
-      const both = cnTeams();
-      const pids = shuffleArray([].concat(both.red.members, both.blue.members));
-      if (pids.length < 4) { showNotification(window.t ? t('Ninja Scrolls needs at least 4 players in teams (2+ per team)!') : 'Ninja Scrolls needs at least 4 players in teams (2+ per team)!'); return; }
+      // 🥷🎴 b122: shuffle EVERY player sitting in the lobby into the boxes — any count,
+      // and it NEVER launches the game (the gate banner still decides when START unlocks)
+      const pids = shuffleArray(Object.keys(currentRoom.players || {}));
+      if (!pids.length) { showNotification(window.t ? t('Nobody to shuffle yet!') : 'Nobody to shuffle yet!'); return; }
       const halves = [[], []];
       pids.forEach((p, i) => halves[i % 2].push(p));
       if (Math.random() < 0.5) halves.reverse(); // which half lands in RED is random too
-      const mk = (arr) => { const m = {}; arr.forEach(p => { m[p] = true; }); return { spy: arr[0], members: m }; };
+      const mk = (arr) => { const m = {}; arr.forEach(p => { m[p] = true; }); return { spy: arr[0] || null, members: m }; };
       await database.ref('rooms/' + roomCode + '/cn/teams').set({ red: mk(halves[0]), blue: mk(halves[1]) });
       touchActivity();
     }
@@ -5331,7 +5345,7 @@
           row.className = 'cn-member' + (pid === playerId ? ' me' : '') + (inSpies ? ' spy cn-spy-slot' : '');
           row.innerHTML = avatarCircle(p.avatar || '', 'ava-chat') +
             '<span class="cn-member-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' <i>(' + tt('You') + ')</i>' : '') + '</span>' +
-            (inSpies ? '<span class="cn-spy-badge">' + ic('key') + ' ' + tt('NINJA') + '</span>' : '');
+            ''; // b122: no inline NINJA tag — the NINJA box itself says it
           // 🥷🎴 everyone is read-only… except: YOU drag your tag, the HOST drags ANYONE
           if (p.isHost) row.innerHTML += ' <span class="host-badge cn-host-crown">' + ic('crown') + '</span>';
           if (pid === playerId || isHost) cnMakeDraggable(row, pid);

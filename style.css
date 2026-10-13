@@ -1772,3 +1772,17 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   @media (max-width: 600px) {
     .dc-join, .dc-copy { flex: 1 1 calc(50% - 5px); justify-content: center; }
   }
+
+  /* ===== b122 · 📱 compact settings tabs + NS lobby & keyboard fixes ===== */
+  @media (max-width: 600px) {
+    /* settings tabs: 4 on one row, no scrollbar, smaller type */
+    .acct-tabs { gap: 4px; padding: 3px; flex-wrap: nowrap; overflow: visible; margin: 12px 0; }
+    .acct-tab { flex: 1 1 0; min-width: 0; gap: 3px; padding: 7px 2px; font-size: 0.66rem; white-space: nowrap; letter-spacing: -0.1px; }
+    .acct-tab .ic { width: 0.8rem; height: 0.8rem; flex: none; }
+  }
+  @media (max-width: 900px) {
+    /* ⌨️ the b120 pin must NOT win over the Discord-style keyboard lift (chat above keyboard) */
+    body.kb-open #codenamesScreen.active ~ .chat-overlay { bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); }
+    /* 🥷🎴 the NS clue box rides above the keyboard exactly like the lobby chat does */
+    body.kb-open #codenamesScreen .cn-controls { position: fixed; left: 8px; right: 8px; bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); z-index: 85; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); margin: 0; }
+  }
