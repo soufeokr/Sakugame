@@ -1,4 +1,4 @@
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap'); /* b121: site-wide typeface — Outfit */
   :root {
     --bg: #0f0f1a;
     --card: #1a1a2e;
@@ -12,7 +12,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Outfit', sans-serif;
     background: #0c1226; /* deep blue base — the sakura backdrop paints the gradients over it */
     color: var(--text);
     min-height: 100vh;
@@ -1455,7 +1455,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   #phoneTopBar { display: none; }
   @media (max-width: 600px) {
     #phoneTopBar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 1200; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 12px; background: rgba(13, 25, 54, 0.9); border-bottom: 1px solid rgba(2, 169, 255, 0.25); backdrop-filter: blur(6px); }
-    body { padding-top: 54px; } /* reserve the strip's space — page-anchored controls (like the ⚙️ gear) stay clickable underneath */
+    /* b121: the phone quick strip is gone — no more 54px reservation; the standard 10px top padding applies */
     .chat-overlay { top: calc(54px + env(safe-area-inset-top, 0px) + 10px); } /* 💬 never tucked under the top strip — close button fully visible */
     .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
     .tb-btn .ic { width: 20px; height: 20px; color: var(--accent); }
@@ -1745,4 +1745,30 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
     /* the floating 💬 would cover the board — the row button replaces it on this screen */
     #codenamesScreen.active ~ #chatToggleBtn { display: none !important; }
     #codenamesScreen.active ~ .chat-overlay { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* ===== b121 · 🎨 Personalization tab · bar cleanup · support fix · in-game logo ===== */
+  /* 🐛 support (phone): the Discord card squeezed its label to 1 letter/line.
+     Let the row wrap and the label take a whole line instead. */
+  .discord-card { flex-wrap: wrap; }
+  .dc-handle { overflow-wrap: break-word; }
+  .dc-mid { flex: 1 1 150px; min-width: 0; text-align: left; }
+  .dc-sync { margin-top: 10px; }
+  .dc-signup-note { color: var(--muted); font-size: 0.78rem; margin: 12px 0 0; line-height: 1.45; }
+  .dc-big { background: #5865F2; margin-top: 10px; }
+  .dc-big:hover { background: #4752c4; }
+  .ghost { background: transparent; border: 2px solid #2a2a4a; color: var(--muted); }
+  .ghost:hover { border-color: var(--accent); color: var(--text); }
+
+  /* personalization language row: flag chips, tight radio cards */
+  .lang-pick-row .radio-option { padding: 10px 6px; }
+  .lang-pick .flg { width: 22px; height: 15px; border-radius: 3px; margin-right: 0.3em; vertical-align: -2px; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+  .lang-pick.selected { border-color: var(--accent); background: rgba(2, 169, 255, 0.08); }
+
+  /* during any game the phone drops the big SAKUGAME logo — the board needs the room */
+  @media (max-width: 900px) {
+    body.in-game .site-header { display: none; }
+  }
+  @media (max-width: 600px) {
+    .dc-join, .dc-copy { flex: 1 1 calc(50% - 5px); justify-content: center; }
   }

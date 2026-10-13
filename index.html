@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="120">
+<meta name="saku-build" content="121">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=120" sizes="any">
+<link rel="icon" href="favicon.ico?v=121" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=120">
+<link rel="stylesheet" href="style.css?v=121">
 </head>
 <body>
 
@@ -218,15 +218,6 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <!-- 🌐 language picker — shown on ALL devices (b119), pinned far-LEFT, just before the Beta badge -->
-    <div id="pcLangWrap" data-noi18n>
-      <button type="button" class="tb-btn" id="pcLangBtn" onclick="phoneBarToggle('pcLangMenu')" title="Language" aria-label="Language"><span id="pcLangFlag" class="tb-flag"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg></span></button>
-      <div class="tb-menu lang-row" id="pcLangMenu">
-        <button type="button" class="lang-opt" data-lang="en" onclick="SAKU_I18N&&SAKU_I18N.setLang('en');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>English</button>
-        <button type="button" class="lang-opt" data-lang="fr" onclick="SAKU_I18N&&SAKU_I18N.setLang('fr');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>Français</button>
-        <button type="button" class="lang-opt" data-lang="es" onclick="SAKU_I18N&&SAKU_I18N.setLang('es');phoneBarToggle('___none___')"><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>Español</button>
-      </div>
-    </div>
     <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Beta</span>
     <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
   </div>
@@ -235,11 +226,6 @@
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
-  <div id="phoneTopBar" data-noi18n>
-    <button type="button" class="tb-btn" id="tbVolBtn" onclick="phoneBarToggle('tbVolMenu')" title="Music volume" aria-label="Music volume"><svg class="ic"><use href="#i-music"/></svg></button>
-    <!-- b120: the language flag used to sit here too — it now lives ONLY in the main bar (all devices) -->
-    <div class="tb-menu" id="tbVolMenu"><input type="range" class="music-volume-slider" min="0" max="100" value="50"></div>
-  </div>
 
   <div class="screen active" id="homepageScreen">
     <div class="homepage-container">
@@ -1309,6 +1295,17 @@
     </div>
   </div>
 
+  <!-- 🎮 Discord link offer — shown once right after account creation -->
+  <div class="modal" id="discordLinkModal" style="z-index: 1315;">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeDiscordLinkModal()">×</div>
+      <h2 style="font-size: 1.3rem;"><svg class="ic"><use href="#i-users"/></svg> Link your Discord</h2>
+      <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">One tap: the official Discord popup verifies your account and shows it on your Sakugame profile. Sign-in stays username + password.</p>
+      <button class="full dc-big" onclick="closeDiscordLinkModal(); sakuDiscordStartLink(true)"><svg class="ic"><use href="#i-users"/></svg> <span class="btn-label">Link Discord</span></button>
+      <button class="full ghost" style="margin-top: 8px;" onclick="closeDiscordLinkModal()">Maybe later</button>
+    </div>
+  </div>
+
   <!-- 🗑️ delete account — final confirmation, password required (GDPR) -->
   <div class="modal" id="deleteAccountModal" style="z-index: 1310;">
     <div class="modal-content">
@@ -1332,6 +1329,7 @@
       <!-- 📑 guest tabs: Account (default) / Support — same support info as logged-in users -->
       <div class="acct-tabs" role="tablist">
         <button type="button" class="acct-tab on" role="tab" aria-selected="true" data-tab="account" onclick="switchUnameTab('account')"><svg class="ic"><use href="#i-user"/></svg> Account</button>
+        <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="perso" onclick="switchUnameTab('perso')"><svg class="ic"><use href="#i-palette"/></svg> Personalization</button>
         <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="support" onclick="switchUnameTab('support')"><svg class="ic"><use href="#i-chat"/></svg> Support</button>
       </div>
       <div id="unamePaneAccount" class="acct-pane" role="tabpanel">
@@ -1342,22 +1340,30 @@
         </div>
         <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
         <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
+        <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
+        <h4 class="profile-section-title music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+        <input type="range" class="music-volume-slider" min="0" max="100" value="50">
+      </div>
+      <div id="unamePanePerso" class="acct-pane" role="tabpanel" style="display: none;">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+        <div class="radio-group lang-pick-row" style="gap: 8px;">
+          <label class="radio-option lang-pick" id="langPickEn" data-lang="en" onclick="sakuSetLang('en')"><input type="radio" name="langpick" value="en"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg> English</div></label>
+          <label class="radio-option lang-pick" id="langPickFr" data-lang="fr" onclick="sakuSetLang('fr')"><input type="radio" name="langpick" value="fr"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg> Français</div></label>
+          <label class="radio-option lang-pick" id="langPickEs" data-lang="es" onclick="sakuSetLang('es')"><input type="radio" name="langpick" value="es"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg> Español</div></label>
+        </div>
         <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-gear"/></svg> Menu bar</h4>
         <div class="radio-group" style="gap: 8px;">
           <label class="radio-option selected" id="barPosBottom" onclick="setBarPos('bottom')"><input type="radio" name="barpos" value="bottom" checked><div><svg class="ic"><use href="#i-layers"/></svg> Bottom</div></label>
           <label class="radio-option" id="barPosTop" onclick="setBarPos('top')"><input type="radio" name="barpos" value="top"><div><svg class="ic"><use href="#i-bolt"/></svg> Top</div></label>
         </div>
-        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
-        <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
-        <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
-        <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
       </div>
       <div id="unamePaneSupport" class="acct-pane" role="tabpanel" style="display: none;">
         <h4 class="profile-section-title"><svg class="ic"><use href="#i-chat"/></svg> Contact & Support</h4>
         <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!</p>
         <div class="discord-card">
           <span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Z"/></svg></span>
-          <div style="text-align: left; flex: 1; min-width: 0;">
+          <div style="text-align: left; flex: 1 1 150px; min-width: 0;">
             <div class="dc-label">Discord</div>
             <div class="dc-handle">Join the Sakugame server</div>
           </div>
@@ -1391,6 +1397,7 @@
         <p id="authError"></p>
         <button class="full success" id="authLoginBtn" onclick="loginAccount()">Log In</button>
         <button class="full secondary" id="authRegisterBtn" style="margin-top: 10px;" onclick="registerAccount()">Create Account</button>
+        <p class="dc-signup-note"><svg class="ic"><use href="#i-users"/></svg> Optional after signup: link your Discord so it shows on your profile (sign-in stays username + password).</p>
       </div>
       <!-- Logged-in profile menu -->
       <div id="authProfileView" style="display: none;">
@@ -1411,6 +1418,7 @@
         <!-- Tabs -->
         <div class="acct-tabs" role="tablist">
           <button type="button" class="acct-tab on" role="tab" aria-selected="true" data-tab="game" onclick="switchAcctTab('game')"><svg class="ic"><use href="#i-gamepad"/></svg> Game</button>
+          <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="perso" onclick="switchAcctTab('perso')"><svg class="ic"><use href="#i-palette"/></svg> Personalization</button>
           <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="account" onclick="switchAcctTab('account')"><svg class="ic"><use href="#i-user"/></svg> Account</button>
           <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="support" onclick="switchAcctTab('support')"><svg class="ic"><use href="#i-chat"/></svg> Support</button>
         </div>
@@ -1429,8 +1437,25 @@
             <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
           </div>
 
-          <h4 class="profile-section-title phm-hide music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
-          <input type="range" class="music-volume-slider phm-hide" min="0" max="100" value="50">
+          <h4 class="profile-section-title music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+          <input type="range" class="music-volume-slider" min="0" max="100" value="50">
+        </div>
+
+        <div id="acctPanePerso" class="acct-pane" role="tabpanel" style="display: none;">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+        <div class="radio-group lang-pick-row" style="gap: 8px;">
+          <label class="radio-option lang-pick" id="langPickEn2" data-lang="en" onclick="sakuSetLang('en')"><input type="radio" name="langpick2" value="en"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg> English</div></label>
+          <label class="radio-option lang-pick" id="langPickFr2" data-lang="fr" onclick="sakuSetLang('fr')"><input type="radio" name="langpick2" value="fr"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg> Français</div></label>
+          <label class="radio-option lang-pick" id="langPickEs2" data-lang="es" onclick="sakuSetLang('es')"><input type="radio" name="langpick2" value="es"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg> Español</div></label>
+        </div>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-gear"/></svg> Menu bar</h4>
+        <div class="radio-group" style="gap: 8px;">
+          <label class="radio-option selected" id="barPosBottom2" onclick="setBarPos('bottom')"><input type="radio" name="barpos2" value="bottom" checked><div><svg class="ic"><use href="#i-layers"/></svg> Bottom</div></label>
+          <label class="radio-option" id="barPosTop2" onclick="setBarPos('top')"><input type="radio" name="barpos2" value="top"><div><svg class="ic"><use href="#i-bolt"/></svg> Top</div></label>
+        </div>
+
+          <h4 class="profile-section-title" style="margin-top: 16px;" data-noi18n><svg class="ic"><use href="#i-key"/></svg> Admin <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unlocks solo launches of every game (handy to preview rooms &amp; displays alone).</span></button></h4>
+          <button type="button" class="secondary full" id="adminToggleBtn" data-noi18n onclick="sakuAdminToggle()">🔒 Admin mode is off</button>
         </div>
 
         <!-- 👤 ACCOUNT tab: AniList · username · password · logout -->
@@ -1450,11 +1475,12 @@
             <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
           </div>
 
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-users"/></svg> Discord account <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Link your Discord via the official popup to show it on your profile. Sign-in stays username + password — this never replaces your password.</span></button></h4>
+          <div class="discord-card dc-sync" id="discordLinkBox"></div>
+
           <h4 class="profile-section-title" style="margin-top: 16px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
           <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
 
-          <h4 class="profile-section-title" style="margin-top: 16px;" data-noi18n><svg class="ic"><use href="#i-key"/></svg> Admin <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unlocks solo launches of every game (handy to preview rooms &amp; displays alone).</span></button></h4>
-          <button type="button" class="secondary full" id="adminToggleBtn" data-noi18n onclick="sakuAdminToggle()">🔒 Admin mode is off</button>
 
           <button class="full secondary" style="margin-top: 18px;" onclick="openPasswordModal()"><svg class="ic"><use href="#i-lock"/></svg> Change Password</button>
 
@@ -1470,7 +1496,7 @@
           <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!</p>
           <div class="discord-card">
             <span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Z"/></svg></span>
-            <div style="text-align: left; flex: 1; min-width: 0;">
+            <div style="text-align: left; flex: 1 1 150px; min-width: 0;">
               <div class="dc-label">Discord</div>
               <div class="dc-handle">Join the Sakugame server</div>
             </div>
@@ -1600,7 +1626,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=120', 'charanimes.js?v=120', 'animes.js?v=120', 'nsfwdata.js?v=120', 'snappics.js?v=120'];
+        var files = ['characters.js?v=121', 'charanimes.js?v=121', 'animes.js?v=121', 'nsfwdata.js?v=121', 'snappics.js?v=121'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1615,10 +1641,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=120"></script>
-  <script src="music.js?v=120"></script>
-  <script src="lang.js?v=120"></script>
-  <script src="app.js?v=120"></script>
+  <script src="undercover.js?v=121"></script>
+  <script src="music.js?v=121"></script>
+  <script src="lang.js?v=121"></script>
+  <script src="app.js?v=121"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1626,5 +1652,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a498c3f01c87e18d',t:'MTc5MTgzNjAwOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a038711d980ba3',t:'MTc5MTkxNDE4MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

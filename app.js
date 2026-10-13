@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '120';
+    const SAKU_BUILD = '121';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -489,6 +489,7 @@
           await ref.set(profile);
         }
         currentAccount = { uid: user.uid, username: profile.username, wins: profile.wins || 0, losses: profile.losses || 0, uWins: profile.uWins || 0, uLosses: profile.uLosses || 0, anilist: profile.anilist || null, avatar: profile.avatar || null };
+        try { sakuDiscordRefreshFromDb(); } catch (e) {}
         playerName = currentAccount.username;
         updateUserButton();
         // If already inside a room, update the displayed name + picture there too
@@ -512,7 +513,8 @@
 
     // 🗂️ Account menu tabs (Game / Account / Support) + Discord copy
     function switchAcctTab(tab) {
-      ['game', 'account', 'support'].forEach(t => {
+      if (tab === 'account') { try { sakuDiscordRefreshFromDb(); } catch (e) {} }
+      ['game', 'account', 'support', 'perso'].forEach(t => {
         const pane = document.getElementById('acctPane' + t.charAt(0).toUpperCase() + t.slice(1));
         if (pane) pane.style.display = (t === tab) ? 'block' : 'none';
       });
@@ -615,6 +617,7 @@
         updateUserButton();
         closeAuthModal();
         showNotification('Account created! Welcome, ' + usernameRaw + '!');
+        setTimeout(function () { try { sakuDiscordPromptSignup(); } catch (e) {} }, 700);
       } catch (e) { showAuthError(friendlyAuthError(e)); }
       authBusy(false);
     }
@@ -1118,7 +1121,7 @@
     function closeUsernameModal() { document.getElementById('usernameModal').classList.remove('show'); }
     // 📑 guest modal tabs (Account / Support — same support content as the account modal)
     function switchUnameTab(tab) {
-      ['account', 'support'].forEach(t => {
+      ['account', 'support', 'perso'].forEach(t => {
         const pane = document.getElementById('unamePane' + t.charAt(0).toUpperCase() + t.slice(1));
         if (pane) pane.style.display = (t === tab) ? 'block' : 'none';
       });
@@ -1166,6 +1169,8 @@
       // The floating 💬 chat button exists in the lobby and during games
       const chatBtn = document.getElementById('chatToggleBtn');
       const chatVisible = (screenId === 'lobbyScreen' || screenId === 'gameScreen' || screenId === 'undercoverScreen' || screenId === 'battleScreen' || screenId === 'raceScreen' || screenId === 'blurScreen' || screenId === 'hotcoldScreen');
+      // 📱 b121: during any GAME screen the phone hides the big site logo (body.in-game)
+      document.body.classList.toggle('in-game', ['gameScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'snapshotScreen', 'codenamesScreen', 'hotcoldScreen', 'undercoverScreen'].indexOf(screenId) !== -1);
       if (chatBtn) chatBtn.style.display = chatVisible ? 'flex' : 'none';
       if (!chatVisible) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
       // The 🌐 public room list only streams while the join screen is open
@@ -1248,9 +1253,8 @@
     function sakuSyncBarPos() {
       const pos = sakuBarPos();
       if (document.body) document.body.classList.toggle('bar-top', pos === 'top');
-      const rb = document.getElementById('barPosBottom'), rt = document.getElementById('barPosTop');
-      if (rb) rb.classList.toggle('selected', pos === 'bottom');
-      if (rt) rt.classList.toggle('selected', pos === 'top');
+      ['barPosBottom', 'barPosBottom2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('selected', pos === 'bottom'); });
+      ['barPosTop', 'barPosTop2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('selected', pos === 'top'); });
     }
     function setBarPos(pos) {
       try { localStorage.setItem('saku-barpos', pos === 'top' ? 'top' : 'bottom'); } catch (e) {}
@@ -1258,6 +1262,107 @@
       showNotification(t(pos === 'top' ? 'Menu bar pinned to the top.' : 'Menu bar pinned to the bottom.'));
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncBarPos); else sakuSyncBarPos();
+
+    // ================= 🎮 DISCORD ACCOUNT LINK (OAuth2 · static-safe, b121) =================
+    // SETUP (5 minutes, no server needed):
+    //   1) https://discord.com/developers/applications → "New Application" (name it Sakugame)
+    //   2) OAuth2 → Redirects → add the EXACT page URL, e.g. https://your-domain.tld/index.html
+    //   3) paste the application's CLIENT ID below, redeploy — done.
+    // Security model: the popup is Discord's own domain; we only read /users/@me with the
+    // token and store the public profile under users/{uid}/discord. Password sign-in untouched.
+    const SAKU_DISCORD_CLIENT_ID = 'PUT_YOUR_DISCORD_CLIENT_ID_HERE';
+    function sakuDiscordConfigured() { return typeof SAKU_DISCORD_CLIENT_ID === 'string' && SAKU_DISCORD_CLIENT_ID.length >= 15 && SAKU_DISCORD_CLIENT_ID.indexOf('PUT_') !== 0; }
+    function sakuDiscordAuthUrl() {
+      let redir = 'https://example.invalid/index.html';
+      try { if (window.location && window.location.origin && window.location.origin !== 'null') redir = window.location.origin + window.location.pathname; } catch (e) {}
+      return 'https://discord.com/oauth2/authorize?client_id=' + encodeURIComponent(SAKU_DISCORD_CLIENT_ID) +
+        '&response_type=token&redirect_uri=' + encodeURIComponent(redir) + '&scope=identify';
+    }
+    function sakuDiscordStartLink(fromSignup) {
+      if (!sakuDiscordConfigured()) { showNotification(t('Discord link is not configured yet.')); return; }
+      try { localStorage.setItem('saku-dc-pending', fromSignup ? 'signup' : 'link'); } catch (e) {}
+      try { window.location.href = sakuDiscordAuthUrl(); } catch (e) {}
+    }
+    // full-page OAuth return: Discord sends us back with #access_token=… in the URL
+    async function sakuDiscordHandleReturn() {
+      let h = '';
+      try { h = String(window.location.hash || ''); } catch (e) {}
+      if (h.indexOf('access_token=') < 0) return;
+      let token = null;
+      try { token = new URLSearchParams(h.substring(1)).get('access_token'); } catch (e) {}
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) {} // scrub the token out of the URL bar
+      let pending = null;
+      try { pending = localStorage.getItem('saku-dc-pending'); localStorage.removeItem('saku-dc-pending'); } catch (e) {}
+      if (!token || !pending) return;
+      try {
+        const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
+        if (!res || !res.ok) throw new Error('discord api');
+        const du = await res.json();
+        await sakuDiscordSave(du);
+      } catch (e) { showNotification(t('Discord link failed — try again.')); }
+    }
+    async function sakuDiscordSave(du) {
+      // wait for the restored Firebase session to hydrate currentAccount (page just reloaded)
+      const t0 = Date.now();
+      while (!(currentAccount && currentAccount.uid) && Date.now() - t0 < 9000) await new Promise(r => setTimeout(r, 200));
+      if (!(currentAccount && currentAccount.uid)) { showNotification(t('Log in, then sync Discord from your account settings.')); return; }
+      const clean = {
+        id: String(du.id || ''), username: String(du.username || ''),
+        globalName: String(du.global_name || du.username || ''),
+        avatar: du.avatar ? ('https://cdn.discordapp.com/avatars/' + du.id + '/' + du.avatar + '.png?size=64') : null,
+        linkedAt: Date.now()
+      };
+      try { await database.ref('users/' + currentAccount.uid + '/discord').set(clean); } catch (e) { showNotification(t('Discord link failed — try again.')); return; }
+      try { localStorage.setItem('saku-dc-cache', JSON.stringify(clean)); } catch (e) {}
+      sakuRenderDiscordBox(clean);
+      showNotification(t('Discord account linked!'));
+    }
+    async function sakuDiscordUnlink() {
+      if (!(currentAccount && currentAccount.uid)) return;
+      try { await database.ref('users/' + currentAccount.uid + '/discord').remove(); } catch (e) {}
+      try { localStorage.removeItem('saku-dc-cache'); } catch (e) {}
+      sakuRenderDiscordBox(null);
+      showNotification(t('Discord account unlinked.'));
+    }
+    function sakuDiscordCached() { try { const v = localStorage.getItem('saku-dc-cache'); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+    // paints the Account-tab card: either the ✅ synced identity or the Sync button
+    function sakuRenderDiscordBox(provided) {
+      const box = document.getElementById('discordLinkBox');
+      if (!box) return;
+      const d = provided !== undefined ? provided : sakuDiscordCached();
+      const tt = (k) => (window.t ? t(k) : k);
+      if (d && d.id) {
+        box.innerHTML = '<span class="dc-icon">' + (d.avatar ? '<img src="' + escapeHtml(d.avatar) + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85Z"/></svg>') + '</span>' +
+          '<div class="dc-mid"><div class="dc-label">' + tt('Linked ✓') + '</div><div class="dc-handle">' + escapeHtml(d.globalName || d.username) + '</div></div>' +
+          '<button type="button" class="dc-copy" onclick="sakuDiscordUnlink()"><svg class="ic"><use href="#i-trash"/></svg> ' + tt('Unlink') + '</button>';
+      } else {
+        box.innerHTML = '<span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85Z"/></svg></span>' +
+          '<div class="dc-mid"><div class="dc-label">Discord</div><div class="dc-handle">' + tt('Not linked') + '</div></div>' +
+          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink(false)"><svg class="ic"><use href="#i-link"/></svg> ' + tt('Sync Discord') + '</button>';
+      }
+    }
+    // fresh read from the DB (when the Account tab opens) so other devices' links show up too
+    let _dcDbN = 0;
+    async function sakuDiscordRefreshFromDb() {
+      if (!(currentAccount && currentAccount.uid)) { sakuRenderDiscordBox(null); return; }
+      const n = ++_dcDbN;
+      try {
+        const snap = await database.ref('users/' + currentAccount.uid + '/discord').once('value');
+        if (n !== _dcDbN) return; // a newer refresh won
+        const v = snap.val() || null;
+        try { if (v) localStorage.setItem('saku-dc-cache', JSON.stringify(v)); else localStorage.removeItem('saku-dc-cache'); } catch (e) {}
+        sakuRenderDiscordBox(v);
+      } catch (e) {}
+    }
+    // 🎁 offer once, right after account creation
+    function sakuDiscordPromptSignup() {
+      if (!sakuDiscordConfigured()) return;
+      const m = document.getElementById('discordLinkModal');
+      if (m) m.classList.add('show');
+    }
+    function closeDiscordLinkModal() { const m = document.getElementById('discordLinkModal'); if (m) m.classList.remove('show'); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); });
+    else { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); }
 
     // ================= 🛠️ ADMIN MODE (solo launches for display checks) =================
     // Unlock it from the Account tab (🔒 Admin) with this passcode — change it to
@@ -1350,39 +1455,30 @@
     function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} }
     function showJoinRoom() { showScreen('joinRoomScreen'); }
 
-    // 📱 phone quick top bar — volume & language menus (bar only visible ≤600px)
-    function phoneBarToggle(id) {
-      ['tbVolMenu', 'tbLangMenu', 'pcLangMenu'].forEach(m => {
-        const el = document.getElementById(m);
-        if (el) el.classList.toggle('open', m === id && !el.classList.contains('open'));
+    // 🌐 language radios (Personalization tab — the old bar buttons are gone).
+    // One source of truth: SAKU_I18N.setLang(); the radios just mirror it.
+    function sakuLangNow() { return (window.SAKU_I18N && SAKU_I18N.lang) || 'en'; }
+    function sakuSyncLangRadios() {
+      const l = sakuLangNow();
+      ['langPickEn', 'langPickFr', 'langPickEs', 'langPickEn2', 'langPickFr2', 'langPickEs2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || !el.classList) return;
+        const dl = el.getAttribute ? el.getAttribute('data-lang') : (el.dataset || {}).lang;
+        try { el.classList.toggle('selected', dl === l); } catch (e) {}
       });
     }
-    document.addEventListener('pointerdown', (e) => {
-      try {
-        if (e.target && e.target.closest && !e.target.closest('#phoneTopBar, #pcLangWrap')) phoneBarToggle('___none___');
-      } catch (err) {}
-    });
-    // top-bar language button shows the CURRENT language's flag
-    const TB_FLAGS = {
-      en: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg>',
-      fr: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg>',
-      es: '<svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg>'
-    };
-    function tbSyncLangBtn() {
-      const l = (window.SAKU_I18N && SAKU_I18N.lang) || 'en';
-      ['tbLangFlag', 'pcLangFlag'].forEach(id => { // phone top-bar flag + PC bottom-bar flag
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = TB_FLAGS[l] || TB_FLAGS.en;
-      });
+    function sakuSetLang(l) {
+      if (window.SAKU_I18N && SAKU_I18N.setLang) SAKU_I18N.setLang(l);
+      sakuSyncLangRadios();
     }
     (function () {
       const wrap = () => {
-        if (window.SAKU_I18N && SAKU_I18N.setLang && !SAKU_I18N.__tbWrapped) {
+        if (window.SAKU_I18N && SAKU_I18N.setLang && !SAKU_I18N.__uiWrapped) {
           const orig = SAKU_I18N.setLang;
-          SAKU_I18N.setLang = function (l) { orig(l); tbSyncLangBtn(); };
-          SAKU_I18N.__tbWrapped = true;
+          SAKU_I18N.setLang = function (l) { orig(l); try { sakuSyncLangRadios(); } catch (e) {} };
+          SAKU_I18N.__uiWrapped = true;
         }
-        tbSyncLangBtn();
+        try { sakuSyncLangRadios(); } catch (e) {}
       };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wrap); else wrap();
     })();
