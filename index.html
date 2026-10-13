@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="122">
+<meta name="saku-build" content="130">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=122" sizes="any">
+<link rel="icon" href="favicon.ico?v=130" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=122">
+<link rel="stylesheet" href="style.css?v=130">
 </head>
 <body>
 
@@ -358,9 +358,9 @@
         <button class="secondary small" onclick="openConfigSave()"><svg class="ic"><use href="#i-check"/></svg> Save</button>
         <button class="secondary small" onclick="openConfigLoad()"><svg class="ic"><use href="#i-folder"/></svg> Load</button>
       </div>
-      <p>Configure your room settings</p>
       <!-- 🎮 One single screen — no tabs: pick a game card, tune below -->
       <div id="createTabRoom">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-door"/></svg> Room settings</h3>
         <div class="settings-section">
           <div class="input-group">
             <label>Choose a Game</label>
@@ -409,27 +409,15 @@
               <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
-          <p id="hostGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Detective Showdown is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="hostMaxPlayersBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="hostMaxPlayersValue">8</strong></div>
             <input type="range" id="hostMaxPlayersSlider" min="2" max="12" value="8" oninput="updateMaxPlayers()">
-            <div class="hc-only-settings" style="display: none;">
-            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
-            <div class="hc-mode-row">
-              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
-              <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
-            </div>
-            <div class="slider-label" style="margin-top: 12px;"><span>Ranking <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Show the live ranking during the match — or hide it until the end for extra suspense.</span></button></span></div>
-            <div class="hc-mode-row">
-              <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
-              <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
-            </div>
-            </div>
-          </div>
+                      </div>
         </div>
       </div>
       <!-- ⚙️ Game-specific settings — same screen, shown/hidden per picked game -->
       <div id="createTabGame">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-gear"/></svg> Game settings</h3>
         <div class="settings-section" id="hostPoolGroup">
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Which characters the game draws from — Generic: the full character library · Favorites: the most popular picks · Mix: a blend of both · Watched: only anime the synced AniList accounts have seen.</span></button></h3>
           <div class="input-group" id="hostPoolSrcGwGroup">
@@ -449,7 +437,6 @@
           </div>
         </div>
         <div class="settings-section" id="hostGwSettings">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Detective Showdown</h3>
           <div class="slider-container">
             <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
             <input type="range" id="hostCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateHostCharCount()">
@@ -461,7 +448,6 @@
           </div>
         </div>
         <div class="settings-section" id="hostUcSettings" style="display: none;">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Undercover <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Everyone gets a secret anime word — except the Undercover (who gets a similar one) and Mr. White (who gets nothing). Describe your word each round, spot the impostor, and vote them out!</span></button></h3>
           <div class="input-group">
             <label>Mr. White <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">One player (Mr. White) gets NO word at all — they improvise from everyone else&#39;s clues, and can steal the win by guessing the civilians&#39; word when caught. Needs 4+ players.</span></button></label>
             <div class="radio-group">
@@ -474,8 +460,19 @@
             <input type="range" id="hostUcUndercoversSlider" min="1" max="4" value="1" oninput="updateUcUndercovers()">
           </div>
         </div>
+        <div class="settings-section hc-only-settings" id="hostHcSettings" style="display: none;">
+            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
+              <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
+            </div>
+            <div class="slider-label" style="margin-top: 12px;"><span>Ranking <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Show the live ranking during the match — or hide it until the end for extra suspense.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
+              <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
+            </div>
+        </div>
         <div class="settings-section" id="hostMultiSettings" style="display: none;">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings — <span id="hostMultiLabel">Multiplayer</span></h3>
           <div class="slider-container race-only-settings" style="display: none;">
             <div class="slider-label"><span><svg class="ic"><use href="#i-heart"/></svg> Hunter lives <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many wrong guesses a hunter can make — if ALL hunters run out of lives, the TARGET wins!</span></button></span><strong id="hostRaceLivesValue">3</strong></div>
             <input type="range" id="hostRaceLivesSlider" min="1" max="5" value="3" oninput="updateRaceLivesSlider()">
@@ -508,7 +505,6 @@
               <label class="radio-option selected" id="hostBgGroupOff" onclick="selectBgGroup(0)"><div>Separate</div></label>
               <label class="radio-option" id="hostBgGroupOn" onclick="selectBgGroup(1)"><div>Unite</div></label>
             </div>
-            <p style="color: var(--muted); font-size: 0.78rem; line-height: 1.45; margin: 6px 0 0;">Only applies in 🎬 covers mode — characters get no seasons!</p>
           </div>
           <div class="slider-container blur-only-settings" style="display: none;">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many blurred characters or covers to guess in this game.</span></button></span><strong id="hostBgRoundsValue">10</strong></div>
@@ -533,7 +529,6 @@
             </div>
             
           </div>
-          <p id="hostMultiDesc" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;"></p>
           <div class="input-group snap-only-settings" style="display: none;">
             <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
             <div class="radio-group diff-row">
@@ -910,7 +905,7 @@
           <div class="board cn-board" id="cnBoard"></div>
           <div class="cn-controls">
             <div id="cnClueInput" class="cn-input-row">
-              <input id="cnClueWord" type="text" maxlength="24" placeholder="One-word clue…" autocomplete="off">
+              <input id="cnClueWord" type="text" maxlength="24" placeholder="Clue…" autocomplete="off">
               <select id="cnClueNum" class="cn-num" disabled title="Auto-set by the cards you tap">
                 <option value="0">×0</option><option value="1">×1</option><option value="2">×2</option><option value="3">×3</option><option value="4">×4</option><option value="5">×5</option><option value="6">×6</option><option value="7">×7</option><option value="8">×8</option><option value="9">×9</option>
               </select>
@@ -1061,6 +1056,7 @@
       </div>
       <!-- 🎮 One single view — no tabs: pick a game card, tune below -->
       <div id="settingsTabRoom">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-door"/></svg> Room settings</h3>
         <div class="settings-section">
           <div class="input-group">
             <label>Switch the game <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Switch everyone to another game — the room, the seats and the queue stay exactly as they are.</span></button></label>
@@ -1118,28 +1114,16 @@
               <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
-          <p id="modalGwPlayersHint" style="color: var(--muted); font-size: 0.85rem; line-height: 1.5;">Detective Showdown is a head-to-head duel — <b>2 players</b>, always.</p>
           <div class="slider-container" id="modalMaxPlayersBlock" style="display: none;">
             <div class="slider-label"><span>Max Players</span><strong id="modalMaxPlayersValue">8</strong></div>
             <input type="range" id="modalMaxPlayersSlider" min="2" max="12" value="8" oninput="changeRoomMaxPlayers()">
             <!-- 🌡️ same Guess mode + Ranking toggles as the create-room screen -->
-            <div class="hc-only-settings" style="display: none;">
-            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
-            <div class="hc-mode-row">
-              <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
-              <label class="radio-option" id="modalHcModeIndividual" onclick="changeHcMode('individual')"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
-            </div>
-            <div class="slider-label" style="margin-top: 12px;"><span>Ranking <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Show the live ranking during the match — or hide it until the end for extra suspense.</span></button></span></div>
-            <div class="hc-mode-row">
-              <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
-              <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
-            </div>
-            </div>
-          </div>
+                      </div>
         </div>
       </div>
       <!-- ⚙️ Game-specific settings — same view, shown/hidden per picked game -->
       <div id="settingsTabGame">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-gear"/></svg> Game settings</h3>
         <div class="settings-section" id="modalPoolGroup">
           <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Which characters the game draws from — Generic: the full character library · Favorites: the most popular picks · Mix: a blend of both · Watched: only anime the synced AniList accounts have seen.</span></button></h3>
           <div class="input-group" id="modalPoolSrcGwGroup">
@@ -1159,7 +1143,6 @@
           </div>
         </div>
         <div class="settings-section" id="modalGwSettings">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Detective Showdown</h3>
           <div class="slider-container">
             <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
             <input type="range" id="modalCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateModalCharCount()">
@@ -1171,7 +1154,6 @@
           </div>
         </div>
         <div class="settings-section" id="modalUwSettings" style="display: none;">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Undercover <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Everyone gets a secret anime word — except the Undercover (who gets a similar one) and Mr. White (who gets nothing). Describe your word each round, spot the impostor, and vote them out!</span></button></h3>
           <div class="input-group">
             <label>Mr. White <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">One player (Mr. White) gets NO word at all — they improvise from everyone else&#39;s clues, and can steal the win by guessing the civilians&#39; word when caught. Needs 4+ players.</span></button></label>
             <div class="radio-group">
@@ -1184,8 +1166,19 @@
             </div>
           </div>
         </div>
+        <div class="settings-section hc-only-settings" id="modalHcSettings" style="display: none;">
+            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
+              <label class="radio-option" id="modalHcModeIndividual" onclick="changeHcMode('individual')"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
+            </div>
+            <div class="slider-label" style="margin-top: 12px;"><span>Ranking <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Show the live ranking during the match — or hide it until the end for extra suspense.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
+              <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
+            </div>
+        </div>
         <div class="settings-section" id="modalRaceSettings" style="display: none;">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Race</h3>
           <div class="slider-container">
             <div class="slider-label"><span><svg class="ic"><use href="#i-heart"/></svg> Hunter lives <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many wrong guesses a hunter can make — if ALL hunters run out of lives, the TARGET wins!</span></button></span><strong id="modalRaceLivesValue">3</strong></div>
             <input type="range" id="modalRaceLivesSlider" min="1" max="5" value="3" oninput="updateModalRaceLives()">
@@ -1194,10 +1187,8 @@
             <div class="slider-label"><span><svg class="ic"><use href="#i-help"/></svg> Hunter questions <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many yes/no questions each hunter may ask the target — running out means you can only guess… or pass.</span></button></span><strong id="modalRaceQuestionsValue">8</strong></div>
             <input type="range" id="modalRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateModalRaceQuestions()">
           </div>
-          <p style="color: var(--muted); font-size: 0.82rem; margin-top: 6px;">Applies from the next game.</p>
         </div>
         <div class="settings-section" id="modalBgSettings" style="display: none;">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Blur Guess <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Each round clears over 5 stages — earlier guess = more points. Applies from the next game.</span></button></h3>
           <div class="input-group">
             <label>What to guess</label>
             <div class="radio-group">
@@ -1222,7 +1213,6 @@
               <label class="radio-option selected" id="modalBgGroupOff" onclick="changeBgGroup(0)"><div>Separate</div></label>
               <label class="radio-option" id="modalBgGroupOn" onclick="changeBgGroup(1)"><div>Unite</div></label>
             </div>
-            <p style="color: var(--muted); font-size: 0.78rem; line-height: 1.45; margin: 6px 0 0;">Only applies in 🎬 covers mode — characters get no seasons!</p>
           </div>
           <div class="slider-container">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many blurred characters or covers to guess in this game.</span></button></span><strong id="modalBgRoundsValue">10</strong></div>
@@ -1235,7 +1225,6 @@
           
         </div>
         <div class="settings-section" id="modalSnapSettings" style="display: none;">
-          <h3><svg class="ic"><use href="#i-gear"/></svg> Game Settings - Snapshot! <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Each round shows up to 4 stills from one anime, harder → easier (the last is the official art, with a hint) — earlier guess = more points. Pool: episode stills + the official art. Applies from the next game.</span></button></h3>
           <div class="slider-container">
             <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many anime to guess this game — each shows up to 4 stills, harder → easier.</span></button></span><strong id="modalSnRoundsValue">10</strong></div>
             <input type="range" id="modalSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateModalSnRounds()">
@@ -1626,7 +1615,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=122', 'charanimes.js?v=122', 'animes.js?v=122', 'nsfwdata.js?v=122', 'snappics.js?v=122'];
+        var files = ['characters.js?v=130', 'charanimes.js?v=130', 'animes.js?v=130', 'nsfwdata.js?v=130', 'snappics.js?v=130'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1641,10 +1630,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=122"></script>
-  <script src="music.js?v=122"></script>
-  <script src="lang.js?v=122"></script>
-  <script src="app.js?v=122"></script>
+  <script src="undercover.js?v=130"></script>
+  <script src="music.js?v=130"></script>
+  <script src="lang.js?v=130"></script>
+  <script src="app.js?v=130"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1652,5 +1641,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a09d9b7df3e1d9',t:'MTc5MTkxODMyNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a20f97498827a6',t:'MTc5MTkzMzQ3OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

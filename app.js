@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '122';
+    const SAKU_BUILD = '130';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -101,11 +101,21 @@
     var HT_SNAP_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (((typeof SNAP_PICS !== 'undefined' ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {}).b)) || HT_BLUR_IMG : '';
     var HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
     var HT_BOARD = '', HT_BOARD_OUT = '';
+    var HT_SNAP_SEQ = [];
+    var HT_UW = { a: 'Blue Lock', b: 'Ao Ashi', imgA: '', imgB: '' }; // fallback till undercover.js lands
     function htRefreshDataRefs() {
       HT_POOL = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS : [];
       HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
       HT_SNAP_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (((typeof SNAP_PICS !== 'undefined' ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {}).b)) || HT_BLUR_IMG : '';
       HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+      { const sp = (typeof SNAP_PICS !== 'undefined' && typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {};
+        HT_SNAP_SEQ = [ sp.p && sp.p[0], sp.p && sp.p[1], HT_SNAP_IMG ].filter(Boolean);
+        // real Undercover pair straight from the game's own deck (with its official artwork)
+        try {
+          const pr = (typeof UNDERCOVER_PAIRS !== 'undefined' && UNDERCOVER_PAIRS.length) ? UNDERCOVER_PAIRS.find(function (p) { return p && p.imgA && p.imgB; }) || UNDERCOVER_PAIRS[0] : null;
+          if (pr) HT_UW = { a: pr.a, b: pr.b, imgA: pr.imgA || '', imgB: pr.imgB || '' };
+        } catch (e) {}
+      }
       if (typeof HT_NAMES !== 'undefined') {
         HT_BOARD = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, i === 3 ? 'secret' : ''); }).join('') + '</div>';
         HT_BOARD_OUT = '<div class="mk-grid">' + HT_NAMES.map(function (n, i) { return htCharReal(n, [0, 2, 6].indexOf(i) >= 0 ? 'out' : (i === 3 ? 'secret' : '')); }).join('') + '</div>';
@@ -133,6 +143,10 @@
       return '<div class="mk-char' + (extra ? ' ' + extra : '') + '"><div class="mk-photo-wrap">' + face + '</div><span class="mk-name">' + escapeHtml(name) + '</span>' + (extra === 'secret' ? '<span class="mk-badge">?</span>' : '') + '</div>';
     }
     htRefreshDataRefs(); // HT_BOARD / HT_BOARD_OUT computed from whatever pool state exists now
+    function htUwCard(word, img) { // undercover role word + the real game illustration
+      const art = img ? '<img class="mk-uw-img" src="' + img + '" alt="" loading="lazy" data-l="' + escapeHtml((word || '?')[0]) + '" onerror="htImgFail(this)">' : '';
+      return '<div class="mk-uw">' + art + '<span>' + escapeHtml(word || '?') + '</span></div>';
+    }
     function htMiniBoard(who, outIdx) {
       const items = HT_NAMES.slice(0, 6).map(function (n, i) { return htCharReal(n, outIdx.indexOf(i) >= 0 ? 'out' : ''); }).join('');
       return '<div class="mk-mini"><div class="mk-label">' + who + '</div><div class="mk-grid mk-grid3">' + items + '</div></div>';
@@ -177,13 +191,13 @@
       ]},
       undercover: { title: 'Undercover', icon: 'spy', players: '3-12 players', slides: [
         { t: 'Secret roles', d: 'Everyone receives the same secret word… except one Undercover (a very similar word) and one Mr. White (no word at all). Peek at your card and keep it secret!',
-          s: htScene('<div class="mk-roles3"><div class="mk-role">' + htChip('Citizen', 'ok') + '<div class="mk-word">Blue Lock</div></div><div class="mk-role">' + htChip('Undercover', 'no') + '<div class="mk-word">Ao Ashi</div></div><div class="mk-role">' + htChip('Mr. White', 'dim') + '<div class="mk-word">???</div></div></div><div class="mk-note">A real pair from the game — both are football anime!</div>') },
+          s: htScene('<div class="mk-roles3"><div class="mk-role">' + htChip('Citizen', 'ok') + '<div class="mk-word">' + htUwCard(HT_UW.a, HT_UW.imgA) + '</div></div><div class="mk-role">' + htChip('Undercover', 'no') + '<div class="mk-word">' + htUwCard(HT_UW.b, HT_UW.imgB) + '</div></div><div class="mk-role">' + htChip('Mr. White', 'dim') + '<div class="mk-word">???</div></div></div><div class="mk-note">A real pair straight from the game\'s own decks — close enough to fool everyone.</div>') },
         { t: 'One clue each', d: 'Round after round, every player gives a one-word clue about their word. Citizens must prove they know it — without making it obvious for the impostors.',
           s: htScene('<div class="mk-log"><p><b>SakuraFan:</b> strikers</p><p><b>Kira_42:</b> football</p><p><b>Yuki:</b> ego</p><p><b>Tensa:</b> isagi</p></div>') },
         { t: 'Listen carefully', d: 'The Undercover bluffs with clues that almost fit, and Mr. White improvises from the other players\' clues. An odd clue is your best lead — remember who said what.',
           s: htScene('<div class="mk-log"><p><b>SakuraFan:</b> blue prison</p><p class="mk-odd"><b>Kira_42:</b> esperion youth team??</p><p><b>Tensa:</b> bachira</p><div class="mk-note">Esperion is the team in Ao Ashi — not in Blue Lock. Suspicious…</div></div>') },
         { t: 'Time to vote', d: 'After the clues, everyone votes to eliminate one suspect. The player with the most votes leaves — and their role is revealed to the table.',
-          s: htScene('<div class="mk-chipwrap">' + htChip('SakuraFan') + htChip('Kira_42 (3 votes)', 'no') + htChip('Yuki') + htChip('Tensa') + '</div><div class="mk-note">Kira_42 was… the Undercover! Their word was Ao Ashi.</div>') },
+          s: htScene('<div class="mk-chipwrap">' + htChip('SakuraFan') + htChip('Kira_42 (3 votes)', 'no') + htChip('Yuki') + htChip('Tensa') + '</div><div class="mk-note">Kira_42 was… the Undercover! Their word was ' + escapeHtml(HT_UW.b) + '.</div>') },
         { t: 'How it ends', d: 'Citizens win by voting out every impostor. Impostors win once they equal the citizens. And Mr. White can steal everything: when caught, one correct guess of the secret word = instant solo win!',
           s: htScene('<div class="mk-chips">' + htChip('Citizens win!', 'ok') + htChip('Impostors win!', 'no') + htChip('Mr. White steals it!', 'dim') + '</div>') }
       ]},
@@ -221,9 +235,9 @@
       ]},
       snapshot: { title: 'Snapshot!', icon: 'image', players: 'solo or up to 12', slides: [
         { t: 'Name that anime!', d: 'Play solo to train, or race up to 12 players at once! Every round, up to 4 stills from ONE anime (out of 700+ shows) join the frame one by one — first one to type the right title banks the points!',
-          s: htScene(htBadges([['Round 1/10', 'dim'], ['Stills 1/4', 'ok'], ['8s', 'warn']]) + (HT_SNAP_IMG ? '<img class="mk-img b3 mk-bigimg" src="' + HT_SNAP_IMG + '" alt="anime still demo">' : '<div class="mk-note">4 stills per round!</div>') + '<div class="mk-who">Which anime is this?!</div>' + htQ('Type the anime title…', 'GUESS!')) },
+          s: htScene(htBadges([['Round 1/10', 'dim'], ['Stills 1/4', 'ok'], ['8s', 'warn']]) + (HT_SNAP_SEQ[0] ? '<img class="mk-img mk-bigimg" src="' + HT_SNAP_SEQ[0] + '" alt="anime still demo">' : '<div class="mk-note">4 stills per round!</div>') + '<div class="mk-who">Which anime is this?!</div>' + htQ('Type the anime title…', 'GUESS!')) },
         { t: 'Four stills, four payouts', d: 'Stage 1 shows ONE deep-cut still (brutal!)… then three easier ones at 8-second beats, ending with the official art AND a hint. Payout melts as it gets easy: stage 1 = 4 pts, stage 4 = 1 pt. Trust your gut early!',
-          s: htScene(HT_SNAP_IMG ? '<div class="mk-stages"><div><img class="mk-img b3" src="' + HT_SNAP_IMG + '" alt=""><span class="mk-badge2">4 pts</span></div><div><img class="mk-img b2" src="' + HT_SNAP_IMG + '" alt=""><span class="mk-badge2">2 pts</span></div><div><img class="mk-img b1" src="' + HT_SNAP_IMG + '" alt=""><span class="mk-badge2">1 pt</span></div></div><div class="mk-note">Hard frame → other frames → official art + hint.</div>' : '<div class="mk-note">Stage 1 = 4 pts … stage 4 = 1 pt.</div>') },
+          s: htScene(HT_SNAP_SEQ.length >= 2 ? '<div class="mk-stages">' + HT_SNAP_SEQ.map(function (u, i) { return '<div><img class="mk-img" src="' + u + '" alt=""><span class="mk-badge2">' + (i === 0 ? '4 pts' : i === 1 ? '2 pts' : '1 pt') + '</span></div>'; }).join('') + '</div><div class="mk-note">Deep-cut frame → more frames → official art + hint.</div>' : '<div class="mk-note">Stage 1 = 4 pts … stage 4 = 1 pt.</div>') },
         { t: 'Stuck? Wait for the hint', d: 'The 4th still lands with genres (max 3), the year, and the title\'s first letter with its letter count. Any known alias works as an answer — SNK, AoT, the full romaji… (typing the second word alone, like "Titan", does NOT count!)',
           s: htScene(htBadges([['Stills 4/4', 'warn'], ['Hint time!', 'ok']]) + '<div class="mk-chips" style="justify-content:center">' + htChip('Action, Drama', 'dim') + htChip('2013', 'dim') + htChip('starts with "A" — 13 letters', 'ok') + '</div>' + htQ('Attack on Titan', 'GUESS!') + '<div class="mk-note">Full title or any full alias counts — single words from the title don\'t.</div>') },
         { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1). A stage-1 first guess is the jackpot: 4 + 3 = 7 points! The host picks 4-20 rounds — most points at the end wins.',
@@ -251,6 +265,22 @@
     // 🐢 when the lazy game-data pools arrive (index.html loader), rebuild the
     // demo scenes so they show real character photos & a real cover
     if (window.sakuDataReady) window.sakuDataReady.then(function () { try { HOWTO = buildHowto(); } catch (e) {} }, function () {});
+
+    // ? tutorial button on every "Choose a Game" card → that game's slideshow
+    function openHowtoCard(e, g) { try { if (e && e.stopPropagation) e.stopPropagation(); } catch (err) {} openHowTo(g); }
+    function decoratePickCards() { // static grids (create screen + lobby settings): cards are in the HTML
+      try {
+        document.querySelectorAll('.game-pick-card[data-game]').forEach(function (c) {
+          if (c.querySelector('.gp-howto')) return;
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'gp-howto'; b.title = 'How to play'; b.setAttribute('aria-label', 'How to play');
+          b.innerHTML = '?';
+          b.onclick = function (e) { openHowtoCard(e, c.dataset.game); };
+          c.appendChild(b);
+        });
+      } catch (e) {}
+    }
+    if (typeof document !== 'undefined') { try { decoratePickCards(); } catch (e) {} }
 
     function openHowTo(g) {
       if (!HOWTO[g]) return;
@@ -1285,7 +1315,7 @@
     //   3) paste the application's CLIENT ID below, redeploy — done.
     // Security model: the popup is Discord's own domain; we only read /users/@me with the
     // token and store the public profile under users/{uid}/discord. Password sign-in untouched.
-    const SAKU_DISCORD_CLIENT_ID = 'PUT_YOUR_DISCORD_CLIENT_ID_HERE';
+    const SAKU_DISCORD_CLIENT_ID = '1559704038067540069';
     function sakuDiscordConfigured() { return typeof SAKU_DISCORD_CLIENT_ID === 'string' && SAKU_DISCORD_CLIENT_ID.length >= 15 && SAKU_DISCORD_CLIENT_ID.indexOf('PUT_') !== 0; }
     function sakuDiscordAuthUrl() {
       let redir = 'https://example.invalid/index.html';
@@ -1860,11 +1890,11 @@
       const isSnap = hostGame === 'snapshot';
       const isCn = hostGame === 'codenames';
       // 🏠 Room tab: only ONE player-count control matches the game
-      document.getElementById('hostGwPlayersHint').style.display = hostGame === 'guesswho' ? 'block' : 'none';
+      const hgh = document.getElementById('hostGwPlayersHint'); if (hgh) hgh.style.display = 'none'; // element removed (b124 two-section cleanup)
       const hpB = document.getElementById('hostMaxPlayersBlock');
       hpB.style.display = hostGame === 'guesswho' ? 'none' : 'block'; // b115: the SAME slider for every game
       document.getElementById('hostMaxPlayersSlider').min = sakuSeatFloor(hostGame);
-      document.querySelectorAll('#hostMaxPlayersBlock .hc-only-settings').forEach(el => { el.style.display = hostGame === 'hotcold' ? 'block' : 'none'; });
+      document.querySelectorAll('#hostHcSettings').forEach(el => { el.style.display = hostGame === 'hotcold' ? 'block' : 'none'; });
       // ⚙️ Game tab: pool for all but Undercover; Detective Showdown board settings for
       // guesswho/battle/race (Blur & Hot & Cold draw from the FULL pool — no count)
       document.getElementById('hostPoolGroup').style.display = (isUc || isSnap) ? 'none' : 'block'; // b110: snapshot has no character pool
@@ -1880,16 +1910,8 @@
       document.querySelectorAll('.blur-only-settings').forEach(el => { el.style.display = isBlur ? 'block' : 'none'; });
       document.querySelectorAll('.snap-only-settings').forEach(el => { el.style.display = isSnap ? 'block' : 'none'; });
       if (isMulti) {
-        document.getElementById('hostMultiLabel').textContent = hostGame === 'battle' ? 'Battle Royale' : hostGame === 'race' ? 'Race' : hostGame === 'codenames' ? 'Ninja Scrolls' : hostGame === 'snapshot' ? 'Snapshot!' : 'Blur Guess';
-        document.getElementById('hostMultiDesc').textContent = hostGame === 'battle'
-          ? 'Everyone picks a secret character. On your turn you ask ONE yes/no question and EVERYONE answers about their own secret. Eliminate cards on each opponent\'s colored board, guess their secrets: the earlier you find one, the more points! Last secret standing wins.'
-          : hostGame === 'race'
-            ? 'One random player is the TARGET: they secretly pick the mystery character and answer all questions honestly. Hunters take turns ASKING — but GUESSING is free for everyone, at any moment (wrong = -1 life)! First to find the mystery character wins!'
-            : hostGame === 'codenames'
-              ? 'Two teams face a 4×6 grid of characters. Each NINJA sees the secret colors, gives ONE word and TAPS the targeted cards to set the guess count. Good picks chain +1 bonus guesses! Find all your agents first — but beware the black assassin card: hitting it loses the game instantly!'
-              : hostGame === 'snapshot'
-                ? '4 stills from ONE anime join the frame one by one — name the anime as early as you can! Each still is EASIER than the last (the 4th is the official art, WITH a hint). 1st still = 4 pts … last = 1 pt, and the fastest guesses score a +3/+2/+1 speed bonus. Playable SOLO too!'
-                : 'A blurred character slowly clears over 5 stages — name them as early as you can! Stage 1 = 5 pts, stage 5 = 1 pt. With friends, the fastest correct guesses score a speed bonus (+3/+2/+1). Playable SOLO too!';
+        // b125: per-game title headers deleted — nothing to rename anymore
+        const hmd = document.getElementById('hostMultiDesc'); if (hmd) hmd.textContent = ''; // descriptions removed (b124)
       }
       try { syncGamePickBtn(); } catch (e) {} // keep the 📱 picker button synced with the selection
     }
@@ -1909,7 +1931,9 @@
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'gpm-row' + (g === cur ? ' on' : '');
-        b.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg><span class="gpm-name">' + (GAME_LABELS[g] || g) + '</span><small>' + GAME_PLAYERS_TXT[g] + '</small>';
+        b.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg><span class="gpm-name">' + (GAME_LABELS[g] || g) + '</span><small>' + GAME_PLAYERS_TXT[g] + '</small><span class="gp-howto gpm-howto" role="button" aria-label="How to play" title="How to play">?</span>';
+        const gph = b.querySelector('.gp-howto');
+        if (gph) gph.onclick = function (e) { e.stopPropagation(); openHowTo(g); };
         b.onclick = function () {
           if (gamePickCtx === 'modal') { try { modalCardGame(g); } catch (e) {} } else { selectHostGame(g); }
           closeGamePickModal();
@@ -5189,14 +5213,20 @@
       const myTeam = cnTeamOf(playerId, cn);
       if (myTeam !== cn.turn) { showNotification(window.t ? t('Wait for your team\'s turn!') : 'Wait for your team\'s turn!'); return; }
       if (teams[myTeam].spy !== playerId) { showNotification(window.t ? t('Only the Ninja can give the clue!') : 'Only the Ninja can give the clue!'); return; }
-      const w = (document.getElementById('cnClueWord').value || '').trim();
+      const w = (document.getElementById('cnClueWord').value || '').trim().replace(/\s+/g, ' ');
       const n = parseInt((document.getElementById('cnClueNum').value || '0'), 10);
-      if (!/^\S{1,24}$/.test(w)) { showNotification(window.t ? t('The clue must be a single word!') : 'The clue must be a single word!'); return; }
+      // 🥷🎴 b123: multi-word clues are welcome (freedom!) — up to 40 chars — but they may
+      // never BE a visible name: exact match · one word of it · the full name inside the
+      // phrase · or the full name scrambled across the clue words.
+      if (!(w.length >= 1 && w.length <= 40)) { showNotification(window.t ? t('The clue must be 1-40 characters!') : 'The clue must be 1-40 characters!'); return; }
       if (!(n >= 1 && n <= 9)) { showNotification(window.t ? t('Tap the targeted cards to set the count!') : 'Tap the targeted cards to set the count!'); return; }
       const lower = w.toLowerCase();
+      const wTok = new Set(lower.split(/[\s,\-'’\.]+/).filter(Boolean));
       const forbidden = (cn.board || []).some(c => {
-        const nm = String((c && c.name) || '').toLowerCase();
-        return nm === lower || nm.split(/[\s,\-'’\.]+/).filter(Boolean).indexOf(lower) !== -1;
+        const nm = String((c && c.name) || '').toLowerCase().trim().replace(/\s+/g, ' ');
+        if (!nm) return false;
+        const nTok = nm.split(/[\s,\-'’\.]+/).filter(Boolean);
+        return nm === lower || nTok.indexOf(lower) !== -1 || (nm.length >= 3 && lower.indexOf(nm) !== -1) || (nTok.length > 1 && nTok.every(tk => wTok.has(tk)));
       });
       if (forbidden) { showNotification(window.t ? t('The clue can\'t be part of a visible character name!') : 'The clue can\'t be part of a visible character name!'); return; }
       database.ref('rooms/' + roomCode).update({ 'cn/clue': { word: w, n: n, by: playerId, at: Date.now() }, 'cn/phase': 'guess', 'cn/guessesLeft': n, 'cn/sug': null });
@@ -5947,7 +5977,7 @@
       syncModalGameCards();
       try { syncGamePickBtn(); } catch (e) {} // refresh the compact bar label
       // 🏠 Room tab: exactly one player-count control per game
-      document.getElementById('modalGwPlayersHint').style.display = game === 'guesswho' ? 'block' : 'none';
+      const gwHint = document.getElementById('modalGwPlayersHint'); if (gwHint) gwHint.style.display = 'none'; // element removed (b123 section cleanup)
       const mpBox = document.getElementById('modalMaxPlayersBlock');
       if (mpBox) { // b115: the SAME slider for every game but the fixed 2-player duel
         mpBox.style.display = game === 'guesswho' ? 'none' : 'block';
@@ -5960,7 +5990,7 @@
           document.getElementById('modalMaxPlayersValue').textContent = mp;
         }
       }
-      document.querySelectorAll('#modalMaxPlayersBlock .hc-only-settings').forEach(el => { el.style.display = game === 'hotcold' ? 'block' : 'none'; });
+      document.querySelectorAll('#modalHcSettings').forEach(el => { el.style.display = game === 'hotcold' ? 'block' : 'none'; });
       if (game === 'hotcold') syncHcSettingsUI(); // 🌡️ Guess mode + Ranking pairs mirror the live settings
       // ⚙️ Game tab
       document.getElementById('modalPoolGroup').style.display = (isUc || isSnap) ? 'none' : 'block'; // b110: Snapshot draws anime stills, never the character pool

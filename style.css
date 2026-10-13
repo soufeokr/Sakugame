@@ -1786,3 +1786,43 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
     /* 🥷🎴 the NS clue box rides above the keyboard exactly like the lobby chat does */
     body.kb-open #codenamesScreen .cn-controls { position: fixed; left: 8px; right: 8px; bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); z-index: 85; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); margin: 0; }
   }
+
+  /* ===== b123 · ⚙️ settings unified into 2 sections · "?" info · compact lobby admin ===== */
+  /* settings window: ONE Room settings card + ONE Game settings card, inner boxes flattened */
+  #settingsModal #settingsTabRoom, #settingsModal #settingsTabGame,
+  #hostRoomScreen #createTabRoom, #hostRoomScreen #createTabGame { display: block; background: #101423; border: 2px solid #2a2a4a; border-radius: 16px; padding: 14px 14px 8px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+  #settingsModal .settings-section, #hostRoomScreen .settings-section { background: transparent; border: none; padding: 0; margin: 0 0 12px; box-shadow: none; }
+  #settingsModal .settings-section:last-of-type, #hostRoomScreen .settings-section:last-of-type { margin-bottom: 4px; }
+  #settingsModal .sec-h, #hostRoomScreen .sec-h { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: var(--accent); font-weight: 900; font-size: 0.95rem; letter-spacing: 0.4px; }
+  #settingsModal .sec-h .ic, #hostRoomScreen .sec-h .ic { width: 1.05rem; height: 1.05rem; }
+
+  /* information bubble trigger: "?" instead of the i glyph, same 13px presence */
+  .info-btn .ic { display: none; }
+  .info-btn::after { content: "?"; font-weight: 900; font-size: 13px; line-height: 1; }
+
+  /* 📱 lobby host buttons (👑 transfer · ✕ kick): small enough to sit inside the name box */
+  @media (max-width: 600px) {
+    .player-admin-actions { gap: 4px; }
+    .player-admin-btn { width: 24px; height: 24px; border-radius: 7px; }
+    .player-admin-btn svg { width: 12px; height: 12px; }
+    .player-admin-btn:hover { transform: none; }
+  }
+
+  /* ===== b125 · ? tutorial button on game cards · real mock-game howto bits ===== */
+  .game-pick-card { position: relative; }
+  .gpm-row { position: relative; }
+  .gp-howto { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--accent); background: rgba(2, 169, 255, 0.14); color: var(--accent); font-weight: 900; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; z-index: 3; }
+  .gp-howto:hover { background: var(--accent); color: #04122b; }
+  .mk-uw { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .mk-uw-img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; border: 2px solid rgba(255,255,255,0.14); background: #1a1a2e; display: block; }
+  .mk-uw span { font-weight: 800; font-size: 0.88rem; }
+
+  /* ===== b126 · compact game-picker rows · trailing ? · tutorial above everything ===== */
+  /* 📱 choose-a-game menu: slimmer rows, the ? sits at the right of each game line */
+  .gpm-row { padding: 8px 12px; font-size: 0.86rem; gap: 10px; margin-bottom: 6px; border-radius: 10px; }
+  .gpm-row .ic { width: 19px; height: 19px; }
+  .gpm-row small { font-size: 0.72rem; }
+  .gp-howto.gpm-howto { position: static; margin-left: 8px; flex: none; width: 24px; height: 24px; font-size: 13px; }
+
+  /* 🎬 tutorial slideshow always in the FOREGROUND (game picker sits at 1260) */
+  .howto-modal { z-index: 1300; }
