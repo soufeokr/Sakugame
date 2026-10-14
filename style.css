@@ -1826,3 +1826,6 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
 
   /* 🎬 tutorial slideshow always in the FOREGROUND (game picker sits at 1260) */
   .howto-modal { z-index: 1300; }
+
+  /* ===== b128 · NS name strip takes each card's color (not black) ===== */
+  .cn-card .cn-name { background: transparent; }

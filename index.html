@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="130">
+<meta name="saku-build" content="131">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=130" sizes="any">
+<link rel="icon" href="favicon.ico?v=131" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=130">
+<link rel="stylesheet" href="style.css?v=131">
 </head>
 <body>
 
@@ -491,7 +491,6 @@
           <div class="input-group blur-only-settings" style="display: none;">
             <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="hostBgDiffRow">
-              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('hostBg')">Everything</button>
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostBg','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostBg','normal')">Normal</button>
               <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('hostBg','hard')">Hard</button>
@@ -521,7 +520,6 @@
           <div class="input-group snap-only-settings" style="display: none;">
             <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="hostSnDiffRow">
-              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('hostSn')">Everything</button>
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostSn','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostSn','normal')">Normal</button>
               <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('hostSn','hard')">Hard</button>
@@ -1199,7 +1197,6 @@
           <div class="input-group">
             <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="modalBgDiffRow">
-              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('modalBg')">Everything</button>
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalBg','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalBg','normal')">Normal</button>
               <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('modalBg','hard')">Hard</button>
@@ -1232,7 +1229,6 @@
           <div class="input-group">
             <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="modalSnDiffRow">
-              <button type="button" class="diff-check selected" data-d="all" onclick="toggleDiffAll('modalSn')">Everything</button>
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalSn','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalSn','normal')">Normal</button>
               <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('modalSn','hard')">Hard</button>
@@ -1615,7 +1611,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=130', 'charanimes.js?v=130', 'animes.js?v=130', 'nsfwdata.js?v=130', 'snappics.js?v=130'];
+        var files = ['characters.js?v=131', 'charanimes.js?v=131', 'animes.js?v=131', 'nsfwdata.js?v=131', 'snappics.js?v=131'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1630,10 +1626,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=130"></script>
-  <script src="music.js?v=130"></script>
-  <script src="lang.js?v=130"></script>
-  <script src="app.js?v=130"></script>
+  <script src="undercover.js?v=131"></script>
+  <script src="music.js?v=131"></script>
+  <script src="lang.js?v=131"></script>
+  <script src="app.js?v=131"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1641,5 +1637,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a20f97498827a6',t:'MTc5MTkzMzQ3OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a60d4f9e92e200',t:'MTc5MTk3NTMyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
