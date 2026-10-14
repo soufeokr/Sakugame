@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '131';
+    const SAKU_BUILD = '154';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1070,7 +1070,7 @@
       Object.keys(map).forEach(k => { const el = document.getElementById(map[k]); if (el) el.checked = sel.indexOf(k) >= 0; });
     }
     let codeBlurred = false;
-    let myCharacterHidden = false;
+    // b130: secret hide/show = tap the card itself (Cold Case mechanic) — no button
 
     // ===== UNDERCOVER MODE state =====
     let hostGame = 'guesswho';     // game selected on the create-room screen
@@ -2891,6 +2891,18 @@
       // 🥷🎴 mirrored badge on the Ninja Scrolls chat row button (phone)
       const cb = document.getElementById('cnChatBadgeRow');
       if (cb) { cb.textContent = chatUnread > 0 ? String(chatUnread) : ''; cb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 🎭👥 mirrored badge on the Detective Royale chat row button (phone)
+      const bb = document.getElementById('brChatUnreadBadgeRow');
+      if (bb) { bb.textContent = chatUnread > 0 ? String(chatUnread) : ''; bb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // ⚡ mirrored badge on the Wanted! chat row button (phone)
+      const xb = document.getElementById('rcChatUnreadBadgeRow');
+      if (xb) { xb.textContent = chatUnread > 0 ? String(chatUnread) : ''; xb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 🕵️‍🔍 mirrored badge on the Undercover chat row button (phone)
+      const ub = document.getElementById('ucChatUnreadBadgeRow');
+      if (ub) { ub.textContent = chatUnread > 0 ? String(chatUnread) : ''; ub.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 🧊🔥 mirrored badge on the Cold Case chat row button (phone)
+      const hb = document.getElementById('hcChatUnreadBadgeRow');
+      if (hb) { hb.textContent = chatUnread > 0 ? String(chatUnread) : ''; hb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
     }
     function toggleChatOverlay() {
       chatOverlayOpen = !chatOverlayOpen;
@@ -7788,12 +7800,9 @@
       setAvatarImg('opponentAvatar', (opponentId && currentRoom.players[opponentId]) ? currentRoom.players[opponentId].avatar : null);
       document.getElementById('myCharacterImg').src = mySecret.image || '';
       document.getElementById('myCharacterName').textContent = mySecret.name || '---';
-      // 🔄 fresh game: secret card visible again + phone label back to "Hide"
-      myCharacterHidden = false;
+      // 🔄 fresh game: secret card visible again
       const myCharEl = document.getElementById('myCharacter');
-      if (myCharEl) myCharEl.classList.remove('hidden');
-      const hidePh = document.getElementById('hideCharPhoneLabel');
-      if (hidePh) hidePh.textContent = 'Hide';
+      if (myCharEl) myCharEl.classList.remove('ds-hide');
       showScreen('gameScreen');
       setTimeout(() => { renderBoard(); updateTurnIndicator(); updateQuestionBox(); updateHistory(); }, 100);
     }
@@ -7890,13 +7899,31 @@
       list.scrollTop = 0;
     }
 
-    function toggleMyCharacter() {
-      myCharacterHidden = !myCharacterHidden;
-      const myChar = document.getElementById('myCharacter');
-      if (myCharacterHidden) myChar.classList.add('hidden'); else myChar.classList.remove('hidden');
-      // 📱 the phone button flips its label: "Hide" while the character is shown, "Show" while hidden
-      const ph = document.getElementById('hideCharPhoneLabel');
-      if (ph) ph.textContent = myCharacterHidden ? 'Show' : 'Hide';
+
+    // 🗒 Q&A log: phone bottom-sheet toggle (desktop keeps its side column)
+    function toggleGwHistory() {
+      const scr = document.getElementById('gameScreen');
+      if (scr) scr.classList.toggle('gw-hist-open');
+    }
+    // 🗒👥 DR: same bottom-sheet for the battle log
+    function toggleBrHistory() {
+      const scr = document.getElementById('battleScreen');
+      if (scr) scr.classList.toggle('br-hist-open');
+    }
+    // 🗒⚡ Wanted!: same bottom-sheet for the race log
+    function toggleRcHistory() {
+      const scr = document.getElementById('raceScreen');
+      if (scr) scr.classList.toggle('rc-hist-open');
+    }
+    // 🗒🕵️‍🔍 Undercover: same bottom-sheet for the word history
+    function toggleUcHistory() {
+      const scr = document.getElementById('undercoverScreen');
+      if (scr) scr.classList.toggle('uc-hist-open');
+    }
+    // 🗒🧊🔥 Cold Case: ranking + guess log as one bottom-sheet
+    function toggleHcHistory() {
+      const scr = document.getElementById('hotcoldScreen');
+      if (scr) scr.classList.toggle('hc-hist-open');
     }
 
     function startGuessing() {
@@ -8799,16 +8826,21 @@
         const p = players[pid] || {};
         const tile = document.createElement('div');
         tile.className = 'uc-player-tile' + (out[pid] ? ' dead' : '') + (pid === playerId ? ' me' : '') + (speaker === pid ? ' speaking' : '');
-        let status = '';
-        if (out[pid]) status = 'out';
+        let status = '', statusCls = '';
+        if (out[pid]) { status = 'out'; statusCls = 'uc-tile-out'; }
         else if (players[pid] && players[pid].dcAt) status = 'away…';
         else if (uc.phase === 'clues') {
-          status = clues[pid] ? 'said theirs'
-            : (speaker === pid ? 'their turn!'
-            : 'waiting their turn');
+          if (clues[pid]) { status = '“' + escapeHtml(String(clues[pid]).slice(0, 22)) + '”'; statusCls = 'uc-tile-clue'; } // b139: show the clue they said, not "said theirs"
+          else if (speaker === pid) { status = ''; statusCls = 'uc-tile-speaking'; } // b141: typing dots — someone is writing
+          else { status = ''; statusCls = 'uc-tile-wait'; } // a little ☁️ with a ? in it
         }
         else if (uc.phase === 'voting') status = votes[pid] ? 'voted' : 'voting…';
-        tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div><div class="uc-tile-status">' + status + '</div>';
+        tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div>'
+          + (statusCls === 'uc-tile-wait'
+            ? '<div class="uc-tile-status uc-tile-wait"><svg class="ic uc-cloudsvg"><use href="#i-cloudq"/></svg></div>'
+            : (statusCls === 'uc-tile-speaking'
+              ? '<div class="uc-tile-status uc-tile-speaking"><span class="uc-typing"><i></i><i></i><i></i></span></div>'
+              : '<div class="uc-tile-status ' + statusCls + '">' + status + '</div>'));
         if (myRole && currentRoom.state === 'playing' && uc.phase === 'voting' && !iAmOut && !iVoted && !out[pid] && pid !== playerId) {
           tile.classList.add('votable');
           const btn = document.createElement('button');

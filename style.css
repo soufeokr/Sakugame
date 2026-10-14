@@ -904,7 +904,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .hc-recap { margin-top: 12px; font-size: 0.85rem; color: var(--muted); line-height: 1.6; max-height: 28vh; overflow-y: auto; }
   .hc-recap b { color: var(--text); }
   @media (max-width: 960px) {
-    .hc-cols { flex-direction: column; }
+    .hc-cols { flex-direction: column; align-items: stretch; } /* b144: stretch — flex-start shrunk the boxes to max-content width */
     .hc-cols > .hc-side { flex: 1 1 auto; width: 100%; }
     .hc-side .hc-log { max-height: 220px; }
   }
@@ -1829,3 +1829,236 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
 
   /* ===== b128 · NS name strip takes each card's color (not black) ===== */
   .cn-card .cn-name { background: transparent; }
+
+  /* ===== b129 · 🕵️ Detective Showdown — phone pass (NS-style one-column flow) ===== */
+  @media (max-width: 600px) {
+    /* one phone-native column: header → secret strip → question → BOARD (dominant) */
+    #gameScreen .game-container { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #gameScreen .game-left { display: contents; }   /* its children join the main grid */
+    #gameScreen .game-center { display: contents; }
+    #gameScreen .game-header { grid-row: 1; padding: 8px 10px; border-radius: 12px; gap: 6px; }
+    /* your secret = a slim horizontal strip, right under the names (still hidable) */
+    #gameScreen .my-character { grid-row: 2; order: initial; padding: 6px 8px; text-align: left; min-width: 0; }
+    #gameScreen .my-character h3 { display: none; }
+    #gameScreen .my-character-card { display: flex; align-items: center; gap: 10px; border-width: 2px; width: 100%; }
+    #gameScreen .my-character-card img { width: 40px; height: 54px; }
+    #gameScreen .my-character-card .info { padding: 0; background: transparent; }
+    #gameScreen .my-character-card .name { font-size: 0.95rem; }
+    #gameScreen .question-box { grid-row: 3; padding: 10px; }
+    #gameScreen .board-section { grid-row: 4; padding: 8px; }
+    #gameScreen .board-section h3 { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+    /* the Q&A log goes away on phone — the live question box carries the state */
+    #gameScreen .history-section { display: none; }
+    /* bigger faces: floor at 64px, tighter chrome */
+    #gameScreen .board { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; margin-bottom: 0; }
+  }
+
+  /* ===== b130 · DS — tap your secret to hide/show (Cold Case blur), chat pinned right ===== */
+  .my-character-card { cursor: pointer; }
+  .my-character.ds-hide .my-character-card img { filter: blur(8px) brightness(0.55); }
+  .my-character.ds-hide .my-character-card .name { filter: blur(4px); }
+
+  /* ===== b131 · DS — fixed corner row (Lobby / End game) · History bottom-sheet ===== */
+  /* 🚪✕ fixed in the top-left: in-flow row, site-styled (no overlays flying over the game) */
+  .gw-corner { display: flex; gap: 8px; align-items: center; align-self: center; flex: none; }
+  .gw-corner button { height: 34px; min-height: 34px; padding: 0 12px; border-radius: 10px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
+  .gw-corner button .ic { width: 16px; height: 16px; }
+  @media (max-width: 600px) {
+    .gw-corner { gap: 6px; align-self: center; margin-right: 8px; }
+    .gw-corner button { width: 38px; height: 38px; min-height: 38px; padding: 0; justify-content: center; }
+    .gw-corner button .btn-label { display: none; }
+    .gw-corner button .ic { width: 18px; height: 18px; }
+    /* 🗒 Q&A log opens as a bottom-sheet above the bar */
+    #gameScreen.gw-hist-open .history-section { display: flex; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #gameScreen.gw-hist-open .history-list { max-height: none; }
+    #gameScreen.gw-hist-open #gwHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+  }
+
+  /* ===== b133 · DS corner polish — centered cluster, a bit more room before "You" ===== */
+  @media (max-width: 600px) {
+    #gameScreen .gw-corner { align-self: center; margin-right: 8px; }
+  }
+
+  /* ===== b134 · 🎭👥 Detective Royale — phone pass (DS formula) ===== */
+  @media (max-width: 600px) {
+    /* one column: banner(corner+badges) → secret → chips → question → BOARD */
+    #battleScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #battleScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #battleScreen .uc-header { grid-row: 1; display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #battleScreen .br-mysecret { grid-row: 2; }
+    #battleScreen .br-chips { grid-row: 3; padding-bottom: 0; margin-bottom: 0; }
+    #battleScreen .br-chip-hint { display: none; }
+    #battleScreen .question-box { grid-row: 4; padding: 10px; }
+    #battleScreen .board-section { grid-row: 5; padding: 8px; }
+    #battleScreen .board-section > h3 { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+    /* the log hides; 🗒 opens it as a bottom-sheet above the bar */
+    #battleScreen .br-log-wrap { display: none; }
+    #battleScreen.br-hist-open .br-log-wrap { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; overflow: auto; background: var(--card); border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #battleScreen.br-hist-open #brHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* the chat button lives IN the bar — the round FAB steps aside while DR is on screen */
+    #battleScreen.active ~ #chatToggleBtn { display: none !important; }
+    #battleScreen .game-controls #brChatRowBtn { display: flex; position: relative; }
+    #battleScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b135 · DR player chips — compact & wrap on phone, no scrollbar ===== */
+  @media (max-width: 600px) {
+    #battleScreen .br-chips { flex-wrap: wrap; gap: 6px; overflow: visible; padding-bottom: 0; }
+    /* b136 · exactly 3 equal chips per line, filling the whole width */
+    #battleScreen .br-chip { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; margin: 0; }
+    #battleScreen .br-chip { padding: 2px 7px 2px 2px; gap: 4px; border-radius: 14px; flex-shrink: 0; min-height: 0; }
+    #battleScreen .br-chip .ava-chat { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #battleScreen .br-chip .chip-name { font-size: 0.7rem; max-width: 52px; }
+    #battleScreen .br-chip .chip-pts { font-size: 0.62rem; }
+    #battleScreen .br-chip .chip-state { display: none; } /* states stay visible via the colored board */
+    #battleScreen .br-chip .chip-state:empty { display: none; }
+  }
+
+  /* ===== b137 · ⚡ Wanted! — phone pass (DS formula) ===== */
+  @media (max-width: 600px) {
+    /* one column: banner(corner+badges) → hunters → target banner → question → BOARD */
+    #raceScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #raceScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #raceScreen .uc-header { grid-row: 1; display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #raceScreen .rc-hunters { grid-row: 2; }
+    #raceScreen .rc-hunters .br-mysecret, #raceScreen #rcBanner { grid-row: 3; }
+    #raceScreen .question-box { grid-row: 4; padding: 10px; }
+    #raceScreen .board-section { grid-row: 5; padding: 8px; }
+    #raceScreen .board-section > h3 { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+    #raceScreen .board { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; }
+    /* hunter chips: compact, exactly 3 equal chips per line */
+    #raceScreen .rc-hunters { flex-wrap: wrap; gap: 6px; overflow: visible; padding-bottom: 0; }
+    #raceScreen .rc-hunter { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; margin: 0; padding: 2px 6px 2px 2px; gap: 4px; border-radius: 14px; min-height: 0; flex-shrink: 0; }
+    #raceScreen .rc-hunter .ava-chat { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #raceScreen .rc-hunter-name { font-size: 0.7rem; max-width: 52px; }
+    #raceScreen .rc-hunter-res { font-size: 0.62rem; }
+    /* the log hides; 🗒 opens it as a bottom-sheet above the bar */
+    #raceScreen .br-log-wrap { display: none; }
+    #raceScreen.rc-hist-open .br-log-wrap { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; overflow: auto; background: var(--card); border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #raceScreen.rc-hist-open #rcHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* the chat button lives IN the bar */
+    #raceScreen.active ~ #chatToggleBtn { display: none !important; }
+    #raceScreen .game-controls #rcChatRowBtn { display: flex; position: relative; }
+    #raceScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b138 · 🕵️‍🔍 Undercover — phone pass (DS formula, clues stay in flow) ===== */
+  #undercoverScreen .uc-word-card { cursor: pointer; }
+  @media (max-width: 600px) {
+    #undercoverScreen .uc-container { padding: 6px 8px calc(96px + env(safe-area-inset-bottom, 0px)); }
+    #undercoverScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #undercoverScreen .uc-header { grid-row: 1; display: flex; align-items: center; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: wrap; }
+    #undercoverScreen .uc-word-card { grid-row: 2; padding: 8px 10px; margin-bottom: 0; }
+    #undercoverScreen .uc-word { font-size: 1.05rem; }
+    #undercoverScreen .uc-word-card .uc-word-label { font-size: 0.76rem; margin-bottom: 3px; }
+    #undercoverScreen .uc-word-img { height: 44px; width: 44px; border-radius: 8px; object-fit: cover; margin: 4px auto; }
+    #undercoverScreen .uc-word-hint { font-size: 0.72rem; margin-top: 3px; }
+    #undercoverScreen .uc-event-banner { grid-row: 3; }
+    #undercoverScreen .uc-players { grid-row: 4; grid-template-columns: repeat(auto-fill, minmax(94px, 1fr)); gap: 6px; margin-bottom: 0; }
+    #undercoverScreen .uc-player-tile { padding: 6px; border-radius: 10px; }
+    #undercoverScreen .uc-action { grid-row: 5; }
+    #undercoverScreen .uc-clues { grid-row: 6; padding: 10px; margin-bottom: 0; }
+    #undercoverScreen .uc-clues h3 { margin: 0 0 6px; font-size: 0.8rem; color: var(--muted); }
+    /* everything the old control stack did now lives in the corner / on the word card */
+    #undercoverScreen .uc-controls { display: none !important; }
+  }
+
+  /* ===== b139 · 🕵️‍🔍 UC — clue-as-status tiles · History · Chat bar ===== */
+  .uc-tile-status.uc-tile-clue { font-style: normal; color: #9fd6ff; font-family: 'Segoe UI', sans-serif; font-size: 0.74rem; max-height: 2.1em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .uc-tile-status .uc-cloudsvg { width: 26px; height: 22px; } /* real sprite cloud, ? inside */
+  /* corner must hug the LEFT edge — the uc headers are center-justified by default */
+  @media (max-width: 600px) {
+    #undercoverScreen .uc-header, #battleScreen .uc-header, #raceScreen .uc-header { justify-content: flex-start; }
+  }
+  @media (max-width: 600px) {
+    /* word history hides; 🗒 opens it as a bottom-sheet above the bar */
+    #undercoverScreen .uc-clues { display: none; }
+    #undercoverScreen.uc-hist-open .uc-clues { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; overflow: auto; background: var(--card); border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #undercoverScreen.uc-hist-open #ucHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* the chat button lives IN the bar — the round FAB steps aside while UC is on screen */
+    #undercoverScreen.active ~ #chatToggleBtn { display: none !important; }
+    #undercoverScreen .game-controls #ucChatRowBtn { display: flex; position: relative; }
+    #undercoverScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+    /* UC now HAS a bottom bar — give the content the same breathing room as the others */
+    #undercoverScreen .uc-container { padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* ===== b141 · 🕵️‍🔍 UC polish: badges fit · word-card corner dice · typing dots ===== */
+  .uc-tile-status.uc-tile-speaking { display: inline-flex; }
+  .uc-tile-status .uc-typing { display: inline-flex; gap: 4px; align-items: center; height: 12px; }
+  .uc-tile-status .uc-typing i { width: 5px; height: 5px; border-radius: 50%; background: #9fd6ff; opacity: 0.25; animation: ucDot 1.05s infinite; }
+  .uc-tile-status .uc-typing i:nth-child(2) { animation-delay: 0.17s; }
+  .uc-tile-status .uc-typing i:nth-child(3) { animation-delay: 0.34s; }
+  @keyframes ucDot { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+
+  /* 🎲 change-words sits in the word card's TOP-RIGHT corner (host-only, JS-toggled) */
+  #undercoverScreen .uc-word-card { position: relative; }
+  #undercoverScreen .uc-word-card .uc-words-corner { position: absolute; top: 7px; right: 7px; width: 30px; height: 30px; min-height: 30px; padding: 0; border-radius: 9px; display: none; align-items: center; justify-content: center; }
+  #undercoverScreen .uc-word-card .uc-words-corner .ic { width: 16px; height: 16px; }
+  #undercoverScreen .uc-word-card .uc-words-corner[style*="inline-block"] { display: inline-flex !important; }
+
+  @media (max-width: 600px) {
+    /* Round 1/3 · Description time — smaller so banner + corner fit on ONE line */
+    #undercoverScreen .uc-badge { padding: 5px 10px; font-size: 0.8rem; border-radius: 14px; white-space: nowrap; }
+    #undercoverScreen .uc-header { flex-wrap: nowrap; }
+    #undercoverScreen .uc-header .uc-badge:last-child { overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  /* ===== b142 · 🧊🔥 Cold Case — phone pass (DS formula) ===== */
+  @media (max-width: 600px) {
+    #hotcoldScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #hotcoldScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #hotcoldScreen .uc-header { grid-row: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #hotcoldScreen .hc-cols { grid-row: 2; flex-direction: column; gap: 8px; }
+    /* b143 · flatten BOTH columns so the phone flow can be reordered — the 🏆 players
+       ranking now lives IN the main flow, directly above the action/answer areas */
+    #hotcoldScreen .hc-play, #hotcoldScreen .hc-side { display: contents; }
+    #hotcoldScreen .hc-play > *, #hotcoldScreen .hc-cols > * { margin-bottom: 0; }
+    #hotcoldScreen #hcSecretStrip { order: 1; }
+    #hotcoldScreen #hcBanner { order: 2; }
+    #hotcoldScreen #hcRankWrap { order: 3; margin: 0; }
+    #hotcoldScreen .question-box { order: 4; padding: 10px; }
+    #hotcoldScreen #hcTopWrap { order: 5; margin: 0; }
+    #hotcoldScreen .game-controls { order: 6; }
+    #hotcoldScreen #hcLogWrap { order: 7; display: none; margin: 0; }
+    #hotcoldScreen .hc-hint { font-size: 0.74rem; margin: 0 0 8px; }
+    #hotcoldScreen .hc-banner { margin: 0; }
+    /* b143 · 🗒 History = the Guesses panel rendered EXACTLY like on PC (same card,
+       same header + hint, same rows) — only repositioned as a bottom-sheet that
+       scrolls internally instead of living in the side column */
+    #hotcoldScreen.hc-hist-open #hcLogWrap { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 68vh; overflow: hidden; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #hotcoldScreen.hc-hist-open #hcLog { max-height: 42vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-right: 16px; } /* b145: 42vh = same cap as the PC side log · score keeps its previous gutter from the scrollbar */
+    /* b149 · rank · picture · name slide LEFT (they hug the row's left edge) while
+       the score columns back to the right edge, its usual spot on the left of the gutter */
+    #hotcoldScreen.hc-hist-open #hcLog .hc-row { gap: 8px; padding-left: 2px; }
+    #hotcoldScreen.hc-hist-open #hcLog .hc-row > .hc-gnum:last-child { flex-shrink: 0; }
+    #hotcoldScreen.hc-hist-open #hcHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* b143 · 🏆 best guesses = a VERTICAL ranking on phone — one full-width row
+       per guess (rank · portrait · who + name · score at the edge) */
+    #hotcoldScreen .hc-topbar { flex-direction: column; gap: 6px; }
+    #hotcoldScreen .hc-tcard { flex: 0 0 auto; width: 100%; flex-direction: row; align-items: center; gap: 10px; padding: 7px 10px; text-align: left; }
+    #hotcoldScreen .hc-tcard img { width: 40px; height: 54px; }
+    #hotcoldScreen #hcTopWrap .hc-gtexts { align-items: flex-start; width: auto; flex: 1; }
+    #hotcoldScreen .hc-tcard .hc-gname { font-size: 0.78rem; }
+    #hotcoldScreen .hc-tcard .hc-gnum { font-size: 1rem; flex-shrink: 0; }
+    /* b144 · 🏆 players Ranking goes COMPACT on phone — small title/hint, slim rows
+       (24px avatars), ~3 players visible then internal scroll */
+    #hotcoldScreen #hcRankWrap { padding: 9px 12px 11px; }
+    #hotcoldScreen #hcRankWrap h3 { font-size: 0.82rem; margin-bottom: 3px; }
+    #hotcoldScreen #hcRankWrap .hc-rank-hint { font-size: 0.66rem; margin: 0 0 6px; }
+    #hotcoldScreen #hcRankWrap .hc-log { max-height: 140px; }
+    #hotcoldScreen #hcRankWrap .hc-row { gap: 8px; padding: 5px 6px; }
+    #hotcoldScreen #hcRankWrap .hc-av { width: 24px; height: 24px; }
+    #hotcoldScreen #hcRankWrap .hc-av img { width: 24px; height: 24px; }
+    #hotcoldScreen #hcRankWrap .hc-rank { width: 20px; font-size: 0.9rem; }
+    #hotcoldScreen #hcRankWrap .hc-cls .hc-row:nth-child(1) .hc-rank, #hotcoldScreen #hcRankWrap .hc-row:nth-child(1) .hc-rank { font-size: 1rem; }
+    #hotcoldScreen #hcRankWrap .hc-gname { font-size: 0.84rem; }
+    #hotcoldScreen #hcRankWrap .hc-gnum { font-size: 0.9rem; }
+    /* b145 · the "Name a character…" coaching line is redundant with the input
+       placeholder on phone — gone (PC keeps it) */
+    #hotcoldScreen #hcGuessHint { display: none; }
+    /* the chat button lives IN the bar — FAB steps aside */
+    #hotcoldScreen.active ~ #chatToggleBtn { display: none !important; }
+    #hotcoldScreen .game-controls #hcChatRowBtn { display: flex; position: relative; }
+    #hotcoldScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
