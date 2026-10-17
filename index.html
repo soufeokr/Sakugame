@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="154">
+<meta name="saku-build" content="167">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=154" sizes="any">
+<link rel="icon" href="favicon.ico?v=167" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=154">
+<link rel="stylesheet" href="style.css?v=167">
 </head>
 <body>
 
@@ -833,6 +833,10 @@
     <div class="uc-container">
       <div class="uc-main">
         <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
           <div class="uc-badge" id="bgRoundBadge"><svg class="ic"><use href="#i-layers"/></svg> Round 1/10</div>
           <div class="uc-badge" id="bgStageBadge">Blur stage 1/5</div>
           <div class="uc-badge" id="bgTimerBadge">12s</div>
@@ -849,11 +853,9 @@
         </div>
         <div class="bg-chips" id="bgChips"></div>
         <div class="game-controls">
-          <button class="warning" id="bgSkipBtn" onclick="blurSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span></button>
-          <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
-          <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          <button class="warning" id="bgSkipBtn" onclick="blurSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span><span class="btn-label-phone">Skip</span></button>
+          <button class="secondary" id="bgChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="bgChatUnreadBadgeRow"></span></button>
         </div>
-        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> Rounds</h3><div class="br-log" id="bgLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
       </div>
     </div>
   </div>
@@ -863,6 +865,10 @@
     <div class="uc-container">
       <div class="uc-main">
         <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
           <div class="uc-badge" id="snRoundBadge"><svg class="ic"><use href="#i-layers"/></svg> Round 1/10</div>
           <div class="uc-badge" id="snStageBadge">Stills 1/4</div>
           <div class="uc-badge" id="snTimerBadge">8s</div>
@@ -874,8 +880,8 @@
             <div class="sn-slot"><img src="" alt="" draggable="false"></div>
             <div class="sn-slot"><img src="" alt="" draggable="false"></div>
           </div>
-          <div class="sn-hint" id="snHint" style="display: none;"></div>
         </div>
+        <div class="sn-hint" id="snHint" style="display: none;"></div>
         <div class="bg-status" id="snStatus">Which anime is this?!</div>
         <div class="question-form" id="snGuessBar">
           <div class="bg-guess-wrap hc-has-rnd">
@@ -887,11 +893,9 @@
         </div>
         <div class="bg-chips" id="snChips"></div>
         <div class="game-controls">
-          <button class="warning" id="snSkipBtn" onclick="snSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span></button>
-          <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
-          <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          <button class="warning" id="snSkipBtn" onclick="snSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span><span class="btn-label-phone">Skip</span></button>
+          <button class="secondary" id="snChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="snChatUnreadBadgeRow"></span></button>
         </div>
-        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> Rounds</h3><div class="br-log" id="snLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
       </div>
     </div>
   </div>
@@ -1630,7 +1634,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=154', 'charanimes.js?v=154', 'animes.js?v=154', 'nsfwdata.js?v=154', 'snappics.js?v=154'];
+        var files = ['characters.js?v=167', 'charanimes.js?v=167', 'animes.js?v=167', 'nsfwdata.js?v=167', 'snappics.js?v=167'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1645,10 +1649,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=154"></script>
-  <script src="music.js?v=154"></script>
-  <script src="lang.js?v=154"></script>
-  <script src="app.js?v=154"></script>
+  <script src="undercover.js?v=167"></script>
+  <script src="music.js?v=167"></script>
+  <script src="lang.js?v=167"></script>
+  <script src="app.js?v=167"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1656,5 +1660,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4a88fb7b8710b96',t:'MTc5MjAwMTY0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4c041631d4319b8',t:'MTc5MjI1MDA5Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

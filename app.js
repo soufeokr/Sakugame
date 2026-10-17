@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '154';
+    const SAKU_BUILD = '167';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -238,8 +238,8 @@
           s: htScene(htBadges([['Round 1/10', 'dim'], ['Stills 1/4', 'ok'], ['8s', 'warn']]) + (HT_SNAP_SEQ[0] ? '<img class="mk-img mk-bigimg" src="' + HT_SNAP_SEQ[0] + '" alt="anime still demo">' : '<div class="mk-note">4 stills per round!</div>') + '<div class="mk-who">Which anime is this?!</div>' + htQ('Type the anime title…', 'GUESS!')) },
         { t: 'Four stills, four payouts', d: 'Stage 1 shows ONE deep-cut still (brutal!)… then three easier ones at 8-second beats, ending with the official art AND a hint. Payout melts as it gets easy: stage 1 = 4 pts, stage 4 = 1 pt. Trust your gut early!',
           s: htScene(HT_SNAP_SEQ.length >= 2 ? '<div class="mk-stages">' + HT_SNAP_SEQ.map(function (u, i) { return '<div><img class="mk-img" src="' + u + '" alt=""><span class="mk-badge2">' + (i === 0 ? '4 pts' : i === 1 ? '2 pts' : '1 pt') + '</span></div>'; }).join('') + '</div><div class="mk-note">Deep-cut frame → more frames → official art + hint.</div>' : '<div class="mk-note">Stage 1 = 4 pts … stage 4 = 1 pt.</div>') },
-        { t: 'Stuck? Wait for the hint', d: 'The 4th still lands with genres (max 3), the year, and the title\'s first letter with its letter count. Any known alias works as an answer — SNK, AoT, the full romaji… (typing the second word alone, like "Titan", does NOT count!)',
-          s: htScene(htBadges([['Stills 4/4', 'warn'], ['Hint time!', 'ok']]) + '<div class="mk-chips" style="justify-content:center">' + htChip('Action, Drama', 'dim') + htChip('2013', 'dim') + htChip('starts with "A" — 13 letters', 'ok') + '</div>' + htQ('Attack on Titan', 'GUESS!') + '<div class="mk-note">Full title or any full alias counts — single words from the title don\'t.</div>') },
+        { t: 'Stuck? Wait for the hint', d: 'The 4th still lands with a HANGMAN hint: about a third of the title\'s letters are revealed, every other letter stays _ . Any known alias works as an answer — SNK, AoT, the full romaji… (typing the second word alone, like "Titan", does NOT count!)',
+          s: htScene(htBadges([['Stills 4/4', 'warn'], ['Hint time!', 'ok']]) + '<div class="mk-chips" style="justify-content:center">' + htChip('A__A__ O_ _I___', 'ok') + '</div>' + htQ('Attack on Titan', 'GUESS!') + '<div class="mk-note">Full title or any full alias counts — single words from the title don\'t.</div>') },
         { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1). A stage-1 first guess is the jackpot: 4 + 3 = 7 points! The host picks 4-20 rounds — most points at the end wins.',
           s: htScene(htQ('Attack on Titan', 'SUBMIT') + '<div class="mk-chips">' + htChip('Correct! +7 pts', 'ok') + htChip('4 base + 3 speed bonus', 'dim') + '</div>' + '<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 21 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 17 pts</p></div>') }
       ]},
@@ -2903,6 +2903,12 @@
       // 🧊🔥 mirrored badge on the Cold Case chat row button (phone)
       const hb = document.getElementById('hcChatUnreadBadgeRow');
       if (hb) { hb.textContent = chatUnread > 0 ? String(chatUnread) : ''; hb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 🌀 mirrored badge on the Blur Guess chat row button (phone)
+      const gb = document.getElementById('bgChatUnreadBadgeRow');
+      if (gb) { gb.textContent = chatUnread > 0 ? String(chatUnread) : ''; gb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
+      // 📸 mirrored badge on the Snapshot! chat row button (phone)
+      const sb = document.getElementById('snChatUnreadBadgeRow');
+      if (sb) { sb.textContent = chatUnread > 0 ? String(chatUnread) : ''; sb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
     }
     function toggleChatOverlay() {
       chatOverlayOpen = !chatOverlayOpen;
@@ -4308,7 +4314,7 @@
       const bgModeNow = bg.mode || ((currentRoom.settings || {}).bgMode) || 'characters';
       const stageSec = Math.round(bgStageMs() / 1000);
       document.getElementById('bgRoundBadge').innerHTML = ic(bgModeNow === 'covers' ? 'film' : 'layers') + (bg.phase === 'setup' ? ' Dealing…' : (' Round ' + Math.min(idx + 1, total || 1) + '/' + (total || '?')));
-      document.getElementById('bgStageBadge').textContent = bg.phase === 'over' ? 'Over' : revealed && bg.phase === 'reveal' ? 'Revealed!' : ('Blur stage ' + stage + '/' + BLUR_STAGES + (stage < BLUR_STAGES ? ' → +' + ((BLUR_STAGES + 1) - stage) + ' pts now' : ''));
+      document.getElementById('bgStageBadge').innerHTML = bg.phase === 'over' ? 'Over' : revealed && bg.phase === 'reveal' ? 'Revealed!' : ('Blur stage ' + stage + '/' + BLUR_STAGES + (stage < BLUR_STAGES ? '<span class="bg-pts"> → +' + ((BLUR_STAGES + 1) - stage) + ' pts now</span>' : ''));
       const img = document.getElementById('bgImage');
       if (img.getAttribute('data-cid') !== String(ch.id)) {
         // 🚫 No peeking: the old 0.7s filter transition let the NEW image
@@ -4494,15 +4500,25 @@
       return label || name;
     }
     function snapPoolNorms() { return snapPool().map(c => bgNorm(c && c.name)).filter(Boolean); }
-    function snapHintOf(entry, labelOverride) { // b111: grouped rounds hint the FAMILY name's letters
-      const name = String(labelOverride || entry.name || '?').trim();
-      const meta = snapMetaOf(entry.id) || {};
-      const bits = [];
-      if (meta.g && meta.g.length) bits.push(meta.g.slice(0, 3).join(', '));
-      if (meta.y || entry.year) bits.push(String(meta.y || entry.year));
-      const letters = (name.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim().match(/\S/g) || []).length;
-      bits.push((window.t ? t('starts with') : 'starts with') + ' "' + (name[0] || '?').toUpperCase() + '" — ' + letters + ' ' + (window.t ? t('letters') : 'letters'));
-      return bits.join(' · ');
+    // 🎯 b158/b160 · the last-stage hint is a HANGMAN: ~33% of the title's letters are
+    // revealed, every other letter stays _ — characters inside a word sit flush, and a
+    // space appears ONLY where the title itself has one (A__A__ O_ _I___)
+    function snapHangman(name) {
+      const words = String(name || '?').trim().split(/\s+/);
+      const letters = [];
+      words.forEach(w => w.split('').forEach(ch => { if (/[A-Za-z0-9]/.test(ch)) letters.push(ch); }));
+      const keep = Math.max(1, Math.round(letters.length * 0.33));
+      const shown = {};
+      for (let k = 0; k < keep; k++) shown[Math.floor(k * letters.length / keep)] = true;
+      let n = 0;
+      return words.map(w => w.split('').map(ch => {
+        if (!/[A-Za-z0-9]/.test(ch)) return ch;
+        const i = n++;
+        return shown[i] ? ch.toUpperCase() : '_';
+      }).join('')).join(' ');
+    }
+    function snapHintOf(entry, labelOverride) { // b111/b158: grouped rounds hint the FAMILY name
+      return snapHangman(labelOverride || entry.name || '?');
     }
     // 🏔️ difficulty ladder: stage 1 = a hard deep-cut episode frame (from later in
     // the run — less iconic), stages 2-3 = other random frames (+ official cover
@@ -7925,6 +7941,9 @@
       const scr = document.getElementById('hotcoldScreen');
       if (scr) scr.classList.toggle('hc-hist-open');
     }
+    function toggleBgHistory() { /* b151: Blur's Rounds history deleted — kept as a no-op for older cached pages */ }
+    // 📸 b157: Snapshot!'s Rounds history deleted — kept as a no-op for older cached pages
+    function toggleSnHistory() { }
 
     function startGuessing() {
       if (!currentRoom || currentRoom.currentTurn !== playerId) { showNotification("It's not your turn! You can only guess on your turn."); return; }

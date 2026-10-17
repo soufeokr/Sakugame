@@ -923,14 +923,15 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
 
   /* 📸 Snapshot! — the 2×2 still board (1 still pops in per stage) */
   .sn-frame { position: relative; min-height: 150px; }
-  .sn-shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; width: 100%; }
-  .sn-slot { aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #16163a; opacity: 0; transform: scale(0.96); pointer-events: none; transition: opacity 0.6s ease, transform 0.6s ease; }
+  .sn-shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
+  .sn-slot { aspect-ratio: 16 / 8.5; border-radius: 8px; overflow: hidden; background: #16163a; opacity: 0; transform: scale(0.96); pointer-events: none; transition: opacity 0.6s ease, transform 0.6s ease; }
   .sn-slot.on { opacity: 1; transform: scale(1); pointer-events: auto; }
   .sn-slot img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; user-select: none; }
   .sn-shots.n1 .sn-slot { aspect-ratio: 21 / 9; }
   .sn-shots.n1 .sn-slot:nth-child(n+2) { display: none; }
-  .sn-hint { position: absolute; left: 12px; right: 12px; bottom: 14px; background: rgba(10, 10, 24, 0.9); border: 2px solid var(--accent); color: var(--text); font-weight: 700; font-size: 0.82rem; line-height: 1.5; padding: 7px 12px; border-radius: 10px; text-align: center; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); }
-  @media (max-width: 640px) { .sn-hint { font-size: 0.74rem; bottom: 10px; padding: 5px 8px; } }
+  /* b159 · the hangman sits UNDER the stills as its own bar · pre-wrap keeps the word gaps */
+  .sn-hint { background: rgba(10, 10, 24, 0.9); border: 2px solid var(--accent); color: var(--text); font-weight: 900; font-size: 1.05rem; line-height: 1.5; padding: 10px 14px; border-radius: 12px; text-align: center; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 0.06em; margin-top: 10px; }
+  @media (max-width: 640px) { .sn-hint { font-size: 0.88rem; padding: 7px 10px; } }
 
   /* ⌨️ Blur Guess autocomplete dropdown */
   .bg-guess-wrap { position: relative; flex: 1; min-width: 0; }
@@ -1314,10 +1315,14 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .cn-board { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px; }
   /* 🥷🎴 horizontal card per mockup: image LEFT · right column = name (with
      a thin rule under it), suggestion circles, green ✓ circle bottom-right */
-  .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.08); background: var(--card); transition: transform 0.15s, box-shadow 0.15s; display: flex; height: 80px; }
+  /* b161 · unrevealed cards are BEIGE word cards (Shogun view) — the Ninja's key/revealed
+     colours override this below */
+  .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(0, 0, 0, 0.22); background: #b0a48a; transition: transform 0.15s, box-shadow 0.15s; display: flex; height: 80px; }
   .cn-card img { display: block; width: 78px; height: 100%; object-fit: cover; flex-shrink: 0; }
   .cn-side { flex: 1; min-width: 0; position: relative; display: flex; flex-direction: column; }
-  .cn-name { background: rgba(10, 10, 24, 0.88); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 2px solid rgba(255, 255, 255, 0.16); flex-shrink: 0; }
+  /* b161 · the strip is the CARD's colour under a 50% black veil → always darker than the card,
+     never a flat black bar (beige word cards included) */
+  .cn-name { background: rgba(0, 0, 0, 0.5); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 2px solid rgba(0, 0, 0, 0.3); color: #fff; flex-shrink: 0; }
   .cn-card.can-pick { cursor: pointer; border-color: rgba(41, 182, 246, 0.55); }
   .cn-card.can-pick:hover { transform: scale(1.04); box-shadow: 0 0 12px rgba(41, 182, 246, 0.5); z-index: 2; }
   /* 🥷🎴 2-step pick: public suggestion dots (bottom-left) + green validate circle (bottom-right) */
@@ -1331,7 +1336,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   /* 🥷🎴 Ninja key view: the WHOLE card background carries the card color (mockup) */
   .cn-card.cn-key-red { background: rgba(229, 57, 53, 0.55); border-color: rgba(229, 57, 53, 0.85); }
   .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.55); border-color: rgba(30, 136, 229, 0.85); }
-  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.35); border-color: rgba(176, 164, 138, 0.55); }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.9); border-color: rgba(232, 217, 184, 0.9); }
   .cn-card.cn-key-black { background: rgba(8, 8, 12, 0.92); border-color: rgba(255, 255, 255, 0.85); }
   .cn-dot { position: absolute; top: 5px; left: 8px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid #0f0f1a; z-index: 2; }
   .cn-dot-red { background: #e53935; }
@@ -1342,7 +1347,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .cn-card.cn-rev img { opacity: 0.22; filter: saturate(0.6); }
   .cn-card.cn-rev-red { border-color: #e53935; background: rgba(229, 57, 53, 0.55); }
   .cn-card.cn-rev-blue { border-color: #1e88e5; background: rgba(30, 136, 229, 0.55); }
-  .cn-card.cn-rev-beige { border-color: #b0a48a; background: rgba(176, 164, 138, 0.35); }
+  .cn-card.cn-rev-beige { border-color: #e8d9b8; background: rgba(176, 164, 138, 0.9); }
   .cn-card.cn-rev-black { border-color: #000; background: rgba(8, 8, 12, 0.92); box-shadow: 0 0 14px rgba(0, 0, 0, 0.9); }
   .cn-stamp { position: absolute; top: 5px; left: 5px; font-size: 0.95rem; background: rgba(8, 8, 16, 0.75); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; text-align: center; }
 
@@ -1432,7 +1437,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .cn-card.cn-rev-black { border-color: #b8b8d8 !important; box-shadow: 0 0 18px 4px rgba(120, 110, 220, 0.65), inset 0 0 26px rgba(0, 0, 0, 0.65); }
   .cn-card.cn-key-red { background: rgba(239, 83, 80, 0.6) !important; border-color: #ff5252 !important; box-shadow: none; }
   .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.6) !important; border-color: #02a9ff !important; box-shadow: none; }
-  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.45) !important; border-color: #e8d9b8 !important; box-shadow: none; }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.9) !important; border-color: #e8d9b8 !important; box-shadow: none; }
   .cn-card.cn-key-black { background: rgba(5, 5, 10, 0.95) !important; border-color: #8a8ab8 !important; box-shadow: none; }
   .cn-card.can-pick:hover { box-shadow: 0 0 16px 3px rgba(255, 243, 176, 0.55) !important; transform: translateY(-3px); }
 
@@ -1827,8 +1832,9 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   /* 🎬 tutorial slideshow always in the FOREGROUND (game picker sits at 1260) */
   .howto-modal { z-index: 1300; }
 
-  /* ===== b128 · NS name strip takes each card's color (not black) ===== */
-  .cn-card .cn-name { background: transparent; }
+  /* ===== b128/b161 · NS name strip = the card's colour, DARKENED ===== */
+  /* one veil on .cn-name covers every state: beige word cards (Shogun) and the
+     coloured key / revealed cards (Ninja) — see the base .cn-name rule above */
 
   /* ===== b129 · 🕵️ Detective Showdown — phone pass (NS-style one-column flow) ===== */
   @media (max-width: 600px) {
@@ -2061,4 +2067,96 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
     #hotcoldScreen.active ~ #chatToggleBtn { display: none !important; }
     #hotcoldScreen .game-controls #hcChatRowBtn { display: flex; position: relative; }
     #hotcoldScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b150 · 🌀 Blur Guess — phone pass (DS formula; Snapshot! mirrors it) ===== */
+  @media (max-width: 600px) {
+    #blurScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #blurScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    /* corner + 3 compact badges on one line: round · stage (pts suffix hidden) · timer */
+    #blurScreen .uc-header { grid-row: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #blurScreen .uc-badge { padding: 5px 10px; font-size: 0.78rem; white-space: nowrap; }
+    #blurScreen .bg-pts { display: none; }
+    #blurScreen #bgImgWrap { grid-row: 2; }
+    #blurScreen #bgImage { width: min(230px, 58vw); }
+    #blurScreen .bg-status { grid-row: 3; margin: 2px 0; font-size: 0.88rem; }
+    #blurScreen #bgGuessBar { grid-row: 4; }
+    /* score chips: compact, exactly 3 equal chips per line (rc-hunter, same as Wanted!) */
+    #blurScreen .bg-chips { grid-row: 5; flex-wrap: wrap; gap: 6px; overflow: visible; padding: 2px 0 0; justify-content: center; margin-bottom: 0; }
+    #blurScreen .rc-hunter { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; margin: 0; padding: 2px 6px 2px 2px; gap: 4px; border-radius: 14px; min-height: 0; flex-shrink: 0; }
+    #blurScreen .rc-hunter .ava-chat { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #blurScreen .rc-hunter-name { font-size: 0.7rem; max-width: 52px; }
+    #blurScreen .rc-hunter .chip-pts { font-size: 0.6rem; font-weight: 900; color: var(--warning); }
+    #blurScreen .rc-hunter-res { font-size: 0.62rem; }
+    /* b151 · the Rounds history is DELETED for Blur (redundant with the live chips/status)
+       — the bar is just Skip (host) · Chat */
+    #blurScreen.active ~ #chatToggleBtn { display: none !important; }
+    #blurScreen .game-controls #bgChatRowBtn { display: flex; position: relative; }
+    #blurScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b152 · delete the page scrollbar — phones overlay-scroll with no rail,
+     and the frame previews got an ugly desktop-rail from the iframe ===== */
+  html { scrollbar-width: none; -ms-overflow-style: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+  /* inner list scrollbars (history sheets, logs, chat, specs) stay visible */
+
+  /* ===== b153 · 🌀 Blur Guess — everything centered on phone ===== */
+  @media (max-width: 600px) {
+    /* b154 · Lobby + End game STAY pinned top-left (user). The corner and the 3 badges are
+       SIBLINGS in ONE flex row, so centering the row centered the corner too — and simply
+       left-aligning the row dragged the badges left with it. Fix: hand the free space to two
+       auto margins (corner + last badge) — the badges then center as a group, corner never moves */
+    #blurScreen .uc-header .gw-corner { margin-right: auto; }
+    #blurScreen #bgTimerBadge { margin-right: auto; }
+    /* every block centers inside the main column */
+    #blurScreen .uc-main { justify-items: center; }
+    #blurScreen .uc-main > * { width: 100%; }
+    /* name input full width, big Guess! centered under it */
+    #blurScreen #bgGuessBar { flex-direction: column; gap: 8px; margin-bottom: 0; }
+    #blurScreen #bgGuessBar .success { align-self: center; width: min(240px, 72%); justify-content: center; }
+  }
+
+  /* ===== b156 · 📸 Snapshot! — score chips finally have a look (never styled before) ===== */
+  /* the markup is: [👑] <ava> <b>Name</b> <span>pts</span> <em>✓</em> */
+  .bg-chip { display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 5px; border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.74rem; font-weight: 700; color: var(--text); min-width: 0; }
+  .bg-chip .ava-chat, .bg-chip .ava { width: 20px; height: 20px; min-width: 20px; border-width: 1px; }
+  .bg-chip b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-chip > span { color: var(--warning); font-weight: 900; }
+  .bg-chip > em { font-style: normal; color: var(--success); font-weight: 900; }
+  .bg-chip .ic { width: 14px; height: 14px; color: #ffc107; flex: none; }
+  .bg-chip.found { border-color: rgba(46, 204, 113, 0.55); background: rgba(46, 204, 113, 0.1); }
+  .bg-chip.lead { border-color: rgba(255, 193, 7, 0.55); }
+
+  /* ===== b156 · 📸 Snapshot! — phone pass (the DS formula; mirrors Blur Guess) ===== */
+  @media (max-width: 600px) {
+    #snapshotScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #snapshotScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    /* corner + 3 compact badges on one line — corner pinned LEFT, badges centered as a group */
+    #snapshotScreen .uc-header { grid-row: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #snapshotScreen .uc-header .gw-corner { margin-right: auto; }
+    #snapshotScreen #snTimerBadge { margin-right: auto; }
+    #snapshotScreen .uc-badge { padding: 5px 10px; font-size: 0.78rem; white-space: nowrap; }
+    /* the 4-still ladder: capped width, centered, never a full-bleed monster */
+    #snapshotScreen #snImgWrap { grid-row: 2; width: 100%; margin: 0 auto; padding: 6px; }
+    #snapshotScreen .sn-slot { aspect-ratio: 16 / 8.5; }
+    #snapshotScreen .sn-shots { gap: 5px; }
+    #snapshotScreen #snHint { grid-row: 3; margin: 2px 0 0; font-size: 0.95rem; padding: 8px 10px; }
+    #snapshotScreen .bg-status { grid-row: 4; margin: 2px 0; font-size: 0.88rem; }
+    #snapshotScreen #snGuessBar { grid-row: 5; flex-direction: column; gap: 8px; margin-bottom: 0; }
+    #snapshotScreen #snGuessBar .success { align-self: center; width: min(240px, 72%); justify-content: center; }
+    /* score chips: exactly 3 equal chips per line */
+    #snapshotScreen #snChips { grid-row: 6; flex-wrap: wrap; gap: 6px; overflow: visible; padding: 2px 0 0; justify-content: center; margin-bottom: 0; }
+    #snapshotScreen #snChips .bg-chip { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; padding: 3px 4px; gap: 4px; border-radius: 12px; min-height: 0; }
+    #snapshotScreen #snChips .bg-chip .ava-chat, #snapshotScreen #snChips .bg-chip .ava { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #snapshotScreen #snChips .bg-chip b { font-size: 0.66rem; max-width: 46px; }
+    #snapshotScreen #snChips .bg-chip > span { font-size: 0.62rem; }
+    /* b157 · Snapshot!'s Rounds history is DELETED (redundant with the reveal + live chips)
+       — the bar is just Skip (host) · Chat */
+    /* the chat button lives IN the bar — FAB steps aside */
+    #snapshotScreen.active ~ #chatToggleBtn { display: none !important; }
+    #snapshotScreen .game-controls #snChatRowBtn { display: flex; position: relative; }
+    #snapshotScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
   }
