@@ -1386,8 +1386,11 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
     .cn-board { grid-template-columns: repeat(4, 1fr) !important; gap: 5px; }
     .cn-card { display: block; height: auto; }
     .cn-card img { width: 100%; height: auto; aspect-ratio: 1 / 1.1; }
-    .cn-side { display: block; position: absolute; inset: 0; }
-    .cn-name { position: absolute; left: 0; right: 0; bottom: 0; font-size: 0.48rem; padding: 2px 2px; }
+    /* b162 · the strip band hugs the bottom and INHERITS the card's colour, so the
+       name bar is the same darkened card colour as on PC (it used to cover the
+       whole card, veiling the picture into a flat dark band instead) */
+    .cn-side { display: block; position: absolute; inset: auto 0 0 0; background-color: inherit; }
+    .cn-name { position: static; font-size: 0.48rem; padding: 3px 2px; }
     .cn-sugs { position: absolute; left: 2px; bottom: 22px; padding: 0; gap: 2px; max-width: 60px; }
     .cn-sug { width: 16px; height: 16px; border-width: 1.5px; }
     .cn-validate { right: 3px; bottom: 22px; width: 24px; height: 24px; font-size: 14px; }
