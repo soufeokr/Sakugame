@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '168';
+    const SAKU_BUILD = '169';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -380,7 +380,6 @@
     // ===== PLAYER ACCOUNTS (Firebase Auth, username-only) =====
     // Internally each username maps to a synthetic email: username@sakugame.app
     // Players never see or use an email address.
-    const AUTH_EMAIL_SUFFIX = '@sakugame.app';
     let currentAccount = null;   // { uid, username, wins, losses, avatar } when logged in
     let gameResultCounted = false; // ensures stats are counted once per game
 
@@ -433,7 +432,7 @@
 
     // ----- avatar picker modal -----
     function openAvatarModal() {
-      if (!firebase.auth().currentUser) { showNotification('Log in to set a profile picture.'); return; }
+      if (!currentAccount) { showNotification(t('Sign in with Discord to set a profile picture.')); return; }
       const grid = document.getElementById('avatarGrid');
       grid.innerHTML = '';
       AVATAR_PRESETS.forEach(p => {
@@ -457,10 +456,9 @@
     }
 
     async function saveAvatar(url) {
-      const user = firebase.auth().currentUser;
-      if (!user) { showNotification('Log in to set a profile picture.'); return; }
+      if (!currentAccount) { showNotification(t('Sign in with Discord to set a profile picture.')); return; }
       try {
-        await database.ref('users/' + user.uid + '/avatar').set(url || null); // null = remove picture
+        await sakuAcctRef(sakuMyDcId()).child('avatar').set(url || null); // null = remove picture
         if (currentAccount) currentAccount.avatar = url || null;
         // Keep the room copy in sync so other players see the new picture immediately
         if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
@@ -507,38 +505,62 @@
     }
 
 
-    firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        const ref = database.ref('users/' + user.uid);
-        const snap = await ref.once('value');
-        let profile = snap.val();
-        if (!profile || !profile.username) {
-          // Fallback: profile write failed during registration — rebuild a minimal one
-          const lower = (user.email || 'player').split('@')[0];
-          profile = { username: lower, usernameLower: lower, wins: 0, losses: 0, uWins: 0, uLosses: 0, createdAt: Date.now() };
-          await ref.set(profile);
-        }
-        currentAccount = { uid: user.uid, username: profile.username, wins: profile.wins || 0, losses: profile.losses || 0, uWins: profile.uWins || 0, uLosses: profile.uLosses || 0, anilist: profile.anilist || null, avatar: profile.avatar || null };
-        try { sakuDiscordRefreshFromDb(); } catch (e) {}
-        playerName = currentAccount.username;
-        updateUserButton();
-        // If already inside a room, update the displayed name + picture there too
-        if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
-          database.ref('rooms/' + roomCode + '/players/' + playerId).update({ name: playerName, avatar: myAvatar() || '' });
-        }
-        // If sitting on the host screen when logging in, load the synced AniList account
-        const hostScreen = document.getElementById('hostRoomScreen');
-        if (hostScreen && hostScreen.classList.contains('active')) autoSyncHostAccount();
-        // If inside a room when logging in, drop the synced account into the pool
-        if (roomCode) syncMyAccountIntoRoom();
-      } else {
-        currentAccount = null;
-        updateUserButton();
+    // ================= 🔐 DISCORD-ONLY ACCOUNTS (b163) =================
+    // There is no backend in this project, so the Discord OAuth popup IS the identity
+    // proof: whoever completes it as a given Discord user owns that account. One account
+    // per Discord ID lives in the DB with a random session token, and the browser keeps
+    // { dc, session } in localStorage — that pair is what signs you back in.
+    const SAKU_ACCT_LS = 'saku-acct-session';
+    function sakuAcctRef(dcId) { return database.ref('accounts/' + dcId); }
+    function sakuMyDcId() { return currentAccount ? String(currentAccount.uid).replace(/^dc_/, '') : null; }
+    function sakuNewSession() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12); }
+    function sakuSessionLoad() {
+      try { const v = JSON.parse(localStorage.getItem(SAKU_ACCT_LS) || 'null'); return (v && v.dc && v.session) ? v : null; } catch (e) { return null; }
+    }
+    function sakuSessionSave(v) { try { localStorage.setItem(SAKU_ACCT_LS, JSON.stringify(v)); } catch (e) {} }
+    function sakuSessionClear() { try { localStorage.removeItem(SAKU_ACCT_LS); } catch (e) {} }
+    function sakuAcctName(a) { return String((a && (a.name || (a.dc && (a.dc.globalName || a.dc.username)))) || 'Discord user'); }
+
+    // Adopt a signed-in account (same shape the rest of the app already expects)
+    async function sakuAdoptAccount(a) {
+      const dc = (a && a.dc) || {};
+      currentAccount = {
+        uid: 'dc_' + dc.id, username: sakuAcctName(a),
+        wins: a.wins || 0, losses: a.losses || 0, uWins: a.uWins || 0, uLosses: a.uLosses || 0,
+        anilist: a.anilist || null, avatar: a.avatar || null, watchStatuses: a.watchStatuses || null
+      };
+      playerName = currentAccount.username;
+      updateUserButton();
+      try { sakuRenderDiscordBox(dc); } catch (e) {}
+      // Already inside a room → refresh the displayed name + picture there too
+      if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
+        database.ref('rooms/' + roomCode + '/players/' + playerId).update({ name: playerName, avatar: myAvatar() || '' });
       }
-    });
+      // Sitting on the host screen when signing in → load the synced AniList account
+      const hostScreen = document.getElementById('hostRoomScreen');
+      if (hostScreen && hostScreen.classList.contains('active')) autoSyncHostAccount();
+      // Inside a room when signing in → drop the synced account into the pool
+      if (roomCode) syncMyAccountIntoRoom();
+    }
+
+    // Replaces Firebase's onAuthStateChanged: validate the stored session against the DB
+    async function sakuRestoreSession() {
+      const st = sakuSessionLoad();
+      if (!st) { currentAccount = null; updateUserButton(); return; }
+      try {
+        const snap = await sakuAcctRef(st.dc).once('value');
+        const a = snap.val();
+        if (a && a.session === st.session) await sakuAdoptAccount(a);
+        else { sakuSessionClear(); currentAccount = null; updateUserButton(); }
+      } catch (e) { currentAccount = null; updateUserButton(); }
+    }
+    // deferred on purpose: the restore touches playerName/currentAccount, which are
+    // declared further down this file — a macrotask guarantees the whole script ran first
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { sakuRestoreSession(); });
+    else setTimeout(sakuRestoreSession, 0);
 
     function onUserButton() {
-      if (firebase.auth().currentUser) openAuthModal(); else changeUsername();
+      if (currentAccount) openAuthModal(); else changeUsername();
     }
 
     // 🗂️ Account menu tabs (Game / Account / Support) + Discord copy
@@ -567,15 +589,15 @@
     }
 
     async function openAuthModal() {
-      const user = firebase.auth().currentUser;
-      document.getElementById('authFormView').style.display = user ? 'none' : 'block';
-      document.getElementById('authProfileView').style.display = user ? 'block' : 'none';
+      const signedIn = !!currentAccount;
+      document.getElementById('authFormView').style.display = signedIn ? 'none' : 'block';
+      document.getElementById('authProfileView').style.display = signedIn ? 'block' : 'none';
       paintAdminBtn();
-      if (user) {
+      if (signedIn) {
         let lastTab = 'game';
         try { lastTab = localStorage.getItem('sakugame_acct_tab') || 'game'; } catch (e) { }
         switchAcctTab(lastTab);
-        const snap = await database.ref('users/' + user.uid).once('value');
+        const snap = await sakuAcctRef(sakuMyDcId()).once('value');
         const p = snap.val() || {};
         document.getElementById('profileName').textContent = p.username || 'Account';
         if (currentAccount) currentAccount.avatar = p.avatar || null;
@@ -601,83 +623,21 @@
 
     function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); showAuthError(''); }
     function showAuthError(msg) { const el = document.getElementById('authError'); if (el) el.textContent = msg || ''; }
-    function authBusy(busy) { ['authLoginBtn', 'authRegisterBtn'].forEach(id => { const el = document.getElementById(id); if (el) el.disabled = busy; }); }
-
-    function validateAuthForm(username, password) {
-      if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return 'Username: 3-20 characters, letters, numbers and _ only.';
-      if (!password || password.length < 6) return 'Password must be at least 6 characters.';
-      return null;
-    }
-
-    function friendlyAuthError(e) {
-      const code = (e && e.code) || '';
-      if (code === 'auth/email-already-in-use') return 'This username is already taken.';
-      if (code === 'auth/weak-password') return 'Password is too weak (min 6 characters).';
-      if (code === 'auth/wrong-password' || code === 'auth/user-not-found' || code === 'auth/invalid-credential' || code === 'auth/invalid-login-credentials') return 'Wrong username or password.';
-      if (code === 'auth/too-many-requests') return 'Too many attempts. Please wait and retry.';
-      if (code === 'auth/network-request-failed') return 'Network error. Check your connection.';
-      if (code === 'auth/operation-not-allowed') return 'Accounts not enabled yet: enable "Email/Password" in Firebase console (Authentication → Sign-in method).';
-      return 'Error: ' + ((e && e.message) || 'unknown');
-    }
-
-    async function registerAccount() {
-      const usernameRaw = document.getElementById('authUsernameInput').value.trim();
-      const password = document.getElementById('authPasswordInput').value;
-      const err = validateAuthForm(usernameRaw, password);
-      if (err) { showAuthError(err); return; }
-      const lower = usernameRaw.toLowerCase();
-      authBusy(true);
-      try {
-        // Cheap availability pre-check (the transaction below enforces it for real)
-        const taken = await database.ref('usernames/' + lower).once('value');
-        if (taken.exists()) { showAuthError('This username is already taken.'); authBusy(false); return; }
-        const cred = await firebase.auth().createUserWithEmailAndPassword(lower + AUTH_EMAIL_SUFFIX, password);
-        // Claim the username — transaction makes it race-safe.
-        // The entry records the uid plus the ORIGINAL login name (authLower),
-        // so later renames don't change how the player logs in.
-        const claim = await database.ref('usernames/' + lower).transaction(cur => (cur === null ? { uid: cred.user.uid, authLower: lower } : undefined));
-        if (!claim.committed) {
-          try { await cred.user.delete(); } catch (e) {}
-          showAuthError('This username is already taken.');
-          authBusy(false); return;
-        }
-        await database.ref('users/' + cred.user.uid).set({ username: usernameRaw, usernameLower: lower, wins: 0, losses: 0, uWins: 0, uLosses: 0, createdAt: Date.now() });
-        currentAccount = { uid: cred.user.uid, username: usernameRaw, wins: 0, losses: 0, uWins: 0, uLosses: 0, avatar: null };
-        playerName = usernameRaw;
-        updateUserButton();
-        closeAuthModal();
-        showNotification('Account created! Welcome, ' + usernameRaw + '!');
-        setTimeout(function () { try { sakuDiscordPromptSignup(); } catch (e) {} }, 700);
-      } catch (e) { showAuthError(friendlyAuthError(e)); }
-      authBusy(false);
-    }
-
-    async function loginAccount() {
-      const usernameRaw = document.getElementById('authUsernameInput').value.trim();
-      const password = document.getElementById('authPasswordInput').value;
-      const err = validateAuthForm(usernameRaw, password);
-      if (err) { showAuthError(err); return; }
-      authBusy(true);
-      try {
-        const lower = usernameRaw.toLowerCase();
-        // The registry tells us which original login name (auth email) this display name maps to
-        const entrySnap = await database.ref('usernames/' + lower).once('value');
-        const entry = entrySnap.val();
-        if (!entry) { showAuthError('Wrong username or password.'); authBusy(false); return; }
-        // New format: { uid, authLower } — legacy format: plain uid string (key == login name)
-        const authLower = (typeof entry === 'object' && entry && entry.authLower) ? entry.authLower : lower;
-        await firebase.auth().signInWithEmailAndPassword(authLower + AUTH_EMAIL_SUFFIX, password);
-        closeAuthModal();
-        showNotification('Logged in as ' + (currentAccount ? currentAccount.username : usernameRaw) + '!');
-      } catch (e) { showAuthError(friendlyAuthError(e)); }
-      authBusy(false);
+    // Discord is the ONLY way in — one button, no form to fill
+    function loginWithDiscord() {
+      if (!sakuDiscordConfigured()) { showNotification(t('Discord login is not configured yet.')); return; }
+      try { localStorage.setItem('saku-dc-pending', 'signin'); } catch (e) {}
+      try { window.location.href = sakuDiscordAuthUrl(); } catch (e) {}
     }
 
     async function logoutAccount() {
-      try { await firebase.auth().signOut(); } catch (e) {}
+      sakuSessionClear();
+      currentAccount = null;
       anilistAutoSyncDone = false;
+      updateUserButton();
+      try { sakuRenderDiscordBox(null); } catch (e) {}
       closeAuthModal();
-      showNotification('Logged out.');
+      showNotification(t('Logged out.'));
     }
 
     // ===== PROFILE MENU ACTIONS =====
@@ -686,28 +646,14 @@
     // internally (auth email never changes → no verification-email problem):
     // the /usernames registry maps display name → original login name.
     async function changeAccountUsername(newNameArg) {
-      const user = firebase.auth().currentUser;
-      if (!user || !currentAccount) return;
+      if (!currentAccount) return;
       const btn = document.getElementById('profileUsernameBtn');
       const newName = (newNameArg != null ? String(newNameArg) : ((document.getElementById('profileUsernameInput') || {}).value || '')).trim();
       if (!/^[A-Za-z0-9_]{3,20}$/.test(newName)) { showNotification('Username: 3-20 characters, letters, numbers and _ only.'); return; }
-      const lower = newName.toLowerCase();
-      const authLower = (user.email || '').split('@')[0]; // original login name, never changes
-      const oldLower = currentAccount.username.toLowerCase();
       if (btn) btn.disabled = true;
       try {
-        if (lower !== oldLower) {
-          const takenSnap = await database.ref('usernames/' + lower).once('value');
-          const tv = takenSnap.val();
-          const takenByOther = tv && !((typeof tv === 'object' && tv.uid === user.uid) || tv === user.uid);
-          if (takenByOther) { showNotification('This username is already taken.'); if (btn) btn.disabled = false; return; }
-          const claim = await database.ref('usernames/' + lower).transaction(cur => (cur === null ? { uid: user.uid, authLower: authLower } : undefined));
-          if (!claim.committed) { showNotification('This username is already taken.'); if (btn) btn.disabled = false; return; }
-          await database.ref('users/' + user.uid).update({ username: newName, usernameLower: lower });
-          try { await database.ref('usernames/' + oldLower).remove(); } catch (e) {} // release old name
-        } else {
-          await database.ref('users/' + user.uid).update({ username: newName }); // case-only change
-        }
+        // b163 · display name only — the Discord identity stays the login, no registry needed
+        await sakuAcctRef(sakuMyDcId()).update({ name: newName });
         currentAccount.username = newName;
         playerName = newName;
         updateUserButton();
@@ -719,46 +665,6 @@
         showNotification('Username changed to: ' + newName);
       } catch (e) { showNotification('Error: ' + e.message); }
       if (btn) btn.disabled = false;
-    }
-
-    // Change password — Firebase requires a recent login, so re-authenticate first
-    async function changeAccountPassword() {
-      const user = firebase.auth().currentUser;
-      if (!user) return;
-      const btn = document.getElementById('profilePasswordBtn');
-      const current = document.getElementById('currentPasswordInput').value;
-      const next = document.getElementById('newPasswordInput').value;
-      if (!current) { showNotification('Enter your current password.'); return; }
-      if (!next || next.length < 6) { showNotification('New password must be at least 6 characters.'); return; }
-      btn.disabled = true;
-      try {
-        const cred = firebase.auth.EmailAuthProvider.credential(user.email, current);
-        await user.reauthenticateWithCredential(cred);
-        await user.updatePassword(next);
-        document.getElementById('currentPasswordInput').value = '';
-        document.getElementById('newPasswordInput').value = '';
-        showNotification('Password updated!'); closePasswordModal();
-      } catch (e) {
-        const code = (e && e.code) || '';
-        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') showNotification('Current password is incorrect.');
-        else showNotification(friendlyAuthError(e));
-      }
-      btn.disabled = false;
-    }
-
-    // 👁 Peek button next to password boxes: tap to reveal what's typed,
-    // tap again to mask — stays readable on every auth form (login/register
-    // + change password) without leaving the modal
-    function togglePassword(inputId, btn) {
-      const inp = document.getElementById(inputId);
-      if (!inp) return;
-      const show = inp.type === 'password';
-      inp.type = show ? 'text' : 'password';
-      if (btn) {
-        btn.classList.toggle('pw-on', show);
-        btn.title = show ? 'Hide password' : 'Show password';
-        btn.setAttribute('aria-label', btn.title);
-      }
     }
 
     // Lightweight AniList check (user exists + enough favorites) without full download
@@ -775,8 +681,7 @@
     }
 
     async function saveAnilistSync() {
-      const user = firebase.auth().currentUser;
-      if (!user) return;
+      if (!currentAccount) return;
       const btn = document.getElementById('anilistSaveBtn');
       const raw = document.getElementById('anilistSyncInput').value.trim();
       btn.disabled = true;
@@ -784,7 +689,7 @@
         if (!raw) {
           // Empty field = remove the sync
           if (currentAccount && currentAccount.anilist) {
-            await database.ref('users/' + user.uid + '/anilist').remove();
+            await sakuAcctRef(sakuMyDcId()).child('anilist').remove();
             currentAccount.anilist = null; anilistAutoSyncDone = false;
             showNotification('AniList sync removed.');
           } else { showNotification('Enter your AniList username.'); }
@@ -793,7 +698,7 @@
         const info = await checkAniListUser(raw);
         if (!info) { showNotification('AniList user not found: ' + raw); btn.disabled = false; return; }
         if (info.total < 6) { showNotification(info.name + ' has only ' + info.total + ' favorites. Need at least 6.'); btn.disabled = false; return; }
-        await database.ref('users/' + user.uid + '/anilist').set(info.name);
+        await sakuAcctRef(sakuMyDcId()).child('anilist').set(info.name);
         if (currentAccount) currentAccount.anilist = info.name;
         anilistAutoSyncDone = false; // allow auto-load next time you host
         document.getElementById('anilistSyncInput').value = info.name;
@@ -839,16 +744,14 @@
 
     // Count the player's own result once per finished game (logged-in players only).
     function recordGameResult(won) {
-      const user = firebase.auth().currentUser;
-      if (!user) return; // guests: no stats
-      database.ref('users/' + user.uid + '/' + (won ? 'wins' : 'losses')).transaction(v => (v || 0) + 1);
+      if (!currentAccount) return; // guests: no stats
+      sakuAcctRef(sakuMyDcId()).child(won ? 'wins' : 'losses').transaction(v => (v || 0) + 1);
     }
 
     // Same, but for Undercover games — counted in separate counters (uWins/uLosses).
     function recordUndercoverResult(won) {
-      const user = firebase.auth().currentUser;
-      if (!user) return; // guests: no stats
-      database.ref('users/' + user.uid + '/' + (won ? 'uWins' : 'uLosses')).transaction(v => (v || 0) + 1);
+      if (!currentAccount) return; // guests: no stats
+      sakuAcctRef(sakuMyDcId()).child(won ? 'uWins' : 'uLosses').transaction(v => (v || 0) + 1);
     }
 
     const ANILIST_API = 'https://graphql.anilist.co';
@@ -1056,8 +959,7 @@
     async function saveWatchStatuses() {
       const sel = currentWatchStatuses();
       if (currentAccount) currentAccount.watchStatuses = sel;
-      const user = firebase.auth().currentUser;
-      if (user) { try { await database.ref('users/' + user.uid + '/watchStatuses').set(sel); } catch (e) {} }
+      if (currentAccount) { try { await sakuAcctRef(sakuMyDcId()).child('watchStatuses').set(sel); } catch (e) {} }
       // refresh my entry inside the room too (the raw watched list is unchanged)
       if (roomCode && currentAccount && currentAccount.anilist) {
         try { await database.ref('rooms/' + roomCode + '/accounts/' + currentAccount.anilist + '/ws').set(sel); } catch (e) {}
@@ -1172,16 +1074,10 @@
       await changeAccountUsername(val);
       toggleNameEdit(); // collapse the inline box after the attempt
     }
-    // 🔑 password modal opens OVER the account window
-    function openPasswordModal() {
-      ['currentPasswordInput', 'newPasswordInput'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-      const m = document.getElementById('passwordModal'); if (m) m.classList.add('show');
-    }
-    function closePasswordModal() { const m = document.getElementById('passwordModal'); if (m) m.classList.remove('show'); }
     async function confirmUsernameChange() {
       const newName = document.getElementById('newUsernameInput').value.trim();
       if (!newName || newName.length < 2) { showNotification('Please enter a valid username (at least 2 characters)'); return; }
-      if (firebase.auth().currentUser) { closeUsernameModal(); await changeAccountUsername(newName); return; } // logged-in: full account rename (registry + DB)
+      if (currentAccount) { closeUsernameModal(); await changeAccountUsername(newName); return; } // signed in: account rename
       playerName = newName;
       updateUserButton();
       if (roomCode && currentRoom) { await database.ref('rooms/' + roomCode + '/players/' + playerId + '/name').set(playerName); }
@@ -1323,11 +1219,8 @@
       return 'https://discord.com/oauth2/authorize?client_id=' + encodeURIComponent(SAKU_DISCORD_CLIENT_ID) +
         '&response_type=token&redirect_uri=' + encodeURIComponent(redir) + '&scope=identify';
     }
-    function sakuDiscordStartLink(fromSignup) {
-      if (!sakuDiscordConfigured()) { showNotification(t('Discord link is not configured yet.')); return; }
-      try { localStorage.setItem('saku-dc-pending', fromSignup ? 'signup' : 'link'); } catch (e) {}
-      try { window.location.href = sakuDiscordAuthUrl(); } catch (e) {}
-    }
+    // 🚪 the single entry point: Discord OAuth popup → verified identity → account
+    function sakuDiscordStartLink() { loginWithDiscord(); }
     // full-page OAuth return: Discord sends us back with #access_token=… in the URL
     async function sakuDiscordHandleReturn() {
       let h = '';
@@ -1343,31 +1236,35 @@
         const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } });
         if (!res || !res.ok) throw new Error('discord api');
         const du = await res.json();
-        await sakuDiscordSave(du);
+        await sakuDiscordSignInWith(du);
       } catch (e) { showNotification(t('Discord link failed — try again.')); }
     }
-    async function sakuDiscordSave(du) {
-      // wait for the restored Firebase session to hydrate currentAccount (page just reloaded)
-      const t0 = Date.now();
-      while (!(currentAccount && currentAccount.uid) && Date.now() - t0 < 9000) await new Promise(r => setTimeout(r, 200));
-      if (!(currentAccount && currentAccount.uid)) { showNotification(t('Log in, then sync Discord from your account settings.')); return; }
+    // 🔑 The Discord identity IS the account: create it on first login, otherwise take the
+    // session over (a new device signing in signs the previous browser out).
+    async function sakuDiscordSignInWith(du) {
+      const dcId = String((du && du.id) || '');
+      if (!dcId) { showNotification(t('Discord login failed — try again.')); return; }
       const clean = {
-        id: String(du.id || ''), username: String(du.username || ''),
+        id: dcId, username: String(du.username || ''),
         globalName: String(du.global_name || du.username || ''),
-        avatar: du.avatar ? ('https://cdn.discordapp.com/avatars/' + du.id + '/' + du.avatar + '.png?size=64') : null,
+        avatar: du.avatar ? ('https://cdn.discordapp.com/avatars/' + dcId + '/' + du.avatar + '.png?size=64') : null,
         linkedAt: Date.now()
       };
-      try { await database.ref('users/' + currentAccount.uid + '/discord').set(clean); } catch (e) { showNotification(t('Discord link failed — try again.')); return; }
-      try { localStorage.setItem('saku-dc-cache', JSON.stringify(clean)); } catch (e) {}
-      sakuRenderDiscordBox(clean);
-      showNotification(t('Discord account linked!'));
-    }
-    async function sakuDiscordUnlink() {
-      if (!(currentAccount && currentAccount.uid)) return;
-      try { await database.ref('users/' + currentAccount.uid + '/discord').remove(); } catch (e) {}
-      try { localStorage.removeItem('saku-dc-cache'); } catch (e) {}
-      sakuRenderDiscordBox(null);
-      showNotification(t('Discord account unlinked.'));
+      const session = sakuNewSession();
+      try {
+        const ref = sakuAcctRef(dcId);
+        const cur = (await ref.once('value')).val() || {};
+        await ref.set({
+          dc: clean, session,
+          createdAt: cur.createdAt || Date.now(),
+          name: cur.name || null,
+          wins: cur.wins || 0, losses: cur.losses || 0, uWins: cur.uWins || 0, uLosses: cur.uLosses || 0,
+          avatar: cur.avatar || null, anilist: cur.anilist || null, watchStatuses: cur.watchStatuses || null
+        });
+        sakuSessionSave({ dc: dcId, session });
+        await sakuAdoptAccount((await ref.once('value')).val() || {});
+        showNotification(t('Signed in with Discord!'));
+      } catch (e) { showNotification(t('Discord login failed — try again.')); }
     }
     function sakuDiscordCached() { try { const v = localStorage.getItem('saku-dc-cache'); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
     // paints the Account-tab card: either the ✅ synced identity or the Sync button
@@ -1379,33 +1276,26 @@
       if (d && d.id) {
         box.innerHTML = '<span class="dc-icon">' + (d.avatar ? '<img src="' + escapeHtml(d.avatar) + '" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">' : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85Z"/></svg>') + '</span>' +
           '<div class="dc-mid"><div class="dc-label">' + tt('Linked ✓') + '</div><div class="dc-handle">' + escapeHtml(d.globalName || d.username) + '</div></div>' +
-          '<button type="button" class="dc-copy" onclick="sakuDiscordUnlink()"><svg class="ic"><use href="#i-trash"/></svg> ' + tt('Unlink') + '</button>';
+          '<button type="button" class="dc-copy" onclick="logoutAccount()"><svg class="ic"><use href="#i-door"/></svg> ' + tt('Log out') + '</button>';
       } else {
         box.innerHTML = '<span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85Z"/></svg></span>' +
-          '<div class="dc-mid"><div class="dc-label">Discord</div><div class="dc-handle">' + tt('Not linked') + '</div></div>' +
-          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink(false)"><svg class="ic"><use href="#i-link"/></svg> ' + tt('Sync Discord') + '</button>';
+          '<div class="dc-mid"><div class="dc-label">Discord</div><div class="dc-handle">' + tt('Not signed in') + '</div></div>' +
+          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink()"><svg class="ic"><use href="#i-door"/></svg> ' + tt('Sign in with Discord') + '</button>';
       }
     }
     // fresh read from the DB (when the Account tab opens) so other devices' links show up too
     let _dcDbN = 0;
     async function sakuDiscordRefreshFromDb() {
-      if (!(currentAccount && currentAccount.uid)) { sakuRenderDiscordBox(null); return; }
+      if (!currentAccount) { sakuRenderDiscordBox(null); return; }
       const n = ++_dcDbN;
       try {
-        const snap = await database.ref('users/' + currentAccount.uid + '/discord').once('value');
+        const snap = await sakuAcctRef(sakuMyDcId()).once('value');
         if (n !== _dcDbN) return; // a newer refresh won
-        const v = snap.val() || null;
+        const v = (snap.val() || {}).dc || null;
         try { if (v) localStorage.setItem('saku-dc-cache', JSON.stringify(v)); else localStorage.removeItem('saku-dc-cache'); } catch (e) {}
         sakuRenderDiscordBox(v);
       } catch (e) {}
     }
-    // 🎁 offer once, right after account creation
-    function sakuDiscordPromptSignup() {
-      if (!sakuDiscordConfigured()) return;
-      const m = document.getElementById('discordLinkModal');
-      if (m) m.classList.add('show');
-    }
-    function closeDiscordLinkModal() { const m = document.getElementById('discordLinkModal'); if (m) m.classList.remove('show'); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); });
     else { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); }
 
@@ -2754,41 +2644,26 @@
       showScreen('homepageScreen'); // leaving a room always brings you back home
     }
 
-    // 🗑️ DELETE ACCOUNT (GDPR right to erasure): password confirm → wipe
-    // users/<uid> + the usernames registry → delete the Firebase auth user.
+    // 🗑️ DELETE ACCOUNT (GDPR right to erasure): wipes the Discord-keyed account
+    // (profile, stats, avatar, AniList link). The Discord account itself is untouched.
     function openDeleteAccountModal() {
-      const p = document.getElementById('deletePasswordInput'); if (p) p.value = '';
       const m = document.getElementById('deleteAccountModal'); if (m) m.classList.add('show');
     }
     function closeDeleteAccountModal() { const m = document.getElementById('deleteAccountModal'); if (m) m.classList.remove('show'); }
     async function confirmDeleteAccount() {
-      const user = firebase.auth().currentUser;
-      if (!user) return;
+      if (!currentAccount) return;
       const btn = document.getElementById('deleteAccountBtn');
-      const pw = (document.getElementById('deletePasswordInput') || {}).value || '';
-      if (!pw) { showNotification(t('Type your password to confirm')); return; }
       btn.disabled = true;
       try {
-        const cred = firebase.auth.EmailAuthProvider.credential(user.email, pw);
-        await user.reauthenticateWithCredential(cred); // recent-login requirement
-        let lower = null;
-        try {
-          const snap = await database.ref('users/' + user.uid).once('value');
-          const v = snap && snap.val();
-          lower = v && (v.usernameLower || (v.username ? String(v.username).toLowerCase() : null));
-        } catch (e) {}
-        try { await database.ref('users/' + user.uid).remove(); } catch (e) {}       // profile + stats + AniList link + avatar
-        if (lower) { try { await database.ref('usernames/' + lower).remove(); } catch (e) {} } // release the name
-        await user.delete();
+        await sakuAcctRef(sakuMyDcId()).remove();   // profile + stats + AniList link + avatar
+        sakuSessionClear();
+        currentAccount = null;
+        updateUserButton();
+        try { sakuRenderDiscordBox(null); } catch (e) {}
         closeDeleteAccountModal();
         try { closeAuthModal(); } catch (e) {}
         showNotification(t('Account deleted. Goodbye!'), 5000);
-      } catch (e) {
-        const code = (e && e.code) || '';
-        if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') showNotification(t('Current password is incorrect.'));
-        else if (code === 'auth/requires-recent-login') showNotification(t('Please log out and back in, then try again.'));
-        else showNotification(friendlyAuthError(e));
-      }
+      } catch (e) { showNotification('Error: ' + (e && e.message ? e.message : e)); }
       btn.disabled = false;
     }
 
@@ -9068,7 +8943,7 @@
     }
 
     async function openPairsModal() {
-      if (!firebase.auth().currentUser) { showNotification('Log in first (profile menu) to manage word pairs.'); return; }
+      if (!currentAccount) { showNotification(t('Sign in with Discord first (profile menu) to manage word pairs.')); return; }
       document.getElementById('pairInputA').value = '';
       document.getElementById('pairInputB').value = '';
       pairPicked.a = null; pairPicked.b = null;
@@ -9143,7 +9018,7 @@
     }
 
     async function addCustomPair() {
-      if (!firebase.auth().currentUser) { showNotification('Log in first (profile menu) to manage word pairs.'); return; }
+      if (!currentAccount) { showNotification(t('Sign in with Discord first (profile menu) to manage word pairs.')); return; }
       const nameA = document.getElementById('pairInputA').value.trim();
       const nameB = document.getElementById('pairInputB').value.trim();
       if (nameA.length < 2 || nameB.length < 2) { showNotification('Both words must be at least 2 characters.'); return; }
