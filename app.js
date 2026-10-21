@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '169';
+    const SAKU_BUILD = '170';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -446,9 +446,17 @@
       });
       const err = document.getElementById('avatarError');
       if (err) err.textContent = '';
+      const dcBtn = document.getElementById('avatarDiscordBtn');
+      if (dcBtn) dcBtn.style.display = sakuMyDcAvatar() ? '' : 'none';
       document.getElementById('avatarModal').classList.add('show');
     }
     function closeAvatarModal() { document.getElementById('avatarModal').classList.remove('show'); }
+    // 🖼️ Re-adopt the Discord profile picture as the account picture
+    function sakuUseDiscordAvatar() {
+      const url = sakuMyDcAvatar();
+      if (!url) { showNotification(t('Your Discord account has no picture.')); return; }
+      saveAvatar(url);
+    }
 
     function renderProfileAvatar() {
       const wrap = document.getElementById('profileAvatar');
@@ -519,7 +527,10 @@
     }
     function sakuSessionSave(v) { try { localStorage.setItem(SAKU_ACCT_LS, JSON.stringify(v)); } catch (e) {} }
     function sakuSessionClear() { try { localStorage.removeItem(SAKU_ACCT_LS); } catch (e) {} }
+    // The Discord avatar IS the account picture: a first login adopts it, and it stays the
+    // fallback so every account shows a face even before anyone opens the picture picker.
     function sakuAcctName(a) { return String((a && (a.name || (a.dc && (a.dc.globalName || a.dc.username)))) || 'Discord user'); }
+    function sakuMyDcAvatar() { return (currentAccount && currentAccount.dcAvatar) ? currentAccount.dcAvatar : null; }
 
     // Adopt a signed-in account (same shape the rest of the app already expects)
     async function sakuAdoptAccount(a) {
@@ -527,7 +538,8 @@
       currentAccount = {
         uid: 'dc_' + dc.id, username: sakuAcctName(a),
         wins: a.wins || 0, losses: a.losses || 0, uWins: a.uWins || 0, uLosses: a.uLosses || 0,
-        anilist: a.anilist || null, avatar: a.avatar || null, watchStatuses: a.watchStatuses || null
+        anilist: a.anilist || null, avatar: a.avatar || (a.dc && a.dc.avatar) || null, watchStatuses: a.watchStatuses || null,
+        dcAvatar: (a.dc && a.dc.avatar) || null
       };
       playerName = currentAccount.username;
       updateUserButton();
@@ -610,8 +622,6 @@
         if (ulEl) ulEl.textContent = p.uLosses || 0;
         document.getElementById('anilistSyncInput').value = p.anilist || '';
         const puReset = document.getElementById('profileUsernameInput'); if (puReset) puReset.value = '';
-        document.getElementById('currentPasswordInput').value = '';
-        document.getElementById('newPasswordInput').value = '';
         if (currentAccount) currentAccount.anilist = p.anilist || null;
         if (currentAccount) currentAccount.watchStatuses = Array.isArray(p.watchStatuses) ? p.watchStatuses : null;
         try { loadWatchStatusesIntoUI(); } catch (e) {}
@@ -1247,7 +1257,7 @@
       const clean = {
         id: dcId, username: String(du.username || ''),
         globalName: String(du.global_name || du.username || ''),
-        avatar: du.avatar ? ('https://cdn.discordapp.com/avatars/' + dcId + '/' + du.avatar + '.png?size=64') : null,
+        avatar: du.avatar ? ('https://cdn.discordapp.com/avatars/' + dcId + '/' + du.avatar + '.png?size=128') : null,
         linkedAt: Date.now()
       };
       const session = sakuNewSession();
@@ -1259,7 +1269,7 @@
           createdAt: cur.createdAt || Date.now(),
           name: cur.name || null,
           wins: cur.wins || 0, losses: cur.losses || 0, uWins: cur.uWins || 0, uLosses: cur.uLosses || 0,
-          avatar: cur.avatar || null, anilist: cur.anilist || null, watchStatuses: cur.watchStatuses || null
+          avatar: cur.avatar || clean.avatar || null, anilist: cur.anilist || null, watchStatuses: cur.watchStatuses || null
         });
         sakuSessionSave({ dc: dcId, session });
         await sakuAdoptAccount((await ref.once('value')).val() || {});
@@ -1293,6 +1303,7 @@
         if (n !== _dcDbN) return; // a newer refresh won
         const v = (snap.val() || {}).dc || null;
         try { if (v) localStorage.setItem('saku-dc-cache', JSON.stringify(v)); else localStorage.removeItem('saku-dc-cache'); } catch (e) {}
+        if (currentAccount && v && v.avatar) currentAccount.dcAvatar = v.avatar; // keep the "use my Discord picture" button fresh
         sakuRenderDiscordBox(v);
       } catch (e) {}
     }

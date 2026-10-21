@@ -878,12 +878,6 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   #specScore .player-card { cursor: default; }
   #specFeed { max-height: 220px; }
   .afk-tag { color: var(--warn, #ffca3a); font-weight: 600; }
-  /* 👁 password peek — the wrap keeps the eye glued to the end of the box
-     (wrap lives OUTSIDE the game forms, so it carries its own positioning;
-     the eye button itself reuses the pinned .hc-clr dock style) */
-  .pw-wrap { position: relative; flex: 1; min-width: 0; }
-  .pw-wrap input { padding-right: 48px !important; }
-  .pw-eye.pw-on { border-color: var(--accent); color: var(--accent); }
   .hc-done-tag { font-weight: 900; font-size: 0.72rem; margin-left: 5px; }
   .hc-done-tag.ok { color: #00c853; }
   .hc-done-tag.no { color: #ff5252; }
@@ -1543,9 +1537,7 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .profile-name-row { display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
   .ava-edit.name-edit { position: static; width: 24px; height: 24px; min-width: 24px; max-width: 24px; min-height: 24px; max-height: 24px; }
   /* (5) profile rows: inputs may shrink, buttons never overlap them */
-  .profile-row .pw-wrap { flex: 1 1 auto; min-width: 0; position: relative; }
   .profile-row input[type="text"], .profile-row input[type="password"] { flex: 1 1 auto; min-width: 0; width: 100%; }
-  .profile-row .pw-wrap input { width: 100%; }
   .profile-row button { flex-shrink: 0; white-space: nowrap; }
   /* (3) Count-as-watched checkboxes — wrap onto clean lines instead of a cropped scroll strip */
   @media (max-width: 600px) {

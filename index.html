@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="169">
+<meta name="saku-build" content="170">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=169" sizes="any">
+<link rel="icon" href="favicon.ico?v=170" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=169">
+<link rel="stylesheet" href="style.css?v=170">
 </head>
 <body>
 
@@ -1558,10 +1558,12 @@
     <div class="modal-content">
       <div class="modal-close" onclick="closeAvatarModal()">×</div>
       <h2><svg class="ic"><use href="#i-image"/></svg> Profile Picture</h2>
+      <p style="color: var(--muted); font-size: 0.85rem;">Your Discord picture is used as your profile picture — pick another one any time.</p>
       <p style="color: var(--muted); font-size: 0.85rem;">Pick an anime avatar:</p>
       <div class="avatar-grid" id="avatarGrid"></div>
       <p style="color: var(--muted); font-size: 0.85rem;">…or use your own picture (your browser shrinks it to a tiny 96×96 image — nothing heavy is uploaded).</p>
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="secondary" style="width: auto; display: none;" id="avatarDiscordBtn" onclick="sakuUseDiscordAvatar()"><svg class="ic"><use href="#i-users"/></svg> <span class="btn-label">Use my Discord picture</span></button>
         <button class="secondary" style="width: auto;" onclick="document.getElementById('avatarFileInput').click()"><svg class="ic"><use href="#i-folder"/></svg> Upload my own</button>
         <button class="danger" style="width: auto;" onclick="saveAvatar(null)"><svg class="ic"><use href="#i-trash"/></svg> Remove picture</button>
       </div>
@@ -1581,7 +1583,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=169', 'charanimes.js?v=169', 'animes.js?v=169', 'nsfwdata.js?v=169', 'snappics.js?v=169'];
+        var files = ['characters.js?v=170', 'charanimes.js?v=170', 'animes.js?v=170', 'nsfwdata.js?v=170', 'snappics.js?v=170'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1596,10 +1598,10 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=169"></script>
-  <script src="music.js?v=169"></script>
-  <script src="lang.js?v=169"></script>
-  <script src="app.js?v=169"></script>
+  <script src="undercover.js?v=170"></script>
+  <script src="music.js?v=170"></script>
+  <script src="lang.js?v=170"></script>
+  <script src="app.js?v=170"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1607,5 +1609,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4c8cf9b093a3108',t:'MTc5MjMzOTgwMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4deb7f38efb6eff',t:'MTc5MjU2OTUyMQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
