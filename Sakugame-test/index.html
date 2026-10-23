@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
+<meta name="saku-build" content="170">
+<meta name="theme-color" content="#0f0f1a">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<title>Sakugame — Anime guessing games to play with friends online</title>
+<!-- 📲 PWA: installable as an app (Add to Home Screen) -->
+<link rel="manifest" href="manifest.json">
+<!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
+     AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
+<link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
+<link rel="dns-prefetch" href="https://s4.anilist.co">
+<meta name="description" content="Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
+<!-- 🔎 SEO / discoverability -->
+<link rel="canonical" href="https://soufeokr.github.io/Sakugame/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="application-name" content="Sakugame">
+<!-- 🔑 Search Console ownership is verified via the googlefbaafd3772baa43a.html
+     file at the site root (HTML-file method) — no meta token needed -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sakugame">
+<meta property="og:title" content="Sakugame — Anime guessing games with friends">
+<meta property="og:description" content="Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
+<meta property="og:url" content="https://soufeokr.github.io/Sakugame/">
+<meta property="og:image" content="https://soufeokr.github.io/Sakugame/icons/open-graph.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sakugame — anime guessing games with friends">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sakugame — Anime guessing games with friends">
+<meta name="twitter:description" content="Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
+<meta name="twitter:image" content="https://soufeokr.github.io/Sakugame/icons/open-graph.png">
+<meta name="twitter:image:alt" content="Sakugame — anime guessing games with friends">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Sakugame",
+  "url": "https://soufeokr.github.io/Sakugame/",
+  "description": "Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot & Cold, Undercover and more. Free, right in your browser.",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "inLanguage": ["en", "fr", "es"],
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "name": "Soufeok" },
+  "image": "https://soufeokr.github.io/Sakugame/icons/open-graph.png"
+}
+</script>
+<!-- 🏷️ WebSite identity (b108): THE source Google uses for the gray "site
+     name" label in search results — says loud & clear the host IS Sakugame -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://soufeokr.github.io/Sakugame/#website",
+  "url": "https://soufeokr.github.io/Sakugame/",
+  "name": "Sakugame",
+  "alternateName": "Sakugame — Anime guessing games with friends",
+  "inLanguage": ["en", "fr", "es"],
+  "publisher": { "@type": "Person", "name": "Soufeok" }
+}
+</script>
+<meta name="theme-color" content="#0f0f1a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sakugame">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="favicon.ico?v=170" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css?v=170">
+</head>
+<body>
+  <!-- 🧪 TEST BUILD marker -->
+  <div id="testBuildBadge" style="position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:2147483001;pointer-events:none;background:rgba(88,101,242,.92);color:#fff;font:600 11px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.3px;padding:5px 10px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.35);">🧪 TEST BUILD — fake backend, nothing public is touched</div>
+
+<!-- ══════ SVG ICON SPRITE — all UI icons (stroke = currentColor, inherits text color) ══════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" fill="#f4f9ff"/><path d="M8.6 7.6v8.8l7.6-4.4z" fill="#02a9ff" stroke="#02a9ff" stroke-width="0.9" stroke-linejoin="round"/></symbol>
+  <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="8.5" width="13" height="12.5" rx="2" fill="#0f0f1a" stroke="currentColor" stroke-width="2"/><path d="M14.5 11.5l.8 1.6 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="#bfe4ff"/></symbol>
+  <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.9"/><circle cx="9.2" cy="9.2" r="1.6" fill="#16335f"/><circle cx="14.8" cy="9.2" r="1.6" fill="#16335f"/><circle cx="12" cy="12" r="1.6" fill="#16335f"/><circle cx="9.2" cy="14.8" r="1.6" fill="#16335f"/><circle cx="14.8" cy="14.8" r="1.6" fill="#16335f"/></symbol>
+  <symbol id="i-gamepad" viewBox="0 0 24 24"><rect x="2.6" y="7.8" width="18.8" height="9.6" rx="4.8" fill="#16335f" stroke="#dfe9ff" stroke-width="1.5"/><rect x="6.3" y="11.8" width="3.6" height="1.6" rx="0.8" fill="#dfe9ff"/><rect x="7.3" y="10.8" width="1.6" height="3.6" rx="0.8" fill="#dfe9ff"/><circle cx="16.6" cy="10.9" r="1.05" fill="#ff5252"/><circle cx="18.35" cy="12.65" r="1.05" fill="#00c853"/><circle cx="16.6" cy="14.4" r="1.05" fill="#ffca3a"/><circle cx="14.85" cy="12.65" r="1.05" fill="#29b6f6"/></symbol>
+  <symbol id="i-mask" viewBox="0 0 24 24"><g transform="rotate(-10 9.5 12)"><rect x="4.5" y="4.5" width="10.5" height="14.5" rx="2" fill="#16335f" stroke="#7fa8e8" stroke-width="1.3"/></g><g transform="rotate(6 14 12)"><rect x="8.8" y="5" width="10.7" height="14.8" rx="2" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.8"/></g><g transform="translate(14.15 12.3) rotate(6)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#02a9ff" stroke-width="1.8" stroke-linecap="round" transform="scale(1.15)"/><circle cx="0" cy="3.8524999999999996" r="1.15" fill="#02a9ff"/></g></symbol>
+  <symbol id="i-spy" viewBox="0 0 24 24"><path d="M4.5 20.8a7.5 4.6 0 0 1 15 0z" fill="#16335f"/><circle cx="12" cy="10.8" r="4.5" fill="#f4f9ff"/><rect x="7.7" y="9.3" width="8.6" height="2.7" rx="1.35" fill="#16335f"/><circle cx="10.2" cy="10.65" r="0.85" fill="#f4f9ff"/><circle cx="13.8" cy="10.65" r="0.85" fill="#f4f9ff"/><rect x="5.2" y="5.9" width="13.6" height="1.9" rx="0.95" fill="#2c4a80"/><path d="M8.1 6.2a3.9 2.9 0 0 1 7.8 0z" fill="#16335f"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M2.6 8.2h3.6M3.2 16.2h3.2" stroke="#f4f9ff" stroke-width="1.7" stroke-linecap="round" opacity="0.85"/><path d="M12.8 2 5.2 13.2h4.9L9 22l8.7-11.6h-5L12.8 2z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.9" stroke-linejoin="round"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><rect x="2.8" y="4.4" width="11.5" height="15.5" rx="2" fill="#16335f" stroke="#2c4a80" stroke-width="1.2"/><rect x="7.4" y="2.8" width="13.2" height="16.5" rx="2" fill="#29b6f6" stroke="#bfe9ff" stroke-width="1.4"/><rect x="9.3" y="7.7" width="9.4" height="2.1" rx="1" fill="#ffffff" opacity="0.55"/><rect x="9.3" y="11.6" width="9.4" height="2.1" rx="1" fill="#ffffff" opacity="0.55"/><rect x="9.3" y="15.5" width="9.4" height="2.1" rx="1" fill="#ffffff" opacity="0.55"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7.5 4v16M16.5 4v16M3 9h4.5M3 15h4.5M16.5 9H21M16.5 15H21" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M20.59 10.64 A8.7 8.7 0 0 1 20.59 13.36 L17.55 13.28 A5.7 5.7 0 0 1 16.83 15.02 L19.04 17.11 A8.7 8.7 0 0 1 17.11 19.04 L15.02 16.83 A5.7 5.7 0 0 1 13.28 17.55 L13.36 20.59 A8.7 8.7 0 0 1 10.64 20.59 L10.72 17.55 A5.7 5.7 0 0 1 8.98 16.83 L6.89 19.04 A8.7 8.7 0 0 1 4.96 17.11 L7.17 15.02 A5.7 5.7 0 0 1 6.45 13.28 L3.41 13.36 A8.7 8.7 0 0 1 3.41 10.64 L6.45 10.72 A5.7 5.7 0 0 1 7.17 8.98 L4.96 6.89 A8.7 8.7 0 0 1 6.89 4.96 L8.98 7.17 A5.7 5.7 0 0 1 10.72 6.45 L10.64 3.41 A8.7 8.7 0 0 1 13.36 3.41 L13.28 6.45 A5.7 5.7 0 0 1 15.02 7.17 L17.11 4.96 A8.7 8.7 0 0 1 19.04 6.89 L16.83 8.98 A5.7 5.7 0 0 1 17.55 10.72 L20.59 10.64 z M9.6 12 a2.4 2.4 0 1 0 4.8 0 a2.4 2.4 0 1 0 -4.8 0 z" fill="currentColor" fill-rule="evenodd"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><rect x="5.5" y="10.3" width="13" height="9.2" rx="1.2" fill="#f4f9ff"/><path d="M3.4 11 12 3.6 20.6 11z" fill="#02a9ff" stroke-linejoin="round"/><rect x="10.3" y="14.6" width="3.4" height="4.9" rx="0.7" fill="#16335f"/><rect x="7.2" y="12.4" width="2.6" height="2.6" rx="0.6" fill="#29b6f6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.9" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.9" fill="#ff5252"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5 5 13.4a4.8 4.8 0 0 1 0-6.9 4.8 4.8 0 0 1 6.9 0l.1.1.1-.1a4.8 4.8 0 0 1 6.9 0 4.8 4.8 0 0 1 0 6.9z" fill="#ff5c7a" stroke="#ff2e63" stroke-width="0.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g transform="rotate(-13 6 12)"><rect x="2.9" y="7.6" width="6.2" height="8.8" rx="1.1" fill="#9d6bff" stroke="#e6dcff" stroke-width="1"/></g><g transform="rotate(13 18 12)"><rect x="14.9" y="7.6" width="6.2" height="8.8" rx="1.1" fill="#00c853" stroke="#c9f5d9" stroke-width="1"/></g><rect x="8.9" y="5.2" width="6.2" height="8.8" rx="1.1" fill="#ffa726" stroke="#ffe4bb" stroke-width="1"/><g transform="translate(6 11.7) rotate(-13)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g><g transform="translate(18 11.7) rotate(13)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g><g transform="translate(12 9.3)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.8 20.5a7.4 7.4 0 0 1 14.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.8 2.6 4.2 5.5 4.2 9S14.8 18.4 12 21c-2.8-2.6-4.2-5.5-4.2-9S9.2 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7.5 6V5a2 2 0 0 1 2-2H19a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-1" fill="none" stroke="currentColor" stroke-width="2" transform="translate(-1.5,0)"/></symbol>
+  <symbol id="i-skull" viewBox="0 0 24 24"><path d="M12 3a7.5 7.5 0 0 0-7.5 7.5c0 3 1.6 4.9 3 5.7V19a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-2.8c1.4-.8 3-2.7 3-5.7A7.5 7.5 0 0 0 12 3z" fill="#dfe5f2"/><circle cx="9" cy="11.2" r="1.9" fill="#16162e"/><circle cx="15" cy="11.2" r="1.9" fill="#16162e"/><path d="M12 13.6l-1 2h2z" fill="#16162e"/><path d="M10.4 18.4v1.9M13.6 18.4v1.9" stroke="#16162e" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m5.7 5.7 12.6 12.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6.5V12l3.8 2.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M9.5 14.5a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7l-1.3 1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 9.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 1 0 5.7 5.7l1.3-1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5L19.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-restore" viewBox="0 0 24 24"><path d="M4 4.5v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9.5A8.5 8.5 0 1 1 3.5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11.5 12.5 20 4M16 8l2.5 2.5M13.5 10.5 16 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="9.5" r="1.5" fill="currentColor"/><path d="m4 18 6-6 4 4 2.5-2.5L21 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4.5h10v4.5a5 5 0 0 1-10 0z" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.8" stroke-linejoin="round"/><path d="M7.2 6H4.7a0.8 0.8 0 0 0-.8.9c0 1.9 1.5 3.6 3.6 3.6M16.8 6h2.5a0.8 0.8 0 0 1 .8.9c0 1.9-1.5 3.6-3.6 3.6" fill="none" stroke="#ffca3a" stroke-width="1.9" stroke-linecap="round"/><rect x="11.1" y="13.2" width="1.8" height="3" fill="#ffca3a"/><rect x="8" y="16.6" width="8" height="2" rx="1" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.7"/><rect x="6.8" y="19.1" width="10.4" height="1.7" rx="0.8" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.7"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 2 15 22l-4-9-9-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5 5l9 7-9 7z" fill="currentColor"/><path d="M17 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20v-6M12 20V6M19 20v-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M2 20h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M17 3.5a2.4 2.4 0 0 1 3.4 3.4L8 19.3l-4.5 1.2L4.7 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 3v6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 13.5h7M8.5 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7.5l-2-2.5H6a2 2 0 0 0-2 2V18a2 2 0 0 0 2 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6.5h16M9 6V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V6M6.5 6.5 7.4 20a1 1 0 0 0 1 .9h7.2a1 1 0 0 0 1-.9l.9-13.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-door" viewBox="0 0 24 24"><rect x="4.2" y="3.2" width="15.6" height="17.6" rx="1.6" fill="#16335f" stroke="#dfe9ff" stroke-width="1.6"/><path d="M8.2 12h6.4" stroke="#00e676" stroke-width="2.3" stroke-linecap="round"/><path d="M12.4 9.5l3.4 2.5-3.4 2.5" fill="none" stroke="#00e676" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="12" r="1.05" fill="#ffca3a"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M8.5 18V6L20 4v11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6" cy="18" r="2.5" fill="#ffca3a"/><circle cx="17.5" cy="15.5" r="2.5" fill="#ffca3a"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 3.2V21" stroke="#dfe9ff" stroke-width="2" stroke-linecap="round"/><path d="M6 4.2h12.2l-3 3.7 3 3.7H6z" fill="#ff5252" stroke-linejoin="round"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 19.5v-5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 14.5A8.5 8.5 0 1 1 20.5 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.1 0 1.6-.8 1.6-1.6 0-.8-.5-1.2-.5-2 0-1.1.9-1.7 1.9-1.7h2.3a3.7 3.7 0 0 0 3.7-3.6C20.8 7 16.5 3.5 12 3.5z" fill="#f4f9ff"/><circle cx="8.2" cy="8.8" r="1.45" fill="#ff5252"/><circle cx="12.4" cy="7" r="1.45" fill="#ffca3a"/><circle cx="15.9" cy="9.6" r="1.45" fill="#00c853"/><circle cx="7.8" cy="13.6" r="1.45" fill="#9d6bff"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6.5 3.5h11M6.5 20.5h11" stroke="#dfe9ff" stroke-width="1.7" stroke-linecap="round"/><path d="M7.6 3.5v2.3c0 3.3 2.3 5.2 4.4 5.8-2.1.6-4.4 2.5-4.4 5.8v3.1M16.4 3.5v2.3c0 3.3-2.3 5.2-4.4 5.8 2.1.6 4.4 2.5 4.4 5.8v3.1" fill="none" stroke="#dfe9ff" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.9 20.5 12 16.4l3.1 4.1z" fill="#ffca3a"/><path d="M10.3 4.7 12 9.3l1.7-4.6z" fill="#ffca3a" opacity="0.85"/><path d="M12 11.1v3.1" stroke="#ffca3a" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 17.3 2.9 8.2l4.7 3.3L12 5.2l4.4 6.3 4.7-3.3L20 17.3z" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.9" stroke-linejoin="round"/><rect x="4" y="18.6" width="16" height="2.1" rx="1" fill="#ffca3a" stroke="#8a5a00" stroke-width="0.8"/><circle cx="5.7" cy="9.6" r="0.8" fill="#fff7dc"/><circle cx="12" cy="7.2" r="0.8" fill="#fff7dc"/><circle cx="18.3" cy="9.6" r="0.8" fill="#fff7dc"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M9.4 13H4.6a1 1 0 0 0-1 1v4.6a2.6 2.6 0 0 0 2.6 2.6h11.6a2.6 2.6 0 0 0 2.6-2.6V14a1 1 0 0 0-1-1h-4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="9.3" y="2.8" width="5.4" height="7.6" rx="0.9" fill="#f4f9ff"/><path d="M10.7 6.3l1 1.1 1.9-2.1" fill="none" stroke="#00c853" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M12 3.5c5 0 9 3.3 9 7.7s-4 7.7-9 7.7c-1 0-2-.1-2.9-.4L4.5 20.4l1.2-3.5C4.3 15.6 3 13.6 3 11.2c0-4.4 4-7.7 9-7.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cloudq" viewBox="0 0 24 24"><path d="M8 13.2a3.1 3.1 0 0 1-.6-6.13 5 5 0 0 1 9.7-.9 3.55 3.55 0 0 1 1.9 6.53H8z" fill="#eef4ff"/><rect x="5.6" y="12.7" width="14.6" height="4.3" rx="2.15" fill="#eef4ff"/><text x="12.3" y="16.6" text-anchor="middle" font-size="9.5" font-weight="900" font-family="Segoe UI, Arial, sans-serif" fill="#0b0e1c">?</text></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.3 9a2.8 2.8 0 0 1 5.5.8c0 1.8-2.8 2.3-2.8 4.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="0.9" fill="currentColor"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><path d="M12 11v5.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="8" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-andlist" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="m7 15 3.5-7 3.5 7M8.2 12.8h4.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-flower" viewBox="-24 -24 48 48"><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(0) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(72) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(144) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(216) translate(0 -19)"/><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor" transform="rotate(288) translate(0 -19)"/><circle cx="0" cy="0" r="2.6" fill="#eaf4ff"/></symbol>
+  <symbol id="i-petal" viewBox="0 0 24 24"><path d="M12 2.6c-1.5 1.5-2.9 1.7-4.3 1.2C5.2 8.7 6.4 14.8 12 21.4 17.6 14.8 18.8 8.7 16.3 3.8c-1.4.5-2.8.3-4.3-1.2z" fill="currentColor"/><path d="M12 5v14" stroke="rgba(13,25,54,.35)" stroke-width="1.1" stroke-linecap="round"/></symbol>
+</svg>
+
+<!-- ===== decorative sakura backdrop — pure CSS + SVG (no JS), sits behind all screens ===== -->
+<div id="sakuraBg" aria-hidden="true"><svg id="sakuraBranch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 330"><defs><radialGradient id="sakGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#cfe6ff" stop-opacity="0.3"/><stop offset="55%" stop-color="#7fb0f0" stop-opacity="0.1"/><stop offset="100%" stop-color="#7fb0f0" stop-opacity="0"/></radialGradient></defs><ellipse cx="672" cy="66" rx="119" ry="96" fill="url(#sakGlow)"/><path d="M700 6 C 612 18 546 56 484 108 C 432 152 378 196 326 226 C 312 234 306 244 312 254 C 315 260 322 260 328 256 C 388 224 442 180 500 136 C 568 84 634 52 700 42 Z" fill="#1a2f66"/><path d="M588 0 C 584 40 568 76 540 108" fill="none" stroke="#1a2f66" stroke-width="16" stroke-linecap="round"/><path d="M500 128 C 486 166 462 196 430 216" fill="none" stroke="#1a2f66" stroke-width="9" stroke-linecap="round"/><path d="M624 44 C 614 80 594 110 566 132" fill="none" stroke="#1a2f66" stroke-width="10" stroke-linecap="round"/><path d="M428 162 C 414 188 394 208 370 220" fill="none" stroke="#1a2f66" stroke-width="7" stroke-linecap="round"/><path d="M660 40 C 654 66 644 90 628 110" fill="none" stroke="#1a2f66" stroke-width="7" stroke-linecap="round"/><path d="M545 120 v22" stroke="#1a2f66" stroke-width="4" stroke-linecap="round"/><path d="M380 210 v18" stroke="#1a2f66" stroke-width="4" stroke-linecap="round"/><g transform="translate(635 80) rotate(260) scale(1.17)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(613 133) rotate(202) scale(1.21)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(626 102) rotate(24) scale(1.02)" color="#2f4d95" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(668 162) rotate(337) scale(1.17)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(634 149) rotate(298) scale(0.97)" color="#4368b8" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(520 194) rotate(303) scale(1.47)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(587 180) rotate(44) scale(1.1)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(571 70) rotate(244) scale(1.22)" color="#d5eaff" opacity="0.5"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(550 132) rotate(46) scale(1.09)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(414 251) rotate(175) scale(1.14)" color="#d5eaff" opacity="0.5"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(497 154) rotate(63) scale(1.09)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(380 257) rotate(240) scale(1.04)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(396 258) rotate(31) scale(0.97)" color="#4368b8" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(232 258) rotate(200) scale(0.80)" color="#4368b8" opacity="0.8"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(310 251) rotate(23) scale(0.87)" color="#2f4d95" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g fill="#a5d2ff" opacity="0.65"><circle cx="520" cy="240" r="4.5"/><circle cx="300" cy="236" r="3.5"/><circle cx="470" cy="150" r="3.5"/><circle cx="610" cy="44" r="4.5"/><circle cx="432" cy="180" r="3.5"/><circle cx="490" cy="262" r="3.5"/><circle cx="650" cy="230" r="4.5"/><circle cx="591" cy="36" r="2.5"/><circle cx="759" cy="56" r="3.5"/><circle cx="519" cy="82" r="2.5"/><circle cx="687" cy="102" r="3.5"/><circle cx="569" cy="140" r="2.5"/><circle cx="737" cy="160" r="3.5"/><circle cx="447" cy="128" r="2.5"/><circle cx="615" cy="148" r="3.5"/><circle cx="479" cy="50" r="2.5"/><circle cx="647" cy="70" r="3.5"/><circle cx="381" cy="176" r="2.5"/><circle cx="549" cy="196" r="3.5"/></g></svg><svg class="petal" style="--x:56%;--s:10px;--d:12s;--dl:-4s;--sw:2.5vw;--fx:-29vw;--c:#eaf4ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:58%;--s:13px;--d:15s;--dl:-12s;--sw:3vw;--fx:-32vw;--c:#bfe0ff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:60%;--s:8px;--d:10s;--dl:-1s;--sw:2.5vw;--fx:-27vw;--c:#d5eaff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:61%;--s:15px;--d:17s;--dl:-19s;--sw:3.5vw;--fx:-35vw;--c:#eaf4ff;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:63%;--s:9px;--d:12s;--dl:-7s;--sw:2.5vw;--fx:-30vw;--c:#93c6ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:65%;--s:11px;--d:14s;--dl:-15s;--sw:3vw;--fx:-33vw;--c:#c9d4ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:67%;--s:16px;--d:18s;--dl:-9s;--sw:3.5vw;--fx:-38vw;--c:#bfe0ff;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:69%;--s:8px;--d:11s;--dl:-3s;--sw:2.5vw;--fx:-28vw;--c:#eaf4ff;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:70%;--s:12px;--d:13s;--dl:-21s;--sw:3vw;--fx:-34vw;--c:#d5eaff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:72%;--s:10px;--d:12s;--dl:-6s;--sw:2.5vw;--fx:-31vw;--c:#93c6ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:74%;--s:14px;--d:16s;--dl:-13s;--sw:3vw;--fx:-36vw;--c:#eaf4ff;--o:1" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:76%;--s:13px;--d:15s;--dl:-17s;--sw:3vw;--fx:-35vw;--c:#bfe0ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:78%;--s:9px;--d:11s;--dl:-2s;--sw:2.5vw;--fx:-32vw;--c:#c9d4ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:80%;--s:17px;--d:20s;--dl:-24s;--sw:4vw;--fx:-42vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:81%;--s:11px;--d:13s;--dl:-8s;--sw:3vw;--fx:-34vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:83%;--s:8px;--d:11s;--dl:-18s;--sw:2.5vw;--fx:-30vw;--c:#bfe0ff;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:85%;--s:15px;--d:17s;--dl:-11s;--sw:3.5vw;--fx:-39vw;--c:#eaf4ff;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:86%;--s:12px;--d:14s;--dl:-22s;--sw:3vw;--fx:-37vw;--c:#93c6ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:87%;--s:10px;--d:12s;--dl:-5s;--sw:2.5vw;--fx:-33vw;--c:#d5eaff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:89%;--s:18px;--d:21s;--dl:-26s;--sw:4vw;--fx:-44vw;--c:#eaf4ff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:90%;--s:9px;--d:11s;--dl:-14s;--sw:2.5vw;--fx:-32vw;--c:#c9d4ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:92%;--s:14px;--d:16s;--dl:-20s;--sw:3.5vw;--fx:-40vw;--c:#bfe0ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:93%;--s:11px;--d:13s;--dl:-10s;--sw:3vw;--fx:-36vw;--c:#eaf4ff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:94%;--s:16px;--d:19s;--dl:-27s;--sw:3.5vw;--fx:-41vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:95%;--s:8px;--d:10s;--dl:-0.5s;--sw:2.5vw;--fx:-29vw;--c:#93c6ff;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:13px;--d:15s;--dl:-23s;--sw:3vw;--fx:-38vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:97%;--s:10px;--d:12s;--dl:-16s;--sw:2.5vw;--fx:-34vw;--c:#bfe0ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:98%;--s:12px;--d:14s;--dl:-25s;--sw:3vw;--fx:-37vw;--c:#d5eaff;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:99%;--s:9px;--d:11s;--dl:-0.2s;--sw:2.5vw;--fx:-31vw;--c:#eaf4ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:100%;--s:14px;--d:16s;--dl:-28s;--sw:3vw;--fx:-39vw;--c:#c9d4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:57%;--s:8px;--d:12s;--dl:-9.5s;--sw:2.5vw;--fx:-27vw;--c:#eaf4ff;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:66%;--s:20px;--d:23s;--dl:-29s;--sw:4vw;--fx:-46vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:75%;--s:11px;--d:13s;--dl:-11.5s;--sw:3vw;--fx:-33vw;--c:#93c6ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:84%;--s:12px;--d:15s;--dl:-20.5s;--sw:3vw;--fx:-36vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:88%;--s:10px;--d:12s;--dl:-13.5s;--sw:2.5vw;--fx:-33vw;--c:#bfe0ff;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:91%;--s:15px;--d:18s;--dl:-30s;--sw:3.5vw;--fx:-41vw;--c:#d5eaff;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:11px;--d:14s;--dl:-17.5s;--sw:3vw;--fx:-35vw;--c:#eaf4ff;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:68%;--s:40px;--d:28s;--dl:-26s;--sw:4vw;--fx:-48vw;--c:#d5eaff;--o:0.45" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:92%;--s:44px;--d:32s;--dl:-15s;--sw:5vw;--fx:-56vw;--c:#bfe0ff;--o:0.4" viewBox="0 0 24 24"><use href="#i-petal"/></svg></div>
+
+<!-- Custom Notifications -->
+<div class="notification-container" id="notificationContainer"></div>
+
+<!-- Interaction Window -->
+<div class="interaction-window" id="interactionWindow">
+  <div class="interaction-content">
+    <h3 id="interactionTitle">Confirm</h3>
+    <p id="interactionMessage"></p>
+    <div class="interaction-buttons" id="interactionButtons"></div>
+  </div>
+</div>
+
+<!-- Winning Screen -->
+<div class="winning-screen" id="winningScreen">
+  <div class="winner-card">
+    <h2 id="winTitle"><svg class="ic"><use href="#i-trophy"/></svg> Winner!</h2>
+    <img id="winCharImg" class="char-img" src="" alt="Winner Character">
+    <h3 id="winCharName" style="color: var(--accent); font-size: 1.3rem; margin-bottom: 4px;">---</h3>
+    <p class="name-with-ava center"><img id="winPlayerAvatar" class="avatar-inline" alt=""> <span id="winPlayerName" style="color: var(--text); font-size: 1rem; font-weight: 700;">Player</span></p>
+  </div>
+  <h3 style="color: var(--text); margin-bottom: 15px;">Secrets Revealed</h3>
+  <div class="secrets-revealed" id="revealedCharacters">
+    <div class="secret-card winner-secret" id="secretCardWinner">
+      <img src="" alt="Winner Secret" id="secretImgWinner">
+      <div class="name" id="secretNameWinner">---</div>
+      <div class="player-label" id="secretLabelWinner">Winner</div>
+    </div>
+    <div class="secret-card" id="secretCardOpponent">
+      <img src="" alt="Opponent Secret" id="secretImgOpponent">
+      <div class="name" id="secretNameOpponent">---</div>
+      <div class="player-label" id="secretLabelOpponent">Opponent</div>
+    </div>
+  </div>
+  <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center;">
+    <button class="success" onclick="restartGame()" id="restartBtn" style="padding: 14px 28px; font-size: 1rem;">Restart</button>
+    <button class="danger" onclick="returnToLobbyFromWin()" style="padding: 14px 28px; font-size: 1rem;">Return to Lobby</button>
+  </div>
+  <p id="restartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;">Waiting for players to restart...</p>
+</div>
+
+<!-- Undercover End Screen -->
+<div class="winning-screen" id="ucEndScreen">
+  <div class="winner-card">
+    <h2 id="ucWinTitle"><svg class="ic"><use href="#i-spy"/></svg> The Undercover Wins!</h2>
+    <p id="ucWinPersonal" style="font-size: 1.05rem; font-weight: 800; margin-bottom: 10px;">---</p>
+    <p class="uc-words-line" id="ucWordsLine">---</p>
+  </div>
+  <h3 style="color: var(--text); margin-bottom: 10px;">Roles Revealed</h3>
+  <div class="uc-reveal-list" id="ucRevealList"></div>
+  <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center;">
+    <button class="success" onclick="ucRestart()" id="ucRestartBtn" style="padding: 14px 28px; font-size: 1rem;">Play Again</button>
+    <button class="danger" onclick="returnToLobbyFromWin()" style="padding: 14px 28px; font-size: 1rem;">Return to Lobby</button>
+  </div>
+  <p id="ucRestartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;"></p>
+</div>
+
+<!-- Shared end screen for Battle Royale & Race -->
+<div class="winning-screen" id="multiEndScreen">
+  <div class="winner-card">
+    <h2 id="meTitle"><svg class="ic"><use href="#i-flag"/></svg> Game Over</h2>
+    <p id="meSub" style="font-size: 1.05rem; font-weight: 800; margin-bottom: 10px;">---</p>
+  </div>
+  <div class="me-list" id="meList"></div>
+  <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center;">
+    <button class="success" onclick="multiRestart()" id="meRestartBtn" style="padding: 14px 28px; font-size: 1rem;">Play Again</button>
+    <button class="danger" onclick="returnToLobbyFromMulti()" style="padding: 14px 28px; font-size: 1rem;">Return to Lobby</button>
+  </div>
+  <p id="meRestartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;"></p>
+</div>
+
+  <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
+       Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
+  <div id="bottomBar">
+    <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Beta</span>
+    <button class="username-change-btn" id="usernameBtn" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
+  </div>
+  <div class="site-header">
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-master.png" alt="Sakugame logo"><span>SAKUGAME</span></div>
+  </div>
+
+  <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
+
+  <div class="screen active" id="homepageScreen">
+    <div class="homepage-container">
+      <h1 class="homepage-title">Welcome to Sakugame!</h1>
+      <p class="homepage-subtitle">Play anime-themed games with friends online</p>
+      <div class="homepage-buttons">
+        <div class="homepage-btn" onclick="showPlayMenu()">
+          <div class="icon"><svg class="ic"><use href="#i-play"/></svg></div>
+          <h3>Play</h3>
+          <p>Host or join a game room</p>
+        </div>
+        <div class="homepage-btn" onclick="showGamesMenu()">
+          <div class="icon"><svg class="ic"><use href="#i-gamepad"/></svg></div>
+          <h3>Rules</h3>
+          <p>Browse games &amp; their rules</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="playMenuScreen">
+    <div class="play-menu">
+      <h2><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button>Play</h2>
+      <div class="play-options">
+        <div class="play-option" " onclick="showHostRoom()">
+          <div class="icon"><svg class="ic"><use href="#i-home"/></svg></div>
+          <div class="content"><h3>Host Room</h3><p>Create a new game room and invite friends</p></div>
+        </div>
+        <div class="play-option" onclick="showJoinRoom()">
+          <div class="icon"><svg class="ic"><use href="#i-door"/></svg></div>
+          <div class="content"><h3>Join Room</h3><p>Enter a room code to join an existing game</p></div>
+        </div>
+      </div>
+      <button class="full back-btn" style="display:none" onclick="goHome()">← Back to Home</button>
+    </div>
+  </div>
+
+  <div class="screen" id="gamesMenuScreen">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h2 style="text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button>Rules</h2>
+      <div class="games-grid">
+        <div class="game-card" onclick="openHowTo('guesswho')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('guesswho')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+          <div class="game-card-content">
+            <h3>Detective Showdown</h3>
+            <p>Classic guessing game with your favorite anime characters from AniList. Eliminate characters and guess your opponent's secret!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('undercover')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('undercover')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+          <div class="game-card-content">
+            <h3>Undercover</h3>
+            <p>3-12 players! Everyone secretly gets an anime word — except the Undercover (a similar word) and Mr. White (no word at all). Give a clue each round, discuss, and vote out the impostor!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('battle')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('battle')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-users"/></svg></div>
+          <div class="game-card-content">
+            <h3>Detective Royale</h3>
+            <p>3-12 players! Everyone has a secret character. Ask questions to the whole table, track each opponent on their own glowing board, guess their secrets, and climb the points ranking!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('race')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('race')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+          <div class="game-card-content">
+            <h3>Wanted!</h3>
+            <p>3-12 players! One player is the TARGET with a mystery character. Hunters take turns ASKING questions — but everyone can GUESS at any moment (wrong guess = -1 life)! First to find the mystery character wins!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('blur')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('blur')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+          <div class="game-card-content">
+            <h3>Blur Guess</h3>
+            <p>Solo or up to 12 players! A blurred character or anime cover slowly clears over 5 stages — name it as early as you can for big points. The fastest correct guesses score a speed bonus!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('hotcold')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('hotcold')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-target"/></svg></div>
+          <div class="game-card-content">
+            <h3>Cold Case</h3>
+            <p>2-12 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess counts — find each secret in the fewest total guesses to win!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('codenames')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-key"/></svg></div>
+          <div class="game-card-content">
+            <h3>Ninja Scrolls</h3>
+            <p>4-12 players, 2 teams! The Ninja gives a ONE-word clue — tap your agents' cards, dodge the assassin, and find all your agents first!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('snapshot')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('snapshot')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-image"/></svg></div>
+          <div class="game-card-content">
+            <h3>Snapshot!</h3>
+            <p>Solo or up to 12 players! 4 random stills from ONE anime join the frame one by one, each EASIER than the last (the 4th is the official art). Name the anime as early as you can: stage 1 pays 4 pts, and the fastest correct guesses add a +3/+2/+1 speed bonus!</p>
+          </div>
+        </div>
+      </div>
+      <button class="full back-btn" style="display:none" onclick="goHome()">← Back to Home</button>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY — game presentation slideshow -->
+  <div id="howtoModal" class="howto-modal" style="display:none" onclick="if(event.target===this)closeHowTo()">
+    <div class="howto-panel">
+      <div class="howto-head">
+        <span class="howto-gameicon" id="howtoIcon"></span>
+        <span class="howto-tag">How to play</span>
+        <h3 id="howtoTitle"></h3>
+        <span class="howto-players" id="howtoPlayers"></span>
+        <button class="howto-close" onclick="closeHowTo()" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="howto-body">
+        <button class="howto-arrow" id="howtoPrev" onclick="howtoNav(-1)" aria-label="Previous step">‹</button>
+        <div class="howto-slide" id="howtoSlide"></div>
+        <button class="howto-arrow" id="howtoNext" onclick="howtoNav(1)" aria-label="Next step">›</button>
+      </div>
+      <div class="howto-foot">
+        <div class="howto-dots" id="howtoDots"></div>
+        <button class="full success howto-cta" id="howtoCta" onclick="howtoPlayNow()"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="hostRoomScreen">
+    <div class="panel">
+      <h2><button type="button" class="page-back" onclick="showPlayMenu()" title="Back" aria-label="Back">←</button>Create Game Room</h2>
+      <!-- 💾📂 named configs — save the current game's settings, reload anytime -->
+      <div class="cfg-quick">
+        <button class="secondary small" onclick="openConfigSave()"><svg class="ic"><use href="#i-check"/></svg> Save</button>
+        <button class="secondary small" onclick="openConfigLoad()"><svg class="ic"><use href="#i-folder"/></svg> Load</button>
+      </div>
+      <!-- 🎮 One single screen — no tabs: pick a game card, tune below -->
+      <div id="createTabRoom">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-door"/></svg> Room settings</h3>
+        <div class="settings-section">
+          <div class="input-group">
+            <label>Choose a Game</label>
+            <div class="game-pick-grid" id="hostGamePick">
+              <div class="game-pick-card selected" data-game="guesswho" onclick="selectHostGame('guesswho')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+                <div class="game-pick-content"><h4>Detective Showdown</h4><small>2 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="battle" onclick="selectHostGame('battle')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
+                <div class="game-pick-content"><h4>Detective Royale</h4><small>3-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="race" onclick="selectHostGame('race')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+                <div class="game-pick-content"><h4>Wanted!</h4><small>3-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="blur" onclick="selectHostGame('blur')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+                <div class="game-pick-content"><h4>Blur Guess</h4><small>1-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="undercover" onclick="selectHostGame('undercover')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+                <div class="game-pick-content"><h4>Undercover</h4><small>3-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="hotcold" onclick="selectHostGame('hotcold')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
+                <div class="game-pick-content"><h4>Cold Case</h4><small>2-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="codenames" onclick="selectHostGame('codenames')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
+                <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="snapshot" onclick="selectHostGame('snapshot')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-image"/></svg></div>
+                <div class="game-pick-content"><h4>Snapshot!</h4><small>1-12 players</small></div>
+              </div>
+            </div>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Detective Showdown (2 players)</option><option value="battle">Detective Royale (3-12 players)</option><option value="race">Wanted! (3-12 players)</option><option value="blur">Blur Guess (solo or up to 12 players)</option><option value="undercover">Undercover (3-12 players)</option><option value="hotcold">Cold Case (2-12 players)</option><option value="codenames">Ninja Scrolls (4-12 players)</option><option value="snapshot">Snapshot! (solo or up to 12 players)</option></select>
+            <!-- 📱 phone only: compact game picker — opens the selection window -->
+            <button type="button" id="gamePickOpenBtn" onclick="openGamePickModal()"><span id="gamePickOpenLabel"><svg class="ic"><use href="#i-gamepad"/></svg> Choose a game…</span><span class="gpo-chev">▾</span></button>
+          </div>
+          <div class="input-group">
+            <label>Room Visibility</label>
+            <div class="radio-group">
+              <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div><svg class="ic"><use href="#i-lock"/></svg> Private</div></label>
+              <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
+            </div>
+          </div>
+          <div class="slider-container" id="hostMaxPlayersBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="hostMaxPlayersValue">8</strong></div>
+            <input type="range" id="hostMaxPlayersSlider" min="2" max="12" value="8" oninput="updateMaxPlayers()">
+                      </div>
+        </div>
+      </div>
+      <!-- ⚙️ Game-specific settings — same screen, shown/hidden per picked game -->
+      <div id="createTabGame">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-gear"/></svg> Game settings</h3>
+        <div class="settings-section" id="hostPoolGroup">
+          <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Which characters the game draws from — Generic: the full character library · Favorites: the most popular picks · Mix: a blend of both · Watched: only anime the synced AniList accounts have seen.</span></button></h3>
+          <div class="input-group" id="hostPoolSrcGwGroup">
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostSrcGeneric" onclick="selectHostSource('generic')"><input type="radio" name="charsource" value="generic" checked><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div></label>
+              <label class="radio-option" id="hostSrcFavorites" onclick="selectHostSource('favorites')"><input type="radio" name="charsource" value="favorites"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div></label>
+              <label class="radio-option" id="hostSrcMix" onclick="selectHostSource('mix')"><input type="radio" name="charsource" value="mix"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div></label>
+              <label class="radio-option" id="hostSrcWatched" onclick="selectHostSource('watched')"><input type="radio" name="charsource" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
+            </div>
+          </div>
+          <!-- 👀🎲 Hot & Cold + Blur Guess: simplified pool — Random (full website pool) vs Watched (only anime the synced AniList accounts have seen) -->
+          <div class="input-group" id="hostPoolSrcWatchGroup" style="display: none;">
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostPoolRandom" onclick="selectHostPool('random')"><input type="radio" name="pool" value="random" checked><div><svg class="ic"><use href="#i-dice"/></svg> Random</div></label>
+              <label class="radio-option" id="hostPoolWatched" onclick="selectHostPool('watched')"><input type="radio" name="pool" value="watched"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section" id="hostGwSettings">
+          <div class="slider-container">
+            <div class="slider-label"><span>Character Count</span><strong id="hostCharCountValue">24</strong></div>
+            <input type="range" id="hostCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateHostCharCount()">
+          </div>
+          <!-- 🔀 Mix split bar (was the distribution bar): only meaningful when the pool is Mix -->
+          <div class="slider-container" id="hostMixBlock" style="display: none;">
+            <div class="slider-label"><span id="hostMixLabel">Mix</span></div>
+            <input type="range" id="hostMixSlider" min="0" max="24" value="12" oninput="updateHostMix()">
+          </div>
+        </div>
+        <div class="settings-section" id="hostUcSettings" style="display: none;">
+          <div class="input-group">
+            <label>Mr. White <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">One player (Mr. White) gets NO word at all — they improvise from everyone else&#39;s clues, and can steal the win by guessing the civilians&#39; word when caught. Needs 4+ players.</span></button></label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostUcMwOff" onclick="selectUcMrWhite(false)"><div><svg class="ic"><use href="#i-slash"/></svg> Disabled</div></label>
+              <label class="radio-option" id="hostUcMwOn" onclick="selectUcMrWhite(true)"><div><svg class="ic"><use href="#i-check"/></svg> Enabled</div></label>
+            </div>
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span>Undercovers <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many impostors hide in the room — 2+ undercovers spice up bigger lobbies. The count always leaves at least 2 innocent civilians.</span></button></span><strong id="hostUcUndercoversValue">1</strong></div>
+            <input type="range" id="hostUcUndercoversSlider" min="1" max="4" value="1" oninput="updateUcUndercovers()">
+          </div>
+        </div>
+        <div class="settings-section hc-only-settings" id="hostHcSettings" style="display: none;">
+            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="hostHcModeShared" onclick="setHostHcMode('shared')"><input type="radio" name="hcmode" value="shared" checked><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
+              <label class="radio-option" id="hostHcModeIndividual" onclick="setHostHcMode('individual')"><input type="radio" name="hcmode" value="individual"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
+            </div>
+            <div class="slider-label" style="margin-top: 12px;"><span>Ranking <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Show the live ranking during the match — or hide it until the end for extra suspense.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="hostHcRankShow" onclick="setHostHcRank(false)"><input type="radio" name="hcrank" value="show" checked><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
+              <label class="radio-option" id="hostHcRankHide" onclick="setHostHcRank(true)"><input type="radio" name="hcrank" value="hide"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
+            </div>
+        </div>
+        <div class="settings-section" id="hostMultiSettings" style="display: none;">
+          <div class="slider-container race-only-settings" style="display: none;">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-heart"/></svg> Hunter lives <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many wrong guesses a hunter can make — if ALL hunters run out of lives, the TARGET wins!</span></button></span><strong id="hostRaceLivesValue">3</strong></div>
+            <input type="range" id="hostRaceLivesSlider" min="1" max="5" value="3" oninput="updateRaceLivesSlider()">
+          </div>
+          <div class="slider-container race-only-settings" style="display: none;">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-help"/></svg> Hunter questions <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many yes/no questions each hunter may ask the target — running out means you can only guess… or pass.</span></button></span><strong id="hostRaceQuestionsValue">8</strong></div>
+            <input type="range" id="hostRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateRaceQuestionsSlider()">
+          </div>
+          <div class="input-group blur-only-settings" style="display: none;">
+            <label>What to guess</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="hostBgModeChars" onclick="selectHostBgMode('characters')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div></label>
+              <label class="radio-option" id="hostBgModeCovers" onclick="selectHostBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div></label>
+            </div>
+          </div>
+          <div class="input-group blur-only-settings" style="display: none;">
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="hostBgDiffRow">
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostBg','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostBg','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('hostBg','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('hostBg','extreme')">Extreme</button>
+            </div>
+            
+          </div>
+          <div class="input-group blur-only-settings" style="display: none;">
+            <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
+            <div class="radio-group diff-row">
+              <label class="radio-option selected" id="hostBgGroupOff" onclick="selectBgGroup(0)"><div>Separate</div></label>
+              <label class="radio-option" id="hostBgGroupOn" onclick="selectBgGroup(1)"><div>Unite</div></label>
+            </div>
+          </div>
+          <div class="slider-container blur-only-settings" style="display: none;">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many blurred characters or covers to guess in this game.</span></button></span><strong id="hostBgRoundsValue">10</strong></div>
+            <input type="range" id="hostBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateBgRoundsSlider()">
+          </div>
+          <div class="slider-container blur-only-settings" style="display: none;">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-clock"/></svg> Stage timer <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Seconds each blur stage lasts before the picture gets a bit clearer.</span></button></span><strong id="hostBgStageSecValue">12s</strong></div>
+            <input type="range" id="hostBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateBgStageSecSlider()">
+          </div>
+          <div class="slider-container snap-only-settings" style="display: none;">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many anime to guess this game — each shows up to 4 stills, harder → easier.</span></button></span><strong id="hostSnRoundsValue">10</strong></div>
+            <input type="range" id="hostSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateSnRoundsSlider()">
+          </div>
+          <div class="input-group snap-only-settings" style="display: none;">
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="hostSnDiffRow">
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostSn','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostSn','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('hostSn','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('hostSn','extreme')">Extreme</button>
+            </div>
+            
+          </div>
+          <div class="input-group snap-only-settings" style="display: none;">
+            <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
+            <div class="radio-group diff-row">
+              <label class="radio-option selected" id="hostSnGroupOff" onclick="selectSnGroup(0)"><div>Separate</div></label>
+              <label class="radio-option" id="hostSnGroupOn" onclick="selectSnGroup(1)"><div>Unite</div></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="full success" onclick="createGameRoom()">Create Room</button>
+      <button class="full back-btn" style="display:none" onclick="showPlayMenu()">← Back</button>
+    </div>
+  </div>
+
+  <div class="screen" id="joinRoomScreen">
+    <div class="panel">
+      <h2><button type="button" class="page-back" onclick="showPlayMenu()" title="Back" aria-label="Back">←</button>Join Game Room</h2>
+      <p>Enter the room code to join</p>
+      <div class="input-group">
+        <label>Room Code</label>
+        <input type="text" id="joinRoomInput" placeholder="Enter 4-digit code" maxlength="4" style="text-transform: uppercase;">
+      </div>
+      <button class="full success" onclick="joinGameRoom()">Join Room</button>
+      <div class="public-rooms">
+        <div class="public-rooms-head">
+          <h3><svg class="ic"><use href="#i-globe"/></svg> Public Rooms</h3>
+          <button class="secondary pub-refresh" onclick="refreshPublicRooms()" title="Refresh the list"><svg class="ic"><use href="#i-refresh"/></svg></button>
+        </div>
+        <div id="publicRoomsList" class="public-rooms-list"><p class="pub-empty">Looking for open rooms…</p></div>
+      </div>
+      <button class="full back-btn" style="display:none" onclick="showPlayMenu()">← Back</button>
+    </div>
+  </div>
+
+  <div class="screen" id="lobbyScreen">
+    <div class="lobby-container">
+      <div class="lobby-left" style="position: relative;">
+        <div class="settings-icon" id="lobbySettingsIcon" onclick="openRoomSettings()" style="display: none;"><svg class="ic"><use href="#i-gear"/></svg></div>
+        <h2 style="text-align: center; color: var(--accent); margin-bottom: 10px;">Game Lobby</h2>
+        <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code — or the link — with your friends</p>
+        <div class="lobby-code-actions">
+          <button class="blur-code-btn secondary" onclick="shareRoom()"><svg class="ic"><use href="#i-link"/></svg> Share Room</button>
+          <button class="blur-code-btn secondary" onclick="toggleBlur()"><svg class="ic"><use href="#i-eye"/></svg> Blur Code</button>
+        </div>
+        <div class="room-code" id="displayRoomCode">----</div>
+        <div class="queue-banner" id="queueBanner" style="display: none;"></div>
+        <div class="players-list" id="playersList"></div>
+        <div id="queueSection" style="display: none;">
+          <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;"><svg class="ic"><use href="#i-hourglass"/></svg> Waiting queue <small style="color: var(--muted); font-weight: 400;" id="queueAutoNote">— joins automatically when a seat opens</small></h3>
+          <div class="players-list" id="queueList"></div>
+        </div>
+        <div style="background: #0f0f1a; padding: 15px; border-radius: 10px; margin: 20px 0;" id="lobbyInfoBox">
+          <strong style="color: var(--accent);">Game:</strong> <span id="lobbyGameName">Detective Showdown</span><br>
+          <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">Private</span><br>
+          <strong style="color: var(--accent);">Players:</strong> <span id="lobbyPlayerCount">1/2</span>
+        </div>
+        <!-- 🥷🎴 NINJA SCROLLS special lobby: the team setup IS the lobby (spectators by default) -->
+        <div id="lobbyCnBox" class="cn-setup" style="display: none;">
+          <p id="cnTeamsHint">Spectating by default — join a box (or drag your name tag) to play; joining = ready. One 🔑 Ninja per team — first tap wins. The host can drag anyone into place or shuffle.</p>
+          <!-- 👀 spectators strip — players who haven't picked a team yet -->
+                <div class="cn-spect" id="cnSpect">
+                  <span class="cn-spect-title">Spectators</span>
+                  <div class="cn-spect-strip" id="cnBench"></div>
+                </div>
+          <div class="cn-cols">
+                  <div class="cn-team blue">
+                    <div class="cn-team-title" id="cnTeamBlueTitle">🔵 BLUE team</div>
+                    <div class="cn-box agents" id="cnBoxAgentsBlue">
+                      <div class="cn-box-title">SHOGUN</div>
+                      <div class="cn-box-list" id="cnAgentsBlue"></div>
+                      <button id="cnJoinBlue" class="cn-join blue" onclick="cnJoinRole('blue', false)">Join 🔵</button>
+                    </div>
+                    <div class="cn-box spies" id="cnBoxSpiesBlue">
+                      <div class="cn-box-title">NINJA</div>
+                      <div class="cn-box-list" id="cnSpiesBlue"></div>
+                      <button id="cnJoinSpiesBlue" class="cn-join blue" onclick="cnJoinRole('blue', true)">Join as 🔑</button>
+                    </div>
+                  </div>
+                  <div class="cn-team red">
+                    <div class="cn-team-title" id="cnTeamRedTitle">🔴 RED team</div>
+                    <div class="cn-box agents" id="cnBoxAgentsRed">
+                      <div class="cn-box-title">SHOGUN</div>
+                      <div class="cn-box-list" id="cnAgentsRed"></div>
+                      <button id="cnJoinRed" class="cn-join red" onclick="cnJoinRole('red', false)">Join 🔴</button>
+                    </div>
+                    <div class="cn-box spies" id="cnBoxSpiesRed">
+                      <div class="cn-box-title">NINJA</div>
+                      <div class="cn-box-list" id="cnSpiesRed"></div>
+                      <button id="cnJoinSpiesRed" class="cn-join red" onclick="cnJoinRole('red', true)">Join as 🔑</button>
+                    </div>
+                  </div>
+                </div>
+          <div id="cnTeamsStatus" class="selection-status waiting"></div>
+          <div class="cn-actions">
+            <button id="cnRandomBtn" class="secondary" onclick="cnRandomTeams()" title="Random teams"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random teams</span></button>
+          </div>
+        </div>
+        <!-- 🛋️ slimmer actions: one prominent CTA, the AFK/Leave pair side-by-side -->
+        <button class="full success lobby-cta" id="readyBtn" onclick="toggleReady()">Ready</button>
+        <button class="full success lobby-cta" id="startGameBtn" onclick="hostStartGame()" style="display: none;"><svg class="ic"><use href="#i-gamepad"/></svg> START GAME</button>
+        <div class="lobby-btn-row">
+          <button class="secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Spectate</span></button>
+          <button class="danger" onclick="leaveRoom()"><svg class="ic"><use href="#i-door"/></svg> Leave Room</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 👀 SPECTATOR view — queued visitors follow the game live (public info only, read-only) -->
+  <div class="screen" id="spectateScreen">
+    <div class="panel spec-panel">
+      <h2><svg class="ic"><use href="#i-eye"/></svg> Spectating — <span id="specGameName">Game</span></h2>
+      <p id="specPhase" style="text-align:center;color:var(--muted);"></p>
+      <div id="specBoard" class="spec-board" style="display:none;"></div>
+      <div class="players-list" id="specScore"></div>
+      <div class="settings-section" style="margin-top:14px;">
+        <h3><svg class="ic"><use href="#i-note"/></svg> Live feed</h3>
+        <div id="specFeed" class="hc-log"></div>
+      </div>
+      <button class="full secondary" style="margin-top:14px;" onclick="specWaitInLobby()"><svg class="ic"><use href="#i-home"/></svg> Wait in the lobby instead</button>
+    </div>
+  </div>
+
+  <div class="screen" id="selectionScreen">
+    <div class="selection-container">
+      <div class="selection-header">
+        <h2><svg class="ic"><use href="#i-target"/></svg> Choose Your Secret Character</h2>
+        <p>Pick a character for your opponent to guess</p>
+      </div>
+      <div class="selection-status" id="selectionStatus">Click on a character to select it as your secret</div>
+      <div class="selection-controls">
+        <button class="secondary" onclick="randomSelect()"><svg class="ic"><use href="#i-dice"/></svg> Random Pick</button>
+        <button class="danger" onclick="returnToLobbyFromSelection()">← Return to Lobby</button>
+      </div>
+      <div class="character-grid" id="characterGrid"></div>
+      <div style="text-align: center;">
+        <button class="success" id="confirmSelectionBtn" onclick="confirmSelection()" disabled style="padding: 16px 40px; font-size: 1.1rem;">Confirm Selection</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="gameScreen">
+    <div class="game-container">
+      <div class="game-left">
+        <div class="history-section">
+          <h3><svg class="ic"><use href="#i-note"/></svg> Question History</h3>
+          <div class="history-list" id="historyList"><p style="text-align: center; color: var(--muted); padding: 20px;">No questions yet</p></div>
+        </div>
+        <div class="my-character" id="myCharacter">
+          <h3><svg class="ic"><use href="#i-target"/></svg> Your Secret</h3>
+          <div class="my-character-card" onclick="document.getElementById('myCharacter').classList.toggle('ds-hide')" title="Tap to hide/show your secret">
+            <img id="myCharacterImg" src="" alt="Your character">
+            <div class="info"><div class="name" id="myCharacterName">---</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="game-center">
+        <div class="game-header">
+            <div class="gw-corner">
+              <button class="secondary" onclick="returnToLobbyFromGame()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+              <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+
+            </div>
+          <div class="player-section"><h3>You</h3><div class="name-with-ava"><img id="yourAvatar" class="avatar-inline" alt=""><div class="name" id="yourName">Player 1</div></div></div>
+          <div class="turn-indicator" id="turnIndicator">Your Turn</div>
+          <div class="player-section" style="text-align: right;"><h3>Opponent</h3><div class="name-with-ava right"><div class="name" id="opponentName">Player 2</div><img id="opponentAvatar" class="avatar-inline" alt=""></div></div>
+        </div>
+        <div class="question-box">
+          <div id="questionFormArea">
+            <div class="question-form">
+              <input type="text" id="questionInput" placeholder="Ask your opponent a yes/no question..." maxlength="200">
+              <button class="success" onclick="askQuestion()">Ask</button>
+            </div>
+          </div>
+          <div id="currentQuestionArea" style="display: none;">
+            <div class="question-display">
+              <div class="label">Question from opponent:</div>
+              <div class="text" id="currentQuestionText">---</div>
+              <div class="answer-buttons">
+                <button class="success" onclick="answerQuestion('YES')"><svg class="ic"><use href="#i-check"/></svg> YES</button>
+                <button class="danger" onclick="answerQuestion('NO')"><svg class="ic"><use href="#i-x"/></svg> NO</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="board-section">
+          <h3>All Characters <span id="remainingCount">(0 remaining)</span></h3>
+          <div class="board" id="gameBoard"></div>
+          <div class="game-controls">
+            <!-- 📱 phone: slim rectangles — Guess · History · Chat (b131) -->
+            <button class="warning" id="guessBtn" onclick="startGuessing()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span><span class="btn-label-phone">Guess</span></button>
+            <button class="secondary" id="gwHistBtn" onclick="toggleGwHistory()" title="Question history"><svg class="ic"><use href="#i-note"/></svg> <span class="btn-label">History</span><span class="btn-label-phone">History</span></button>
+            <button class="secondary" id="chatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="chatUnreadBadgeRow"></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="undercoverScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromUndercover()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+          <div class="uc-badge" id="ucRoundBadge">Round 1</div>
+          <div class="uc-badge" id="ucPhaseBadge"><svg class="ic"><use href="#i-chat"/></svg> Description time</div>
+        </div>
+        <div class="uc-word-card" id="ucWordCard" onclick="toggleUcWord()" title="Tap to hide/show my word">
+          <button class="secondary uc-words-corner" id="ucNewWordsBtn" style="display: none;" onclick="event.stopPropagation(); hostRerollUndercoverWords()" title="Change the word pair (roles stay the same)"><svg class="ic"><use href="#i-dice"/></svg></button>
+          <div class="uc-word-label" id="ucRoleLabel"><svg class="ic"><use href="#i-eye"/></svg> Your secret word</div>
+          <img id="ucMyWordImg" class="uc-word-img" src="" alt="" style="display: none;">
+          <div class="uc-word" id="ucMyWord">---</div>
+          <div class="uc-word-hint" id="ucRoleHint">Describe your word without saying it!</div>
+        </div>
+        <div class="uc-event-banner" id="ucEventBanner" style="display: none;"></div>
+        <div class="uc-players" id="ucPlayers"></div>
+        <div class="uc-clues">
+          <h3><svg class="ic"><use href="#i-note"/></svg> Word history</h3>
+          <div id="ucClueList"></div>
+        </div>
+        <div class="uc-action" id="ucActionArea"></div>
+        <div class="game-controls">
+          <button class="secondary" id="ucSkipBtn" style="display: none;" onclick="hostSkipUndercover()" title="Host power: shorten the current phase"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label" id="ucSkipBtnTxt">Skip to the vote</span><span class="btn-label-phone" id="ucSkipBtnTxtPh">Skip</span></button>
+          <button class="secondary" id="ucHistBtn" onclick="toggleUcHistory()" title="Word history"><svg class="ic"><use href="#i-note"/></svg> <span class="btn-label">History</span><span class="btn-label-phone">History</span></button>
+          <button class="secondary" id="ucChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="ucChatUnreadBadgeRow"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎭👥 GUESS WHO — BATTLE ROYALE (3-12 players) -->
+  <div class="screen" id="battleScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+          <div class="uc-badge" id="brTurnBadge">—</div>
+          <div class="uc-badge" id="brPhaseBadge"><svg class="ic"><use href="#i-chat"/></svg> Question time</div>
+        </div>
+        <div class="br-mysecret" id="brMySecret" onclick="this.classList.toggle('br-hide')" title="Tap to hide/show your secret">
+          <img id="brMySecretImg" src="" alt="">
+          <div class="br-mysecret-info">
+            <div class="br-mysecret-label"><svg class="ic"><use href="#i-target"/></svg> Your secret — tap to hide</div>
+            <div class="br-mysecret-name" id="brMySecretName">---</div>
+          </div>
+          <div class="br-my-points" id="brMyPoints">0 pts</div>
+        </div>
+        <div class="br-chips" id="brChips"></div>
+        <div class="br-chip-hint">Tap a color chip to switch to that player's board — every card glows with their color. Tap a card to eliminate it (greyed like in 1v1 Detective Showdown — tap again to undo). Eliminations and guesses are per-board!</div>
+        <div class="question-box" id="brQuestionArea"></div>
+        <div class="board-section">
+          <h3 id="brBoardTitle">All Characters</h3>
+          <div class="board" id="brBoard"></div>
+          <div class="game-controls">
+            <button class="secondary" onclick="battleClearMarks()" title="Restore all eliminated cards on this board"><svg class="ic"><use href="#i-restore"/></svg> <span class="btn-label">Restore all</span><span class="btn-label-phone">All</span></button>
+            <button class="warning" id="brGuessBtn" onclick="battleToggleGuess()" title="Make a Guess"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span><span class="btn-label-phone">Guess</span></button>
+            <button class="secondary" id="brHistBtn" onclick="toggleBrHistory()" title="History"><svg class="ic"><use href="#i-note"/></svg> <span class="btn-label">History</span><span class="btn-label-phone">History</span></button>
+            <button class="secondary" id="brChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="brChatUnreadBadgeRow"></span></button>
+          </div>
+        </div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> History</h3><div class="br-log" id="brLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⚡ GUESS WHO — RACE (3-12 players): everyone hunts the target's character -->  <div class="screen" id="raceScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+          <div class="uc-badge" id="rcTurnBadge">—</div>
+          <div class="uc-badge" id="rcPhaseBadge"><svg class="ic"><use href="#i-chat"/></svg> Question time</div>
+        </div>
+        <div class="rc-hunters" id="rcHuntersBar"></div>
+        <div class="br-mysecret" id="rcBanner"></div>
+        <div class="question-box" id="rcQuestionArea"></div>
+        <div class="board-section">
+          <h3>All Characters</h3>
+          <div class="board" id="rcBoard"></div>
+          <div class="game-controls">
+            <button class="secondary" onclick="raceClearMarks()" title="Restore all eliminated cards"><svg class="ic"><use href="#i-restore"/></svg> <span class="btn-label">Restore all</span><span class="btn-label-phone">All</span></button>
+            <button class="warning" id="rcGuessBtn" onclick="raceToggleGuess()" title="Free guess — anytime, even off-turn (wrong = -1 life)"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Make a Guess</span><span class="btn-label-phone">Guess</span></button>
+            <button class="secondary" id="rcHistBtn" onclick="toggleRcHistory()" title="History"><svg class="ic"><use href="#i-note"/></svg> <span class="btn-label">History</span><span class="btn-label-phone">History</span></button>
+            <button class="secondary" id="rcChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="rcChatUnreadBadgeRow"></span></button>
+          </div>
+        </div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> History</h3><div class="br-log" id="rcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌫️ BLUR GUESS (solo or up to 12): name the blurred character as early as possible -->
+  <div class="screen" id="blurScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+          <div class="uc-badge" id="bgRoundBadge"><svg class="ic"><use href="#i-layers"/></svg> Round 1/10</div>
+          <div class="uc-badge" id="bgStageBadge">Blur stage 1/5</div>
+          <div class="uc-badge" id="bgTimerBadge">12s</div>
+        </div>
+        <div class="bg-img-wrap" id="bgImgWrap"><img id="bgImage" src="" alt="Mystery character"></div>
+        <div class="bg-status" id="bgStatus">Who is this?!</div>
+        <div class="question-form" id="bgGuessBar">
+          <div class="bg-guess-wrap hc-has-rnd">
+            <input type="text" id="bgGuessInput" placeholder="Type the character's name… (any name: Deku, Burdock…)" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <button class="hc-clr" type="button" onclick="bgClearGuessInput()" title="Clear"><svg class="ic"><use href="#i-x"/></svg></button>
+            <div class="bg-suggest" id="bgSuggest"></div>
+          </div>
+          <button class="success" onclick="blurGuess()">Guess!</button>
+        </div>
+        <div class="bg-chips" id="bgChips"></div>
+        <div class="game-controls">
+          <button class="warning" id="bgSkipBtn" onclick="blurSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span><span class="btn-label-phone">Skip</span></button>
+          <button class="secondary" id="bgChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="bgChatUnreadBadgeRow"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📸 SNAPSHOT! (1-12 players): 4 random stills from ONE anime pop in over 4 stages — name the anime, fastest first! -->
+  <div class="screen" id="snapshotScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+          <div class="uc-badge" id="snRoundBadge"><svg class="ic"><use href="#i-layers"/></svg> Round 1/10</div>
+          <div class="uc-badge" id="snStageBadge">Stills 1/4</div>
+          <div class="uc-badge" id="snTimerBadge">8s</div>
+        </div>
+        <div class="bg-img-wrap sn-frame" id="snImgWrap">
+          <div class="sn-shots" id="snShots">
+            <div class="sn-slot on"><img src="" alt="Anime still" draggable="false"></div>
+            <div class="sn-slot"><img src="" alt="" draggable="false"></div>
+            <div class="sn-slot"><img src="" alt="" draggable="false"></div>
+            <div class="sn-slot"><img src="" alt="" draggable="false"></div>
+          </div>
+        </div>
+        <div class="sn-hint" id="snHint" style="display: none;"></div>
+        <div class="bg-status" id="snStatus">Which anime is this?!</div>
+        <div class="question-form" id="snGuessBar">
+          <div class="bg-guess-wrap hc-has-rnd">
+            <input type="text" id="snGuessInput" placeholder="Type the anime title… (any known alias works: SNK, AoT…)" maxlength="80" autocomplete="off" autocapitalize="none" spellcheck="false">
+            <button class="hc-clr" type="button" onclick="snClearGuessInput()" title="Clear"><svg class="ic"><use href="#i-x"/></svg></button>
+            <div class="bg-suggest" id="snSuggest"></div>
+          </div>
+          <button class="success" onclick="snGuess()">Guess!</button>
+        </div>
+        <div class="bg-chips" id="snChips"></div>
+        <div class="game-controls">
+          <button class="warning" id="snSkipBtn" onclick="snSkip()" title="Reveal & skip this round (host)"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Skip round</span><span class="btn-label-phone">Skip</span></button>
+          <button class="secondary" id="snChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="snChatUnreadBadgeRow"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌡️ GUESS WHO — HOT & COLD (2-12 players): every seeker hunts their own path, Σ guesses = the classement -->
+  <!-- 🗝 CODE NAMES (4-12 players, 2 teams) — live game screen -->
+  <div class="screen" id="codenamesScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="uc-badge cn-score-badge red" id="cnScoreRed">🔴 —</div>
+          <div class="uc-badge cn-score-badge blue" id="cnScoreBlue">🔵 —</div>
+        </div>
+        <!-- 📱 phone-only header (b120 · hybrid mock): SHOGUN/NINJA team panels + mini history — filled by renderCnPhoneHead(), hidden on desktop -->
+        <div class="cn-phone-head" id="cnPhoneHead">
+          <div class="cnph-team blue" id="cnphBlue"></div>
+          <div class="cnph-hist"><h5>History</h5><div class="cnph-hist-list" id="cnphLog"></div></div>
+          <div class="cnph-team red" id="cnphRed"></div>
+        </div>
+        <div class="cn-role" id="cnMyRole"></div>
+        <div class="cn-turn-wrap"><div class="cn-turn" id="cnTurnBanner"></div><button type="button" class="cn-help-btn" onclick="openHowTo('codenames')" title="How to play" aria-label="How to play">?</button></div>
+        <div class="cn-cluebar" id="cnClueBar"></div>
+        <div class="board-section">
+          <div class="board cn-board" id="cnBoard"></div>
+          <div class="cn-controls">
+            <div id="cnClueInput" class="cn-input-row">
+              <input id="cnClueWord" type="text" maxlength="24" placeholder="Clue…" autocomplete="off">
+              <select id="cnClueNum" class="cn-num" disabled title="Auto-set by the cards you tap">
+                <option value="0">×0</option><option value="1">×1</option><option value="2">×2</option><option value="3">×3</option><option value="4">×4</option><option value="5">×5</option><option value="6">×6</option><option value="7">×7</option><option value="8">×8</option><option value="9">×9</option>
+              </select>
+              <button class="success" onclick="cnSendClue()"><svg class="ic"><use href="#i-send"/></svg> <span class="btn-label">Send clue</span></button>
+            </div>
+            <p class="cn-clue-hint" id="cnClueHint" style="display: none;">🥷 Tap YOUR team's cards — the number sets itself!</p>
+            <div id="cnGuessRow" class="cn-input-row">
+              <button class="secondary" onclick="cnPass()"><svg class="ic"><use href="#i-skip"/></svg> <span class="btn-label">Pass turn</span></button>
+            </div>
+            <div id="cnWaitMsg" class="cn-wait"></div>
+          </div>
+          <div class="game-controls">
+            <button class="secondary" id="cnChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="cnChatBadgeRow"></span></button>
+            <button class="danger" onclick="returnToLobbyFromMulti()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">To Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+        </div>
+        <div class="br-log-wrap"><h3><svg class="ic"><use href="#i-note"/></svg> History</h3><div class="br-log" id="cnLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="hotcoldScreen">
+    <div class="uc-container">
+      <div class="uc-main">
+        <div class="uc-header">
+          <div class="gw-corner">
+            <button class="secondary" onclick="returnToLobbyFromHotcold()" title="Return to Lobby"><svg class="ic"><use href="#i-door"/></svg> <span class="btn-label">Lobby</span></button>
+            <button class="danger saku-endgame" style="display:none" onclick="hostEndGame()" title="End the game for everyone — everybody returns to the lobby"><svg class="ic"><use href="#i-x"/></svg> <span class="btn-label">End game</span></button>
+          </div>
+          <div class="uc-badge" id="hcRoundBadge"><svg class="ic"><use href="#i-target"/></svg> Round 1/2</div>
+          <div class="uc-badge" id="hcRoleBadge"><svg class="ic"><use href="#i-search"/></svg> You are a SEEKER</div>
+        </div>
+        <div class="hc-cols">
+          <div class="hc-play">
+            <!-- hider's secret strip (guesser never sees it — the panel itself is hidden) -->
+            <div class="br-mysecret" id="hcSecretStrip" style="display: none;" onclick="this.classList.toggle('br-hide')" title="Tap to hide/show your secret">
+          <img id="hcSecretImg" src="" alt="">
+          <div class="br-mysecret-info">
+            <div class="br-mysecret-label"><svg class="ic"><use href="#i-eye"/></svg> Your secret — tap to hide</div>
+            <div class="br-mysecret-name" id="hcSecretName">---</div>
+          </div>
+          <div class="br-my-points" id="hcCountChip">0</div>
+        </div>
+        <div id="hcBanner" class="hc-banner" style="display: none;"></div>
+
+        <!-- 👁️ HIDER: pick the secret -->
+        <div class="question-box" id="hcPickArea" style="display: none;">
+          <p class="hc-hint">Pick any character from the pool and hide it — the seekers will feel their way to it!</p>
+          <div class="question-form">
+            <div class="bg-guess-wrap hc-has-rnd">
+              <input type="text" id="hcPickInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="hc-rnd" onclick="hcRandomPick()" title="Random"><svg class="ic"><use href="#i-dice"/></svg></button>
+              <button class="hc-clr" onclick="hcClearPick()" title="Eraser"><svg class="ic"><use href="#i-x"/></svg></button>
+              <div class="bg-suggest" id="hcPickSuggest"></div>
+            </div>
+            <button class="secondary hc-rnd-big" onclick="hcRandomPick()"><svg class="ic"><use href="#i-dice"/></svg> <span class="btn-label">Random</span></button>
+          </div>
+          <div class="hc-staged" id="hcPickStaged" style="display: none;">
+            <img id="hcPickStagedImg" src="" alt="">
+            <div class="hc-staged-info"><div class="hc-staged-label">Hide this one?</div><div class="hc-staged-name" id="hcPickStagedName">---</div></div>
+            <button class="success" onclick="hcConfirmHide()"><svg class="ic"><use href="#i-check"/></svg> <span class="btn-label">Hide it!</span></button>
+          </div>
+        </div>
+
+        <!-- 🔍 GUESSER: propose characters -->
+        <div class="question-box" id="hcGuessArea" style="display: none;">
+          <p class="hc-hint" id="hcGuessHint">Name a character — every answer earns a 0-100 closeness score!</p>
+          <div class="question-form">
+            <div class="bg-guess-wrap hc-has-rnd">
+              <input type="text" id="hcGuessInput" placeholder="Type a character name…" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false">
+              <button class="hc-clr" type="button" onclick="hcClearGuessInput()" title="Clear"><svg class="ic"><use href="#i-x"/></svg></button>
+              <div class="bg-suggest" id="hcGuessSuggest"></div>
+            </div>
+          </div>
+          <div class="hc-staged" id="hcGuessStaged" style="display: none;">
+            <img id="hcGuessStagedImg" src="" alt="">
+            <div class="hc-staged-info"><div class="hc-staged-label">Your guess?</div><div class="hc-staged-name" id="hcGuessStagedName">---</div></div>
+            <button class="success" onclick="hcConfirmGuess()"><svg class="ic"><use href="#i-target"/></svg> <span class="btn-label">Propose it!</span></button>
+          </div>
+        </div>
+
+        <!-- ⏳ SEEKER: your proposal is queued for scoring -->
+        <div class="question-box" id="hcInflightArea" style="display: none;">
+          <p class="hc-hint" id="hcInflightText">Waiting…</p>
+        </div>
+
+        <!-- 📥 HIDER: the seekers' proposals queue — tap one, it lands in the scoring box -->
+        <div class="question-box" id="hcQueueArea" style="display: none;">
+          <p class="hc-hint">The seekers are proposing — tap a guess to score it:</p>
+          <div class="hc-queue" id="hcQueue"></div>
+        </div>
+
+        <!-- 👁️ HIDER: score the selected proposal -->
+        <div class="question-box" id="hcAnswerArea" style="display: none;">
+          <div class="hc-staged"><img id="hcAnsImg" src="" alt="">
+            <div class="hc-staged-info"><div class="hc-staged-label" id="hcAnsLabel">Their guess</div><div class="hc-staged-name" id="hcAnsName">---</div></div>
+          </div>
+          <div class="slider-container" id="hcScoreBox">
+            <div class="slider-label"><span>How close is it?</span><strong id="hcScoreValue">50</strong></div>
+            <input type="range" id="hcScoreSlider" min="0" max="100" value="50" oninput="hcScoreChanged()">
+          </div>
+          <p class="hc-hint" id="hcAnswerHint" style="margin-top: -4px;">0 = nothing alike · 100 = exactly the one! Answer honestly — it decides the round.</p>
+          <button class="full success" onclick="hcSubmitScore()"><svg class="ic"><use href="#i-send"/></svg> Send the score</button>
+        </div>
+
+        <!-- ⏳ generic waiting banner -->
+        <div class="question-box" id="hcWaitArea" style="display: none;">
+          <p class="hc-hint" id="hcWaitText">Waiting…</p>
+        </div>
+
+            <!-- 🔥 horizontal BEST-GUESSES bar (this round, by 0-100 score) -->
+            <div id="hcTopWrap" style="display: none;"><h3 id="hcTopTitle"><svg class="ic"><use href="#i-trophy"/></svg> Best guesses</h3><div class="hc-topbar" id="hcTop"></div></div>
+
+            <div class="game-controls">
+              <button class="secondary" id="hcHistBtn" onclick="toggleHcHistory()" title="Guess log"><svg class="ic"><use href="#i-trophy"/></svg> <span class="btn-label">History</span><span class="btn-label-phone">History</span></button>
+              <button class="secondary" id="hcChatRowBtn" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg> <span class="btn-label">Chat</span><span class="btn-label-phone">Chat</span><span class="chat-row-badge" id="hcChatUnreadBadgeRow"></span></button>
+            </div>
+          </div>
+          <div class="hc-side">
+            <div class="br-log-wrap" id="hcRankWrap"><h3 id="hcRankTitle"><svg class="ic"><use href="#i-trophy"/></svg> Ranking</h3><small class="hc-rank-hint">Every guess counts — fewest wins!</small><div class="br-log hc-log hc-cls" id="hcRank"><p style="text-align:center;color:var(--muted);">No guesses yet</p></div></div>
+            <div class="br-log-wrap" id="hcLogWrap"><h3 id="hcLogTitle"><svg class="ic"><use href="#i-note"/></svg> Guesses</h3><div class="br-log hc-log" id="hcLog"><p style="text-align:center;color:var(--muted);">Nothing yet</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌡️ Hot & Cold end screen -->
+  <div class="winning-screen" id="hcEndScreen">
+    <div class="winner-card">
+      <h2 id="hcWinTitle"><svg class="ic"><use href="#i-trophy"/></svg> Winner!</h2>
+      <p id="hcWinSub" style="font-size: 1.05rem; font-weight: 800; margin-bottom: 10px;">---</p>
+    </div>
+    <div class="me-list" id="hcEndList"></div>
+    <div class="hc-recap" id="hcRoundsRecap"></div>
+    <div style="display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center;">
+      <button class="success" onclick="hcPlayAgain()" id="hcRestartBtn" style="padding: 14px 28px; font-size: 1rem;">Play Again</button>
+      <button class="danger" onclick="returnToLobbyFromWin()" style="padding: 14px 28px; font-size: 1rem;">Return to Lobby</button>
+    </div>
+    <p id="hcRestartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;"></p>
+  </div>
+
+  <div class="modal" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeSettings()">×</div>
+      <h2><svg class="ic"><use href="#i-gear"/></svg> Settings</h2>
+      <!-- 💾📂 named configs — save the room's current settings, reload anytime -->
+      <div class="cfg-quick">
+        <button class="secondary small" onclick="openConfigSave('room')"><svg class="ic"><use href="#i-check"/></svg> Save</button>
+        <button class="secondary small" onclick="openConfigLoad('room')"><svg class="ic"><use href="#i-folder"/></svg> Load</button>
+      </div>
+      <!-- 🎮 One single view — no tabs: pick a game card, tune below -->
+      <div id="settingsTabRoom">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-door"/></svg> Room settings</h3>
+        <div class="settings-section">
+          <div class="input-group">
+            <label>Switch the game <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Switch everyone to another game — the room, the seats and the queue stay exactly as they are.</span></button></label>
+            <!-- 🎮 compact game-selection bar (phone & PC): opens the list window -->
+            <button type="button" id="modalGamePickOpenBtn" onclick="openGamePickModal('modal')"><span id="modalGamePickOpenLabel"><svg class="ic"><use href="#i-gamepad"/></svg> Choose a game…</span><span class="gpo-chev">▾</span></button>
+            <div class="game-pick-grid" id="modalGamePick">
+              <div class="game-pick-card selected" data-game="guesswho" onclick="modalCardGame('guesswho')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+                <div class="game-pick-content"><h4>Detective Showdown</h4><small>2 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="battle" onclick="modalCardGame('battle')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
+                <div class="game-pick-content"><h4>Detective Royale</h4><small>3-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="race" onclick="modalCardGame('race')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+                <div class="game-pick-content"><h4>Wanted!</h4><small>3-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="blur" onclick="modalCardGame('blur')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+                <div class="game-pick-content"><h4>Blur Guess</h4><small>1-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="undercover" onclick="modalCardGame('undercover')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+                <div class="game-pick-content"><h4>Undercover</h4><small>3-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="hotcold" onclick="modalCardGame('hotcold')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
+                <div class="game-pick-content"><h4>Cold Case</h4><small>2-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="codenames" onclick="modalCardGame('codenames')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
+                <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-12 players</small></div>
+              </div>
+              <div class="game-pick-card" data-game="snapshot" onclick="modalCardGame('snapshot')">
+                <div class="game-pick-img"><svg class="ic"><use href="#i-image"/></svg></div>
+                <div class="game-pick-content"><h4>Snapshot!</h4><small>1-12 players</small></div>
+              </div>
+            </div>
+            <select id="modalGameSelect" style="display: none;" onchange="modalGameChanged()">
+              <option value="guesswho">Detective Showdown (2 players)</option>
+              <option value="battle">Detective Royale (3-12 players)</option>
+              <option value="race">Wanted! (3-12 players)</option>
+              <option value="blur">Blur Guess (solo or up to 12 players)</option>
+              <option value="undercover">Undercover (3-12 players)</option>
+              <option value="hotcold">Cold Case (2-12 players)</option>
+              <option value="codenames">Ninja Scrolls (4-12 players)</option>
+              <option value="snapshot">Snapshot! (solo or up to 12 players)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Room Visibility</label>
+            <div class="radio-group">
+              <label class="radio-option" id="modalPrivate" onclick="changeVisibility('private')"><div><svg class="ic"><use href="#i-lock"/></svg> Private</div></label>
+              <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
+            </div>
+          </div>
+          <div class="slider-container" id="modalMaxPlayersBlock" style="display: none;">
+            <div class="slider-label"><span>Max Players</span><strong id="modalMaxPlayersValue">8</strong></div>
+            <input type="range" id="modalMaxPlayersSlider" min="2" max="12" value="8" oninput="changeRoomMaxPlayers()">
+            <!-- 🌡️ same Guess mode + Ranking toggles as the create-room screen -->
+                      </div>
+        </div>
+      </div>
+      <!-- ⚙️ Game-specific settings — same view, shown/hidden per picked game -->
+      <div id="settingsTabGame">
+        <h3 class="sec-h"><svg class="ic"><use href="#i-gear"/></svg> Game settings</h3>
+        <div class="settings-section" id="modalPoolGroup">
+          <h3><svg class="ic"><use href="#i-cards"/></svg> Character Pool <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Which characters the game draws from — Generic: the full character library · Favorites: the most popular picks · Mix: a blend of both · Watched: only anime the synced AniList accounts have seen.</span></button></h3>
+          <div class="input-group" id="modalPoolSrcGwGroup">
+            <div class="radio-group">
+              <label class="radio-option" id="modalSrcGeneric" onclick="changeSource('generic')"><div><svg class="ic"><use href="#i-cards"/></svg> Generic</div></label>
+              <label class="radio-option" id="modalSrcFavorites" onclick="changeSource('favorites')"><div><svg class="ic"><use href="#i-star"/></svg> Favorites</div></label>
+              <label class="radio-option" id="modalSrcMix" onclick="changeSource('mix')"><div><svg class="ic"><use href="#i-dice"/></svg> Mix</div></label>
+              <label class="radio-option" id="modalSrcWatched" onclick="changeSource('watched')"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
+            </div>
+          </div>
+          <!-- 👀🎲 Hot & Cold + Blur Guess: Random vs Watched pool -->
+          <div class="input-group" id="modalPoolSrcWatchGroup" style="display: none;">
+            <div class="radio-group">
+              <label class="radio-option" id="modalPoolRandom" onclick="changePool('random')"><div><svg class="ic"><use href="#i-dice"/></svg> Random</div></label>
+              <label class="radio-option" id="modalPoolWatched" onclick="changePool('watched')"><div><svg class="ic"><use href="#i-eye"/></svg> Watched</div></label>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section" id="modalGwSettings">
+          <div class="slider-container">
+            <div class="slider-label"><span>Character Count</span><strong id="modalCharCountValue">24</strong></div>
+            <input type="range" id="modalCharCountSlider" min="12" max="80" value="24" step="4" oninput="updateModalCharCount()">
+          </div>
+          <!-- 🔀 Mix split bar (Detective Showdown games only, when pool = Mix) -->
+          <div class="slider-container" id="modalMixBlock" style="display: none;">
+            <div class="slider-label"><span id="modalMixLabel">Mix</span></div>
+            <input type="range" id="modalMixSlider" min="0" max="24" value="12" oninput="updateModalMix()">
+          </div>
+        </div>
+        <div class="settings-section" id="modalUwSettings" style="display: none;">
+          <div class="input-group">
+            <label>Mr. White <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">One player (Mr. White) gets NO word at all — they improvise from everyone else&#39;s clues, and can steal the win by guessing the civilians&#39; word when caught. Needs 4+ players.</span></button></label>
+            <div class="radio-group">
+              <label class="radio-option" id="modalUcMwOff" onclick="changeUcMrWhite(false)"><div><svg class="ic"><use href="#i-slash"/></svg> Disabled</div></label>
+              <label class="radio-option" id="modalUcMwOn" onclick="changeUcMrWhite(true)"><div><svg class="ic"><use href="#i-check"/></svg> Enabled</div></label>
+            </div>
+            <div class="slider-container" style="margin-top: 14px;">
+              <div class="slider-label"><span>Undercovers</span><strong id="modalUcUndercoversValue">1</strong></div>
+              <input type="range" id="modalUcUndercoversSlider" min="1" max="4" value="1" oninput="updateModalUndercovers()">
+            </div>
+          </div>
+        </div>
+        <div class="settings-section hc-only-settings" id="modalHcSettings" style="display: none;">
+            <div class="slider-label" style="margin-top: 12px;"><span>Guess mode <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Shared guesses: everyone sees every guess land and get scored · Individual guesses: each hunter plays their own hidden lane, at their own pace.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="modalHcModeShared" onclick="changeHcMode('shared')"><div><svg class="ic"><use href="#i-users"/></svg> Shared guesses</div></label>
+              <label class="radio-option" id="modalHcModeIndividual" onclick="changeHcMode('individual')"><div><svg class="ic"><use href="#i-eye"/></svg> Individual guesses</div></label>
+            </div>
+            <div class="slider-label" style="margin-top: 12px;"><span>Ranking <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Show the live ranking during the match — or hide it until the end for extra suspense.</span></button></span></div>
+            <div class="hc-mode-row">
+              <label class="radio-option selected" id="modalHcRankShow" onclick="changeHcRank(false)"><div><svg class="ic"><use href="#i-chart"/></svg> Visible</div></label>
+              <label class="radio-option" id="modalHcRankHide" onclick="changeHcRank(true)"><div><svg class="ic"><use href="#i-eye"/></svg> Hidden</div></label>
+            </div>
+        </div>
+        <div class="settings-section" id="modalRaceSettings" style="display: none;">
+          <div class="slider-container">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-heart"/></svg> Hunter lives <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many wrong guesses a hunter can make — if ALL hunters run out of lives, the TARGET wins!</span></button></span><strong id="modalRaceLivesValue">3</strong></div>
+            <input type="range" id="modalRaceLivesSlider" min="1" max="5" value="3" oninput="updateModalRaceLives()">
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-help"/></svg> Hunter questions <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many yes/no questions each hunter may ask the target — running out means you can only guess… or pass.</span></button></span><strong id="modalRaceQuestionsValue">8</strong></div>
+            <input type="range" id="modalRaceQuestionsSlider" min="1" max="15" value="8" oninput="updateModalRaceQuestions()">
+          </div>
+        </div>
+        <div class="settings-section" id="modalBgSettings" style="display: none;">
+          <div class="input-group">
+            <label>What to guess</label>
+            <div class="radio-group">
+              <label class="radio-option selected" id="modalBgModeChars" onclick="changeBgMode('characters')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div></label>
+              <label class="radio-option" id="modalBgModeCovers" onclick="changeBgMode('covers')"><div><svg class="ic"><use href="#i-film"/></svg> Anime covers</div></label>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="modalBgDiffRow">
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalBg','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalBg','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('modalBg','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('modalBg','extreme')">Extreme</button>
+            </div>
+            
+          </div>
+          <div class="input-group">
+            <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
+            <div class="radio-group diff-row">
+              <label class="radio-option selected" id="modalBgGroupOff" onclick="changeBgGroup(0)"><div>Separate</div></label>
+              <label class="radio-option" id="modalBgGroupOn" onclick="changeBgGroup(1)"><div>Unite</div></label>
+            </div>
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many blurred characters or covers to guess in this game.</span></button></span><strong id="modalBgRoundsValue">10</strong></div>
+            <input type="range" id="modalBgRoundsSlider" min="5" max="80" step="5" value="10" oninput="updateModalBgRounds()">
+          </div>
+          <div class="slider-container">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-clock"/></svg> Stage timer <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Seconds each blur stage lasts before the picture gets a bit clearer.</span></button></span><strong id="modalBgStageSecValue">12s</strong></div>
+            <input type="range" id="modalBgStageSecSlider" min="5" max="30" step="1" value="12" oninput="updateModalBgStageSec()">
+          </div>
+          
+        </div>
+        <div class="settings-section" id="modalSnapSettings" style="display: none;">
+          <div class="slider-container">
+            <div class="slider-label"><span><svg class="ic"><use href="#i-layers"/></svg> Rounds <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How many anime to guess this game — each shows up to 4 stills, harder → easier.</span></button></span><strong id="modalSnRoundsValue">10</strong></div>
+            <input type="range" id="modalSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateModalSnRounds()">
+          </div>
+          <div class="input-group">
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+<div class="check-row diff-row" id="modalSnDiffRow">
+              <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalSn','easy')">Easy</button>
+              <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalSn','normal')">Normal</button>
+              <button type="button" class="diff-check" data-d="hard" onclick="toggleDiffBand('modalSn','hard')">Hard</button>
+              <button type="button" class="diff-check" data-d="extreme" onclick="toggleDiffBand('modalSn','extreme')">Extreme</button>
+            </div>
+            
+          </div>
+          
+          <div class="input-group">
+            <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
+            <div class="radio-group diff-row">
+              <label class="radio-option selected" id="modalSnGroupOff" onclick="changeSnGroup(0)"><div>Separate</div></label>
+              <label class="radio-option" id="modalSnGroupOn" onclick="changeSnGroup(1)"><div>Unite</div></label>
+            </div>
+          </div>
+        </div>
+        <button class="full success" onclick="closeSettings()">Save & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📱 phone game picker window -->
+  <div class="modal" id="gamePickModal" style="z-index: 1260;">
+    <div class="modal-content gpm-box">
+      <div class="modal-close" onclick="closeGamePickModal()">×</div>
+      <h2><svg class="ic"><use href="#i-gamepad"/></svg> Choose a Game</h2>
+      <div id="gamePickList"></div>
+    </div>
+  </div>
+
+  <!-- 🗑️ delete account — final confirmation (GDPR) -->
+  <div class="modal" id="deleteAccountModal" style="z-index: 1310;">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeDeleteAccountModal()">×</div>
+      <h2 style="color: var(--danger);"><svg class="ic"><use href="#i-skull"/></svg> Delete my account</h2>
+      <p style="color: var(--muted); font-size: 0.85rem;">This permanently deletes your Sakugame account: username, stats, avatar and AniList link. Your Discord account itself is untouched, and you can sign back in any time. This cannot be undone.</p>
+      <button class="full danger" id="deleteAccountBtn" onclick="confirmDeleteAccount()">Delete permanently</button>
+    </div>
+  </div>
+
+  <div class="modal" id="usernameModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeUsernameModal()">×</div>
+      <h2 style="font-size: 1.4rem;">Your Profile</h2>
+      <!-- 📑 guest tabs: Account (default) / Support — same support info as logged-in users -->
+      <div class="acct-tabs" role="tablist">
+        <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="perso" onclick="switchUnameTab('perso')"><svg class="ic"><use href="#i-palette"/></svg> Display</button>
+        <button type="button" class="acct-tab on" role="tab" aria-selected="true" data-tab="account" onclick="switchUnameTab('account')"><svg class="ic"><use href="#i-user"/></svg> Account</button>
+        <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="support" onclick="switchUnameTab('support')"><svg class="ic"><use href="#i-chat"/></svg> Support</button>
+      </div>
+      <div id="unamePaneAccount" class="acct-pane" role="tabpanel">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-user"/></svg> Change Username</h4>
+        <div class="input-group">
+          <label>New Username</label>
+          <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20">
+        </div>
+        <button class="full success" onclick="confirmUsernameChange()">Confirm</button>
+        <button class="full secondary" style="margin-top: 10px;" onclick="closeUsernameModal(); openAuthModal();"><svg class="ic"><use href="#i-key"/></svg> Log in / Create account</button>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
+        <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
+        <h4 class="profile-section-title music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+        <input type="range" class="music-volume-slider" min="0" max="100" value="50">
+      </div>
+      <div id="unamePanePerso" class="acct-pane" role="tabpanel" style="display: none;">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+        <div class="radio-group lang-pick-row" style="gap: 8px;">
+          <label class="radio-option lang-pick" id="langPickEn" data-lang="en" onclick="sakuSetLang('en')"><input type="radio" name="langpick" value="en"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg> English</div></label>
+          <label class="radio-option lang-pick" id="langPickFr" data-lang="fr" onclick="sakuSetLang('fr')"><input type="radio" name="langpick" value="fr"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg> Français</div></label>
+          <label class="radio-option lang-pick" id="langPickEs" data-lang="es" onclick="sakuSetLang('es')"><input type="radio" name="langpick" value="es"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg> Español</div></label>
+        </div>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-gear"/></svg> Menu bar</h4>
+        <div class="radio-group" style="gap: 8px;">
+          <label class="radio-option selected" id="barPosBottom" onclick="setBarPos('bottom')"><input type="radio" name="barpos" value="bottom" checked><div><svg class="ic"><use href="#i-layers"/></svg> Bottom</div></label>
+          <label class="radio-option" id="barPosTop" onclick="setBarPos('top')"><input type="radio" name="barpos" value="top"><div><svg class="ic"><use href="#i-bolt"/></svg> Top</div></label>
+        </div>
+      </div>
+      <div id="unamePaneSupport" class="acct-pane" role="tabpanel" style="display: none;">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-chat"/></svg> Contact & Support</h4>
+        <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!</p>
+        <div class="discord-card">
+          <span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Z"/></svg></span>
+          <div style="text-align: left; flex: 1 1 150px; min-width: 0;">
+            <div class="dc-label">Discord</div>
+            <div class="dc-handle">Join the Sakugame server</div>
+          </div>
+          <a class="dc-join" href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener"><svg class="ic"><use href="#i-door"/></svg> Open invite</a>
+          <button type="button" class="dc-copy" onclick="copyDiscord()"><svg class="ic"><use href="#i-copy"/></svg> Copy</button>
+        </div>
+        <p style="color: var(--muted); font-size: 0.78rem; margin-top: 10px; line-height: 1.5;">Chat with players, report bugs, suggest ideas — or DM <strong>@soufiane_jv</strong>, I usually answer within a day.</p>
+        <p class="legal-link-wrap"><a href="privacy.html" target="_blank" rel="noopener" class="legal-link"><svg class="ic"><use href="#i-note"/></svg> Privacy Policy &amp; Terms of Use and Service</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="authModal">
+    <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
+      <div class="modal-close" onclick="closeAuthModal()">×</div>
+      <!-- Discord is the only way in -->
+      <div id="authFormView">
+        <h2><svg class="ic"><use href="#i-key"/></svg> Account</h2>
+        <p style="color: var(--muted); margin-bottom: 20px;">Sign in with Discord — no email, no password. Your Discord account is your identity here.</p>
+        <button class="full dc-big" onclick="loginWithDiscord()"><svg class="ic"><use href="#i-users"/></svg> <span class="btn-label">Continue with Discord</span></button>
+        <p class="dc-signup-note" style="margin-top: 14px;"><svg class="ic"><use href="#i-users"/></svg> An account keeps your username, avatar, AniList sync and stats across devices. You can still play as a guest with any nickname.</p>
+        <p class="dc-signup-note" style="margin-top: 8px;"><svg class="ic"><use href="#i-note"/></svg> The official Discord popup only shares your username and avatar — Sakugame never sees your password.</p>
+      </div>
+      <!-- Logged-in profile menu -->
+      <div id="authProfileView" style="display: none;">
+        <!-- Header: avatar + little edit badge -->
+        <div class="profile-head">
+          <div class="profile-ava-wrap" onclick="openAvatarModal()" title="Change picture">
+            <span id="profileAvatar"></span>
+            <button type="button" class="ava-edit" aria-label="Change picture" title="Change picture"><svg class="ic"><use href="#i-pencil"/></svg></button>
+          </div>
+          <h2 style="margin: 8px 0 2px;" class="profile-name-row"><span id="profileName">Account</span><button type="button" class="ava-edit name-edit" onclick="toggleNameEdit()" title="Change username" aria-label="Change username"><svg class="ic"><use href="#i-pencil"/></svg></button></h2>
+          <!-- ✏️ inline username editor — a simple box like the AniList sync row (no popup) -->
+          <div class="profile-row name-edit-row" id="nameEditRow" style="display: none;">
+            <input type="text" id="inlNameInput" placeholder="New username (3-20 chars)" maxlength="20">
+            <button class="secondary" onclick="saveNameEdit()">Save</button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="acct-tabs" role="tablist">
+          <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="perso" onclick="switchAcctTab('perso')"><svg class="ic"><use href="#i-palette"/></svg> Display</button>
+          <button type="button" class="acct-tab on" role="tab" aria-selected="true" data-tab="game" onclick="switchAcctTab('game')"><svg class="ic"><use href="#i-gamepad"/></svg> Game</button>
+          <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="account" onclick="switchAcctTab('account')"><svg class="ic"><use href="#i-user"/></svg> Account</button>
+          <button type="button" class="acct-tab" role="tab" aria-selected="false" data-tab="support" onclick="switchAcctTab('support')"><svg class="ic"><use href="#i-chat"/></svg> Support</button>
+        </div>
+
+        <!-- 🎮 GAME tab: stats · language · volume -->
+        <div id="acctPaneGame" class="acct-pane" role="tabpanel">
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-chart"/></svg> Stats</h4>
+          <p style="color: var(--muted); font-size: 0.78rem; margin-bottom: 4px;"><svg class="ic"><use href="#i-mask"/></svg> Detective Showdown</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <div class="stat-box"><strong id="profileWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
+            <div class="stat-box"><strong id="profileLosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
+          </div>
+          <p style="color: var(--muted); font-size: 0.78rem; margin: 10px 0 4px;"><svg class="ic"><use href="#i-spy"/></svg> Undercover</p>
+          <div style="display: flex; gap: 12px; justify-content: center;">
+            <div class="stat-box"><strong id="profileUWins">0</strong><svg class="ic"><use href="#i-trophy"/></svg> Wins</div>
+            <div class="stat-box"><strong id="profileULosses">0</strong><svg class="ic"><use href="#i-skull"/></svg> Losses</div>
+          </div>
+
+          <h4 class="profile-section-title music-block"><svg class="ic"><use href="#i-music"/></svg> Music Volume</h4>
+          <input type="range" class="music-volume-slider" min="0" max="100" value="50">
+        </div>
+
+        <div id="acctPanePerso" class="acct-pane" role="tabpanel" style="display: none;">
+        <h4 class="profile-section-title"><svg class="ic"><use href="#i-globe"/></svg> Language</h4>
+        <div class="radio-group lang-pick-row" style="gap: 8px;">
+          <label class="radio-option lang-pick" id="langPickEn2" data-lang="en" onclick="sakuSetLang('en')"><input type="radio" name="langpick2" value="en"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg> English</div></label>
+          <label class="radio-option lang-pick" id="langPickFr2" data-lang="fr" onclick="sakuSetLang('fr')"><input type="radio" name="langpick2" value="fr"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#ffffff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg> Français</div></label>
+          <label class="radio-option lang-pick" id="langPickEs2" data-lang="es" onclick="sakuSetLang('es')"><input type="radio" name="langpick2" value="es"><div><svg class="flg" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg> Español</div></label>
+        </div>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-gear"/></svg> Menu bar</h4>
+        <div class="radio-group" style="gap: 8px;">
+          <label class="radio-option selected" id="barPosBottom2" onclick="setBarPos('bottom')"><input type="radio" name="barpos2" value="bottom" checked><div><svg class="ic"><use href="#i-layers"/></svg> Bottom</div></label>
+          <label class="radio-option" id="barPosTop2" onclick="setBarPos('top')"><input type="radio" name="barpos2" value="top"><div><svg class="ic"><use href="#i-bolt"/></svg> Top</div></label>
+        </div>
+
+          <h4 class="profile-section-title" style="margin-top: 16px;" data-noi18n><svg class="ic"><use href="#i-key"/></svg> Admin <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unlocks solo launches of every game (handy to preview rooms &amp; displays alone).</span></button></h4>
+          <button type="button" class="secondary full" id="adminToggleBtn" data-noi18n onclick="sakuAdminToggle()">🔒 Admin mode is off</button>
+        </div>
+
+        <!-- 👤 ACCOUNT tab: Discord identity · AniList · username · logout -->
+        <div id="acctPaneAccount" class="acct-pane" role="tabpanel" style="display: none;">
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-andlist"/></svg> AniList Account <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Your synced AniList account is loaded automatically when you host a room. Clear the field and press Sync to remove it.</span></button></h4>
+          <div class="profile-row">
+            <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
+            <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
+          </div>
+          <!-- 👀 Which AniList list-statuses count as "watched" for the HC/Blur Watched pools -->
+          <span class="ws-lead">Count as watched:</span>
+          <div class="ws-row" id="watchStatusRow">
+            <label><input type="checkbox" id="wsWatching" checked onchange="saveWatchStatuses()"> Watching</label>
+            <label><input type="checkbox" id="wsCompleted" checked onchange="saveWatchStatuses()"> Completed</label>
+            <label><input type="checkbox" id="wsPaused" checked onchange="saveWatchStatuses()"> Paused</label>
+            <label><input type="checkbox" id="wsDropped" onchange="saveWatchStatuses()"> Dropped</label>
+            <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
+          </div>
+
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-users"/></svg> Discord account <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Discord is how you sign in: the official popup verifies your account and gives Sakugame your username and avatar. Sign out any time from this card.</span></button></h4>
+          <div class="discord-card dc-sync" id="discordLinkBox"></div>
+
+          <h4 class="profile-section-title" style="margin-top: 16px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
+          <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
+
+          <h4 class="profile-section-title" style="margin-top: 18px; color: var(--danger);"><svg class="ic"><use href="#i-skull"/></svg> Danger zone</h4>
+          <button class="full ghost-danger" onclick="openDeleteAccountModal()"><svg class="ic"><use href="#i-skull"/></svg> Delete my account</button>
+
+          <button class="full danger" style="margin-top: 22px;" onclick="logoutAccount()">Log Out</button>
+        </div>
+
+        <!-- 💬 SUPPORT tab: Discord contact -->
+        <div id="acctPaneSupport" class="acct-pane" role="tabpanel" style="display: none;">
+          <h4 class="profile-section-title"><svg class="ic"><use href="#i-chat"/></svg> Contact & Support</h4>
+          <p style="color: var(--muted); font-size: 0.86rem; line-height: 1.5;">A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!</p>
+          <div class="discord-card">
+            <span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.8 2.01c0 1.11-.8 2.01-1.8 2.01Z"/></svg></span>
+            <div style="text-align: left; flex: 1 1 150px; min-width: 0;">
+              <div class="dc-label">Discord</div>
+              <div class="dc-handle">Join the Sakugame server</div>
+            </div>
+            <a class="dc-join" href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener"><svg class="ic"><use href="#i-door"/></svg> Open invite</a>
+          <button type="button" class="dc-copy" onclick="copyDiscord()"><svg class="ic"><use href="#i-copy"/></svg> Copy</button>
+          </div>
+          <p style="color: var(--muted); font-size: 0.78rem; margin-top: 10px; line-height: 1.5;">Chat with players, report bugs, suggest ideas — or DM <strong>@soufiane_jv</strong>, I usually answer within a day.</p>
+          <p class="legal-link-wrap"><a href="privacy.html" target="_blank" rel="noopener" class="legal-link"><svg class="ic"><use href="#i-note"/></svg> Privacy Policy &amp; Terms of Use and Service</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="pairsModal">
+    <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
+      <div class="modal-close" onclick="closePairsModal()">×</div>
+      <h2><svg class="ic"><use href="#i-note"/></svg> Undercover Word Pairs</h2>
+      <p style="color: var(--muted); margin-bottom: 16px; line-height: 1.5; font-size: 0.9rem;">Add your own pairs — saved online instantly and used by every Undercover room (on top of the built-in pairs). Type a name, click Search AniList and pick the right result to attach the official name &amp; picture. You must be logged in.</p>
+      <div class="input-group">
+        <label>Pair type</label>
+        <div class="radio-group">
+          <label class="radio-option selected" id="pairTypeC" onclick="selectPairType('c')"><div><svg class="ic"><use href="#i-user"/></svg> Characters</div></label>
+          <label class="radio-option" id="pairTypeS" onclick="selectPairType('s')"><div><svg class="ic"><use href="#i-film"/></svg> Anime series</div></label>
+        </div>
+      </div>
+      <div class="pair-slots">
+        <div class="pair-slot">
+          <div class="pair-slot-title">Word A</div>
+          <img id="pairImgA" class="pair-thumb" src="" alt="" style="display: none;">
+          <input type="text" id="pairInputA" placeholder="e.g. Luffy" maxlength="60">
+          <button class="secondary small" id="pairSearchABtn" onclick="pairAniListSearch('a')"><svg class="ic"><use href="#i-search"/></svg> Search AniList</button>
+        </div>
+        <div class="pair-slot-vs">VS</div>
+        <div class="pair-slot">
+          <div class="pair-slot-title">Word B</div>
+          <img id="pairImgB" class="pair-thumb" src="" alt="" style="display: none;">
+          <input type="text" id="pairInputB" placeholder="e.g. Zoro" maxlength="60">
+          <button class="secondary small" id="pairSearchBBtn" onclick="pairAniListSearch('b')"><svg class="ic"><use href="#i-search"/></svg> Search AniList</button>
+        </div>
+      </div>
+      <div id="pairResults"></div>
+      <button class="full success" id="pairAddBtn" onclick="addCustomPair()"><svg class="ic"><use href="#i-plus"/></svg> Add This Pair</button>
+      <h4 class="profile-section-title">Your custom pairs</h4>
+      <div id="pairList"><p style="color: var(--muted); text-align: center; font-size: 0.85rem;">No custom pairs yet.</p></div>
+    </div>
+  </div>
+
+  <!-- 💾 Save current settings — name it, keep it -->
+  <div class="modal" id="configSaveModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeConfigSave()">×</div>
+      <h2><svg class="ic"><use href="#i-check"/></svg> Save this config</h2>
+      <p style="color: var(--muted); font-size: 0.88rem; line-height: 1.5; margin-bottom: 18px;">Save the current settings for the selected game. Reload them later in one tap!</p>
+      <div class="input-group">
+        <label>Name</label>
+        <input type="text" id="cfgNameInput" placeholder="e.g. Race 5Q 2L" maxlength="30">
+      </div>
+      <button class="full success" onclick="confirmConfigSave()">Save</button>
+    </div>
+  </div>
+
+  <!-- 📂 Load a saved config -->
+  <div class="modal" id="configLoadModal">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+      <div class="modal-close" onclick="closeConfigLoad()">×</div>
+      <h2><svg class="ic"><use href="#i-folder"/></svg> Load a config</h2>
+      <div id="cfgLoadList" style="margin-top: 6px;"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="guessModal">
+    <div class="modal-content">
+      <h2>Confirm Your Guess</h2>
+      <img id="guessCharImg" class="modal-char-img" src="" alt="">
+      <p style="margin-bottom: 20px;">Is this your opponent's character?</p>
+      <p style="font-size: 1.2rem; font-weight: 700; color: var(--accent); margin-bottom: 20px;" id="guessCharName">---</p>
+      <div style="display: flex; gap: 12px;">
+        <button class="full success" onclick="confirmGuess()"><svg class="ic"><use href="#i-check"/></svg> Yes, Confirm Guess</button>
+        <button class="full danger" onclick="cancelGuess()"><svg class="ic"><use href="#i-x"/></svg> Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 💬 Floating chat button + chat window (visible during games). New messages
+       from other players show a red unread counter on the button. -->
+  <button id="chatToggleBtn" style="display: none;" onclick="toggleChatOverlay()" title="Chat"><svg class="ic"><use href="#i-chat"/></svg><span id="chatUnreadBadge"></span></button>
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-overlay-head">
+      <h3><svg class="ic"><use href="#i-chat"/></svg> Game Chat</h3>
+      <button class="chat-overlay-close" onclick="toggleChatOverlay()"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="chat-messages" id="chatOverlayMessages"><div style="text-align: center; color: var(--muted); font-size: 0.85rem; padding: 20px;">Chat with the other players!</div></div>
+    <div class="chat-input-area">
+      <div class="chat-input-form">
+        <input type="text" id="chatOverlayInput" placeholder="Type a message..." maxlength="200">
+        <button class="secondary" onclick="sendOverlayChatMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar picker: preset anime avatars or your own uploaded picture -->
+  <div class="modal" id="avatarModal">
+    <div class="modal-content">
+      <div class="modal-close" onclick="closeAvatarModal()">×</div>
+      <h2><svg class="ic"><use href="#i-image"/></svg> Profile Picture</h2>
+      <p style="color: var(--muted); font-size: 0.85rem;">Your Discord picture is used as your profile picture — pick another one any time.</p>
+      <p style="color: var(--muted); font-size: 0.85rem;">Pick an anime avatar:</p>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <p style="color: var(--muted); font-size: 0.85rem;">…or use your own picture (your browser shrinks it to a tiny 96×96 image — nothing heavy is uploaded).</p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="secondary" style="width: auto; display: none;" id="avatarDiscordBtn" onclick="sakuUseDiscordAvatar()"><svg class="ic"><use href="#i-users"/></svg> <span class="btn-label">Use my Discord picture</span></button>
+        <button class="secondary" style="width: auto;" onclick="document.getElementById('avatarFileInput').click()"><svg class="ic"><use href="#i-folder"/></svg> Upload my own</button>
+        <button class="danger" style="width: auto;" onclick="saveAvatar(null)"><svg class="ic"><use href="#i-trash"/></svg> Remove picture</button>
+      </div>
+      <p id="avatarError" style="color: var(--danger); font-size: 0.82rem; min-height: 1em; margin: 8px 0 0;"></p>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="onAvatarFileSelected(event)">
+    </div>
+  </div>
+
+  <!-- 🧪 TEST BUILD — the real Firebase scripts are replaced by this local stub,
+       so nothing you do here can touch the public database. -->
+  <script src="test-stub.js"></script>
+
+  <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
+       AFTER first paint instead of blocking the opening page. This loader injects
+       the three scripts on window 'load' (async=false keeps classic-script order)
+       and exposes window.sakuDataReady — app.js awaits it before dealing a game. -->
+  <script>
+    window.sakuDataReady = new Promise(function (resolve, reject) {
+      function kickSakuData() {
+        var files = ['characters.js?v=170', 'charanimes.js?v=170', 'animes.js?v=170', 'nsfwdata.js?v=170', 'snappics.js?v=170'];
+        var left = files.length, failed = false;
+        files.forEach(function (f) {
+          var s = document.createElement('script');
+          s.src = f; s.async = false;
+          s.onload = function () { if (!failed && --left === 0) resolve(); };
+          s.onerror = function () { if (!failed) { failed = true; reject(new Error('game data failed to load: ' + f)); } };
+          document.body.appendChild(s);
+        });
+      }
+      if (document.readyState === 'complete') kickSakuData();
+      else window.addEventListener('load', kickSakuData);
+    });
+    window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
+  </script>
+  <script src="undercover.js?v=170"></script>
+  <script src="music.js?v=170"></script>
+  <script src="lang.js?v=170"></script>
+  <script src="app.js?v=170"></script>
+  <script src="test-panel.js"></script>
+
+  <!-- 🍪 One-time storage notice (b107): we only use your browser's local
+       storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
+  <div id="sakuConsent" class="saku-consent" role="note" style="display: none;">
+    <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
+    <button class="success" onclick="dismissSakuConsent()">Got it</button>
+  </div>
+</body>
+</html>

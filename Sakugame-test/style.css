@@ -1,0 +1,2157 @@
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap'); /* b121: site-wide typeface — Outfit */
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --accent: #02a9ff;
+    --accent2: #0f3460;
+    --text: #eee;
+    --muted: #a0a0b0;
+    --success: #00c853;
+    --danger: #ff1744;
+    --warning: #ffa726;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #0c1226; /* deep blue base — the sakura backdrop paints the gradients over it */
+    color: var(--text);
+    min-height: 100vh;
+    padding: 16px 16px 68px; /* extra room at the bottom so nothing hides behind the bottom bar */
+    overflow-x: hidden;
+  }
+
+  /* ===== 🌸 Sakura backdrop: layered blue gradients + corner branch + falling petals =====
+     Fixed full-screen layer behind every screen (z-index -1); pure CSS/SVG, no JS. */
+  #sakuraBg {
+    position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+    background:
+      radial-gradient(1000px 620px at 88% -12%, rgba(2, 169, 255, 0.14), transparent 62%),
+      radial-gradient(820px 620px at -12% 108%, rgba(67, 96, 159, 0.22), transparent 60%),
+      linear-gradient(158deg, #0a0e24 0%, #101b3f 48%, #162653 100%);
+  }
+  #sakuraBranch { position: absolute; top: -6px; right: -14px; width: min(47vw, 660px); height: auto; }
+  #sakuraBg .petal {
+    position: absolute; top: -7vh; left: var(--x);
+    width: var(--s); height: var(--s); color: var(--c, #bfe0ff); opacity: 0;
+    animation: sakuraFall var(--d) linear var(--dl) infinite;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 0 3px rgba(213, 234, 255, 0.35)); /* soft moonlit glow */
+  }
+  /* Big out-of-focus foreground petals — the bokeh look (kept out of the phone budget) */
+  #sakuraBg .petal.big { filter: blur(3px); }
+  /* Petals spawn in the top-right corner by the branch and get blown diagonally
+     down-left across the whole page -- as if the wind pushes them off the branch.
+     --fx = total sideways travel (negative = leftward), --sw = small flutter wobble. */
+  @keyframes sakuraFall {
+    0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+    8%   { opacity: var(--o, .85); }
+    25%  { transform: translate3d(calc(var(--fx, -35vw) * 0.25 + var(--sw, 3vw)), 25vh, 0) rotate(110deg); }
+    50%  { transform: translate3d(calc(var(--fx, -35vw) * 0.5 - var(--sw, 3vw)), 52vh, 0) rotate(225deg); }
+    75%  { transform: translate3d(calc(var(--fx, -35vw) * 0.75 + var(--sw, 3vw)), 80vh, 0) rotate(345deg); }
+    93%  { opacity: var(--o, .85); }
+    100% { transform: translate3d(var(--fx, -35vw), 114vh, 0) rotate(470deg); opacity: 0; }
+  }
+  @media (max-width: 640px) {
+    #sakuraBranch { width: 72vw; right: -3vw; top: 0; }
+    #sakuraBg .petal:nth-of-type(n+10) { display: none; } /* 8 petals on phones — keeps the game smooth */
+  }
+  /* Reduced motion: keep the falling petals (site owner's choice) but make them fewer,
+     slower and gentler — no fast spinning. */
+  @media (prefers-reduced-motion: reduce) {
+    #sakuraBg .petal { animation-duration: calc(var(--d) * 2.5); }
+    #sakuraBg .petal:nth-of-type(n+8) { display: none; } /* only 6 slow petals */
+  }
+  .site-header { text-align: center; margin-bottom: 40px; padding-top: 8px; }
+  /* Brand mark: simple, just "SAKUGAME" — no tagline */
+  .site-logo {
+    display: inline-flex; align-items: center; gap: 14px;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 900; letter-spacing: 0.06em; line-height: 1;
+    background: linear-gradient(90deg, #02a9ff, #4fb9fb, #a5d2ff, #e6f3ff);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 34px rgba(2,169,255,0.35);
+    cursor: pointer;
+  }
+  .site-logo .ic { width: 2.5rem; height: 2.5rem; flex: none; filter: drop-shadow(0 0 10px rgba(2,169,255,0.45)); }
+  .screen { display: none; max-width: 1600px; margin: 0 auto; }
+  .screen.active { display: block; }
+  .username-change-btn {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    background: var(--accent2); color: white; border: none;
+    padding: 10px 20px; border-radius: 25px; cursor: pointer;
+    font-weight: 700; font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: all 0.2s; z-index: 50;
+  }
+  .username-change-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(2, 169, 255, 0.4); }
+  .homepage-container { max-width: 800px; margin: 60px auto; text-align: center; }
+  .homepage-title { font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; font-weight: 900; }
+  .homepage-subtitle { color: var(--muted); font-size: 1.2rem; margin-bottom: 50px; }
+  .homepage-buttons { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; }
+  .homepage-btn {
+    background: var(--card); padding: 40px 60px; border-radius: 20px;
+    cursor: pointer; transition: all 0.3s; border: 3px solid transparent; min-width: 250px;
+  }
+  .homepage-btn:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(2, 169, 255, 0.3); }
+  .homepage-btn .icon { font-size: 4rem; margin-bottom: 15px; }
+  .homepage-btn h3 { font-size: 1.8rem; color: var(--accent); margin-bottom: 10px; }
+  .homepage-btn p { color: var(--muted); font-size: 1rem; }
+  .play-menu { max-width: 600px; margin: 60px auto; }
+  .play-menu h2 { text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px; }
+  .play-options { display: flex; flex-direction: column; gap: 20px; }
+  .play-option {
+    background: var(--card); padding: 30px; border-radius: 16px; cursor: pointer;
+    transition: all 0.3s; border: 3px solid transparent; display: flex; align-items: center; gap: 20px;
+  }
+  .play-option:hover { border-color: var(--accent); transform: translateX(10px); }
+  .play-option .icon { font-size: 3rem; min-width: 60px; text-align: center; }
+  .play-option .content h3 { font-size: 1.5rem; color: var(--text); margin-bottom: 8px; }
+  .play-option .content p { color: var(--muted); font-size: 0.95rem; }
+  .games-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;
+  }
+  /* 📱 Rules menu: a column of two blocks per row on phones */
+  @media (max-width: 700px) {
+    .games-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .game-card { border-radius: 14px; }
+    .game-card-img { height: 90px; font-size: 2.6rem; }
+    .game-card-content { padding: 12px; }
+    .game-card h3 { font-size: 0.95rem; margin-bottom: 6px; }
+    .game-card p { font-size: 0.78rem; line-height: 1.4; }
+  }
+  .game-card { background: var(--card); border-radius: 20px; overflow: hidden; cursor: pointer; transition: all 0.3s; border: 3px solid transparent; }
+  .game-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 40px rgba(2, 169, 255, 0.3); }
+  .game-card-img { width: 100%; height: 200px; background: linear-gradient(135deg, #02a9ff, #0f3460); display: flex; align-items: center; justify-content: center; font-size: 5rem; }
+  .game-card-content { padding: 25px; }
+  .game-card h3 { font-size: 1.5rem; color: var(--accent); margin-bottom: 10px; }
+  .game-card p { color: var(--muted); line-height: 1.6; }
+  .game-card-content::after { content: "How to play →"; display: inline-block; margin-top: 12px; font-size: 0.78rem; font-weight: 700; color: var(--accent); opacity: 0.85; }
+
+  /* ===== 🎮 Create-room game picker — mini cards (no descriptions) ===== */
+  .game-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+  .game-pick-card { background: #14142a; border: 2px solid rgba(255, 255, 255, 0.07); border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .game-pick-card:hover { transform: translateY(-4px); border-color: rgba(2, 169, 255, 0.6); box-shadow: 0 10px 24px rgba(2, 169, 255, 0.25); }
+  .game-pick-card.selected { border-color: var(--accent); background: rgba(2, 169, 255, 0.1); box-shadow: 0 10px 26px rgba(2, 169, 255, 0.35); }
+  .game-pick-card.selected .game-pick-content h4 { color: var(--accent); }
+  .game-pick-img { height: 62px; background: linear-gradient(135deg, #02a9ff, #0f3460); display: flex; align-items: center; justify-content: center; }
+  .game-pick-img .ic { width: 2rem; height: 2rem; color: rgba(255, 255, 255, 0.95); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35)); }
+  .game-pick-content { padding: 10px 6px 11px; }
+  .game-pick-content h4 { font-size: 0.8rem; color: var(--text); line-height: 1.25; transition: color 0.2s; }
+  .game-pick-content small { display: block; margin-top: 4px; font-size: 0.68rem; color: var(--muted); font-weight: 700; }
+
+  /* ===== 💾📂 Config save/load (create room) ===== */
+  .cfg-quick { display: flex; gap: 8px; justify-content: flex-start; margin: 2px 0 16px; }
+  .cfg-quick button { width: auto; }
+  .cfg-row { display: flex; align-items: center; gap: 8px; background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+  .cfg-row .cfg-name { flex: 1; min-width: 0; font-weight: 800; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cfg-row .cfg-name small { display: block; color: var(--muted); font-weight: 600; font-size: 0.74rem; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ===== 🌡️ Guess Who — Hot & Cold ===== */
+  .hc-banner { background: rgba(2, 169, 255, 0.12); border: 1px solid rgba(2, 169, 255, 0.45); color: var(--text); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-weight: 600; font-size: 0.95rem; line-height: 1.5; }
+  .hc-banner b { color: var(--accent); }
+  .hc-hint { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin: 0 0 10px; }
+  .hc-staged { display: flex; align-items: center; gap: 12px; background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 12px; padding: 12px; margin-top: 10px; }
+  .hc-staged img { width: 56px; height: 72px; object-fit: cover; border-radius: 8px; background: #1a1a2e; }
+  .hc-staged-info { flex: 1; min-width: 0; }
+  .hc-staged-label { color: var(--muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .hc-staged-name { color: var(--text); font-weight: 800; font-size: 1.02rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hc-log .hc-row { display: flex; align-items: center; gap: 10px; padding: 7px 4px; border-bottom: 1px dashed rgba(255,255,255,0.07); text-align: left; }
+  .hc-log .hc-row:last-child { border-bottom: none; }
+  .hc-log .hc-gimg { width: 34px; height: 44px; object-fit: cover; border-radius: 6px; background: #1a1a2e; flex-shrink: 0; }
+  .hc-log .hc-gname { flex: 1; min-width: 0; color: var(--text); font-weight: 700; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hc-log .hc-gnum { font-weight: 800; font-size: 0.92rem; min-width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; }
+  .hc-hot { color: #ff5252; } .hc-warm { color: #ffca3a; } .hc-cold { color: #29b6f6; }
+  #hcScoreBox input[type="range"] { accent-color: var(--hc-col, var(--accent)); }
+  #hcScoreValue { color: var(--hc-col, var(--accent)); }
+
+  /* ===== 🎓 How to Play modal (Games menu slideshow) ===== */
+  .howto-modal { position: fixed; inset: 0; z-index: 400; background: rgba(5, 8, 20, 0.82); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 14px; }
+  .howto-panel { background: var(--card); border: 1px solid #2a2a4a; border-radius: 16px; width: 100%; max-width: 880px; max-height: 92vh; overflow-y: auto; padding: 16px 20px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
+  .howto-head { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #26264a; }
+  .howto-gameicon .ic { width: 2rem; height: 2rem; }
+  .howto-head h3 { margin: 0; color: var(--accent); font-size: 1.25rem; }
+  .howto-players { margin-left: auto; font-size: 0.75rem; font-weight: 700; color: #99aacd; background: #1b1b35; padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+  .howto-close { background: none; border: none; color: #aab; cursor: pointer; padding: 6px; border-radius: 8px; }
+  .howto-close:hover { color: #fff; background: #26264a; }
+  .howto-close .ic { width: 1.3rem; height: 1.3rem; }
+  .howto-body { display: flex; align-items: stretch; gap: 10px; margin: 16px 0; }
+  .howto-arrow { flex: none; align-self: center; width: 38px; height: 60px; background: #20203c; border: none; border-radius: 10px; color: #bbcdf0; font-size: 1.5rem; cursor: pointer; }
+  .howto-arrow:hover:not(:disabled) { background: #2a2a50; }
+  .howto-arrow:disabled { opacity: 0.25; cursor: default; }
+  .howto-slide { flex: 1; display: flex; gap: 18px; align-items: center; min-height: 240px; }
+  .ht-scene { flex: 1.25; min-width: 0; }
+  .ht-text { flex: 1; min-width: 210px; }
+  .ht-text h4 { margin: 0 0 10px; color: #eaf4ff; font-size: 1.1rem; }
+  .ht-text p { margin: 0; color: #9fb2cc; font-size: 0.9rem; line-height: 1.6; }
+  .ht-step { margin-top: 14px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; color: #66779a; text-transform: uppercase; }
+  .howto-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .howto-dots { display: flex; gap: 7px; }
+  .howto-dot { width: 9px; height: 9px; border-radius: 50%; background: #333a5a; cursor: pointer; transition: background 0.2s; }
+  .howto-dot.on { background: var(--accent); }
+  .howto-cta { max-width: 230px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin: 0; }
+  .howto-cta .ic { width: 1rem; height: 1rem; }
+
+  /* Mock gameplay scenes (stylized demo screenshots) */
+  .mock { background: #12122a; border: 1px solid #2a2a4a; border-radius: 12px; padding: 12px; }
+  .mk-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; color: #7f92b8; text-transform: uppercase; margin-bottom: 8px; }
+  .mk-note { margin-top: 10px; font-size: 0.78rem; color: #7f92b8; font-style: italic; }
+  .mk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .mk-char { position: relative; background: #1e1e38; border-radius: 8px; padding: 6px; text-align: center; font-size: 0.7rem; color: #cdd8ee; overflow: hidden; }
+  .mk-face { width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 5px; background: linear-gradient(135deg, #2c4a80, #4368b8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #eaf4ff; font-size: 0.85rem; }
+  .mk-photo-wrap { width: 100%; aspect-ratio: 1; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
+  .mk-photo-wrap .mk-face { width: 100%; height: 100%; border-radius: 6px; margin: 0; font-size: 1.1rem; }
+  .mk-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mk-name { display: block; font-size: 0.66rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-grid3 { grid-template-columns: repeat(3, 1fr); }
+  .mk-mini { background: #171731; border: 1px solid #2a2a4a; border-radius: 10px; padding: 8px; }
+  .mk-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mk-badge2 { display: block; margin-top: 4px; text-align: center; font-size: 0.66rem; font-weight: 800; color: var(--accent); background: #1b1b35; border-radius: 999px; padding: 2px 0; }
+  .mk-char.secret { outline: 2px solid var(--warning); }
+  .mk-char.out { opacity: 0.3; filter: grayscale(1); }
+  .mk-char.out::after { content: "✕"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--danger); font-weight: 900; }
+  .mk-badge { position: absolute; top: 3px; right: 5px; font-size: 0.75rem; color: var(--warning); font-weight: 900; }
+  .mk-q { display: flex; gap: 6px; margin-top: 10px; align-items: stretch; }
+  .mk-in { flex: 1; background: #0f0f1a; border: 1px solid #333a5a; border-radius: 8px; padding: 8px 10px; color: #9db8dd; font-size: 0.78rem; font-style: italic; display: flex; align-items: center; }
+  .mk-btn { background: var(--accent); color: #04121f; border-radius: 8px; padding: 8px 12px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; white-space: nowrap; }
+  .mk-chips, .mk-chipwrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .mk-chip { background: #1b1b35; border: 1px solid #2f3a63; color: #cdd8ee; border-radius: 999px; padding: 4px 11px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+  .mk-chip.ok { border-color: var(--success); color: #7ce8a4; }
+  .mk-chip.no { border-color: var(--danger); color: #ff8ba0; }
+  .mk-chip.dim { border-color: #3a3a5a; color: #8b9bc0; }
+  .mk-chip .ic { width: 0.85rem; height: 0.85rem; }
+  .mk-roles3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mk-role { background: #1e1e38; border-radius: 10px; padding: 9px; }
+  .mk-word { margin-top: 7px; background: #0f0f1a; border: 1px dashed #3a4a80; border-radius: 8px; padding: 8px 4px; text-align: center; color: #eaf4ff; font-size: 0.72rem; letter-spacing: 0.06em; }
+  .mk-log p { margin: 0 0 6px; font-size: 0.8rem; color: #b9c6e2; }
+  .mk-log .mk-odd { background: rgba(255, 23, 68, 0.12); border-radius: 6px; padding: 3px 6px; }
+  .mk-board-list p { margin: 0 0 8px; font-size: 0.82rem; color: #b9c6e2; }
+  .mk-lives { display: flex; gap: 5px; margin-bottom: 4px; }
+  .mk-lives .ic { width: 1.3rem; height: 1.3rem; }
+  .mk-dead { opacity: 0.25; filter: grayscale(1); }
+  .mk-img { width: 100%; border-radius: 8px; display: block; margin-top: 8px; }
+  .mk-stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .mk-stages .mk-img { margin-top: 0; aspect-ratio: 3/4; object-fit: cover; }
+  .mk-img.b3 { filter: blur(10px) saturate(1.2); }
+  .mk-img.b2 { filter: blur(4px); }
+  .mk-img.b1 { filter: blur(0.5px); }
+
+  /* 🎬 "How to play" ribbon — these pages are GUIDES, not the live game */
+  .howto-tag { background: rgba(2, 169, 255, 0.14); border: 1px solid rgba(2, 169, 255, 0.4); color: var(--accent); font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+
+  /* 🎬 authentic per-game demo scenes — mini replicas of each real screen */
+  .mk-badges { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 9px; }
+  .mk-pill { background: #1a1a2e; border: 1px solid rgba(2, 169, 255, 0.45); color: var(--accent); font-size: 0.64rem; font-weight: 800; padding: 3px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px; }
+  .mk-pill.ok { border-color: rgba(2, 210, 120, 0.55); color: #7ce8a4; }
+  .mk-pill.warn { border-color: rgba(255, 202, 58, 0.55); color: var(--warning); }
+  .mk-pill.dim { border-color: #3a3a5a; color: #8b9bc0; }
+  .mk-pill.red { border-color: rgba(229, 57, 53, 0.65); color: #ff8079; }
+  .mk-pill.blue { border-color: rgba(30, 136, 229, 0.65); color: #64b5f6; }
+  /* the "your secret" banner — mirrors the in-game br-mysecret strip */
+  .mk-strip { display: flex; align-items: center; gap: 10px; background: #0f0f1a; border: 1px solid #2a2a4a; border-radius: 10px; padding: 7px 10px; margin-bottom: 9px; text-align: left; }
+  .mk-strip-img { width: 38px; height: 50px; border-radius: 7px; object-fit: cover; background: #1a1a2e; flex: none; }
+  .mk-strip-face { width: 38px; height: 50px; border-radius: 7px; background: linear-gradient(135deg, #2c4a80, #4368b8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #eaf4ff; flex: none; }
+  .mk-strip-info { flex: 1; min-width: 0; }
+  .mk-strip-label { color: #8b9bc0; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .mk-strip-name { color: #eaf4ff; font-weight: 800; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-strip-right { color: var(--warning); font-weight: 900; font-size: 0.72rem; flex: none; }
+  /* Battle Royale player color chips */
+  .mk-colorrow { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 9px; }
+  .mk-cchip { display: inline-flex; align-items: center; gap: 5px; background: #1e1e38; border: 1px solid #2f3a63; border-radius: 999px; padding: 3px 10px; font-size: 0.66rem; font-weight: 700; color: #cdd8ee; }
+  .mk-cchip.on { border-color: var(--accent); box-shadow: 0 0 8px rgba(2, 169, 255, 0.35); }
+  .mk-cdot { width: 9px; height: 9px; border-radius: 50%; }
+  /* Wanted! hunters bar */
+  .mk-hunters { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 9px; }
+  .mk-hunter { background: #1e1e38; border: 1px solid #2f3a63; color: #cdd8ee; font-size: 0.66rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; }
+  .mk-hunter.me { border-color: var(--accent); box-shadow: 0 0 8px rgba(2, 169, 255, 0.35); }
+  .mk-hearts { color: var(--danger); font-size: 0.66rem; letter-spacing: -1px; }
+  /* Blur Guess big stage image + "Who is this?!" */
+  .mk-bigimg { display: block; max-width: 180px; margin: 2px auto 0; }
+  .mk-who { text-align: center; color: var(--accent); font-weight: 800; font-size: 0.82rem; margin-top: 8px; }
+  /* Cold Case live score list */
+  .mk-hc { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .mk-hc-row { display: flex; align-items: center; gap: 9px; background: #14142a; border-radius: 8px; padding: 5px 8px; }
+  .mk-hc-img { width: 26px; height: 34px; border-radius: 5px; object-fit: cover; background: linear-gradient(135deg, #2c4a80, #4368b8); color: #eaf4ff; font-weight: 800; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; flex: none; }
+  .mk-hc-name { flex: 1; min-width: 0; color: #cdd8ee; font-weight: 700; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mk-hc-num { font-weight: 900; font-size: 0.72rem; min-width: 2.4em; text-align: right; }
+  .mk-hc-num.hot { color: #ff5252; }
+  .mk-hc-num.warm { color: #ffca3a; }
+  .mk-hc-num.cold { color: #29b6f6; }
+  /* Ninja Scrolls — spymaster clue bar + true-colored key cards */
+  .mk-cluebar { background: rgba(2, 169, 255, 0.10); border: 1px solid rgba(2, 169, 255, 0.4); color: #dfe9ff; border-radius: 10px; padding: 7px 10px; font-size: 0.74rem; font-weight: 700; text-align: center; margin-bottom: 9px; }
+
+  /* 🥷🎴 drag your own name tag between the boxes (mouse + finger, Pointer Events) */
+  .cn-me-drag { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
+  .cn-me-drag img { -webkit-user-drag: none; pointer-events: none; }
+  .cn-me-drag:active { cursor: grabbing; }
+  .cn-me-drag .cn-member-name { text-decoration: underline dotted rgba(255, 255, 255, 0.45); text-underline-offset: 3px; }
+  .cn-drag-src { opacity: 0.35; }
+  .cn-box.cn-over, .cn-spect.cn-over { border-color: var(--accent) !important; box-shadow: 0 0 14px rgba(2, 169, 255, 0.5); }
+  .cn-ghost { pointer-events: none; }
+  /* 👑✕ host admin chips on any name tag + the host's own crown */
+  .cn-member .player-admin-btn { flex: none; width: 22px; height: 22px; border-radius: 7px; margin-left: 4px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .cn-member .player-admin-btn svg { width: 12px; height: 12px; }
+  .cn-host-crown { flex: none; padding: 1px 5px; }
+  .cn-host-crown .ic { width: 0.72rem; height: 0.72rem; vertical-align: -0.08em; }
+
+  .mk-cn { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .mk-cn .mk-char { padding: 4px; font-size: 0.56rem; border: 2px solid rgba(255, 255, 255, 0.08); }
+  .mk-cn .mk-char .mk-name { font-size: 0.56rem; }
+  .mk-cn .mk-char.key-red { border-color: rgba(229, 57, 53, 0.9); }
+  .mk-cn .mk-char.key-blue { border-color: rgba(30, 136, 229, 0.9); }
+  .mk-cn .mk-char.key-beige { border-color: rgba(176, 164, 138, 0.6); }
+  .mk-cn .mk-char.key-black { border-color: #fff; background: #08080c; }
+  .mk-cn .mk-char.rev-red { border-color: #e53935; background: rgba(229, 57, 53, 0.5); }
+  .mk-cn .mk-char.rev-red .mk-photo { opacity: 0.3; filter: saturate(0.6); }
+
+  @media (max-width: 640px) {
+    /* 📱 how-to on phone: ONE fixed-size window hugging the top bar, swipe to navigate;
+       the slide scrolls INSIDE — the window itself never resizes between steps */
+    .howto-modal { padding: 8px; padding-top: calc(54px + env(safe-area-inset-top, 0px) + 8px); align-items: flex-start; }
+    .howto-panel { padding: 12px; border-radius: 14px; height: calc(100dvh - 54px - env(safe-area-inset-top, 0px) - 16px); max-height: none; overflow: hidden; display: flex; flex-direction: column; }
+    .howto-head { flex: none; }
+    .howto-body { flex: 1 1 auto; min-height: 0; margin: 10px 0; }
+    .howto-slide { height: 100%; overflow-y: auto; align-content: flex-start; }
+    .howto-foot { flex: none; }
+    .howto-head { gap: 8px; flex-wrap: wrap; padding-bottom: 10px; }
+    .howto-head h3 { font-size: 1.1rem; }
+    .howto-close .ic { width: 1.5rem; height: 1.5rem; }
+    .howto-body { gap: 6px; }
+    .howto-slide { flex-direction: column; align-items: stretch; min-height: 0; gap: 12px; }
+    .howto-arrow { display: none; } /* swipe + dots are the phone navigation */
+    .ht-scene { min-width: 0; }
+    .ht-scene .mock { padding: 14px; overflow-x: hidden; }
+    .ht-text { min-width: 0; }
+    .ht-text h4 { font-size: 1.1rem; margin: 2px 0 4px; }
+    .ht-text p { font-size: 0.98rem; line-height: 1.5; color: #c9d4ef; }
+    .ht-step { margin-top: 8px; font-size: 0.8rem; }
+    .howto-dots { gap: 10px; }
+    .howto-dot { width: 13px; height: 13px; }
+    .howto-cta { max-width: none; flex: 1; padding: 13px; }
+    .howto-foot { flex-wrap: wrap; justify-content: center; }
+  }
+  .panel { max-width: 700px; margin: 40px auto; background: var(--card); padding: 35px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .panel h2 { color: var(--accent); margin-bottom: 10px; text-align: center; font-size: 2rem; }
+  .panel > p { color: var(--muted); margin-bottom: 30px; line-height: 1.6; text-align: center; font-size: 1rem; }
+  .settings-section { background: #0f0f1a; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+  .settings-section h3 { color: var(--accent); margin-bottom: 15px; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+  .input-group { margin-bottom: 20px; }
+  .input-group label { display: block; margin-bottom: 8px; color: var(--text); font-size: 0.95rem; font-weight: 600; }
+  .input-group input, .input-group select { width: 100%; padding: 12px; font-size: 1rem; border: 2px solid #2a2a4a; border-radius: 10px; background: #1a1a2e; color: white; font-family: inherit; }
+  .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
+  .radio-group { display: flex; gap: 20px; }
+  /* b110 🎚️ many-chip rows (difficulty, family grouping): wrap — never overflow the modal */
+  .radio-group.diff-row { flex-wrap: wrap; gap: 8px; }
+  .radio-group.diff-row .radio-option { flex: 1 1 30%; margin-bottom: 0; padding: 10px 6px; min-width: 86px; }
+  /* ☐☑ b115 multi-select band pickers (Blur & Snapshot difficulty) */
+  .check-row.diff-row { display: flex; flex-wrap: nowrap; gap: 6px; } /* b116: all five bands squeezed onto ONE line */
+  .diff-check { flex: 1 1 0; min-width: 0; padding: 9px 3px; background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 10px; color: var(--text); font-size: 0.76rem; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; transition: all 0.15s; }
+  .diff-check::before { content: ""; width: 11px; height: 11px; border: 2px solid var(--muted); border-radius: 3px; flex: 0 0 auto; transition: all 0.15s; }
+  @media (max-width: 620px) { .diff-check { font-size: 0.66rem; padding: 8px 2px; gap: 3px; } .diff-check::before { width: 9px; height: 9px; } }
+  .diff-check:hover { border-color: var(--accent); }
+  .diff-check.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); }
+  .diff-check.selected::before { border-color: var(--success); background-color: var(--success); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23051018' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E"); background-position: center; background-repeat: no-repeat; background-size: 8px; }
+  .radio-option { flex: 1; background: #1a1a2e; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #2a2a4a; text-align: center; transition: all 0.2s; }
+  .radio-option:hover { border-color: var(--accent); }
+  .radio-option.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); }
+  .radio-option input { display: none; }
+  button { font-family: inherit; font-size: 0.95rem; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; font-weight: 700; background: var(--accent); color: white; }
+  button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.full { width: 100%; margin-bottom: 10px; }
+  .btn-label-phone { display: none; } /* 📱 phone-only short label (the desktop .btn-label stays) */
+  button.secondary { background: var(--accent2); }
+  button.success { background: var(--success); }
+  button.danger { background: var(--danger); }
+  button.small { padding: 8px 14px; font-size: 0.85rem; }
+  .back-btn { background: var(--accent2); margin-bottom: 20px; }
+
+  /* ===== SVG UI ICONS (replace emojis) — inherit text color via currentColor ===== */
+  .ic { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+  .ic.ic-off { opacity: 0.22; } /* spent life heart in the Race hunter bar */
+  .rc-hunter-res .ic, .chip-state .ic, .rc-hunter-turn .ic { vertical-align: -0.14em; }
+  .ready-badge .ic, .uc-hint-line .ic, .pub-title .ic, .pub-players .ic { vertical-align: -0.16em; margin-right: 0.25em; }
+  .ready-badge .ic { margin-right: 0.15em; }
+  button .ic { margin-right: 0.35em; }
+  button .ic:only-child, #lobbySettingsIcon .ic, .pub-refresh .ic { margin-right: 0; }
+  h2 > .ic, h3 > .ic, .panel h2 .ic { color: var(--accent); margin-right: 0.3em; }
+  .radio-option .ic { color: var(--accent); margin-right: 0.35em; }
+  .slider-label .ic { color: var(--accent); margin-right: 0.3em; }
+  .homepage-btn .icon .ic { width: 3.6rem; height: 3.6rem; color: var(--accent); }
+  .play-option .icon .ic { width: 2.6rem; height: 2.6rem; color: var(--accent); }
+  .game-card-img .ic { width: 5rem; height: 5rem; color: rgba(255, 255, 255, 0.95); filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35)); }
+  .uc-badge .ic { color: var(--accent); margin-right: 0.3em; }
+  /* (old small logo-icon rule — superseded by the .site-logo block above) */
+  .br-mysecret-label .ic, .br-mysecret-name .ic { margin-right: 0.3em; vertical-align: -0.2em; }
+  #lobbySettingsIcon .ic { width: 1.55rem; height: 1.55rem; }
+  .stat-box .ic { color: var(--accent); margin-right: 0.25em; }
+  .uc-hint-line .ic, .br-chip-hint .ic { opacity: 0.85; margin-right: 0.2em; }
+  .winner-card h2 .ic { color: var(--warning); }
+  .slider-container { margin: 16px 0; }
+  .slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+/* ℹ️ info chips — little descriptions moved to hover bubbles (b106).
+   Pure CSS: hover on desktop, tap-to-focus on touch screens. */
+.info-btn { position: relative; display: inline-flex; width: 20px; height: 20px; min-height: 0; min-width: 0; padding: 0; margin-left: 6px; border: 1px solid var(--muted); border-radius: 50%; background: transparent; color: var(--muted); align-items: center; justify-content: center; cursor: help; vertical-align: -0.2em; flex: 0 0 auto; opacity: 0.95; }
+.info-btn:hover, .info-btn:focus-visible { border-color: var(--accent); color: var(--accent); opacity: 1; outline: none; }
+.info-btn .ic { width: 13px; height: 13px; } /* b116: the "i" itself, clear at arm's length */
+.info-bubble { position: absolute; top: calc(100% + 7px); left: 0; z-index: 70; width: max-content; max-width: min(250px, 72vw); padding: 8px 10px; background: var(--bg); border: 1px solid var(--accent2); border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); color: var(--text); font-size: 0.78rem; font-weight: 400; line-height: 1.45; text-align: left; white-space: normal; opacity: 0; visibility: hidden; transform: translateY(-3px); transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease; pointer-events: none; }
+.info-btn.flip .info-bubble { top: auto; bottom: calc(100% + 7px); transform: translateY(3px); }
+.info-btn:hover .info-bubble, .info-btn:focus .info-bubble, .info-btn:focus-within .info-bubble { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* 🍪 one-time local-storage notice (b107) — floats above the bottom bar */
+.saku-consent { position: fixed; left: 16px; bottom: 78px; z-index: 1900; display: flex; flex-direction: column; gap: 10px; width: min(340px, calc(100vw - 32px)); padding: 14px 16px; background: var(--card); border: 1px solid var(--accent2); border-left: 4px solid var(--accent); border-radius: 14px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55); animation: sakuConsentIn 0.35s ease; }
+.saku-consent-txt { font-size: 0.82rem; line-height: 1.5; color: var(--text); text-align: left; }
+.saku-consent .success { min-height: 40px; }
+@keyframes sakuConsentIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* ⓘ chips sitting inside section titles inherit their color rhythm */
+h3 .info-btn, h4 .info-btn { vertical-align: 0; }
+  input[type="range"] { width: 100%; height: 6px; border-radius: 3px; background: #2a2a4a; outline: none; -webkit-appearance: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); cursor: pointer; border: none; }
+  .lobby-container { display: grid; grid-template-columns: minmax(0, 620px); justify-content: center; gap: 20px; max-width: 1400px; margin: 0 auto; }
+  .lobby-left { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .room-code { text-align: center; font-size: 2.5rem; font-weight: 900; color: var(--accent); letter-spacing: 8px; margin: 20px 0; padding: 16px; background: #0f0f1a; border-radius: 12px; transition: all 0.3s; }
+  .room-code.blurred { filter: blur(10px); user-select: none; }
+  .blur-code-btn { display: block; margin: 0 auto 10px; padding: 6px 16px; font-size: 0.8rem; }
+  .players-list { margin: 20px 0; }
+  .player-card { background: #0f0f1a; padding: 14px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .player-card.ready { border: 2px solid var(--success); }
+  .player-card.host { border: 2px solid var(--warning); }
+  .player-info .name { font-weight: 700; color: var(--text); }
+  .player-info .status { font-size: 0.85rem; color: var(--muted); }
+  .ready-badge { background: var(--success); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+  .host-badge { background: var(--warning); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
+  .player-card-right { display: flex; align-items: center; gap: 8px; }
+  .player-admin-actions { display: flex; gap: 6px; }
+  .player-admin-btn { width: 30px; height: 30px; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: transform 0.15s, box-shadow 0.15s; flex-shrink: 0; }
+  .player-admin-btn:hover { transform: scale(1.15); box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  .player-admin-btn.kick-btn { background: var(--danger); }
+  .player-admin-btn.crown-btn { background: var(--warning); }
+  button.warning { background: var(--warning); }
+  .stat-box { background: #0f0f1a; border-radius: 10px; padding: 14px 26px; text-align: center; font-weight: 700; min-width: 110px; }
+  .stat-box strong { display: block; font-size: 1.7rem; color: var(--accent); }
+  #authError { color: var(--danger); min-height: 20px; font-size: 0.9rem; margin-bottom: 10px; font-weight: 700; }
+  .profile-section-title { color: var(--accent); font-size: 0.95rem; font-weight: 900; letter-spacing: 0.5px; margin: 18px 0 8px; text-align: left; }
+  .profile-row { display: flex; gap: 8px; align-items: center; }
+  .profile-row input { flex: 1; min-width: 0; padding: 10px; border: 2px solid #2a2a4a; border-radius: 8px; background: #1a1a2e; color: white; font-family: inherit; }
+  .profile-row input:focus { outline: none; border-color: var(--accent); }
+  .profile-row button { flex-shrink: 0; padding: 10px 16px; }
+  .settings-icon { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--muted); transition: all 0.2s; z-index: 10; }
+  .settings-icon:hover { color: var(--accent); transform: rotate(30deg); }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 20px; background: #0f0f1a; min-height: 0; display: flex; flex-direction: column; }
+  .chat-messages::before { content: ''; flex: 1 0 0; } /* 💬 Discord-style: messages stick to the BOTTOM — the latest sits just above the typing row */
+  .chat-messages::-webkit-scrollbar { width: 8px; }
+  .chat-messages::-webkit-scrollbar-track { background: #1a1a2e; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+  .chat-message { margin-bottom: 12px; padding: 10px 14px; background: #1a1a2e; border-radius: 12px; font-size: 0.9rem; animation: slideIn 0.2s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .chat-message.own { background: rgba(2, 169, 255, 0.2); border-left: 3px solid var(--accent); }
+  .chat-message .sender { font-weight: 700; color: var(--accent); font-size: 0.85rem; margin-bottom: 4px; }
+  .chat-message .text { color: var(--text); word-wrap: break-word; line-height: 1.4; }
+  .chat-input-area { padding: 20px; border-top: 2px solid #0f0f1a; flex-shrink: 0; }
+  .chat-input-form { display: flex; gap: 10px; }
+  .chat-input-form input { flex: 1; padding: 12px; border: 2px solid #2a2a4a; border-radius: 10px; background: #1a1a2e; color: white; font-family: inherit; font-size: 0.95rem; }
+  .chat-input-form input:focus { outline: none; border-color: var(--accent); }
+  .selection-container { max-width: 900px; margin: 0 auto; }
+  .selection-header { text-align: center; margin-bottom: 30px; }
+  .selection-header h2 { color: var(--accent); font-size: 2rem; margin-bottom: 10px; }
+  .selection-header p { color: var(--muted); font-size: 1.1rem; }
+  .selection-status { text-align: center; padding: 16px; background: var(--card); border-radius: 12px; margin-bottom: 20px; font-size: 1.1rem; }
+  .selection-status.waiting { background: rgba(255, 167, 38, 0.2); color: var(--warning); }
+  .selection-status.ready { background: rgba(0, 200, 83, 0.2); color: var(--success); }
+  .selection-controls { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; }
+  .character-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; margin-bottom: 30px; }
+  .selectable-card { background: var(--card); border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s; border: 3px solid transparent; position: relative; }
+  .selectable-card:hover { transform: translateY(-8px) scale(1.05); border-color: var(--accent); box-shadow: 0 12px 30px rgba(2, 169, 255, 0.4); }
+  .selectable-card.selected { border-color: var(--success); box-shadow: 0 0 30px rgba(0, 200, 83, 0.5); }
+  .selectable-card.selected::before {
+    content: "✓"; position: absolute; top: 10px; right: 10px;
+    background: var(--success); color: white; width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .selectable-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .selectable-card .info { padding: 10px; text-align: center; background: #0f0f1a; }
+  .selectable-card .char-name { font-weight: 800; font-size: 0.9rem; color: var(--text); line-height: 1.2; }
+  .game-container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; max-width: 1600px; margin: 0 auto; }
+  .game-left { display: flex; flex-direction: column; gap: 16px; }
+  .game-center { display: flex; flex-direction: column; gap: 16px; }
+  .game-header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 16px 20px; border-radius: 16px; flex-wrap: wrap; gap: 12px; }
+  .player-section { flex: 1; min-width: 150px; }
+  .player-section h3 { font-size: 0.9rem; color: var(--muted); margin-bottom: 4px; }
+  .player-section .name { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
+  .turn-indicator { text-align: center; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1rem; }
+  .turn-indicator.your-turn { background: var(--success); color: white; animation: pulse 2s infinite; }
+  .turn-indicator.their-turn { background: var(--warning); color: white; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  .history-section { background: var(--card); padding: 20px; border-radius: 16px; flex: 1; display: flex; flex-direction: column; max-height: calc(100vh - 300px); }
+  .history-section h3 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; text-align: center; }
+  .history-list { flex: 1; overflow-y: auto; padding-right: 8px; }
+  .history-list::-webkit-scrollbar { width: 6px; }
+  .history-list::-webkit-scrollbar-track { background: #0f0f1a; }
+  .history-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+  .history-item { background: #0f0f1a; padding: 12px; border-radius: 10px; margin-bottom: 10px; }
+  .history-item .question { font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .history-item .answer { font-size: 0.9rem; padding: 4px 10px; border-radius: 6px; display: inline-block; }
+  .history-item .answer.yes { background: rgba(0, 200, 83, 0.2); color: var(--success); }
+  .history-item .answer.no { background: rgba(255, 23, 68, 0.2); color: var(--danger); }
+  .history-item .asker { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .my-character { background: var(--card); padding: 20px; border-radius: 16px; text-align: center; }
+  .my-character.hidden { display: none; }
+  .my-character h3 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; }
+  .my-character-card { display: inline-block; background: #0f0f1a; border-radius: 14px; overflow: hidden; border: 3px solid var(--success); box-shadow: 0 8px 24px rgba(0, 200, 83, 0.3); }
+  .my-character-card img { width: 200px; height: 267px; object-fit: cover; display: block; }
+  .my-character-card .info { padding: 12px; background: #0f0f1a; }
+  .my-character-card .name { font-weight: 800; font-size: 1.1rem; color: var(--text); }
+  .question-box { background: var(--card); padding: 20px; border-radius: 16px; }
+  .question-form { display: flex; gap: 12px; margin-bottom: 16px; }
+  .question-form input { flex: 1; padding: 12px; border: 2px solid #2a2a4a; border-radius: 10px; background: #0f0f1a; color: white; font-family: inherit; font-size: 1rem; }
+  .question-form input:focus { outline: none; border-color: var(--accent); }
+  .question-display { padding: 16px; background: #0f0f1a; border-radius: 12px; margin-bottom: 12px; }
+  .question-display .label { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+  .question-display .text { font-size: 1.1rem; color: var(--text); font-weight: 600; margin-bottom: 12px; }
+  .answer-buttons { display: flex; gap: 12px; }
+  .answer-buttons button { flex: 1; }
+  .board-section { background: var(--card); padding: 20px; border-radius: 16px; }
+  .board-section h3 { text-align: center; margin-bottom: 16px; font-size: 1.2rem; color: var(--text); }
+  .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .card { background: #0f0f1a; border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.3s; border: 3px solid transparent; position: relative; }
+  .card:hover:not(.eliminated):not(.guessing) { transform: translateY(-6px); border-color: var(--accent); }
+  .card.guessing:hover { transform: translateY(-6px) scale(1.05); border-color: var(--warning); box-shadow: 0 8px 20px rgba(255, 167, 38, 0.4); }
+  .card.eliminated { opacity: 0.3; filter: grayscale(1); }
+  .card.eliminated::after { content: "✕"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; color: var(--danger); font-weight: 900; background: rgba(0,0,0,0.3); }
+  .card-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .card-info { padding: 8px; text-align: center; background: #0f0f1a; }
+  .card-name { font-weight: 700; font-size: 0.8rem; line-height: 1.2; color: var(--text); }
+  .game-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 130; align-items: center; justify-content: center; padding: 20px; } /* b110: above .winning-screen (120), below .interaction-window (140) */
+  .modal.show { display: flex; }
+  .modal-content { background: var(--card); padding: 35px; border-radius: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; text-align: center; }
+  .modal-close { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+  .modal-close:hover { color: var(--danger); }
+  .modal h2 { margin-bottom: 20px; color: var(--accent); }
+  .modal-char-img { width: 150px; height: 200px; object-fit: cover; border-radius: 12px; margin: 12px auto; display: block; }
+  /* Winning Screen (small centered card over the game) */
+  .winning-screen { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 120; background: var(--card); border-radius: 20px; padding: 30px; max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.8); text-align: center; border: 2px solid var(--accent); }
+  .winning-screen.show { display: block; }
+  .winner-card { text-align: center; margin-bottom: 20px; }
+  .winner-card h2 { font-size: 2.2rem; color: var(--success); margin-bottom: 8px; text-shadow: 0 0 20px rgba(0,200,83,0.4); }
+  .winner-card .char-img { width: 160px; height: 213px; object-fit: cover; border-radius: 14px; border: 3px solid var(--success); box-shadow: 0 0 30px rgba(0,200,83,0.4); margin: 0 auto 10px; display: block; }
+  .secrets-revealed { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; max-width: 320px; margin: 0 auto 20px; }
+  .secret-card { background: #0f0f1a; border-radius: 12px; overflow: hidden; border: 2px solid transparent; width: 140px; text-align: center; transition: all 0.3s; }
+  .secret-card.winner-secret { border-color: var(--success); box-shadow: 0 0 20px rgba(0,200,83,0.4); }
+  .secret-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .secret-card .name { padding: 8px; text-align: center; font-weight: 700; color: var(--text); font-size: 0.85rem; line-height: 1.1; }
+  .secret-card .player-label { padding: 4px 8px; text-align: center; font-size: 0.75rem; color: var(--muted); background: rgba(0,0,0,0.2); }
+
+  /* Notification System */
+  .notification-container { position: fixed; top: 20%; left: 50%; transform: translateX(-50%); z-index: 130; width: 420px; max-width: 90%; text-align: center; pointer-events: none; }
+  .notification-message { background: var(--card); border: 2px solid var(--accent); border-radius: 16px; padding: 20px 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.7); color: var(--text); font-size: 1rem; font-weight: 700; animation: slideInDown 0.3s ease; pointer-events: auto; }
+  .notification-message.fade-out { animation: fadeOut 0.35s ease forwards; }
+  @keyframes slideInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+
+  /* Interaction Window */
+  .interaction-window { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 140; align-items: center; justify-content: center; padding: 20px; }
+  .interaction-window.show { display: flex; }
+  .interaction-content { background: var(--card); border-radius: 20px; padding: 35px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.8); border: 2px solid var(--accent); text-align: center; animation: slideInDown 0.2s ease; }
+  .interaction-content h3 { color: var(--accent); margin-bottom: 12px; font-size: 1.3rem; }
+  .interaction-content p { color: var(--text); margin-bottom: 20px; font-size: 1rem; }
+  .interaction-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .interaction-buttons button { padding: 12px 28px; font-size: 1rem; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; font-weight: 700; }
+  .interaction-buttons button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
+
+  @media (max-width: 1400px) {
+    .game-container { grid-template-columns: 1fr; }
+    /* Side panels no longer disappear on small screens — they stack:
+       secret card + history side by side, board next, chat at the bottom */
+    .game-left { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+    .game-left > * { flex: 1; min-width: 220px; }
+    .history-list { max-height: 200px; }
+    .my-character-card img { width: 140px; height: 187px; }
+  }
+  @media (max-width: 1100px) {
+    .lobby-container { grid-template-columns: minmax(0, 100%); }
+  }
+  @media (max-width: 600px) {
+    .site-logo { font-size: 2rem; }
+    .homepage-title { font-size: 1.8rem; }
+    .board { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+    .room-code { font-size: 1.8rem; letter-spacing: 4px; }
+    .character-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+    .homepage-buttons { flex-direction: column; }
+    .username-change-btn { bottom: 10px; right: 10px; padding: 8px 16px; font-size: 0.8rem; }
+  }
+
+  /* ===== UNDERCOVER MODE ===== */
+  .uc-container { display: grid; grid-template-columns: 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+  .uc-main { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .uc-header { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .uc-badge { background: #0f0f1a; color: var(--accent); font-weight: 900; padding: 8px 18px; border-radius: 25px; font-size: 1rem; }
+  .uc-badge .ic { vertical-align: -0.16em; margin-right: 0.3em; }
+  .uc-word-card { text-align: center; background: #0f0f1a; border: 2px solid var(--accent2); padding: 18px; border-radius: 14px; margin-bottom: 16px; }
+  .uc-word-card.undercover { border-color: var(--warning); }
+  .uc-word-card.mrwhite { border-color: var(--danger); }
+  .uc-word-card .uc-word-label { color: var(--muted); font-weight: 800; font-size: 0.9rem; margin-bottom: 6px; }
+  .uc-word { font-size: 1.7rem; font-weight: 900; color: var(--accent); letter-spacing: 1px; transition: filter 0.2s; }
+  .uc-word.blurred { filter: blur(10px); user-select: none; }
+  .uc-word-hint { color: var(--muted); font-size: 0.82rem; margin-top: 6px; }
+  .uc-event-banner { background: rgba(255, 167, 38, 0.12); border: 2px solid var(--warning); color: var(--text); padding: 12px 16px; border-radius: 12px; text-align: center; font-weight: 800; margin-bottom: 16px; line-height: 1.5; }
+  .uc-players { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .uc-player-tile { background: #0f0f1a; border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; text-align: center; }
+  .uc-player-tile.me { border-color: var(--accent); }
+  .uc-player-tile.speaking { border-color: var(--accent); box-shadow: 0 0 16px rgba(2, 169, 255, 0.7), inset 0 0 0 1px var(--accent); transform: translateY(-3px); transition: box-shadow 0.2s, transform 0.2s; }
+  .uc-player-tile.dead { opacity: 0.45; }
+  .uc-player-tile.votable:hover { border-color: var(--danger); }
+  .uc-tile-name { font-weight: 800; font-size: 0.92rem; word-break: break-word; }
+  .uc-tile-status { color: var(--muted); font-size: 0.75rem; margin-top: 4px; min-height: 1em; }
+  .uc-vote-btn { margin-top: 8px; padding: 6px 12px; font-size: 0.8rem; width: 100%; }
+  .uc-clues { background: #0f0f1a; border-radius: 12px; padding: 14px; margin-bottom: 16px; }
+  .uc-clues h3 { color: var(--accent); font-size: 1rem; margin-bottom: 10px; text-align: center; }
+  #ucClueList { max-height: 190px; overflow-y: auto; }
+  .uc-clue { padding: 6px 8px; border-bottom: 1px solid #2a2a4a; font-size: 0.92rem; }
+  .uc-clue:last-child { border-bottom: none; }
+  .uc-clue strong { color: var(--accent); margin-right: 6px; }
+  .uc-action { margin-bottom: 10px; }
+  .uc-action-form { display: flex; gap: 8px; max-width: 560px; margin: 0 auto; }
+  .uc-action-form input { flex: 1; min-width: 0; padding: 12px; border: 2px solid #2a2a4a; border-radius: 10px; background: #1a1a2e; color: white; font-family: inherit; font-size: 0.95rem; }
+  .uc-action-form input:focus { outline: none; border-color: var(--accent); }
+  .uc-action-form button { flex-shrink: 0; }
+  .uc-action-form .mw-wrap { position: relative; flex: 1; min-width: 0; }
+  .uc-action-form .mw-wrap input { width: 100%; }
+  .bg-sug-row.sel { background: rgba(2, 169, 255, 0.18); }
+  .uc-waiting { color: var(--muted); font-weight: 700; padding: 14px; text-align: center; }
+  .uc-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+  .uc-words-line { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .uc-reveal-list { background: #0f0f1a; border-radius: 12px; padding: 10px 16px; max-height: 200px; overflow-y: auto; margin-bottom: 5px; text-align: left; }
+  .uc-reveal-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #2a2a4a; font-size: 0.92rem; }
+  .uc-reveal-row:last-child { border-bottom: none; }
+  .uc-reveal-role { font-weight: 800; }
+
+  @media (max-width: 1100px) {
+    .uc-container { grid-template-columns: 1fr; }
+  }
+
+  /* ===== UNDERCOVER PAIR MANAGER ===== */
+  .uc-word-img { width: 88px; height: 122px; object-fit: cover; border-radius: 10px; margin: 4px auto 8px; display: block; border: 2px solid var(--accent2); }
+  .uc-end-img { width: 42px; height: 58px; object-fit: cover; border-radius: 6px; vertical-align: middle; margin-right: 8px; border: 2px solid var(--accent2); }
+  .pair-slots { display: flex; gap: 10px; align-items: stretch; margin-bottom: 12px; }
+  .pair-slot { flex: 1; background: #0f0f1a; padding: 12px; border-radius: 12px; text-align: center; min-width: 0; }
+  .pair-slot-title { color: var(--accent); font-weight: 900; font-size: 0.85rem; margin-bottom: 8px; }
+  .pair-slot input { width: 100%; padding: 10px; border: 2px solid #2a2a4a; border-radius: 8px; background: #1a1a2e; color: #fff; font-family: inherit; margin-bottom: 8px; }
+  .pair-slot input:focus { outline: none; border-color: var(--accent); }
+  .pair-slot-vs { align-self: center; color: var(--warning); font-weight: 900; font-size: 0.9rem; }
+  .pair-thumb { width: 74px; height: 102px; object-fit: cover; border-radius: 8px; margin: 0 auto 8px; display: block; border: 2px solid var(--accent2); }
+  .pair-results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; margin: 10px 0; }
+  .pair-result { background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 10px; padding: 6px; cursor: pointer; text-align: center; font-size: 0.75rem; transition: border-color 0.15s; }
+  .pair-result:hover { border-color: var(--accent); }
+  .pair-result img { width: 100%; height: 88px; object-fit: cover; border-radius: 6px; margin-bottom: 4px; }
+  .pair-result .pr-name { font-weight: 700; line-height: 1.25; word-break: break-word; }
+  .pair-row { display: flex; align-items: center; gap: 8px; background: #0f0f1a; border-radius: 10px; padding: 8px 12px; margin-bottom: 8px; font-size: 0.9rem; }
+  .pair-row img { width: 34px; height: 47px; object-fit: cover; border-radius: 5px; flex-shrink: 0; }
+  .pair-row .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pair-row .pair-vs { color: var(--muted); font-size: 0.72rem; font-weight: 900; margin: 0 4px; }
+  .pair-row .type-badge { font-size: 0.72rem; color: var(--muted); flex-shrink: 0; }
+  .pair-row button { padding: 5px 10px; font-size: 0.78rem; background: var(--danger); flex-shrink: 0; }
+  .uc-word-img.blurred { filter: blur(10px); }
+
+  /* ===== Profile pictures (avatars) ===== */
+  .ava { display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; background: #14142e; border: 2px solid #2a2a4a; flex-shrink: 0; vertical-align: middle; font-size: 1rem; }
+  .ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ava.ava-empty { color: #8a8aa8; background: #14142e url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8aa8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'/%3E%3C/svg%3E") center / 62% no-repeat; }
+  .ava-btn { width: 22px; height: 22px; border-width: 1px; margin: 0 2px 2px 0; }
+  .ava-lobby { width: 42px; height: 42px; }
+  .ava-profile { width: 74px; height: 74px; border-width: 3px; border-color: var(--accent); font-size: 1.8rem; }
+  .ava-chat { width: 20px; height: 20px; border-width: 1px; font-size: 0.7rem; }
+  .ava-tile { width: 46px; height: 46px; display: flex; margin: 0 auto 6px; font-size: 1.3rem; }
+  .player-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .chat-message .sender { display: flex; align-items: center; gap: 6px; }
+  .name-with-ava { display: flex; align-items: center; gap: 8px; }
+  .name-with-ava.right { justify-content: flex-end; }
+  .name-with-ava.center { justify-content: center; margin: 6px 0; }
+  .avatar-inline { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); background: #14142e; display: none; }
+  .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0 14px; }
+  .avatar-pick { background: #0f0f1a; border: 2px solid #2a2a4a; border-radius: 14px; padding: 5px; cursor: pointer; transition: border-color 0.15s, transform 0.15s; width: auto; }
+  .avatar-pick:hover { border-color: var(--accent); transform: scale(1.05); }
+  .avatar-pick img { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; display: block; }
+  .uc-reveal-who { display: flex; align-items: center; gap: 8px; }
+  .uc-log-round { text-align: center; color: var(--muted); font-size: 0.72rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin: 10px 0 4px; }
+  #ucNewWordsBtn { padding: 7px 14px; border-radius: 25px; font-size: 0.82rem; min-height: 0; }
+
+  /* ===== Floating 💬 chat button + big chat window (phones: almost full screen, PC: side panel) ===== */
+  #chatToggleBtn { position: fixed; right: 14px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; width: 54px; height: 54px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.4rem; display: none; align-items: center; justify-content: center; background: var(--accent); box-shadow: 0 6px 20px rgba(0,0,0,0.5); }
+  #chatUnreadBadge { position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; border-radius: 12px; background: var(--danger); color: #fff; font-size: 0.72rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 5px; border: 2px solid #0b0b15; }
+  #chatRowBtn { display: none; } /* 📱 phone-only: the 💬 button joins the in-game bar (Detective Showdown) */
+  .chat-overlay { display: none; position: fixed; z-index: 70; left: 8px; right: 8px; top: 10px; bottom: calc(122px + env(safe-area-inset-bottom, 0px)); background: var(--card); border: 2px solid var(--accent2); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.75); flex-direction: column; overflow: hidden; }
+  .chat-overlay.show { display: flex; }
+  /* ⌨️ phone keyboard open: the chat window hugs the keyboard — the typing space
+     sits JUST above it so you always see what you write. Three independent height
+     sources (JS --kb, Chromium's env(keyboard-inset-height)) — whichever is taller wins */
+  body.kb-open .chat-overlay { bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); }
+  .chat-overlay-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 2px solid #0f0f1a; flex-shrink: 0; }
+  .chat-overlay-head h3 { color: var(--accent); font-size: 1rem; }
+  .chat-overlay-close { background: var(--danger); width: 38px; height: 38px; min-height: 0; border-radius: 50%; font-size: 1rem; padding: 0; flex-shrink: 0; }
+  @media (min-width: 901px) {
+    .chat-overlay { left: auto; right: 16px; top: auto; bottom: calc(126px + env(safe-area-inset-bottom, 0px)); width: 400px; height: 62vh; }
+  }
+
+  /* ===== Bottom bar (always visible, full width, page content scrolls above it) ===== */
+  #bottomBar { position: fixed; left: 0; right: 0; bottom: 0; min-height: 48px; background: #0b0b15; border-top: 2px solid #2a2a4a; box-shadow: 0 -4px 18px rgba(0,0,0,0.45); display: flex; align-items: center; gap: 10px; padding: 5px 14px; padding-bottom: calc(5px + env(safe-area-inset-bottom, 0px)); z-index: 45; }
+  #bottomBar .username-change-btn { position: static; z-index: auto; margin-left: auto; box-shadow: none; padding: 8px 18px; font-size: 0.85rem; }
+  #bottomBar .username-change-btn:hover { transform: none; }
+
+  /* 🧪 Bêta badge — pinned to the far LEFT of the bottom bar on PC & phones */
+  #betaBadge { flex-shrink: 0; margin-right: auto; font-size: 0.66rem; font-weight: 900; letter-spacing: 2.2px; text-transform: uppercase; line-height: 1; color: var(--accent); background: rgba(2, 169, 255, 0.10); border: 1px solid rgba(2, 169, 255, 0.45); border-radius: 999px; padding: 4px 10px 3px 12px; user-select: none; cursor: default; }
+
+  /* Host admin buttons (👑 / ✕): hidden by default — they appear when the host
+     hovers the player card (PC) or taps it (phone, adds .show-actions) */
+  .player-card { position: relative; }
+  .player-admin-actions { display: none; }
+  .player-card:hover .player-admin-actions,
+  .player-card.show-actions .player-admin-actions { display: flex; }
+
+  /* No jumpy card hovers on touchscreens */
+  @media (hover: none) {
+    .card:hover:not(.eliminated):not(.guessing) { transform: none; }
+    .card.guessing:hover { transform: none; }
+  }
+
+  /* ================================================================
+     🌐 PUBLIC ROOM BROWSER (join screen) + ⏳ QUEUE (lobby)
+     ================================================================ */
+  .public-rooms { margin-top: 22px; }
+  .public-rooms-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .public-rooms-head h3 { color: var(--accent); font-size: 1.05rem; }
+  .pub-refresh { padding: 7px 12px; min-height: 0; border-radius: 10px; font-size: 1rem; }
+  .public-rooms-list { max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 2px; }
+  .pub-empty { text-align: center; color: var(--muted); padding: 18px 10px; font-size: 0.9rem; }
+  .public-room-card { background: #0f0f1a; border: 2px solid #2a2a4a; border-radius: 14px; padding: 12px 14px; }
+  .pub-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pub-title { font-weight: 900; font-size: 0.95rem; }
+  .pub-status { font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: #1a1a2e; border: 1px solid #2a2a4a; white-space: nowrap; }
+  .pub-players { font-size: 0.8rem; color: var(--muted); margin-top: 5px; }
+  .pub-players b { color: var(--text); }
+  .pub-names { font-size: 0.76rem; }
+  .pub-rules { font-size: 0.76rem; color: var(--muted); margin-top: 5px; }
+  .pub-rules b { color: var(--accent); }
+  .pub-join { width: 100%; margin-top: 10px; font-size: 0.88rem; }
+  .queue-banner { background: rgba(2, 169, 255, 0.10); border: 2px solid var(--accent2); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.45; }
+  .queue-card { opacity: 0.85; border-style: dashed !important; }
+  .queue-pos { font-weight: 900; color: var(--accent); min-width: 32px; text-align: center; }
+
+  /* ================================================================
+     🎭👥 BATTLE ROYALE & ⚡ RACE (multiplayer Guess Who)
+     ================================================================ */
+  .br-mysecret { display: flex; align-items: center; gap: 12px; background: #0f0f1a; border: 2px solid var(--accent2); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; cursor: pointer; user-select: none; }
+  .br-mysecret img { width: 54px; height: 72px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .br-mysecret-label { font-size: 0.7rem; color: var(--muted); font-weight: 700; }
+  .br-mysecret-info { min-width: 0; flex: 1; }
+  .br-mysecret-name { font-weight: 900; font-size: 0.95rem; margin-top: 2px; }
+  /* 🎵 volume sliders wear the site's accent color */
+  .music-volume-slider { accent-color: var(--accent); cursor: pointer; }
+  .br-my-points { margin-left: auto; font-weight: 900; color: var(--warning); font-size: 1.1rem; white-space: nowrap; }
+  .br-mysecret.br-hide img { filter: blur(12px) brightness(0.5); }
+  .br-mysecret.br-hide .br-mysecret-name { filter: blur(6px); }
+  .br-chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin-bottom: 6px; }
+  .br-chip { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--c, #2a2a4a); background: #0f0f1a; color: var(--text); border-radius: 22px; padding: 4px 12px 4px 4px; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+  .br-chip .chip-name { font-size: 0.82rem; font-weight: 800; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .br-chip .chip-pts { color: var(--warning); font-size: 0.72rem; font-weight: 900; }
+  .br-chip .chip-state { font-size: 0.75rem; }
+  .br-chip.sel { box-shadow: 0 0 14px var(--c); background: #16163a; transform: translateY(-2px); }
+  .br-chip.sel .chip-name::before { content: ''; display: inline-block; width: 0.95em; height: 0.95em; margin-right: 4px; vertical-align: -0.15em; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2302a9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E") center / contain no-repeat; }
+  .br-chip-hint { color: var(--muted); font-size: 0.72rem; text-align: center; margin: -2px 0 8px; }
+  /* 🎨 Per-player boards: every card wears the active board's color + glow,
+     so you instantly see whose tracking board you're on */
+  .board.br-fenced .card { border-color: var(--boardc, #2a2a4a); box-shadow: 0 0 7px var(--boardc, #2a2a4a), 0 2px 8px rgba(0, 0, 0, 0.5); }
+  .board.br-fenced .card:hover:not(.guessing) { border-color: var(--boardc, #2a2a4a); box-shadow: 0 0 12px var(--boardc, #2a2a4a), 0 4px 12px rgba(0, 0, 0, 0.55); }
+  /* ❌ Eliminated cards (1v1 Guess Who look): greyed + big ✕, glow toned down */
+  .board.br-fenced .card.eliminated { box-shadow: 0 0 2px var(--boardc, #2a2a4a); }
+  .card.br-found::after { content: ''; position: absolute; inset: 0; z-index: 2; background: rgba(15, 15, 26, 0.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300c853' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21'/%3E%3C/svg%3E") center / 45% no-repeat; }
+  .board.guessing { outline: 3px dashed var(--warning); outline-offset: 3px; border-radius: 12px; }
+  .board.guessing .card { animation: none; box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.25); }
+  .board.br-fenced.guessing .card { box-shadow: 0 0 0 2px rgba(255, 167, 38, 0.35), 0 0 10px var(--boardc, #2a2a4a); }
+  /* 🚫 Blur Guess: instant swap between rounds — never show a clear flash */
+  #bgImage.bg-no-anim { transition: none !important; }
+  .uc-hint-line { color: var(--muted); font-size: 0.8rem; margin-top: 8px; text-align: center; }
+  .qa-answers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; justify-content: center; }
+  .qa-ans { display: inline-flex; align-items: center; gap: 6px; background: #1a1a2e; border: 2px solid var(--c, #2a2a4a); padding: 4px 10px; border-radius: 16px; font-size: 0.78rem; font-weight: 800; }
+  .br-log-wrap { background: #0f0f1a; border-radius: 14px; padding: 12px 14px; margin-top: 14px; }
+  .br-log-wrap h3 { color: var(--accent); font-size: 0.9rem; margin-bottom: 8px; }
+  .br-log { max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; }
+  /* 📜 history color-coding: questions neutral, answers muted, finds green, misses red */
+  .br-log > div { padding: 6px 10px; border-radius: 8px; line-height: 1.45; background: #141428; color: #c9d4ee; border-left: 3px solid #2a2a4a; }
+  .br-log-q { color: #eaf1ff; border-left-color: #29b6f6; font-weight: 600; }
+  .br-log-info { color: #9aa8cc; }
+  .br-log-find { color: #a8f0c0; border-left-color: #00c853; background: #0d2018; font-weight: 700; }
+  .br-log-miss { color: #ffb3ba; border-left-color: #ff5252; background: #241016; }
+  /* live YES/NO answer chips: green check / red cross instead of inherited color */
+  .qa-ans .ic { width: 14px; height: 14px; }
+  .qa-ans .qa-yes { color: #00e676; display: inline-flex; }
+  .qa-ans .qa-no { color: #ff5252; display: inline-flex; }
+
+  /* ===== 🌡️ HOT & COLD — desktop 2-column layout + best-guess ranking ===== */
+  /* The play areas stay on the left; the guesses log + ranking live in a
+     natural-height side panel on the right (phones stack one column). */
+  #hotcoldScreen .uc-container { max-width: 1440px; }
+  .hc-cols { display: flex; gap: 20px; align-items: flex-start; }
+  .hc-cols > .hc-play { flex: 1 1 auto; min-width: 0; }
+  .hc-cols > .hc-side { flex: 0 0 370px; min-width: 0; }
+  .hc-side > .br-log-wrap { margin-top: 0; margin-bottom: 16px; }
+  .hc-side > .br-log-wrap:last-child { margin-bottom: 0; }
+  .hc-side .hc-log { max-height: 42vh; min-height: 60px; }
+  /* heat colors on the whole log (chronological + ranking rows share them) */
+  .hc-log .hc-hot { color: #ff5252; }
+  .hc-log .hc-warm { color: #ffca3a; }
+  .hc-log .hc-cold { color: #29b6f6; }
+  /* 🏆 live classement (every guess counts 1 — fewest first) */
+  .hc-cls .hc-rank { width: 26px; text-align: right; font-weight: 900; font-size: 1rem; color: var(--muted); flex-shrink: 0; }
+  .hc-cls .hc-row:nth-child(1) .hc-rank { color: #02a9ff; font-size: 1.15rem; } /* leader pops */
+  .hc-cls .hc-row { border-bottom-style: solid; }
+  .hc-cls .hc-row.hc-me { background: rgba(2, 169, 255, 0.08); border-radius: 8px; }
+  .hc-cls .hc-gnum { min-width: 2.6em; font-size: 1rem; }
+  .hc-cls .hc-av { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; }
+  .hc-rank-hint { display: block; color: var(--muted); font-size: 0.72rem; margin: -4px 0 8px; }
+  /* 🔥 best-guesses HORIZONTAL bar — spans the play column width between the
+     action areas and the To Lobby button (frees the right column for the
+     classement + guess history) */
+  #hcTopWrap { margin-top: 16px; background: #0f0f1a; border-radius: 14px; padding: 12px 14px; }
+  #hcTopWrap h3 { color: var(--accent); font-size: 0.9rem; margin-bottom: 8px; }
+  /* the bar FITS the box width: cards share the row (no side-scrolling);
+     taller than wide — big picture, who + name + score stacked beneath */
+  .hc-topbar { display: flex; gap: 8px; }
+  .hc-tcard { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 12px; padding: 8px 6px 10px; text-align: center; }
+  .hc-tcard .hc-rank { font-weight: 900; font-size: 0.75rem; color: var(--muted); }
+  .hc-tcard:nth-child(1) { border-color: rgba(255, 82, 82, 0.55); } /* hottest shot pops */
+  .hc-tcard:nth-child(1) .hc-rank { color: #ff5252; font-size: 0.85rem; }
+  .hc-tcard img { width: 60px; height: 80px; object-fit: cover; border-radius: 8px; background: #0f0f1a; display: block; flex-shrink: 0; }
+  #hcTopWrap .hc-gtexts { display: flex; flex-direction: column; align-items: center; gap: 1px; width: 100%; }
+  .hc-tcard .hc-gwho { font-size: 0.6rem; letter-spacing: 0.08em; }
+  .hc-tcard .hc-gname { font-size: 0.75rem; line-height: 1.2; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hc-tcard .hc-gnum { font-size: 1.05rem; font-weight: 800; }
+  @media (max-width: 640px) {
+    .hc-topbar { gap: 6px; }
+    .hc-tcard { padding: 6px 4px 8px; }
+    .hc-tcard img { width: 44px; height: 60px; }
+    .hc-tcard .hc-gname { font-size: 0.65rem; }
+  }
+  /* 🎲 small Random button docked at the end of the hider's input (phones:
+     it can never sit under the suggestion dropdown — tap-through-proof) —
+     the big labeled Random below is a PC-only convenience */
+  .bg-guess-wrap.hc-has-rnd input { padding-right: 48px; }
+  /* pinned with FIXED offsets (no 50%/translateY) so the button can never
+     drift or jump — it stays glued to the end of the input row */
+  .hc-rnd, .hc-clr { position: absolute; right: 4px; top: 4px; width: 38px; height: 38px; border-radius: 10px; border: 2px solid #2a2a4a; background: #1a1a2e; color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex-shrink: 0; }
+  .hc-rnd:hover, .hc-clr:hover { border-color: var(--accent); }
+  /* 🧽 PC: eraser inside the input (+ big Random below). Phone: back to the
+     old single small Random button (no cross, and the big one already hides) */
+  .hc-rnd { display: none; }
+  @media (max-width: 700px) {
+    .hc-rnd-big { display: none; }
+    .hc-rnd { display: flex; }
+    .hc-clr { display: none; }
+  }
+  /* 🃏 4-way character pool (Generic/Favorites/Mix/Watched): tidy 2×2 grid */
+  #hostPoolSrcGwGroup .radio-group, #modalPoolSrcGwGroup .radio-group { flex-wrap: wrap; gap: 8px; }
+  #hostPoolSrcGwGroup .radio-option, #modalPoolSrcGwGroup .radio-option { flex: 1 1 44%; margin-bottom: 0; }
+  /* 🔓 revealed secret portraits: big card in the round banner, thumbnail
+     inside the match-end rounds recap */
+  .hc-reveal-img { display: block; width: 72px; height: 96px; object-fit: cover; border-radius: 10px; border: 2px solid var(--accent); margin: 10px auto 4px; background: #0f0f1a; }
+  .hc-recap-img { width: 28px; height: 38px; object-fit: cover; border-radius: 5px; vertical-align: middle; background: #0f0f1a; }
+  /* 🔀 Hot & Cold guess-mode toggle (shared vs individual) in the host menu */
+  .hc-mode-row { display: flex; gap: 8px; }
+  .hc-mode-row .radio-option { flex: 1; margin-bottom: 0; padding: 12px 8px; }
+  .hc-mode-row .radio-option small { display: block; margin-top: 4px; }
+  /* 📏 Uniform settings windows — the create-room card and the lobby ⚙️ modal
+     keep ONE size whatever options get picked (inner scroll for short content) */
+  #hostRoomScreen .panel { height: min(88vh, 900px); overflow-y: auto; }
+  #settingsModal .modal-content { height: min(88vh, 820px); overflow-x: hidden; } /* b110: no horizontal scrollbar ever */
+  #settingsModal h3, #settingsModal label { text-align: left; } /* b115: field labels flush left, never centered */
+  /* 👀 AniList "count as watched" status checkboxes — lead on its own line, boxes all on one */
+  .ws-row { display: flex; gap: 10px; flex-wrap: nowrap; overflow-x: auto; align-items: center; margin-top: 4px; padding-bottom: 3px; font-size: 0.8rem; color: var(--muted); }
+  .ws-lead { display: block; font-weight: 600; font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
+  .ws-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .ws-row input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+  /* 👀 Spectator mode: the live public view queued visitors watch */
+  .spec-panel { max-width: 560px; }
+  .spec-panel h2 { font-size: 1.35rem; }
+  .spec-board { text-align: center; margin: 10px 0 14px; }
+  .spec-blur-img { width: 210px; height: 292px; object-fit: cover; border-radius: 12px; background: #0f0f1a; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.55); }
+  #specScore .player-card { cursor: default; }
+  #specFeed { max-height: 220px; }
+  .afk-tag { color: var(--warn, #ffca3a); font-weight: 600; }
+  .hc-done-tag { font-weight: 900; font-size: 0.72rem; margin-left: 5px; }
+  .hc-done-tag.ok { color: #00c853; }
+  .hc-done-tag.no { color: #ff5252; }
+  /* 📥 the hider's proposals queue (seekers propose in parallel) */
+  .hc-queue { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .hc-qcard { display: flex; align-items: center; gap: 10px; background: #1a1a2e; border: 2px solid #2a2a4a; border-radius: 12px; padding: 8px 10px; cursor: pointer; text-align: left; width: 100%; font: inherit; }
+  .hc-qcard:hover { border-color: var(--accent); }
+  .hc-qcard.sel { border-color: var(--accent); box-shadow: 0 0 8px rgba(2, 169, 255, 0.35); }
+  .hc-qcard img { width: 38px; height: 50px; object-fit: cover; border-radius: 6px; background: #0f0f1a; flex-shrink: 0; }
+  .hc-qinfo { flex: 1; min-width: 0; }
+  .hc-qby { color: var(--accent); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .hc-qname { color: var(--text); font-weight: 800; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* proposer sub-line inside the guesses log rows */
+  .hc-gtexts { flex: 1; min-width: 0; }
+  .hc-gwho { display: block; color: var(--muted); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hc-log .hc-gtexts .hc-gname { display: block; }
+  /* end-screen per-round recap under the classement */
+  .hc-recap { margin-top: 12px; font-size: 0.85rem; color: var(--muted); line-height: 1.6; max-height: 28vh; overflow-y: auto; }
+  .hc-recap b { color: var(--text); }
+  @media (max-width: 960px) {
+    .hc-cols { flex-direction: column; align-items: stretch; } /* b144: stretch — flex-start shrunk the boxes to max-content width */
+    .hc-cols > .hc-side { flex: 1 1 auto; width: 100%; }
+    .hc-side .hc-log { max-height: 220px; }
+  }
+
+  .me-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; width: 100%; }
+  .me-row { display: flex; align-items: center; gap: 10px; background: #0f0f1a; padding: 9px 14px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; border: 2px solid #2a2a4a; }
+  .me-row.me { border-color: var(--accent); }
+  .me-rank { min-width: 34px; font-size: 1.05rem; }
+  .me-pts { margin-left: auto; color: var(--warning); font-size: 0.8rem; white-space: nowrap; }
+
+  /* 🌫️ Blur Guess: big clear frame, unblur animation, status + score chips */
+  .bg-img-wrap { background: #0f0f1a; border-radius: 16px; padding: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 3px solid #2a2a4a; transition: border-color 0.4s; }
+  .bg-img-wrap.revealed { border-color: var(--success); box-shadow: 0 0 24px rgba(0, 200, 83, 0.35); }
+  #bgImage { width: min(300px, 62vw); aspect-ratio: 23 / 35; object-fit: cover; border-radius: 10px; background: #16163a; transition: filter 0.7s ease, transform 0.7s ease; }
+  .bg-status { text-align: center; color: var(--text); font-weight: 800; margin: 12px 0 4px; font-size: 0.95rem; min-height: 1.4em; }
+
+  /* 📸 Snapshot! — the 2×2 still board (1 still pops in per stage) */
+  .sn-frame { position: relative; min-height: 150px; }
+  .sn-shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
+  .sn-slot { aspect-ratio: 16 / 8.5; border-radius: 8px; overflow: hidden; background: #16163a; opacity: 0; transform: scale(0.96); pointer-events: none; transition: opacity 0.6s ease, transform 0.6s ease; }
+  .sn-slot.on { opacity: 1; transform: scale(1); pointer-events: auto; }
+  .sn-slot img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-user-drag: none; user-select: none; }
+  .sn-shots.n1 .sn-slot { aspect-ratio: 21 / 9; }
+  .sn-shots.n1 .sn-slot:nth-child(n+2) { display: none; }
+  /* b159 · the hangman sits UNDER the stills as its own bar · pre-wrap keeps the word gaps */
+  .sn-hint { background: rgba(10, 10, 24, 0.9); border: 2px solid var(--accent); color: var(--text); font-weight: 900; font-size: 1.05rem; line-height: 1.5; padding: 10px 14px; border-radius: 12px; text-align: center; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5); white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 0.06em; margin-top: 10px; }
+  @media (max-width: 640px) { .sn-hint { font-size: 0.88rem; padding: 7px 10px; } }
+
+  /* ⌨️ Blur Guess autocomplete dropdown */
+  .bg-guess-wrap { position: relative; flex: 1; min-width: 0; }
+  .bg-guess-wrap input { width: 100%; box-sizing: border-box; }
+  .bg-suggest { display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: #16162b; border: 2px solid var(--accent); border-radius: 12px; max-height: 264px; overflow-y: auto; z-index: 80; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65); -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain; }
+  .bg-suggest.show { display: block; }
+  .bg-sug-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; cursor: pointer; border-bottom: 1px solid #2a2a4a; transition: background 0.15s; -webkit-tap-highlight-color: transparent; }
+  .bg-sug-row:last-child { border-bottom: none; }
+  .bg-sug-row:hover, .bg-sug-row:active { background: rgba(2, 169, 255, 0.16); }
+  .bg-sug-img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #0f0f1a; flex-shrink: 0; }
+  .bg-sug-name { flex: 1; font-weight: 800; color: var(--text); font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-sug-via { flex-shrink: 0; font-size: 0.7rem; font-weight: 700; color: var(--accent); background: rgba(2, 169, 255, 0.14); padding: 2px 8px; border-radius: 999px; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-sug-row.active { background: rgba(2, 169, 255, 0.28); box-shadow: inset 3px 0 0 var(--accent); }
+
+  .bg-chips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 2px 4px; flex-wrap: wrap; justify-content: center; }
+  #bgGuessBar { margin-top: 8px; }
+
+  /* ❤️❓ Race hunters bar: each hunter's lives & questions, color-coded */
+  .rc-hunters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; margin-bottom: 8px; flex-wrap: wrap; justify-content: center; }
+  .rc-hunter { display: inline-flex; align-items: center; gap: 7px; border: 2px solid var(--c, #2a2a4a); background: #0f0f1a; color: var(--text); border-radius: 22px; padding: 4px 12px 4px 4px; flex-shrink: 0; }
+  .rc-hunter .rc-hunter-name { font-size: 0.82rem; font-weight: 800; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rc-hunter .rc-hunter-res { font-size: 0.78rem; letter-spacing: -1px; white-space: nowrap; }
+  .rc-hunter .rc-hunter-turn { font-size: 0.8rem; }
+  .rc-hunter.turn { box-shadow: 0 0 14px var(--c); background: #16163a; }
+  .rc-hunter.out { opacity: 0.45; filter: grayscale(0.9); }
+
+  /* Lobby code row: 🔗 Share + 👁️ Blur side by side */
+  .lobby-code-actions { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
+  .lobby-code-actions .blur-code-btn { margin: 0; }
+
+  /* ================================================================
+     📱 PHONE OPTIMIZATION (screens up to 600px)
+     Everything stacks vertically, nothing on screen is hidden,
+     tap targets get finger-friendly, text stays readable.
+     ================================================================ */
+  @media (max-width: 600px) {
+    body { padding: 10px 10px 62px; }
+    .site-header { margin-bottom: 20px; }
+
+    /* Font ≥16px in inputs = no more unwanted auto-zoom on iPhone */
+    input[type="text"], input[type="password"], input[type="number"], textarea, select { font-size: 16px !important; }
+
+    /* Bigger tap targets (fingers, not mouse pointers) */
+    button { min-height: 44px; }
+    .player-admin-actions .player-admin-btn { min-width: 38px; min-height: 38px; }
+    .uc-vote-btn { min-height: 40px; }
+    input[type="range"] { height: 26px; }
+    input[type="range"]::-webkit-slider-thumb { width: 26px; height: 26px; }
+    input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; }
+
+    /* ----- Guess Who: one clean column, action first ----- */
+    .game-left { order: 0; flex-direction: row; gap: 10px; }      /* mini secret card + history row */
+    .game-center { order: 1; gap: 10px; }                          /* header → question → board */
+    .my-character { order: -1; padding: 10px; flex: 1; min-width: 118px; }
+    .my-character h3 { font-size: 0.85rem; margin-bottom: 6px; }
+    .my-character-card img { width: 72px; height: 96px; }
+    .my-character-card .info { padding: 6px; }
+    .my-character-card .name { font-size: 0.85rem; }
+    .history-section { padding: 10px; max-height: none; flex: 1.5; min-width: 150px; }
+    .history-section h3 { font-size: 0.85rem; margin-bottom: 6px; }
+    .history-list { max-height: 96px; font-size: 0.78rem; }
+    .game-header { padding: 10px 12px; gap: 8px; }
+    .player-section { min-width: 0; }
+    .player-section h3 { font-size: 0.72rem; margin-bottom: 2px; }
+    .player-section .name { font-size: 0.85rem; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .avatar-inline { width: 26px; height: 26px; }
+    .turn-indicator { padding: 8px 12px; font-size: 0.78rem; }
+    .question-box { padding: 12px; }
+    .question-form { flex-direction: column; gap: 8px; margin-bottom: 6px; }
+    .board-section { padding: 12px; }
+    .board-section h3 { font-size: 0.95rem; margin-bottom: 10px; }
+    .board { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; margin-bottom: 10px; }
+    .card { border-width: 2px; border-radius: 9px; }
+    .card-info { padding: 4px 3px; }
+    .card-name { font-size: 0.66rem; }
+    .card.eliminated::after { font-size: 2rem; }
+
+    /* ----- Small round floating buttons (same style as the 💬 chat button),
+           spread evenly across the whole screen width ----- */
+    /* The right padding makes room for the 💬 chat button, so it sits IN the
+       same full-width button row as the game buttons. */
+    /* 🕵️ Detective Showdown in-game bar (phone): 3 slim RECTANGLE buttons with
+       small text, spanning almost the whole width side by side */
+    .game-controls { position: fixed; left: 0; right: 0; padding: 0 10px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; display: flex; flex-direction: row; flex-wrap: nowrap; gap: 8px; margin-top: 0; }
+    .game-controls button { flex: 1; min-width: 0; height: 44px; min-height: 0; padding: 0 6px; border-radius: 10px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 6px 20px rgba(0,0,0,0.5); white-space: nowrap; }
+    .game-controls button .ic { width: 16px; height: 16px; flex: none; }
+    .game-controls .btn-label { display: none; }
+    .game-controls .btn-label-phone { display: inline; font-weight: 700; }
+    /* 🤫 Undercover in-game bar: keeps the round icon buttons (2 buttons only) */
+    .uc-controls { position: fixed; left: 0; right: 0; padding: 0 68px 0 12px; bottom: calc(58px + env(safe-area-inset-bottom, 0px)); z-index: 60; flex-direction: row; flex-wrap: nowrap; justify-content: space-between; gap: 8px; margin-top: 0; pointer-events: none; }
+    .uc-controls button { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0,0,0,0.5); flex-shrink: 0; pointer-events: auto; }
+    .uc-controls .btn-label { display: none; }
+    /* 💬 joins the button row: same line, same size, pinned to the right edge */
+    #chatToggleBtn { bottom: calc(58px + env(safe-area-inset-bottom, 0px)); right: 12px; width: 48px; height: 48px; font-size: 1.25rem; }
+    .chat-overlay { bottom: calc(118px + env(safe-area-inset-bottom, 0px)); }
+    /* 💬🕵️ Detective Showdown bar: the chat button takes its share of the row's width,
+       the old floating round button steps aside while that bar is on screen */
+    .game-controls #chatRowBtn { display: flex; position: relative; }
+    .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+    #gameScreen.active ~ #chatToggleBtn { display: none !important; }
+    /* ----- multiplayer games + public rooms on phones ----- */
+    .public-rooms-list { max-height: 300px; }
+    .br-mysecret img { width: 46px; height: 62px; }
+    .br-mysecret { padding: 8px 10px; gap: 10px; }
+    .br-mysecret-name { font-size: 0.85rem; }
+    .br-chip .chip-name { max-width: 64px; }
+    .rc-hunter .rc-hunter-name { max-width: 64px; }
+    #bgImage { width: min(240px, 70vw); }
+    .bg-status { font-size: 0.88rem; }
+    .br-log { max-height: 130px; }
+    .qa-ans { font-size: 0.72rem; padding: 3px 8px; }
+    .me-row { font-size: 0.82rem; padding: 8px 10px; }
+    .chat-messages { padding: 12px; }
+    .chat-input-area { padding: 10px; }
+
+    /* ----- Undercover screen ----- */
+    .uc-main { padding: 14px; }
+    .uc-badge { font-size: 0.82rem; padding: 6px 12px; }
+    .uc-players { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+    .uc-word-card { padding: 12px; }
+    .uc-word-img { width: 68px; height: 94px; }
+    .ava-tile { width: 40px; height: 40px; margin-bottom: 4px; }
+    .uc-tile-name { font-size: 0.82rem; }
+
+    /* ----- modals, pop-ups, avatar picker ----- */
+    .modal { padding: 10px; }
+    .modal-content { padding: 24px 16px; border-radius: 16px; }
+    .avatar-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .interaction-buttons button { flex: 1; }
+    /* 🏆 the winning screen FITS the phone — no scrolling needed */
+    .winning-screen { padding: 16px 12px 14px; max-height: calc(100svh - 20px); overflow-y: auto; width: min(94%, 420px); }
+    .winner-card { margin-bottom: 10px; }
+    .winner-card h2 { font-size: 1.5rem; margin-bottom: 5px; }
+    .winner-card .char-img { width: 92px; height: 123px; margin-bottom: 6px; border-width: 2px; }
+    #winningScreen .winner-card h3 { font-size: 1.05rem !important; margin-bottom: 2px !important; }
+    #winningScreen .winner-card p { margin-bottom: 2px; }
+    #winningScreen > h3 { font-size: 1rem !important; margin-bottom: 8px !important; }
+    .secrets-revealed { gap: 10px; margin-bottom: 10px; }
+    .secret-card { width: 104px; }
+    .secret-card .name { font-size: 0.76rem; padding: 6px 4px; }
+    .secret-card .player-label { font-size: 0.68rem; padding: 3px 6px; }
+    #winningScreen > div:last-child { gap: 10px !important; margin-top: 4px !important; }
+    #winningScreen button { padding: 10px 22px !important; font-size: 0.9rem !important; }
+
+    /* 🛋️ the lobby FITS the phone too — tighter blocks, players list scrolls inside */
+    #lobbyScreen .lobby-left { padding: 16px 14px 14px; }
+    #lobbyScreen .lobby-left h2 { font-size: 1.35rem; margin-bottom: 4px !important; }
+    #lobbyScreen .lobby-left p { font-size: 0.82rem; margin-bottom: 10px !important; }
+    #lobbyScreen .room-code { font-size: 1.5rem; letter-spacing: 3px; margin: 10px 0; padding: 10px; }
+    #lobbyScreen #playersList { max-height: 200px; overflow-y: auto; margin: 10px 0; }
+    #lobbyInfoBox { padding: 10px 12px !important; margin: 10px 0 !important; font-size: 0.85rem; }
+    .lobby-code-actions { margin-bottom: 8px; }
+    #lobbyScreen .lobby-cta { padding: 10px 16px; font-size: 0.95rem; }
+
+    /* ----- lobby ----- */
+    .player-card { padding: 10px; }
+    .ava-lobby { width: 36px; height: 36px; }
+
+    /* ----- bottom bar ----- */
+    #bottomBar { min-height: 44px; padding: 4px 10px; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); gap: 8px; }
+    #bottomBar .username-change-btn { padding: 7px 14px; font-size: 0.78rem; min-height: 36px; }
+    #musicNowPlaying { max-width: 46vw; font-size: 0.74rem !important; padding: 4px 10px; }
+
+    /* ----- character selection screen: smaller cards too ----- */
+    .selection-header h2 { font-size: 1.4rem; }
+    .selection-header p { font-size: 0.9rem; }
+    .selection-status { padding: 10px; font-size: 0.9rem; margin-bottom: 14px; }
+    .selection-controls { gap: 8px; margin-bottom: 12px; }
+    .character-grid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; }
+    .selectable-card { border-width: 2px; border-radius: 10px; }
+    .selectable-card .info { padding: 5px 4px; }
+    .selectable-card .char-name { font-size: 0.66rem; }
+    .selectable-card.selected::before { width: 26px; height: 26px; font-size: 1rem; top: 6px; right: 6px; }
+  }
+
+  /* 🌐 Language switcher (globe, bottom-left) */
+  /* Language picker (settings panels, above Music Volume) */
+  .lang-row { display: flex; gap: 8px; margin: 2px 0 6px; }
+  .lang-opt {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 8px 4px; border-radius: 12px; cursor: pointer;
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(90,150,230,0.35);
+    color: var(--text, #eee); font-family: inherit; font-weight: 700; font-size: 0.8rem;
+    transition: all 0.2s;
+  }
+  .lang-opt .flg { width: 22px; height: 15px; border-radius: 3px; flex: none; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+  .lang-opt:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .lang-opt.on {
+    border-color: var(--accent); background: rgba(2,169,255,0.14);
+    box-shadow: 0 0 12px rgba(2,169,255,0.28);
+  }
+
+  /* Profile head: avatar + little edit badge */
+  .profile-head { display: flex; flex-direction: column; align-items: center; margin: 4px 0 2px; }
+  .profile-ava-wrap { position: relative; width: 74px; height: 74px; border-radius: 50%; cursor: pointer; }
+  .profile-ava-wrap .ava { display: block; }
+  .ava-edit {
+    position: absolute; top: -3px; right: -3px; width: 26px; height: 26px; padding: 0;
+    border-radius: 50%; border: 2px solid #0d1630; background: var(--accent); color: #04101e;
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5); transition: transform 0.15s, background 0.15s;
+  }
+  .ava-edit .ic { width: 13px; height: 13px; }
+  .ava-edit:hover { transform: scale(1.1); background: #4fb9fb; }
+
+  /* Account menu tabs */
+  .acct-tabs {
+    display: flex; gap: 6px; margin: 14px 0 14px; padding: 4px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(90,150,230,0.22); border-radius: 14px;
+  }
+  .acct-tab {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 4px; border-radius: 10px; border: none; background: transparent; color: var(--muted);
+    font-family: inherit; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+  }
+  .acct-tab .ic { width: 0.95rem; height: 0.95rem; }
+  .acct-tab:hover { color: var(--text, #eee); }
+  .acct-tab.on { background: rgba(2,169,255,0.16); color: var(--accent); box-shadow: 0 0 10px rgba(2,169,255,0.2); }
+  .acct-pane { animation: acctFade 0.25s ease; }
+  @keyframes acctFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* 🔒 Rock-steady tab area on EVERY screen: fixed height, so the header (avatar,
+     name, tab bar) never moves when switching tabs; long panes scroll inside. */
+  #authModal #authProfileView .acct-pane,
+  #usernameModal .acct-pane { height: clamp(240px, 42vh, 340px); height: clamp(240px, 42svh, 340px); overflow-y: auto; scrollbar-gutter: stable; padding-right: 6px; }
+
+  /* 💻 PC-only language picker in the bottom bar (phones use the top bar) */
+  #pcLangWrap { display: none; }
+
+  /* 💻 PC only: bigger settings window, SAME proportions as the original design —
+     the whole window is uniformly zoomed, so every element inside (avatar, name,
+     tabs, inputs, text) keeps its build-64 ratios. Phone layout untouched. */
+  @media (min-width: 901px) {
+    #authModal .modal-content { zoom: 1.18; }
+    #usernameModal .modal-content { zoom: 1.1; }
+    /* 💻 PC only: bigger room-settings window — uniformly zoomed (same b64
+       proportions, no width-stretch); height is divided by the zoom so the
+       rendered window keeps its 88vh/820px size and never exceeds the screen */
+    #settingsModal .modal-content { zoom: 1.18; height: min(74.5vh, 695px); }
+    /* 🃏 the game-card icons stay the SAME rendered size as the create-room window (un-zoomed) */
+    #settingsModal .game-pick-img .ic { width: calc(2rem / 1.18); height: calc(2rem / 1.18); }
+    #authModal #authProfileView .acct-pane,
+    #usernameModal .acct-pane { height: clamp(240px, 36vh, 340px); }
+    /* bottom-bar language picker: little square flag button, bottom-RIGHT, just left of the settings button */
+    #bottomBar { justify-content: flex-end; }
+    #pcLangWrap { display: inline-flex; align-items: center; position: relative; margin-left: 0; }
+    #bottomBar .username-change-btn { margin-left: 0; }
+    #pcLangWrap .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2,169,255,0.35); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.35); flex: none; }
+    #pcLangWrap .tb-btn:hover { border-color: var(--accent); }
+    #pcLangWrap .tb-flag { display: flex; align-items: center; }
+    #pcLangWrap .tb-flag .flg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+    #pcLangMenu { display: none; position: absolute; bottom: calc(100% + 10px); right: 0; flex-direction: column; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 130; min-width: 170px; margin: 0; gap: 6px; }
+    #pcLangMenu.open { display: flex; }
+    #pcLangMenu .lang-opt { width: 100%; margin: 0; }
+  }
+  @media (min-width: 901px) and (min-height: 950px) {
+    #authModal .modal-content { zoom: 1.38; }
+    #usernameModal .modal-content { zoom: 1.2; }
+    #settingsModal .modal-content { zoom: 1.35; height: min(65.2vh, 607px); }
+    #settingsModal .game-pick-img .ic { width: calc(2rem / 1.35); height: calc(2rem / 1.35); }
+    #authModal #authProfileView .acct-pane,
+    #usernameModal .acct-pane { height: clamp(280px, 32vh, 380px); }
+  }
+
+  /* 📱 compact game picker (phone): small button + selection window — saves a
+     full grid of screen space. PC keeps the classic card grid. */
+  #gamePickOpenBtn { display: none; }
+  .gpm-row { display: flex; align-items: center; gap: 12px; width: 100%; margin-bottom: 8px; padding: 12px 14px; border-radius: 12px; background: #14142a; border: 2px solid rgba(255,255,255,0.07); color: var(--text, #eee); font-family: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; text-align: left; transition: all 0.15s; }
+  .gpm-row:last-child { margin-bottom: 0; }
+  .gpm-row:hover { border-color: rgba(2,169,255,0.6); transform: translateY(-1px); }
+  .gpm-row.on { border-color: var(--accent); background: rgba(2,169,255,0.12); }
+  .gpm-row .ic { width: 22px; height: 22px; color: var(--accent); flex: none; }
+  .gpm-row .gpm-name { flex: 1; }
+  .gpm-row small { color: var(--muted); font-weight: 600; }
+  @media (max-width: 900px) {
+    #hostGamePick { display: none; }
+    #gamePickOpenBtn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 14px; border-radius: 14px; background: #14142a; border: 2px solid rgba(2,169,255,0.35); color: var(--accent); font-family: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+    #gamePickOpenBtn .ic { width: 20px; height: 20px; }
+    #gamePickOpenBtn .gpo-chev { color: var(--muted); font-size: 1.1rem; line-height: 1; }
+    #gamePickOpenBtn small { color: var(--muted); font-weight: 600; }
+    #gamePickOpenBtn:hover { border-color: var(--accent); }
+  }
+  /* 🎮 lobby-settings game bar (⚙️ modal): the card grid retired in favor of the
+     compact picker button + list window — on phone AND PC */
+  #modalGamePick { display: none !important; }
+  #modalGamePickOpenBtn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 14px; border-radius: 14px; background: #14142a; border: 2px solid rgba(2,169,255,0.35); color: var(--accent); font-family: inherit; font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+  #modalGamePickOpenBtn .ic { width: 20px; height: 20px; }
+  #modalGamePickOpenBtn .gpo-chev { color: var(--muted); font-size: 1.1rem; line-height: 1; }
+  #modalGamePickOpenBtn small { color: var(--muted); font-weight: 600; }
+  #modalGamePickOpenBtn:hover { border-color: var(--accent); }
+
+  /* 🛋️ Lobby actions — slimmer & tidier: one prominent CTA (Ready/Start),
+     the AFK/Leave pair side-by-side below it */
+  #lobbyScreen .lobby-cta { padding: 11px 18px; font-size: 1rem; border-radius: 14px; }
+  .lobby-btn-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .lobby-btn-row button { flex: 1; min-width: 0; padding: 10px 8px; font-size: 0.85rem; border-radius: 12px; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .lobby-btn-row button .ic { width: 16px; height: 16px; flex: none; }
+
+  /* 🚫 Content filter row (Settings → Account) + 🗑️ danger-zone button */
+  .nsfw-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(90,150,230,0.22); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-size: 0.85rem; }
+  .nsfw-row input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex: none; }
+  .ghost-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); }
+  .ghost-danger:hover { background: var(--danger); color: #ffffff; }
+
+  /* Support tab: Discord card */
+  .discord-card {
+    display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 10px;
+    background: rgba(88,101,242,0.10); border: 1.5px solid rgba(88,101,242,0.45); border-radius: 14px;
+  }
+  .dc-icon { width: 42px; height: 42px; border-radius: 12px; background: #5865F2; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+  .dc-icon svg { width: 26px; height: 20px; fill: #ffffff; }
+  .dc-label { color: var(--muted); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+  .dc-handle { font-weight: 800; font-size: 1.02rem; color: var(--text, #eee); overflow-wrap: anywhere; }
+  .dc-join {
+    width: auto; display: inline-flex; align-items: center; gap: 6px; flex: none;
+    background: #5865F2; color: #ffffff; text-decoration: none; border-radius: 10px; padding: 8px 13px;
+    font-family: inherit; font-weight: 800; font-size: 0.78rem; transition: background 0.2s, transform 0.15s;
+  }
+  .dc-join:hover { background: #4752c4; transform: translateY(-1px); }
+  .dc-join:active { transform: scale(0.97); }
+  .dc-join .ic { width: 0.85rem; height: 0.85rem; }
+  .dc-copy {
+    width: auto; display: inline-flex; align-items: center; gap: 6px; flex: none;
+    background: rgba(88,101,242,0.14); border: 1.5px solid rgba(88,101,242,0.55); color: var(--text, #eee);
+    border-radius: 10px; padding: 7px 12px;
+    font-family: inherit; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: background 0.2s, transform 0.15s;
+  }
+  .dc-copy:hover { background: rgba(88,101,242,0.26); transform: translateY(-1px); }
+  .dc-copy .ic { width: 0.85rem; height: 0.85rem; }
+
+  /* ================================ 🗝 CODE NAMES ================================ */
+  /* ---- shared team colors ---- */
+  .cn-team.red, .cn-score-badge.red, .cn-clue-tag.red { border-color: rgba(229, 57, 53, 0.6); }
+  .cn-team.blue, .cn-score-badge.blue, .cn-clue-tag.blue { border-color: rgba(30, 136, 229, 0.6); }
+
+  /* ---- team-setup screen ---- */
+  .cn-selfjoin { display: flex; gap: 10px; justify-content: center; margin: 6px 0 14px; }
+  .cn-join { padding: 12px 26px; border-radius: 12px; border: 2px solid; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.2s; background: var(--card); color: #fff; }
+  .cn-join.red { border-color: rgba(229, 57, 53, 0.7); }
+  .cn-join.blue { border-color: rgba(30, 136, 229, 0.7); }
+  .cn-join.red.selected { background: rgba(229, 57, 53, 0.25); box-shadow: 0 0 14px rgba(229, 57, 53, 0.35); }
+  .cn-join.blue.selected { background: rgba(30, 136, 229, 0.25); box-shadow: 0 0 14px rgba(30, 136, 229, 0.35); }
+  .cn-join:hover { transform: translateY(-2px); }
+  .cn-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .cn-team { border: 2px solid; border-radius: 14px; padding: 12px; background: var(--card); }
+  .cn-team.red { background: rgba(229, 57, 53, 0.07); }
+  .cn-team.blue { background: rgba(30, 136, 229, 0.07); }
+  .cn-team-title { font-weight: 900; font-size: 1.05rem; margin-bottom: 10px; }
+  .cn-team-title small { display: block; font-weight: 600; color: var(--muted); font-size: 0.75rem; margin-top: 2px; }
+  .cn-empty { color: var(--muted); text-align: center; font-size: 0.9rem; padding: 12px 0; }
+  .cn-member { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid transparent; margin-bottom: 6px; }
+  .cn-member.me { border-color: rgba(41, 182, 246, 0.55); }
+  .cn-member.spy { border-color: rgba(255, 193, 7, 0.5); background: rgba(255, 193, 7, 0.07); }
+  .cn-member-name { font-weight: 700; font-size: 0.92rem; }
+  .cn-member-name i { color: var(--muted); font-style: normal; font-size: 0.8em; }
+  .cn-spy-badge { margin-left: auto; font-size: 0.68rem; font-weight: 900; color: #ffc107; background: rgba(255, 193, 7, 0.12); padding: 3px 8px; border-radius: 8px; letter-spacing: 0.05em; white-space: nowrap; }
+  .cn-spy-badge .ic { width: 12px; height: 12px; vertical-align: -0.15em; }
+  .cn-mini { margin-left: auto; background: none; border: 1px solid var(--card-border, rgba(255,255,255,.15)); color: #fff; border-radius: 7px; padding: 3px 7px; font-size: 0.78rem; cursor: pointer; }
+  .cn-mini + .cn-mini { margin-left: 4px; }
+  .cn-mini:hover { background: rgba(255,255,255,0.12); }
+  .cn-mini .ic { width: 13px; height: 13px; vertical-align: -0.2em; }
+  .cn-bench-title { margin: 14px 0 8px; font-size: 0.95rem; color: var(--muted); }
+  .cn-bench { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cn-bench .cn-member { margin-bottom: 0; }
+
+  /* ---- live screen: score header + turn banner ---- */
+  .cn-score-badge.red { color: #ff8a80; border: 2px solid rgba(229, 57, 53, 0.6); }
+  .cn-score-badge.blue { color: #82b1ff; border: 2px solid rgba(30, 136, 229, 0.6); }
+  .cn-role { text-align: center; font-size: 0.88rem; font-weight: 700; color: var(--muted); margin: 4px 0; }
+  .cn-role.red { color: #ff8a80; }
+  .cn-role.blue { color: #82b1ff; }
+  .cn-turn { text-align: center; font-weight: 900; font-size: 1.02rem; padding: 10px 12px; border-radius: 12px; margin: 6px 0 10px; border: 2px solid transparent; }
+  .cn-turn.red { background: rgba(229, 57, 53, 0.14); border-color: rgba(229, 57, 53, 0.5); }
+  .cn-turn.blue { background: rgba(30, 136, 229, 0.14); border-color: rgba(30, 136, 229, 0.5); }
+  .cn-cluebar { text-align: center; min-height: 40px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.05rem; margin-bottom: 12px; padding: 8px; border-radius: 12px; background: #0f0f1a; }
+  .cn-clue-tag { font-size: 0.68rem; font-weight: 900; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--muted); padding: 2px 7px; border-radius: 7px; }
+  .cn-clue-n { color: var(--accent); font-weight: 900; }
+  .cn-clue-wait { color: var(--muted); font-size: 0.9rem; }
+
+  /* ---- the 5×5 board ---- */
+  .cn-board { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px; }
+  /* 🥷🎴 horizontal card per mockup: image LEFT · right column = name (with
+     a thin rule under it), suggestion circles, green ✓ circle bottom-right */
+  /* b161 · unrevealed cards are BEIGE word cards (Shogun view) — the Ninja's key/revealed
+     colours override this below */
+  .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(0, 0, 0, 0.22); background: #b0a48a; transition: transform 0.15s, box-shadow 0.15s; display: flex; height: 80px; }
+  .cn-card img { display: block; width: 78px; height: 100%; object-fit: cover; flex-shrink: 0; }
+  .cn-side { flex: 1; min-width: 0; position: relative; display: flex; flex-direction: column; }
+  /* b161 · the strip is the CARD's colour under a 50% black veil → always darker than the card,
+     never a flat black bar (beige word cards included) */
+  .cn-name { background: rgba(0, 0, 0, 0.5); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 2px solid rgba(0, 0, 0, 0.3); color: #fff; flex-shrink: 0; }
+  .cn-card.can-pick { cursor: pointer; border-color: rgba(41, 182, 246, 0.55); }
+  .cn-card.can-pick:hover { transform: scale(1.04); box-shadow: 0 0 12px rgba(41, 182, 246, 0.5); z-index: 2; }
+  /* 🥷🎴 2-step pick: public suggestion dots (bottom-left) + green validate circle (bottom-right) */
+  .cn-sugs { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px; padding: 6px 8px; pointer-events: none; }
+  .cn-sug { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55); }
+  .cn-sug .ava, .cn-sug .ava img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; font-size: 0.5rem; } /* 🪲 class is .ava — the old .avatar selector never matched, pfps showed a sliver */
+  .cn-validate { position: absolute; right: 6px; bottom: 6px; z-index: 4; width: 26px; height: 26px; min-width: 0; min-height: 0; /* 🪲 phones: global button min-height:44px was squashing this into an ellipse */ border-radius: 50%; border: 2px solid #fff; background: var(--success); color: #fff; font-weight: 900; font-size: 15px; line-height: 1; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 9px rgba(46, 204, 113, 0.6); }
+  .cn-validate:hover { transform: scale(1.14); }
+  .cn-validate.locked { opacity: 0.55; filter: saturate(0.6); }
+  /* spymaster key view: colored borders + corner dot */
+  /* 🥷🎴 Ninja key view: the WHOLE card background carries the card color (mockup) */
+  .cn-card.cn-key-red { background: rgba(229, 57, 53, 0.55); border-color: rgba(229, 57, 53, 0.85); }
+  .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.55); border-color: rgba(30, 136, 229, 0.85); }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.9); border-color: rgba(232, 217, 184, 0.9); }
+  .cn-card.cn-key-black { background: rgba(8, 8, 12, 0.92); border-color: rgba(255, 255, 255, 0.85); }
+  .cn-dot { position: absolute; top: 5px; left: 8px; width: 13px; height: 13px; border-radius: 50%; border: 2px solid #0f0f1a; z-index: 2; }
+  .cn-dot-red { background: #e53935; }
+  .cn-dot-blue { background: #1e88e5; }
+  .cn-dot-beige { background: #b0a48a; }
+  .cn-dot-black { background: #111; box-shadow: 0 0 0 1px #fff; }
+  /* revealed cards get their true color (visible to EVERYONE) */
+  .cn-card.cn-rev img { opacity: 0.22; filter: saturate(0.6); }
+  .cn-card.cn-rev-red { border-color: #e53935; background: rgba(229, 57, 53, 0.55); }
+  .cn-card.cn-rev-blue { border-color: #1e88e5; background: rgba(30, 136, 229, 0.55); }
+  .cn-card.cn-rev-beige { border-color: #e8d9b8; background: rgba(176, 164, 138, 0.9); }
+  .cn-card.cn-rev-black { border-color: #000; background: rgba(8, 8, 12, 0.92); box-shadow: 0 0 14px rgba(0, 0, 0, 0.9); }
+  .cn-stamp { position: absolute; top: 5px; left: 5px; font-size: 0.95rem; background: rgba(8, 8, 16, 0.75); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; text-align: center; }
+
+  /* 🥷🎴 clue phase: the Ninja taps his team's cards to set the ×N count */
+  .cn-card.cn-clueable { cursor: pointer; border-color: rgba(46, 204, 113, 0.5); }
+  .cn-card.cn-clueable:hover { transform: scale(1.04); box-shadow: 0 0 12px rgba(46, 204, 113, 0.45); z-index: 2; }
+  .cn-card.cn-clue-sel { border-color: var(--success) !important; box-shadow: 0 0 16px 4px rgba(46, 204, 113, 0.8) !important; transform: scale(1.05); z-index: 2; }
+  .cn-num[disabled] { opacity: 1; font-weight: 900; min-width: 56px; text-align: center; }
+  p.cn-clue-hint { text-align: center; color: var(--muted); font-size: 0.8rem; margin: 4px 0 0; }
+
+  /* ---- action rows ---- */
+  .cn-controls { margin: 6px 0 2px; }
+  .cn-input-row { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .cn-input-row input { flex: 1 1 180px; max-width: 320px; padding: 11px 14px; border-radius: 10px; border: 2px solid rgba(255, 255, 255, 0.14); background: #0f0f1a; color: #fff; font-size: 1rem; }
+  .cn-input-row input:focus { border-color: var(--accent); outline: none; }
+  .cn-input-row select { padding: 11px 10px; border-radius: 10px; border: 2px solid rgba(255, 255, 255, 0.14); background: #0f0f1a; color: #fff; font-size: 1rem; font-weight: 900; }
+  .cn-wait { text-align: center; color: var(--muted); font-size: 0.92rem; padding: 8px; }
+
+  /* ---- log colors ---- */
+  .br-log-cn-c-red { border-left-color: #e53935; color: #ff8a80; }
+  .br-log-cn-c-blue { border-left-color: #1e88e5; color: #82b1ff; }
+  .br-log-cn-f-red { border-left-color: #e53935; background: rgba(229, 57, 53, 0.10); }
+  .br-log-cn-f-blue { border-left-color: #1e88e5; background: rgba(30, 136, 229, 0.10); }
+  .br-log-cn-beige { border-left-color: #b0a48a; color: #b0a48a; }
+  .br-log-cn-black { border-left-color: #fff; color: #fff; font-weight: 900; background: rgba(255, 255, 255, 0.05); }
+
+  /* ---- end-screen team blocks ---- */
+  .me-row.cn-end-head { margin-top: 8px; font-weight: 900; background: rgba(255, 255, 255, 0.05); }
+  .me-row.cn-end-head.red { border-left: 3px solid #e53935; }
+  .me-row.cn-end-head.blue { border-left: 3px solid #1e88e5; }
+  .me-row.cn-end-row { font-size: 0.9rem; }
+
+  @media (max-width: 640px) {
+    /* 📱 4×6 on phones too: compact vertical tiles (image top · name bar bottom ·
+       dots bottom-left · green ✓ bottom-right over the image) */
+    .cn-board { grid-template-columns: repeat(4, 1fr) !important; gap: 5px; }
+    .cn-card { display: block; height: auto; }
+    .cn-card img { width: 100%; height: auto; aspect-ratio: 1 / 1.1; }
+    /* b162 · the strip band hugs the bottom and INHERITS the card's colour, so the
+       name bar is the same darkened card colour as on PC (it used to cover the
+       whole card, veiling the picture into a flat dark band instead) */
+    .cn-side { display: block; position: absolute; inset: auto 0 0 0; background-color: inherit; }
+    .cn-name { position: static; font-size: 0.48rem; padding: 3px 2px; }
+    .cn-sugs { position: absolute; left: 2px; bottom: 22px; padding: 0; gap: 2px; max-width: 60px; }
+    .cn-sug { width: 16px; height: 16px; border-width: 1.5px; }
+    .cn-validate { right: 3px; bottom: 22px; width: 24px; height: 24px; font-size: 14px; }
+    .cn-teams { grid-template-columns: 1fr; }
+    .cn-turn { font-size: 0.88rem; }
+    .cn-cluebar { font-size: 0.92rem; }
+  }
+
+  /* ===== 🗝 CODE NAMES — team setup v2 (image-inspired: AGENTS / SPIES boxes per team) ===== */
+  .cn-setup .lobby-header p { margin-bottom: 12px; }
+  .cn-spect { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: rgba(10, 20, 45, 0.55); border: 1px dashed rgba(127, 176, 240, 0.35); border-radius: 14px; padding: 10px 14px; margin-bottom: 18px; }
+  .cn-spect-title { font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+  .cn-spect-strip { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cn-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+  .cn-cols .cn-team { background: transparent; border: none; padding: 0; display: flex; flex-direction: column; }
+  /* 📦 the 4 team boxes are ALWAYS the same height: both columns stretch to the
+     same size, and each column's SHOGUN/NINJA boxes split it 1:1 (compact floor
+     stays min-height: 120px; content simply grows them together) */
+  .cn-cols .cn-team > .cn-box { flex: 1; }
+  .cn-cols .cn-team > .cn-box:last-child { margin-bottom: 0; }
+  .cn-cols .cn-team-title { text-align: center; font-size: 1.15rem; margin-bottom: 12px; padding: 8px 12px; border-radius: 12px; background: rgba(13, 25, 54, 0.7); }
+  .cn-box { background: rgba(13, 25, 54, 0.6); border-radius: 16px; padding: 12px; border: 2px solid rgba(127, 176, 240, 0.22); margin-bottom: 14px; min-height: 120px; }
+  .cn-team.blue .cn-box { border-color: rgba(2, 169, 255, 0.55); box-shadow: inset 0 0 26px rgba(2, 169, 255, 0.07); }
+  .cn-team.red .cn-box { border-color: rgba(255, 82, 82, 0.55); box-shadow: inset 0 0 26px rgba(255, 82, 82, 0.07); }
+  .cn-box-title { font-weight: 900; letter-spacing: 0.14em; font-size: 0.82rem; text-align: center; margin-bottom: 10px; opacity: 0.95; }
+  .cn-team.blue .cn-box-title { color: #7fd3ff; }
+  .cn-team.red .cn-box-title { color: #ff9b9b; }
+  .cn-box .cn-empty { margin: 8px 0; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  .cn-box .cn-join { width: 100%; margin: 10px 0 2px; }
+  .cn-spy-hint { text-align: center; color: var(--muted); font-size: 0.76rem; padding: 4px 6px 2px; }
+  .cn-member.cn-spy-slot { border-width: 2px; }
+  .cn-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .cn-start-big { width: 100%; max-width: 560px; display: block; margin: 16px auto 4px; padding: 16px 20px; font-size: 1.15rem; font-weight: 900; border-radius: 16px; }
+  /* 📱 team setup stays 2×columns on phones (like PC) — halves the scroll */
+  @media (max-width: 700px) {
+    .cn-cols { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cn-box { padding: 8px; }
+    .cn-cols .cn-team-title { font-size: 0.92rem; padding: 6px 8px; margin-bottom: 8px; }
+  }
+
+  /* ===== 🗝 CODE NAMES — glowy color reveals (battle-royale style) ===== */
+  @keyframes cnGlowPulse { 0% { filter: brightness(1.5) saturate(1.3); } 100% { filter: none; } }
+  .cn-card[class*="cn-rev-"] { animation: cnGlowPulse 0.55s ease-out; }
+  .cn-card.cn-rev-red { border-color: #ff5252 !important; box-shadow: 0 0 18px 4px rgba(255, 82, 82, 0.8), inset 0 0 26px rgba(255, 82, 82, 0.25); }
+  .cn-card.cn-rev-blue { border-color: #02a9ff !important; box-shadow: 0 0 18px 4px rgba(2, 169, 255, 0.8), inset 0 0 26px rgba(2, 169, 255, 0.25); }
+  .cn-card.cn-rev-beige { border-color: #e8d9b8 !important; box-shadow: 0 0 14px 3px rgba(232, 217, 184, 0.55), inset 0 0 22px rgba(232, 217, 184, 0.18); }
+  .cn-card.cn-rev-black { border-color: #b8b8d8 !important; box-shadow: 0 0 18px 4px rgba(120, 110, 220, 0.65), inset 0 0 26px rgba(0, 0, 0, 0.65); }
+  .cn-card.cn-key-red { background: rgba(239, 83, 80, 0.6) !important; border-color: #ff5252 !important; box-shadow: none; }
+  .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.6) !important; border-color: #02a9ff !important; box-shadow: none; }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.9) !important; border-color: #e8d9b8 !important; box-shadow: none; }
+  .cn-card.cn-key-black { background: rgba(5, 5, 10, 0.95) !important; border-color: #8a8ab8 !important; box-shadow: none; }
+  .cn-card.can-pick:hover { box-shadow: 0 0 16px 3px rgba(255, 243, 176, 0.55) !important; transform: translateY(-3px); }
+
+  /* ===== 📱 Phone disposition — home: two big side-by-side cards (per mockup) ===== */
+  @media (max-width: 600px) {
+    #homepageScreen .homepage-buttons { flex-direction: row !important; gap: 16px; align-items: stretch; }
+    #homepageScreen .homepage-btn { flex: 1 1 0; padding: 32px 10px; margin: 0; }
+    #homepageScreen .homepage-btn .icon { margin-bottom: 12px; }
+    #homepageScreen .homepage-btn .icon .ic { width: 3rem; height: 3rem; }
+    #homepageScreen .homepage-btn h3 { font-size: 1.3rem; }
+    #homepageScreen .homepage-btn p { font-size: 0.78rem; }
+    /* rules grid: tighten cards so scrolling scans fast */
+    #gamesMenuScreen .game-card p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    #gamesMenuScreen .game-card-img { height: 80px; }
+    #gamesMenuScreen .game-card-img .ic { width: 3.4rem; height: 3.4rem; }
+  }
+
+  /* ===== 📱 Phone disposition — mockup layout, ORIGINAL style kept ===== */
+  /* quick top bar: a permanent strip ABOVE the SAKUGAME logo (hidden on desktop) */
+  #phoneTopBar { display: none; }
+  @media (max-width: 600px) {
+    #phoneTopBar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 54px; z-index: 1200; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 12px; background: rgba(13, 25, 54, 0.9); border-bottom: 1px solid rgba(2, 169, 255, 0.25); backdrop-filter: blur(6px); }
+    /* b121: the phone quick strip is gone — no more 54px reservation; the standard 10px top padding applies */
+    .chat-overlay { top: calc(54px + env(safe-area-inset-top, 0px) + 10px); } /* 💬 never tucked under the top strip — close button fully visible */
+    .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
+    .tb-btn .ic { width: 20px; height: 20px; color: var(--accent); }
+    .tb-btn:hover { border-color: var(--accent); }
+    .tb-flag { display: flex; align-items: center; }
+    .tb-flag .flg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45); }
+    .tb-menu { display: none; position: absolute; top: 48px; right: 12px; background: var(--card); border: 2px solid rgba(2, 169, 255, 0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55); z-index: 1201; }
+    .tb-menu.open { display: block; }
+    #tbVolMenu { width: 190px; }
+    #tbVolMenu .music-volume-slider { width: 100%; }
+    #tbLangMenu .lang-opt { width: 100%; margin-bottom: 6px; }
+    #tbLangMenu .lang-opt:last-child { margin-bottom: 0; }
+    /* volume & language live in the top bar on phones — hide the old copies inside the menus */
+    .phm-hide { display: none !important; }
+  }
+
+  /* home + rules: mockup disposition only — original card style untouched */
+  @media (max-width: 600px) {
+    /* HOME — two big cards right under the SAKUGAME logo, fits one screen */
+    #homepageScreen.active { display: block; min-height: 0; }
+    #homepageScreen .homepage-container { margin: 14px auto 0; width: 100%; max-width: 560px; padding: 0 18px; }
+    #homepageScreen .homepage-title { display: none; }
+    #homepageScreen .homepage-subtitle { display: none; }
+    #homepageScreen .homepage-buttons { gap: 18px; flex-wrap: nowrap; flex-direction: row; }
+    #homepageScreen .homepage-btn { flex: 1 1 0; min-width: 0; aspect-ratio: 1 / 1; padding: 14px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    #homepageScreen .homepage-btn .icon { margin-bottom: 10px; }
+    #homepageScreen .homepage-btn .icon .ic { width: 3rem; height: 3rem; }
+    #homepageScreen .homepage-btn h3 { font-size: 1.3rem; margin: 0; }
+    #homepageScreen .homepage-btn p { display: none; }
+    /* RULES — compact phone cards (the smaller version you liked is back) */
+    #gamesMenuScreen h2 { font-size: 1.6rem !important; margin-bottom: 18px !important; }
+    #gamesMenuScreen .games-grid { gap: 12px; margin-top: 4px; }
+    #gamesMenuScreen .game-card { border-radius: 16px; }
+    #gamesMenuScreen .game-card-img { height: 66px; }
+    #gamesMenuScreen .game-card-img .ic { width: 2.8rem; height: 2.8rem; }
+    #gamesMenuScreen .game-card-content { padding: 10px 10px 12px; }
+    #gamesMenuScreen .game-card-content h3 { font-size: 0.92rem; margin-bottom: 4px; text-align: center; }
+    #gamesMenuScreen .game-card-content p { font-size: 0.7rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    #gamesMenuScreen .game-card-content::after { font-size: 0.66rem; margin-top: 6px; }
+  }
+
+  /* ⬅ universal mini back arrow — sits at the left of the screen title */
+  .back-mini { background: none; border: none; color: var(--accent); font-size: 0.85em; line-height: 1; cursor: pointer; padding: 4px 12px 4px 2px; opacity: 0.9; transition: all 0.2s; }
+  .back-mini:hover { opacity: 1; transform: translateX(-3px); }
+  #playMenuScreen h2, #gamesMenuScreen h2, #hostRoomScreen h2, #joinRoomScreen h2 { display: flex; align-items: center; justify-content: center; gap: 2px; }
+
+  /* 🧭 Unified page-back button — a real button (not just an arrow), always in the
+     same spot: top-left of the page, just under the logo, hugging the content column. */
+  .page-back {
+    position: fixed; top: 74px; left: max(18px, calc(50% - 330px)); z-index: 70;
+    width: 48px; height: 48px; border-radius: 13px; border: 2px solid rgba(2,169,255,0.35);
+    background: var(--card); color: var(--accent); font-size: 1.5rem; font-weight: 800; line-height: 1;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4); transition: all 0.18s;
+  }
+  .page-back:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(2,169,255,0.25); }
+  @media (max-width: 900px) {
+    /* 📱 back button: far LEFT of the title row (orange-square zone); the title
+       itself shrinks a notch and leaves room for the button — never overlapped */
+    #playMenuScreen h2, #gamesMenuScreen h2, #hostRoomScreen h2, #joinRoomScreen h2 {
+      position: relative; padding-left: 58px; font-size: 1.5rem !important;
+    }
+    .page-back { position: absolute; top: 50%; transform: translateY(-50%); left: 12px; width: 44px; height: 44px; border-radius: 12px; font-size: 1.4rem; }
+    .page-back:hover { transform: translateY(calc(-50% - 2px)); }
+  }
+
+  /* 📱 play menu + host/join panels — fit one viewport on phones */
+  @media (max-width: 600px) {
+    #playMenuScreen .play-menu { margin: 8px auto; padding: 0 14px; }
+    #hostRoomScreen .panel, #joinRoomScreen .panel { margin: 8px auto; padding: 22px 18px; max-height: calc(100dvh - 150px); overflow-y: auto; }
+  }
+
+  /* ===== 👤 account modal — phone fixes (edit badges, checkboxes, rows) ===== */
+  /* (1) edit badges: perfectly circular everywhere — crush any inherited button box-model */
+  .ava-edit { min-width: 26px; min-height: 26px; max-width: 26px; max-height: 26px; width: 26px; height: 26px; flex: none; padding: 0; line-height: 1; font-size: 0; box-sizing: border-box; }
+  /* (4) name edit pencil — same badge style, just inline next to the name */
+  .profile-name-row { display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+  .ava-edit.name-edit { position: static; width: 24px; height: 24px; min-width: 24px; max-width: 24px; min-height: 24px; max-height: 24px; }
+  /* (5) profile rows: inputs may shrink, buttons never overlap them */
+  .profile-row input[type="text"], .profile-row input[type="password"] { flex: 1 1 auto; min-width: 0; width: 100%; }
+  .profile-row button { flex-shrink: 0; white-space: nowrap; }
+  /* (3) Count-as-watched checkboxes — wrap onto clean lines instead of a cropped scroll strip */
+  @media (max-width: 600px) {
+    .ws-row { flex-wrap: wrap; overflow: visible; gap: 6px 14px; }
+    .ws-row label { font-size: 0.78rem; }
+  }
+
+  /* ⏸️ music suspended (placeholder tracks removed) — hide every music control */
+  /* 🔇 Music UI is OPT-IN: hidden by default everywhere, shown only when the
+     player really boots (body.music-on). Suspension-proof even with stale JS. */
+  #tbVolBtn, #tbVolMenu, .music-volume-slider, .music-block { display: none !important; }
+  body.music-on #tbVolBtn { display: flex !important; }
+  body.music-on #tbVolMenu.open { display: block !important; }
+  body.music-on .music-block { display: block !important; }
+  body.music-on .music-volume-slider { display: block !important; }
+
+  /* ⚖️ legal link at the bottom of the Support tab */
+  .legal-link-wrap { text-align: center; margin-top: 20px; }
+  .legal-link { color: var(--accent); font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding-bottom: 2px; border-bottom: 1px dashed rgba(2, 169, 255, 0.45); }
+  .legal-link:hover { color: #4fb9fb; border-bottom-color: #4fb9fb; }
+  .legal-link .ic { width: 14px; height: 14px; }
+
+  /* ═══════════════ b117 — "ARCADE OUTLINE (soft glow)" reskin ═══════════════
+     Approved from design-variants/variant-c-neon.html. Palette, Nunito and the
+     sakura backdrop are UNCHANGED; surfaces become deep-navy plates with thin
+     cyan outlines. Glow discipline: whisper-light (≤ 12px, ≤ ~.25 alpha) on
+     static/UI elements — luminous outlines (22-24px, ~.3) only on interactive
+     card hover/selected states. Settings surfaces keep the muted profile.
+     This layer overrides base rules by source order — base kept as fallback. */
+
+  /* 🌌 backdrop: faint blueprint grid under the petals */
+  #sakuraBg {
+    background:
+      linear-gradient(rgba(2, 169, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(2, 169, 255, 0.022) 1px, transparent 1px),
+      radial-gradient(1000px 620px at 88% -12%, rgba(2, 169, 255, 0.14), transparent 62%),
+      radial-gradient(820px 620px at -12% 108%, rgba(67, 96, 159, 0.22), transparent 60%),
+      linear-gradient(158deg, #0a0e24 0%, #101b3f 48%, #162653 100%);
+    background-size: 42px 42px, 42px 42px, auto, auto, auto;
+  }
+
+  /* 🏷️ brand — the only glowy text on the site (large display type = safe) */
+  .site-logo { filter: drop-shadow(0 0 6px rgba(2, 169, 255, 0.3)); }
+  .site-logo span { color: var(--accent); letter-spacing: 0.14em; text-shadow: 0 0 9px rgba(2, 169, 255, 0.45); }
+
+  /* 🏠 homepage hero cards */
+  .homepage-btn {
+    background: #131a38; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 14px;
+    clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  }
+  .homepage-btn:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55), 0 0 24px rgba(2, 169, 255, 0.3); }
+  .homepage-btn h3 { text-transform: uppercase; letter-spacing: 0.08em; }
+  .homepage-btn .icon { width: 62px; height: 62px; margin: 0 auto 15px; border-radius: 50%; border: 2px solid rgba(2, 169, 255, 0.6); background: rgba(2, 169, 255, 0.08); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45), 0 0 10px rgba(2, 169, 255, 0.22); display: flex; align-items: center; justify-content: center; }
+  .homepage-btn .icon .ic { width: 30px; height: 30px; color: #8fdcff; }
+
+  /* 🎮 play menu options */
+  .play-option { background: #121831; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 12px; }
+  .play-option:hover { border-color: var(--accent); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(2, 169, 255, 0.22); }
+
+  /* 🃏 rules cards — angular cut + luminous rim on hover */
+  .game-card { background: #121831; border: 1.5px solid rgba(2, 169, 255, 0.28); border-radius: 12px; clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%); }
+  .game-card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(2, 169, 255, 0.3); }
+  #gamesMenuScreen .game-card { border-radius: 12px; }
+  .game-card-img { background: linear-gradient(135deg, #0d2a55, #081226); border-bottom: 1.5px solid rgba(2, 169, 255, 0.35); }
+  .game-card-img .ic { color: var(--accent); filter: none; }
+
+  /* 🎯 create-room & lobby game pickers */
+  .game-pick-card { background: #121831; border: 1.5px solid rgba(2, 169, 255, 0.22); border-radius: 10px; }
+  .game-pick-card:hover { border-color: rgba(2, 169, 255, 0.85); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 16px rgba(2, 169, 255, 0.22); }
+  .game-pick-card.selected { border-color: var(--accent); background: rgba(2, 169, 255, 0.12); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), 0 0 22px rgba(2, 169, 255, 0.32); }
+  .game-pick-img { background: none; height: auto; padding: 14px 0 4px; }
+  .game-pick-img .ic { width: 26px; height: 26px; color: #6ec9ff; filter: none; }
+
+  /* 🧩 panels & modals — MUTED profile (calm settings, per guideline) */
+  .panel, .settings-section, .modal-content {
+    background: #10162e; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 14px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5), 0 0 20px rgba(2, 169, 255, 0.08);
+  }
+
+  /* 🔘 option radios + difficulty checks — luminous selected ring, whisper glow */
+  .radio-option { background: rgba(2, 169, 255, 0.03); border: 1.5px solid rgba(2, 169, 255, 0.28); border-radius: 8px; }
+  .radio-option.selected { border-color: var(--success); background: rgba(0, 200, 83, 0.1); color: #8fffb4; box-shadow: 0 0 8px rgba(0, 200, 83, 0.22); }
+  .diff-check { background: transparent; border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 7px; }
+  .diff-check.selected { color: #8fffb4; box-shadow: 0 0 8px rgba(0, 200, 83, 0.22); }
+
+  /* 🎚️ sliders — clean bar, rimmed thumb, almost no glow */
+  input[type="range"] { background: rgba(2, 169, 255, 0.12); border: 1px solid rgba(2, 169, 255, 0.3); border-radius: 99px; }
+  input[type="range"]::-webkit-slider-thumb { background: #06121f; border: 3px solid var(--accent); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 4px rgba(2, 169, 255, 0.2); }
+  input[type="range"]::-moz-range-thumb { background: #06121f; border: 3px solid var(--accent); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 4px rgba(2, 169, 255, 0.2); }
+
+  /* ⌨️ text inputs */
+  .input-group input, .input-group select { border: 1.5px solid rgba(2, 169, 255, 0.3); border-radius: 8px; background: rgba(10, 15, 35, 0.6); }
+  .input-group input:focus, .input-group select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(2, 169, 255, 0.15); }
+
+  /* ✅ action buttons — outlined green plate (matches the approved Create Room) */
+  button.success { background: rgba(0, 200, 83, 0.12); border: 2px solid var(--success); color: #8fffb4; box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 200, 83, 0.22); }
+  button.success:hover { background: rgba(0, 200, 83, 0.2); }
+  .back-btn { background: transparent; border: 1.5px solid rgba(2, 169, 255, 0.3); color: var(--muted); }
+  .back-btn:hover { border-color: rgba(2, 169, 255, 0.7); color: var(--text); }
+
+  /* ===== b119 · 🌐 language picker on ALL devices + 📍 user menu-bar position (Bottom/Top) ===== */
+  /* The flag button is now part of the bar on every device (it used to be desktop-only);
+     these base rules un-gate it. It sits at the far LEFT of the bar, just before the Beta badge. */
+  #pcLangWrap { display: inline-flex; align-items: center; position: relative; flex: none; }
+  #pcLangWrap .tb-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--card); border: 2px solid rgba(2,169,255,0.35); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; box-shadow: 0 4px 14px rgba(0,0,0,0.35); flex: none; }
+  #pcLangWrap .tb-btn:hover { border-color: var(--accent); }
+  #pcLangWrap .tb-flag { display: flex; align-items: center; }
+  #pcLangWrap .tb-flag .flg { width: 22px; height: 15px; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+  /* menu opens upward, anchored to the LEFT of the flag (bar is left-anchored now) —
+     top/right neutralized so the shared .tb-menu phone rules can't stretch it */
+  #pcLangMenu { display: none; position: absolute; bottom: calc(100% + 10px); top: auto; left: 0; right: auto; flex-direction: column; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 12px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 130; min-width: 170px; margin: 0; gap: 6px; }
+  #pcLangMenu.open { display: flex; }
+  #pcLangMenu .lang-opt { width: 100%; margin: 0; }
+
+  /* 📍 body.bar-top — user setting (profile modal) repins the menu bar to the TOP of every page */
+  body.bar-top { padding-top: 74px; padding-bottom: 20px; }
+  body.bar-top #bottomBar { top: 0; bottom: auto; padding-bottom: 5px; border-top: 0; border-bottom: 2px solid #2a2a4a; box-shadow: 0 4px 18px rgba(0,0,0,0.45); }
+  body.bar-top #pcLangMenu { bottom: auto; top: calc(100% + 10px); }
+  body.bar-top #phoneTopBar { top: 60px; } /* the phone quick strip slides under the moved bar */
+  /* everything that used to hover above the bar's bottom spot falls back to the screen edge */
+  body.bar-top #chatToggleBtn { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  body.bar-top .chat-overlay { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  body.bar-top .game-controls,
+  body.bar-top .uc-controls { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  body.bar-top .saku-consent { bottom: 16px; }
+  @media (max-width: 600px) { body.bar-top { padding-top: 118px; } } /* bar + phone quick strip */
+  @media (min-width: 901px) { body.bar-top .chat-overlay { bottom: 16px; } }
+
+  /* ===== b120 · 🥷🎴 Ninja Scrolls phone redesign (approved hybrid mock) + lobby/flag fixes ===== */
+  /* new parts live here by default so the DESKTOP look is 100% untouched */
+  .cn-phone-head { display: none; }
+  .cn-turn-wrap { position: relative; }
+  .cn-help-btn { display: none; }
+  #cnChatRowBtn { display: none; } /* phone control-row chat; desktop keeps the floating 💬 */
+
+  /* 🐛 FIX (user report): the NS lobby team columns changed WIDTH when someone joined a box —
+     the grid tracks sized to content. Clamp their minimum so both halves stay exactly 50/50. */
+  .cn-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .cn-cols .cn-box { min-width: 0; }
+  .cn-cols .cn-box-list, .cn-cols .cn-box-list > * { min-width: 0; max-width: 100%; }
+
+  @media (max-width: 900px) {
+    /* ---- FLOW: one column in the mock's order. .board-section is flattened with display:contents
+         so the board, the controls and the button row can interleave with their siblings ---- */
+    #codenamesScreen .uc-main { display: grid; grid-template-columns: 1fr; }
+    #codenamesScreen .board-section { display: contents; }
+    #codenamesScreen .cn-phone-head { grid-row: 1; }
+    #codenamesScreen .cn-role { grid-row: 2; }
+    #codenamesScreen .cn-turn-wrap { grid-row: 3; }
+    #codenamesScreen .cn-board { grid-row: 4; }
+    #codenamesScreen .cn-cluebar { grid-row: 5; }
+    #codenamesScreen .cn-controls { grid-row: 6; }
+    #codenamesScreen .game-controls { grid-row: 7; }
+    #codenamesScreen .uc-header, #codenamesScreen .br-log-wrap { display: none; } /* counts+history moved into the header grid */
+
+    /* ---- top zone: SHOGUN/NINJA team panels flanking the mini history (mock .headrow) ---- */
+    #codenamesScreen .cn-phone-head { display: grid; grid-template-columns: 82px minmax(0, 1fr) 82px; gap: 7px; align-items: stretch; }
+    #codenamesScreen .cnph-team { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    #codenamesScreen .cnph-sec { border-radius: 12px; padding: 6px 4px; text-align: center; }
+    #codenamesScreen .cnph-sec h5 { font-size: 0.56rem; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; opacity: 0.85; margin-bottom: 4px; font-weight: 800; }
+    #codenamesScreen .cnph-team.blue .cnph-agents { background: linear-gradient(160deg, rgba(30,136,229,0.55), rgba(30,136,229,0.30)); box-shadow: inset 0 0 0 1.5px rgba(140,196,255,0.55), 0 2px 6px rgba(0,0,0,0.35); }
+    #codenamesScreen .cnph-team.red .cnph-agents { background: linear-gradient(160deg, rgba(229,57,53,0.55), rgba(229,57,53,0.30)); box-shadow: inset 0 0 0 1.5px rgba(255,160,140,0.6), 0 2px 6px rgba(0,0,0,0.35); }
+    #codenamesScreen .cnph-team.blue .cnph-spy, #codenamesScreen .cnph-team.blue .cnph-count { background: rgba(30,136,229,0.22); box-shadow: inset 0 0 0 1.5px rgba(140,196,255,0.35); }
+    #codenamesScreen .cnph-team.red .cnph-spy, #codenamesScreen .cnph-team.red .cnph-count { background: rgba(229,57,53,0.22); box-shadow: inset 0 0 0 1.5px rgba(255,160,140,0.4); }
+    #codenamesScreen .cnph-count { border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    #codenamesScreen .cnph-count b { font-size: 1.7rem; font-weight: 900; color: #fff; line-height: 1; }
+    #codenamesScreen .cnph-avrow { display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; }
+    #codenamesScreen .cnph-chip { display: inline-flex; }
+    #codenamesScreen .ava.ava-cnph { width: 22px; height: 22px; border-radius: 50%; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.55); }
+    #codenamesScreen .ava.ava-cnph img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    #codenamesScreen .cnph-names { font-size: 0.52rem; color: #fff; opacity: 0.92; margin-top: 2px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+    #codenamesScreen .cnph-none { opacity: 0.5; font-size: 0.7rem; }
+    #codenamesScreen .cnph-hist { background: rgba(13,25,54,0.8); border-radius: 12px; padding: 6px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.1), 0 2px 6px rgba(0,0,0,0.3); min-width: 0; display: flex; flex-direction: column; }
+    #codenamesScreen .cnph-hist h5 { text-align: center; font-size: 0.6rem; letter-spacing: 0.16em; color: rgba(255,255,255,0.7); margin-bottom: 5px; text-transform: uppercase; font-weight: 800; }
+    #codenamesScreen .cnph-hist-list { display: flex; flex-direction: column; gap: 3px; flex: 1; min-height: 0; max-height: 150px; overflow-y: auto; }
+    #codenamesScreen .cnph-hist-list > div { border-radius: 6px; padding: 3px 6px; font-size: 0.58rem; line-height: 1.3; background: rgba(255,255,255,0.05); border-left: 3px solid rgba(255,255,255,0.2); word-break: break-word; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-c-red { border-left-color: #e53935; background: rgba(229,57,53,0.18); }
+    #codenamesScreen .cnph-hist-list .br-log-cn-c-blue { border-left-color: #1e88e5; background: rgba(30,136,229,0.18); }
+    #codenamesScreen .cnph-hist-list .br-log-cn-f-red { border-left-color: #ff8a80; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-f-blue { border-left-color: #82b1ff; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-beige { border-left-color: #b0a48a; }
+    #codenamesScreen .cnph-hist-list .br-log-cn-black { border-left-color: #6a6a80; }
+    #codenamesScreen .cnph-empty { text-align: center; color: var(--muted); font-size: 0.6rem; }
+
+    /* ---- role chip + turn banner + ❓ ---- */
+    #codenamesScreen .cn-role { font-size: 0.72rem; margin: 7px 0 0; }
+    #codenamesScreen .cn-turn { margin: 5px 0 3px; font-size: 0.85rem; padding: 8px 36px 8px 12px; }
+    #codenamesScreen .cn-help-btn { display: flex; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; padding: 0; border-radius: 50%; background: linear-gradient(150deg, #2fd37a, #0e9d54); color: #fff; font-weight: 900; font-size: 0.85rem; border: none; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+    /* ---- board: exact hybrid geometry (4 cols, small gap, 1/1.02 tiles) ---- */
+    #codenamesScreen .cn-board { gap: 5px; margin-top: 4px; }
+    #codenamesScreen .cn-card { border-radius: 8px; }
+    #codenamesScreen .cn-card img { aspect-ratio: 1 / 1.02; }
+    #codenamesScreen .cn-card .cn-name { font-size: 0.46rem; }
+
+    /* ---- clue bar (mock): dark pill with the word card + ×n ---- */
+    #codenamesScreen .cn-cluebar { margin: 8px 0 0; font-size: 0.95rem; background: #0d0f18; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.14), 0 4px 10px rgba(0,0,0,0.4); }
+
+    /* ---- controls row becomes the mock's 📟 3-button strip (chat / lobby / end) ---- */
+    #codenamesScreen .game-controls { position: static; padding: 0; margin-top: 8px; display: flex; flex-direction: row; flex-wrap: nowrap; gap: 7px; }
+    #codenamesScreen .game-controls button { flex: 1; min-width: 0; height: 46px; border-radius: 12px; font-size: 0.72rem; position: relative; }
+    #codenamesScreen .game-controls .btn-label { display: inline; font-weight: 800; }
+    #codenamesScreen .game-controls .btn-label-phone { display: none; }
+    #codenamesScreen #cnChatRowBtn { display: flex; }
+    /* the floating 💬 would cover the board — the row button replaces it on this screen */
+    #codenamesScreen.active ~ #chatToggleBtn { display: none !important; }
+    #codenamesScreen.active ~ .chat-overlay { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* ===== b121 · 🎨 Personalization tab · bar cleanup · support fix · in-game logo ===== */
+  /* 🐛 support (phone): the Discord card squeezed its label to 1 letter/line.
+     Let the row wrap and the label take a whole line instead. */
+  .discord-card { flex-wrap: wrap; }
+  .dc-handle { overflow-wrap: break-word; }
+  .dc-mid { flex: 1 1 150px; min-width: 0; text-align: left; }
+  .dc-sync { margin-top: 10px; }
+  .dc-signup-note { color: var(--muted); font-size: 0.78rem; margin: 12px 0 0; line-height: 1.45; }
+  .dc-big { background: #5865F2; margin-top: 10px; }
+  .dc-big:hover { background: #4752c4; }
+  .ghost { background: transparent; border: 2px solid #2a2a4a; color: var(--muted); }
+  .ghost:hover { border-color: var(--accent); color: var(--text); }
+
+  /* personalization language row: flag chips, tight radio cards */
+  .lang-pick-row .radio-option { padding: 10px 6px; }
+  .lang-pick .flg { width: 22px; height: 15px; border-radius: 3px; margin-right: 0.3em; vertical-align: -2px; box-shadow: 0 1px 3px rgba(0,0,0,0.45); }
+  .lang-pick.selected { border-color: var(--accent); background: rgba(2, 169, 255, 0.08); }
+
+  /* during any game the phone drops the big SAKUGAME logo — the board needs the room */
+  @media (max-width: 900px) {
+    body.in-game .site-header { display: none; }
+  }
+  @media (max-width: 600px) {
+    .dc-join, .dc-copy { flex: 1 1 calc(50% - 5px); justify-content: center; }
+  }
+
+  /* ===== b122 · 📱 compact settings tabs + NS lobby & keyboard fixes ===== */
+  @media (max-width: 600px) {
+    /* settings tabs: 4 on one row, no scrollbar, smaller type */
+    .acct-tabs { gap: 4px; padding: 3px; flex-wrap: nowrap; overflow: visible; margin: 12px 0; }
+    .acct-tab { flex: 1 1 0; min-width: 0; gap: 3px; padding: 7px 2px; font-size: 0.66rem; white-space: nowrap; letter-spacing: -0.1px; }
+    .acct-tab .ic { width: 0.8rem; height: 0.8rem; flex: none; }
+  }
+  @media (max-width: 900px) {
+    /* ⌨️ the b120 pin must NOT win over the Discord-style keyboard lift (chat above keyboard) */
+    body.kb-open #codenamesScreen.active ~ .chat-overlay { bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); }
+    /* 🥷🎴 the NS clue box rides above the keyboard exactly like the lobby chat does */
+    body.kb-open #codenamesScreen .cn-controls { position: fixed; left: 8px; right: 8px; bottom: calc(max(var(--kb, 0px), env(keyboard-inset-height, 0px)) + env(safe-area-inset-bottom, 0px) + 8px); z-index: 85; background: var(--card); border: 2px solid rgba(2,169,255,0.35); border-radius: 14px; padding: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); margin: 0; }
+  }
+
+  /* ===== b123 · ⚙️ settings unified into 2 sections · "?" info · compact lobby admin ===== */
+  /* settings window: ONE Room settings card + ONE Game settings card, inner boxes flattened */
+  #settingsModal #settingsTabRoom, #settingsModal #settingsTabGame,
+  #hostRoomScreen #createTabRoom, #hostRoomScreen #createTabGame { display: block; background: #101423; border: 2px solid #2a2a4a; border-radius: 16px; padding: 14px 14px 8px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+  #settingsModal .settings-section, #hostRoomScreen .settings-section { background: transparent; border: none; padding: 0; margin: 0 0 12px; box-shadow: none; }
+  #settingsModal .settings-section:last-of-type, #hostRoomScreen .settings-section:last-of-type { margin-bottom: 4px; }
+  #settingsModal .sec-h, #hostRoomScreen .sec-h { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: var(--accent); font-weight: 900; font-size: 0.95rem; letter-spacing: 0.4px; }
+  #settingsModal .sec-h .ic, #hostRoomScreen .sec-h .ic { width: 1.05rem; height: 1.05rem; }
+
+  /* information bubble trigger: "?" instead of the i glyph, same 13px presence */
+  .info-btn .ic { display: none; }
+  .info-btn::after { content: "?"; font-weight: 900; font-size: 13px; line-height: 1; }
+
+  /* 📱 lobby host buttons (👑 transfer · ✕ kick): small enough to sit inside the name box */
+  @media (max-width: 600px) {
+    .player-admin-actions { gap: 4px; }
+    .player-admin-btn { width: 24px; height: 24px; border-radius: 7px; }
+    .player-admin-btn svg { width: 12px; height: 12px; }
+    .player-admin-btn:hover { transform: none; }
+  }
+
+  /* ===== b125 · ? tutorial button on game cards · real mock-game howto bits ===== */
+  .game-pick-card { position: relative; }
+  .gpm-row { position: relative; }
+  .gp-howto { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--accent); background: rgba(2, 169, 255, 0.14); color: var(--accent); font-weight: 900; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; z-index: 3; }
+  .gp-howto:hover { background: var(--accent); color: #04122b; }
+  .mk-uw { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .mk-uw-img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; border: 2px solid rgba(255,255,255,0.14); background: #1a1a2e; display: block; }
+  .mk-uw span { font-weight: 800; font-size: 0.88rem; }
+
+  /* ===== b126 · compact game-picker rows · trailing ? · tutorial above everything ===== */
+  /* 📱 choose-a-game menu: slimmer rows, the ? sits at the right of each game line */
+  .gpm-row { padding: 8px 12px; font-size: 0.86rem; gap: 10px; margin-bottom: 6px; border-radius: 10px; }
+  .gpm-row .ic { width: 19px; height: 19px; }
+  .gpm-row small { font-size: 0.72rem; }
+  .gp-howto.gpm-howto { position: static; margin-left: 8px; flex: none; width: 24px; height: 24px; font-size: 13px; }
+
+  /* 🎬 tutorial slideshow always in the FOREGROUND (game picker sits at 1260) */
+  .howto-modal { z-index: 1300; }
+
+  /* ===== b128/b161 · NS name strip = the card's colour, DARKENED ===== */
+  /* one veil on .cn-name covers every state: beige word cards (Shogun) and the
+     coloured key / revealed cards (Ninja) — see the base .cn-name rule above */
+
+  /* ===== b129 · 🕵️ Detective Showdown — phone pass (NS-style one-column flow) ===== */
+  @media (max-width: 600px) {
+    /* one phone-native column: header → secret strip → question → BOARD (dominant) */
+    #gameScreen .game-container { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #gameScreen .game-left { display: contents; }   /* its children join the main grid */
+    #gameScreen .game-center { display: contents; }
+    #gameScreen .game-header { grid-row: 1; padding: 8px 10px; border-radius: 12px; gap: 6px; }
+    /* your secret = a slim horizontal strip, right under the names (still hidable) */
+    #gameScreen .my-character { grid-row: 2; order: initial; padding: 6px 8px; text-align: left; min-width: 0; }
+    #gameScreen .my-character h3 { display: none; }
+    #gameScreen .my-character-card { display: flex; align-items: center; gap: 10px; border-width: 2px; width: 100%; }
+    #gameScreen .my-character-card img { width: 40px; height: 54px; }
+    #gameScreen .my-character-card .info { padding: 0; background: transparent; }
+    #gameScreen .my-character-card .name { font-size: 0.95rem; }
+    #gameScreen .question-box { grid-row: 3; padding: 10px; }
+    #gameScreen .board-section { grid-row: 4; padding: 8px; }
+    #gameScreen .board-section h3 { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+    /* the Q&A log goes away on phone — the live question box carries the state */
+    #gameScreen .history-section { display: none; }
+    /* bigger faces: floor at 64px, tighter chrome */
+    #gameScreen .board { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; margin-bottom: 0; }
+  }
+
+  /* ===== b130 · DS — tap your secret to hide/show (Cold Case blur), chat pinned right ===== */
+  .my-character-card { cursor: pointer; }
+  .my-character.ds-hide .my-character-card img { filter: blur(8px) brightness(0.55); }
+  .my-character.ds-hide .my-character-card .name { filter: blur(4px); }
+
+  /* ===== b131 · DS — fixed corner row (Lobby / End game) · History bottom-sheet ===== */
+  /* 🚪✕ fixed in the top-left: in-flow row, site-styled (no overlays flying over the game) */
+  .gw-corner { display: flex; gap: 8px; align-items: center; align-self: center; flex: none; }
+  .gw-corner button { height: 34px; min-height: 34px; padding: 0 12px; border-radius: 10px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
+  .gw-corner button .ic { width: 16px; height: 16px; }
+  @media (max-width: 600px) {
+    .gw-corner { gap: 6px; align-self: center; margin-right: 8px; }
+    .gw-corner button { width: 38px; height: 38px; min-height: 38px; padding: 0; justify-content: center; }
+    .gw-corner button .btn-label { display: none; }
+    .gw-corner button .ic { width: 18px; height: 18px; }
+    /* 🗒 Q&A log opens as a bottom-sheet above the bar */
+    #gameScreen.gw-hist-open .history-section { display: flex; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #gameScreen.gw-hist-open .history-list { max-height: none; }
+    #gameScreen.gw-hist-open #gwHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+  }
+
+  /* ===== b133 · DS corner polish — centered cluster, a bit more room before "You" ===== */
+  @media (max-width: 600px) {
+    #gameScreen .gw-corner { align-self: center; margin-right: 8px; }
+  }
+
+  /* ===== b134 · 🎭👥 Detective Royale — phone pass (DS formula) ===== */
+  @media (max-width: 600px) {
+    /* one column: banner(corner+badges) → secret → chips → question → BOARD */
+    #battleScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #battleScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #battleScreen .uc-header { grid-row: 1; display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #battleScreen .br-mysecret { grid-row: 2; }
+    #battleScreen .br-chips { grid-row: 3; padding-bottom: 0; margin-bottom: 0; }
+    #battleScreen .br-chip-hint { display: none; }
+    #battleScreen .question-box { grid-row: 4; padding: 10px; }
+    #battleScreen .board-section { grid-row: 5; padding: 8px; }
+    #battleScreen .board-section > h3 { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+    /* the log hides; 🗒 opens it as a bottom-sheet above the bar */
+    #battleScreen .br-log-wrap { display: none; }
+    #battleScreen.br-hist-open .br-log-wrap { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; overflow: auto; background: var(--card); border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #battleScreen.br-hist-open #brHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* the chat button lives IN the bar — the round FAB steps aside while DR is on screen */
+    #battleScreen.active ~ #chatToggleBtn { display: none !important; }
+    #battleScreen .game-controls #brChatRowBtn { display: flex; position: relative; }
+    #battleScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b135 · DR player chips — compact & wrap on phone, no scrollbar ===== */
+  @media (max-width: 600px) {
+    #battleScreen .br-chips { flex-wrap: wrap; gap: 6px; overflow: visible; padding-bottom: 0; }
+    /* b136 · exactly 3 equal chips per line, filling the whole width */
+    #battleScreen .br-chip { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; margin: 0; }
+    #battleScreen .br-chip { padding: 2px 7px 2px 2px; gap: 4px; border-radius: 14px; flex-shrink: 0; min-height: 0; }
+    #battleScreen .br-chip .ava-chat { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #battleScreen .br-chip .chip-name { font-size: 0.7rem; max-width: 52px; }
+    #battleScreen .br-chip .chip-pts { font-size: 0.62rem; }
+    #battleScreen .br-chip .chip-state { display: none; } /* states stay visible via the colored board */
+    #battleScreen .br-chip .chip-state:empty { display: none; }
+  }
+
+  /* ===== b137 · ⚡ Wanted! — phone pass (DS formula) ===== */
+  @media (max-width: 600px) {
+    /* one column: banner(corner+badges) → hunters → target banner → question → BOARD */
+    #raceScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #raceScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #raceScreen .uc-header { grid-row: 1; display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #raceScreen .rc-hunters { grid-row: 2; }
+    #raceScreen .rc-hunters .br-mysecret, #raceScreen #rcBanner { grid-row: 3; }
+    #raceScreen .question-box { grid-row: 4; padding: 10px; }
+    #raceScreen .board-section { grid-row: 5; padding: 8px; }
+    #raceScreen .board-section > h3 { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+    #raceScreen .board { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; }
+    /* hunter chips: compact, exactly 3 equal chips per line */
+    #raceScreen .rc-hunters { flex-wrap: wrap; gap: 6px; overflow: visible; padding-bottom: 0; }
+    #raceScreen .rc-hunter { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; margin: 0; padding: 2px 6px 2px 2px; gap: 4px; border-radius: 14px; min-height: 0; flex-shrink: 0; }
+    #raceScreen .rc-hunter .ava-chat { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #raceScreen .rc-hunter-name { font-size: 0.7rem; max-width: 52px; }
+    #raceScreen .rc-hunter-res { font-size: 0.62rem; }
+    /* the log hides; 🗒 opens it as a bottom-sheet above the bar */
+    #raceScreen .br-log-wrap { display: none; }
+    #raceScreen.rc-hist-open .br-log-wrap { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; overflow: auto; background: var(--card); border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #raceScreen.rc-hist-open #rcHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* the chat button lives IN the bar */
+    #raceScreen.active ~ #chatToggleBtn { display: none !important; }
+    #raceScreen .game-controls #rcChatRowBtn { display: flex; position: relative; }
+    #raceScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b138 · 🕵️‍🔍 Undercover — phone pass (DS formula, clues stay in flow) ===== */
+  #undercoverScreen .uc-word-card { cursor: pointer; }
+  @media (max-width: 600px) {
+    #undercoverScreen .uc-container { padding: 6px 8px calc(96px + env(safe-area-inset-bottom, 0px)); }
+    #undercoverScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #undercoverScreen .uc-header { grid-row: 1; display: flex; align-items: center; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: wrap; }
+    #undercoverScreen .uc-word-card { grid-row: 2; padding: 8px 10px; margin-bottom: 0; }
+    #undercoverScreen .uc-word { font-size: 1.05rem; }
+    #undercoverScreen .uc-word-card .uc-word-label { font-size: 0.76rem; margin-bottom: 3px; }
+    #undercoverScreen .uc-word-img { height: 44px; width: 44px; border-radius: 8px; object-fit: cover; margin: 4px auto; }
+    #undercoverScreen .uc-word-hint { font-size: 0.72rem; margin-top: 3px; }
+    #undercoverScreen .uc-event-banner { grid-row: 3; }
+    #undercoverScreen .uc-players { grid-row: 4; grid-template-columns: repeat(auto-fill, minmax(94px, 1fr)); gap: 6px; margin-bottom: 0; }
+    #undercoverScreen .uc-player-tile { padding: 6px; border-radius: 10px; }
+    #undercoverScreen .uc-action { grid-row: 5; }
+    #undercoverScreen .uc-clues { grid-row: 6; padding: 10px; margin-bottom: 0; }
+    #undercoverScreen .uc-clues h3 { margin: 0 0 6px; font-size: 0.8rem; color: var(--muted); }
+    /* everything the old control stack did now lives in the corner / on the word card */
+    #undercoverScreen .uc-controls { display: none !important; }
+  }
+
+  /* ===== b139 · 🕵️‍🔍 UC — clue-as-status tiles · History · Chat bar ===== */
+  .uc-tile-status.uc-tile-clue { font-style: normal; color: #9fd6ff; font-family: 'Segoe UI', sans-serif; font-size: 0.74rem; max-height: 2.1em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .uc-tile-status .uc-cloudsvg { width: 26px; height: 22px; } /* real sprite cloud, ? inside */
+  /* corner must hug the LEFT edge — the uc headers are center-justified by default */
+  @media (max-width: 600px) {
+    #undercoverScreen .uc-header, #battleScreen .uc-header, #raceScreen .uc-header { justify-content: flex-start; }
+  }
+  @media (max-width: 600px) {
+    /* word history hides; 🗒 opens it as a bottom-sheet above the bar */
+    #undercoverScreen .uc-clues { display: none; }
+    #undercoverScreen.uc-hist-open .uc-clues { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 46vh; overflow: auto; background: var(--card); border: 2px solid #2a2a4a; border-radius: 12px; padding: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #undercoverScreen.uc-hist-open #ucHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* the chat button lives IN the bar — the round FAB steps aside while UC is on screen */
+    #undercoverScreen.active ~ #chatToggleBtn { display: none !important; }
+    #undercoverScreen .game-controls #ucChatRowBtn { display: flex; position: relative; }
+    #undercoverScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+    /* UC now HAS a bottom bar — give the content the same breathing room as the others */
+    #undercoverScreen .uc-container { padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* ===== b141 · 🕵️‍🔍 UC polish: badges fit · word-card corner dice · typing dots ===== */
+  .uc-tile-status.uc-tile-speaking { display: inline-flex; }
+  .uc-tile-status .uc-typing { display: inline-flex; gap: 4px; align-items: center; height: 12px; }
+  .uc-tile-status .uc-typing i { width: 5px; height: 5px; border-radius: 50%; background: #9fd6ff; opacity: 0.25; animation: ucDot 1.05s infinite; }
+  .uc-tile-status .uc-typing i:nth-child(2) { animation-delay: 0.17s; }
+  .uc-tile-status .uc-typing i:nth-child(3) { animation-delay: 0.34s; }
+  @keyframes ucDot { 0%, 60%, 100% { opacity: 0.25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+
+  /* 🎲 change-words sits in the word card's TOP-RIGHT corner (host-only, JS-toggled) */
+  #undercoverScreen .uc-word-card { position: relative; }
+  #undercoverScreen .uc-word-card .uc-words-corner { position: absolute; top: 7px; right: 7px; width: 30px; height: 30px; min-height: 30px; padding: 0; border-radius: 9px; display: none; align-items: center; justify-content: center; }
+  #undercoverScreen .uc-word-card .uc-words-corner .ic { width: 16px; height: 16px; }
+  #undercoverScreen .uc-word-card .uc-words-corner[style*="inline-block"] { display: inline-flex !important; }
+
+  @media (max-width: 600px) {
+    /* Round 1/3 · Description time — smaller so banner + corner fit on ONE line */
+    #undercoverScreen .uc-badge { padding: 5px 10px; font-size: 0.8rem; border-radius: 14px; white-space: nowrap; }
+    #undercoverScreen .uc-header { flex-wrap: nowrap; }
+    #undercoverScreen .uc-header .uc-badge:last-child { overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  /* ===== b142 · 🧊🔥 Cold Case — phone pass (DS formula) ===== */
+  @media (max-width: 600px) {
+    #hotcoldScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #hotcoldScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    #hotcoldScreen .uc-header { grid-row: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #hotcoldScreen .hc-cols { grid-row: 2; flex-direction: column; gap: 8px; }
+    /* b143 · flatten BOTH columns so the phone flow can be reordered — the 🏆 players
+       ranking now lives IN the main flow, directly above the action/answer areas */
+    #hotcoldScreen .hc-play, #hotcoldScreen .hc-side { display: contents; }
+    #hotcoldScreen .hc-play > *, #hotcoldScreen .hc-cols > * { margin-bottom: 0; }
+    #hotcoldScreen #hcSecretStrip { order: 1; }
+    #hotcoldScreen #hcBanner { order: 2; }
+    #hotcoldScreen #hcRankWrap { order: 3; margin: 0; }
+    #hotcoldScreen .question-box { order: 4; padding: 10px; }
+    #hotcoldScreen #hcTopWrap { order: 5; margin: 0; }
+    #hotcoldScreen .game-controls { order: 6; }
+    #hotcoldScreen #hcLogWrap { order: 7; display: none; margin: 0; }
+    #hotcoldScreen .hc-hint { font-size: 0.74rem; margin: 0 0 8px; }
+    #hotcoldScreen .hc-banner { margin: 0; }
+    /* b143 · 🗒 History = the Guesses panel rendered EXACTLY like on PC (same card,
+       same header + hint, same rows) — only repositioned as a bottom-sheet that
+       scrolls internally instead of living in the side column */
+    #hotcoldScreen.hc-hist-open #hcLogWrap { display: block; position: fixed; left: 10px; right: 10px; bottom: calc(118px + env(safe-area-inset-bottom, 0px)); z-index: 70; max-height: 68vh; overflow: hidden; box-shadow: 0 10px 28px rgba(0,0,0,0.55); }
+    #hotcoldScreen.hc-hist-open #hcLog { max-height: 42vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-right: 16px; } /* b145: 42vh = same cap as the PC side log · score keeps its previous gutter from the scrollbar */
+    /* b149 · rank · picture · name slide LEFT (they hug the row's left edge) while
+       the score columns back to the right edge, its usual spot on the left of the gutter */
+    #hotcoldScreen.hc-hist-open #hcLog .hc-row { gap: 8px; padding-left: 2px; }
+    #hotcoldScreen.hc-hist-open #hcLog .hc-row > .hc-gnum:last-child { flex-shrink: 0; }
+    #hotcoldScreen.hc-hist-open #hcHistBtn { border-color: var(--accent); color: var(--accent); background: rgba(2, 169, 255, 0.14); }
+    /* b143 · 🏆 best guesses = a VERTICAL ranking on phone — one full-width row
+       per guess (rank · portrait · who + name · score at the edge) */
+    #hotcoldScreen .hc-topbar { flex-direction: column; gap: 6px; }
+    #hotcoldScreen .hc-tcard { flex: 0 0 auto; width: 100%; flex-direction: row; align-items: center; gap: 10px; padding: 7px 10px; text-align: left; }
+    #hotcoldScreen .hc-tcard img { width: 40px; height: 54px; }
+    #hotcoldScreen #hcTopWrap .hc-gtexts { align-items: flex-start; width: auto; flex: 1; }
+    #hotcoldScreen .hc-tcard .hc-gname { font-size: 0.78rem; }
+    #hotcoldScreen .hc-tcard .hc-gnum { font-size: 1rem; flex-shrink: 0; }
+    /* b144 · 🏆 players Ranking goes COMPACT on phone — small title/hint, slim rows
+       (24px avatars), ~3 players visible then internal scroll */
+    #hotcoldScreen #hcRankWrap { padding: 9px 12px 11px; }
+    #hotcoldScreen #hcRankWrap h3 { font-size: 0.82rem; margin-bottom: 3px; }
+    #hotcoldScreen #hcRankWrap .hc-rank-hint { font-size: 0.66rem; margin: 0 0 6px; }
+    #hotcoldScreen #hcRankWrap .hc-log { max-height: 140px; }
+    #hotcoldScreen #hcRankWrap .hc-row { gap: 8px; padding: 5px 6px; }
+    #hotcoldScreen #hcRankWrap .hc-av { width: 24px; height: 24px; }
+    #hotcoldScreen #hcRankWrap .hc-av img { width: 24px; height: 24px; }
+    #hotcoldScreen #hcRankWrap .hc-rank { width: 20px; font-size: 0.9rem; }
+    #hotcoldScreen #hcRankWrap .hc-cls .hc-row:nth-child(1) .hc-rank, #hotcoldScreen #hcRankWrap .hc-row:nth-child(1) .hc-rank { font-size: 1rem; }
+    #hotcoldScreen #hcRankWrap .hc-gname { font-size: 0.84rem; }
+    #hotcoldScreen #hcRankWrap .hc-gnum { font-size: 0.9rem; }
+    /* b145 · the "Name a character…" coaching line is redundant with the input
+       placeholder on phone — gone (PC keeps it) */
+    #hotcoldScreen #hcGuessHint { display: none; }
+    /* the chat button lives IN the bar — FAB steps aside */
+    #hotcoldScreen.active ~ #chatToggleBtn { display: none !important; }
+    #hotcoldScreen .game-controls #hcChatRowBtn { display: flex; position: relative; }
+    #hotcoldScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b150 · 🌀 Blur Guess — phone pass (DS formula; Snapshot! mirrors it) ===== */
+  @media (max-width: 600px) {
+    #blurScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #blurScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    /* corner + 3 compact badges on one line: round · stage (pts suffix hidden) · timer */
+    #blurScreen .uc-header { grid-row: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #blurScreen .uc-badge { padding: 5px 10px; font-size: 0.78rem; white-space: nowrap; }
+    #blurScreen .bg-pts { display: none; }
+    #blurScreen #bgImgWrap { grid-row: 2; }
+    #blurScreen #bgImage { width: min(230px, 58vw); }
+    #blurScreen .bg-status { grid-row: 3; margin: 2px 0; font-size: 0.88rem; }
+    #blurScreen #bgGuessBar { grid-row: 4; }
+    /* score chips: compact, exactly 3 equal chips per line (rc-hunter, same as Wanted!) */
+    #blurScreen .bg-chips { grid-row: 5; flex-wrap: wrap; gap: 6px; overflow: visible; padding: 2px 0 0; justify-content: center; margin-bottom: 0; }
+    #blurScreen .rc-hunter { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; margin: 0; padding: 2px 6px 2px 2px; gap: 4px; border-radius: 14px; min-height: 0; flex-shrink: 0; }
+    #blurScreen .rc-hunter .ava-chat { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #blurScreen .rc-hunter-name { font-size: 0.7rem; max-width: 52px; }
+    #blurScreen .rc-hunter .chip-pts { font-size: 0.6rem; font-weight: 900; color: var(--warning); }
+    #blurScreen .rc-hunter-res { font-size: 0.62rem; }
+    /* b151 · the Rounds history is DELETED for Blur (redundant with the live chips/status)
+       — the bar is just Skip (host) · Chat */
+    #blurScreen.active ~ #chatToggleBtn { display: none !important; }
+    #blurScreen .game-controls #bgChatRowBtn { display: flex; position: relative; }
+    #blurScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }
+
+  /* ===== b152 · delete the page scrollbar — phones overlay-scroll with no rail,
+     and the frame previews got an ugly desktop-rail from the iframe ===== */
+  html { scrollbar-width: none; -ms-overflow-style: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+  /* inner list scrollbars (history sheets, logs, chat, specs) stay visible */
+
+  /* ===== b153 · 🌀 Blur Guess — everything centered on phone ===== */
+  @media (max-width: 600px) {
+    /* b154 · Lobby + End game STAY pinned top-left (user). The corner and the 3 badges are
+       SIBLINGS in ONE flex row, so centering the row centered the corner too — and simply
+       left-aligning the row dragged the badges left with it. Fix: hand the free space to two
+       auto margins (corner + last badge) — the badges then center as a group, corner never moves */
+    #blurScreen .uc-header .gw-corner { margin-right: auto; }
+    #blurScreen #bgTimerBadge { margin-right: auto; }
+    /* every block centers inside the main column */
+    #blurScreen .uc-main { justify-items: center; }
+    #blurScreen .uc-main > * { width: 100%; }
+    /* name input full width, big Guess! centered under it */
+    #blurScreen #bgGuessBar { flex-direction: column; gap: 8px; margin-bottom: 0; }
+    #blurScreen #bgGuessBar .success { align-self: center; width: min(240px, 72%); justify-content: center; }
+  }
+
+  /* ===== b156 · 📸 Snapshot! — score chips finally have a look (never styled before) ===== */
+  /* the markup is: [👑] <ava> <b>Name</b> <span>pts</span> <em>✓</em> */
+  .bg-chip { display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 5px; border-radius: 14px;
+    background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.74rem; font-weight: 700; color: var(--text); min-width: 0; }
+  .bg-chip .ava-chat, .bg-chip .ava { width: 20px; height: 20px; min-width: 20px; border-width: 1px; }
+  .bg-chip b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bg-chip > span { color: var(--warning); font-weight: 900; }
+  .bg-chip > em { font-style: normal; color: var(--success); font-weight: 900; }
+  .bg-chip .ic { width: 14px; height: 14px; color: #ffc107; flex: none; }
+  .bg-chip.found { border-color: rgba(46, 204, 113, 0.55); background: rgba(46, 204, 113, 0.1); }
+  .bg-chip.lead { border-color: rgba(255, 193, 7, 0.55); }
+
+  /* ===== b156 · 📸 Snapshot! — phone pass (the DS formula; mirrors Blur Guess) ===== */
+  @media (max-width: 600px) {
+    #snapshotScreen .uc-container { padding: 6px 8px calc(132px + env(safe-area-inset-bottom, 0px)); }
+    #snapshotScreen .uc-main { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    /* corner + 3 compact badges on one line — corner pinned LEFT, badges centered as a group */
+    #snapshotScreen .uc-header { grid-row: 1; display: flex; align-items: center; justify-content: flex-start; gap: 6px; padding: 6px 8px; margin: 0; flex-wrap: nowrap; }
+    #snapshotScreen .uc-header .gw-corner { margin-right: auto; }
+    #snapshotScreen #snTimerBadge { margin-right: auto; }
+    #snapshotScreen .uc-badge { padding: 5px 10px; font-size: 0.78rem; white-space: nowrap; }
+    /* the 4-still ladder: capped width, centered, never a full-bleed monster */
+    #snapshotScreen #snImgWrap { grid-row: 2; width: 100%; margin: 0 auto; padding: 6px; }
+    #snapshotScreen .sn-slot { aspect-ratio: 16 / 8.5; }
+    #snapshotScreen .sn-shots { gap: 5px; }
+    #snapshotScreen #snHint { grid-row: 3; margin: 2px 0 0; font-size: 0.95rem; padding: 8px 10px; }
+    #snapshotScreen .bg-status { grid-row: 4; margin: 2px 0; font-size: 0.88rem; }
+    #snapshotScreen #snGuessBar { grid-row: 5; flex-direction: column; gap: 8px; margin-bottom: 0; }
+    #snapshotScreen #snGuessBar .success { align-self: center; width: min(240px, 72%); justify-content: center; }
+    /* score chips: exactly 3 equal chips per line */
+    #snapshotScreen #snChips { grid-row: 6; flex-wrap: wrap; gap: 6px; overflow: visible; padding: 2px 0 0; justify-content: center; margin-bottom: 0; }
+    #snapshotScreen #snChips .bg-chip { flex: 0 0 calc((100% - 12px) / 3); width: calc((100% - 12px) / 3); justify-content: center; padding: 3px 4px; gap: 4px; border-radius: 12px; min-height: 0; }
+    #snapshotScreen #snChips .bg-chip .ava-chat, #snapshotScreen #snChips .bg-chip .ava { width: 18px !important; height: 18px !important; min-width: 18px; }
+    #snapshotScreen #snChips .bg-chip b { font-size: 0.66rem; max-width: 46px; }
+    #snapshotScreen #snChips .bg-chip > span { font-size: 0.62rem; }
+    /* b157 · Snapshot!'s Rounds history is DELETED (redundant with the reveal + live chips)
+       — the bar is just Skip (host) · Chat */
+    /* the chat button lives IN the bar — FAB steps aside */
+    #snapshotScreen.active ~ #chatToggleBtn { display: none !important; }
+    #snapshotScreen .game-controls #snChatRowBtn { display: flex; position: relative; }
+    #snapshotScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
+  }

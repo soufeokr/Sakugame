@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CN card — b101 geometry preview</title>
+<style>
+  body { background: #0b0b15; color: #e8e8f0; font-family: Arial, sans-serif; padding: 20px; }
+  h1 { font-size: 1rem; }
+  p.note { color: #9aa; font-size: 0.8rem; }
+  /* ==== copy of the REAL CN card rules from style.css (b101) ==== */
+  :root { --card: #1a1a2e; --success: #2ecc71; --muted: #8a8aa3; }
+  .cn-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 900px; }
+  .cn-card { position: relative; border-radius: 10px; overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.08); background: var(--card); transition: transform 0.15s, box-shadow 0.15s; display: flex; height: 80px; }
+  .cn-card img { display: block; width: 78px; height: 100%; object-fit: cover; flex-shrink: 0; }
+  .cn-side { flex: 1; min-width: 0; position: relative; display: flex; flex-direction: column; }
+  .cn-name { background: rgba(10, 10, 24, 0.88); font-size: 0.58rem; font-weight: 700; text-align: center; padding: 3px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-bottom: 2px solid rgba(255, 255, 255, 0.16); flex-shrink: 0; }
+  .cn-card.can-pick { cursor: pointer; border-color: rgba(41, 182, 246, 0.55); }
+  .cn-card.can-pick:hover { transform: scale(1.04); box-shadow: 0 0 12px rgba(41, 182, 246, 0.5); z-index: 2; }
+  .cn-sugs { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px; padding: 6px 8px; pointer-events: none; }
+  .cn-sug { width: 18px; height: 18px; border-radius: 50%; overflow: hidden; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55); background: #555; }
+  .cn-validate { position: absolute; right: 6px; bottom: 6px; z-index: 4; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; background: var(--success); color: #fff; font-weight: 900; font-size: 15px; line-height: 1; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 9px rgba(46, 204, 113, 0.6); }
+  .cn-stamp { position: absolute; top: 5px; left: 5px; font-size: 0.95rem; background: rgba(8, 8, 16, 0.75); border-radius: 50%; width: 22px; height: 22px; line-height: 22px; text-align: center; }
+  .cn-card.cn-rev-red { border-color: #ff5252; box-shadow: 0 0 18px 4px rgba(255, 82, 82, 0.8), inset 0 0 26px rgba(255, 82, 82, 0.25); }
+  .cn-card.cn-rev img { opacity: 0.22; filter: saturate(0.6); }
+  .cn-card.cn-rev-red-bg { background: rgba(229, 57, 53, 0.55); }
+  /* Ninja key view: whole card background carries the card color */
+  .cn-card.cn-key-red { background: rgba(239, 83, 80, 0.6); border-color: #ff5252; }
+  .cn-card.cn-key-blue { background: rgba(30, 136, 229, 0.6); border-color: #02a9ff; }
+  .cn-card.cn-key-beige { background: rgba(176, 164, 138, 0.45); border-color: #e8d9b8; }
+  .cn-card.cn-key-black { background: rgba(5, 5, 10, 0.95); border-color: #8a8ab8; }
+  .graybox { width: 78px; height: 100%; background: #4a4a5c; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<h1>🥷🎴 b102 — 4×6 board (8🔵/7🔴/8 beige/1💀) · colored cards · ninja taps = ×N · +1 bonus chains</h1>
+<p class="note">24 cards · green glow = ninja tap-selection (clue phase) · phones: 3×8 compact vertical tiles</p>
+<div class="cn-board" id="b"></div>
+<script>
+  const key = ['red','blue','beige','black','red','blue','beige','black','red','blue'];
+  const cards = [];
+  for (let i = 0; i < 10; i++) cards.push({ name: 'Character ' + (i+1), cls: 'cn-key-' + key[i] });
+  cards.push({ name: 'Teammates suggesting', sugs: 6, cls: 'can-pick' });
+  cards.push({ name: 'Five shoguns max', sugs: 5, cls: 'can-pick' });
+  cards.push({ name: 'No suggestions (no circles)', cls: 'can-pick' });
+  cards.push({ name: 'One dot', sugs: 1, cls: 'can-pick' });
+  cards.push({ name: 'Revealed red team', cls: 'cn-rev cn-rev-red cn-rev-red-bg', stamp: '✓' });
+  const b = document.getElementById('b');
+  for (const s of cards) {
+    const d = document.createElement('div');
+    d.className = 'cn-card ' + (s.cls || '');
+    let html = '<div class="graybox"></div>';
+    if (s.stamp) html += '<div class="cn-stamp">' + s.stamp + '</div>';
+    html += '<div class="cn-side"><div class="cn-name">' + s.name + '</div></div>';
+    d.innerHTML = html;
+    if (s.sugs && !s.stamp) {
+      const side = d.querySelector('.cn-side');
+      const sugs = document.createElement('div'); sugs.className = 'cn-sugs';
+      for (let i = 0; i < Math.min(s.sugs, 4); i++) { const x = document.createElement('span'); x.className = 'cn-sug'; sugs.appendChild(x); }
+      side.appendChild(sugs);
+      const v = document.createElement('button'); v.className = 'cn-validate'; v.textContent = '✓';
+      side.appendChild(v);
+    }
+    b.appendChild(d);
+  }
+</script>
+</body>
+</html>
