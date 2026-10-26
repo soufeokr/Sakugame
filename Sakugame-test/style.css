@@ -1440,12 +1440,13 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
 
   /* ===== 📱 Phone disposition — home: two big side-by-side cards (per mockup) ===== */
   @media (max-width: 600px) {
-    #homepageScreen .homepage-buttons { flex-direction: row !important; gap: 16px; align-items: stretch; }
-    #homepageScreen .homepage-btn { flex: 1 1 0; padding: 32px 10px; margin: 0; }
-    #homepageScreen .homepage-btn .icon { margin-bottom: 12px; }
-    #homepageScreen .homepage-btn .icon .ic { width: 3rem; height: 3rem; }
-    #homepageScreen .homepage-btn h3 { font-size: 1.3rem; }
-    #homepageScreen .homepage-btn p { font-size: 0.78rem; }
+    #homepageScreen .homepage-buttons { flex-direction: row !important; gap: 12px; align-items: stretch; }
+    /* three cards now (Play · Rules · Cards): two per line, the third takes the full row */
+    #homepageScreen .homepage-btn { flex: 1 1 calc(50% - 6px); padding: 22px 10px; margin: 0; }
+    #homepageScreen .homepage-btn .icon { margin-bottom: 10px; }
+    #homepageScreen .homepage-btn .icon .ic { width: 2.6rem; height: 2.6rem; }
+    #homepageScreen .homepage-btn h3 { font-size: 1.15rem; margin-bottom: 6px; }
+    #homepageScreen .homepage-btn p { font-size: 0.74rem; line-height: 1.3; }
     /* rules grid: tighten cards so scrolling scans fast */
     #gamesMenuScreen .game-card p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     #gamesMenuScreen .game-card-img { height: 80px; }
@@ -2155,3 +2156,160 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
     #snapshotScreen .game-controls #snChatRowBtn { display: flex; position: relative; }
     #snapshotScreen .game-controls .chat-row-badge { position: absolute; top: -6px; right: 4px; min-width: 18px; height: 18px; border-radius: 10px; background: var(--danger); color: #fff; font-size: 0.66rem; font-weight: 900; display: none; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #0b0b15; }
   }
+
+/* ============================================================
+   🎴 ANIME CARDS — booster collection (cardgame.js)
+   Rarity is carried by a coloured edge + a corner gem (no big
+   glows, no text-shadow — the site's accessibility rules).
+   ============================================================ */
+.cards-page { max-width: 1100px; margin: 0 auto; padding: 10px 14px 60px; }
+.cards-title { display: flex; align-items: center; gap: 10px; font-size: 2rem; color: var(--accent); margin: 6px 0 18px; }
+.cards-title .ic { width: 1.6rem; height: 1.6rem; }
+
+/* ---- hero: the booster + the open button ---- */
+.cards-hero { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; margin-bottom: 10px; }
+.cards-pack { display: flex; align-items: center; gap: 14px; background: var(--card); border: 2px solid rgba(2,169,255,.25);
+  border-radius: 16px; padding: 14px 18px; flex: 1 1 260px; }
+.cards-pack-art { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px;
+  background: linear-gradient(160deg, rgba(2,169,255,.22), rgba(157,107,255,.18)); color: var(--accent); }
+.cards-pack-art .ic { width: 2rem; height: 2rem; }
+.cards-pack-count { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.1; }
+.cards-pack-count span { font-size: .95rem; font-weight: 600; color: var(--muted); margin-left: 4px; }
+.cards-pack-timer { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+.cards-hero-actions { display: flex; flex-direction: column; gap: 8px; flex: 1 1 240px; }
+.cards-hero-actions select { width: 100%; }
+.cards-open { font: inherit; font-weight: 800; font-size: 1.05rem; color: #fff; cursor: pointer;
+  background: linear-gradient(180deg, #2b6cff, #1b46c9); border: 2px solid rgba(255,255,255,.18);
+  border-radius: 14px; padding: 13px 18px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: transform .12s, filter .12s; }
+.cards-open .ic { width: 1.15rem; height: 1.15rem; }
+.cards-open:hover { filter: brightness(1.12); transform: translateY(-2px); }
+.cards-open.ready { background: linear-gradient(180deg, #00c853, #00913c); border-color: rgba(255,255,255,.28); }
+.cards-open:disabled { opacity: .5; cursor: default; transform: none; }
+.cards-save-note { font-size: .8rem; color: var(--muted); margin: 2px 0 14px; }
+
+/* ---- stats ---- */
+.cards-stats { background: var(--card); border: 2px solid rgba(255,255,255,.06); border-radius: 16px;
+  padding: 14px 16px; margin-bottom: 14px; }
+.ac-prog-bar { height: 12px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+.ac-prog-bar span { display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #02a9ff, #9d6bff); transition: width .3s; }
+.ac-prog-txt { font-size: .88rem; color: var(--muted); margin-top: 7px; }
+.ac-prog-txt b { color: var(--text); }
+.ac-tiers { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: .8rem; color: var(--muted); }
+.ac-tier { display: inline-flex; align-items: center; gap: 6px; }
+.ac-tier i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.ac-tier b { color: var(--text); }
+.ac-sub { font-size: .78rem; color: var(--muted); margin-top: 8px; }
+.ac-sub b { color: var(--text); }
+
+/* ---- tools ---- */
+.cards-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.cards-tools input[type="search"] { flex: 1 1 220px; min-width: 0; }
+.cards-tools select { flex: 0 1 auto; }
+.cards-owned { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.cards-more { text-align: center; margin: 16px 0 30px; }
+
+/* ---- the album grid ---- */
+.cards-album { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 12px; }
+.ac-empty { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 10px; font-size: .92rem; }
+
+/* ---- one card ---- */
+.ac-tile, .ac-detail-card, .ac-face-back { position: relative; display: block; border-radius: 13px; overflow: hidden;
+  background: #101426; border: 2px solid var(--ac-edge, rgba(255,255,255,.14)); cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0,0,0,.35); transition: transform .12s, border-color .12s; }
+.ac-tile:hover { transform: translateY(-4px); }
+.ac-tile:focus-visible, .ac-detail-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ac-art { display: block; position: relative; width: 100%; aspect-ratio: 1 / 1; background: #0a0e1c; overflow: hidden; }
+.ac-art img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; display: block; }
+.ac-name { display: block; font-size: .8rem; font-weight: 700; color: var(--text); padding: 7px 8px 0;
+  line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ac-series { display: block; font-size: .68rem; color: var(--muted); padding: 1px 8px 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ac-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 8px 8px; font-size: .68rem; }
+.ac-foot b { font-weight: 800; letter-spacing: .2px; }
+.ac-foot i { font-style: normal; color: var(--muted); }
+.ac-rar { position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 2; }
+.ac-count, .ac-new { position: absolute; top: 8px; right: 8px; z-index: 3; font-size: .68rem; font-weight: 800;
+  color: #0b1020; background: #ffd54f; border-radius: 999px; padding: 2px 7px; }
+.ac-new { background: #00e676; }
+.ac-tile.missing { opacity: .42; filter: grayscale(.85); }
+.ac-tile.missing .ac-art img { opacity: .25; }
+.ac-own { font-style: normal; color: var(--accent); font-weight: 800; }
+
+/* ---- booster reveal ---- */
+.cards-reveal { position: fixed; inset: 0; z-index: 1200; display: none; align-items: center; justify-content: center;
+  background: rgba(6,9,20,.92); padding: 16px; }
+.cards-reveal.show { display: flex; }
+.cards-reveal-inner { width: 100%; max-width: 760px; text-align: center; }
+.cards-reveal-inner h3 { color: var(--text); font-size: 1.15rem; margin-bottom: 18px; }
+.cards-reveal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.ac-slot { position: relative; aspect-ratio: 3 / 4; perspective: 900px; cursor: pointer; }
+.ac-flip-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.2,.7,.3,1); }
+.ac-slot.flipped .ac-flip-inner { transform: rotateY(180deg); }
+.ac-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; overflow: hidden;
+  border: 2px solid var(--ac-edge, rgba(255,255,255,.14)); background: #101426; box-shadow: 0 10px 22px rgba(0,0,0,.4); }
+.ac-face-front { display: grid; place-items: center;
+  background: repeating-linear-gradient(135deg, rgba(2,169,255,.16) 0 10px, rgba(157,107,255,.16) 10px 20px), #0d1326; }
+.ac-face-front .ac-q { font-size: 2.4rem; font-weight: 900; color: rgba(255,255,255,.5); }
+.ac-face-back { transform: rotateY(180deg); cursor: default; }
+.ac-slot.is-dupe .ac-face-back { filter: saturate(.8); }
+.cards-reveal-done { font: inherit; font-weight: 800; color: #fff; background: #2b6cff; border: 2px solid rgba(255,255,255,.18);
+  border-radius: 12px; padding: 11px 26px; cursor: pointer; opacity: .55; }
+.cards-reveal-done.ready { opacity: 1; background: #00c853; }
+
+/* ---- card detail ---- */
+.cards-detail { position: fixed; inset: 0; z-index: 1200; display: none; align-items: center; justify-content: center;
+  gap: 22px; background: rgba(6,9,20,.92); padding: 18px; flex-wrap: wrap; }
+.cards-detail.show { display: flex; }
+.ac-detail-card { width: 240px; flex: none; cursor: default; }
+.ac-detail-meta { max-width: 320px; color: var(--text); }
+.ac-detail-meta h3 { font-size: 1.4rem; margin-bottom: 4px; }
+.ac-detail-meta p { color: var(--muted); font-size: .9rem; margin-bottom: 8px; }
+.ac-detail-meta a { display: inline-block; margin-top: 6px; text-decoration: none; }
+
+/* ============================================================
+   📱 Phone — the cards page keeps its rhythm: 3 tiles per line,
+   the booster on top, the tools on one scrollable strip.
+   ============================================================ */
+@media (max-width: 600px) {
+  .cards-page { padding: 6px 10px 50px; }
+  .cards-title { font-size: 1.5rem; margin-bottom: 12px; }
+  .cards-title .ic { width: 1.3rem; height: 1.3rem; }
+  .cards-hero { gap: 10px; }
+  .cards-pack { flex: 1 1 100%; padding: 11px 13px; }
+  .cards-pack-art { width: 44px; height: 44px; }
+  .cards-pack-art .ic { width: 1.6rem; height: 1.6rem; }
+  .cards-pack-count { font-size: 1.25rem; }
+  .cards-hero-actions { flex: 1 1 100%; flex-direction: row; }
+  .cards-hero-actions select { flex: 1 1 auto; min-width: 0; }
+  .cards-open { flex: 1 1 auto; font-size: .95rem; padding: 12px 14px; }
+  .cards-stats { padding: 11px 12px; }
+  .ac-tiers { gap: 4px 10px; font-size: .74rem; }
+  .cards-tools { gap: 6px; }
+  .cards-tools input[type="search"] { flex: 1 1 100%; }
+  .cards-tools select { flex: 1 1 0; min-width: 0; font-size: .82rem; }
+  .cards-owned { flex: 1 1 100%; font-size: .8rem; }
+  .cards-album { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .ac-name { font-size: .7rem; padding: 5px 6px 0; }
+  .ac-series { font-size: .6rem; padding: 1px 6px 0; }
+  .ac-foot { font-size: .6rem; padding: 4px 6px 6px; }
+  .ac-count, .ac-new { font-size: .58rem; padding: 1px 5px; top: 6px; right: 6px; }
+  .cards-reveal-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .ac-face-front .ac-q { font-size: 1.7rem; }
+  .ac-detail-card { width: 190px; }
+  .ac-detail-meta { max-width: 260px; }
+  .ac-detail-meta h3 { font-size: 1.15rem; }
+}
+
+/* ---- 🎴 how-to slide: three sample cards (Common / Rare / Mythic) ---- */
+.mk-cards-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.mk-card { width: 92px; background: #101426; border: 2px solid rgba(255,255,255,.16); border-radius: 10px;
+  overflow: hidden; text-align: center; box-shadow: 0 8px 18px rgba(0,0,0,.35); }
+.mk-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: center 18%; display: block; }
+.mk-card b { display: block; font-size: .68rem; color: var(--text); padding: 4px 4px 0; }
+.mk-card i { display: block; font-style: normal; font-size: .6rem; font-weight: 800; padding: 1px 4px 5px; color: #9aa5b1; }
+.mk-card.rare { border-color: rgba(2,169,255,.6); }
+.mk-card.rare i { color: #02a9ff; }
+.mk-card.mythic { border-color: rgba(255,82,82,.6); }
+.mk-card.mythic i { color: #ff5252; }

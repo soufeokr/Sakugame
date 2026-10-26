@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="170">
+<meta name="saku-build" content="171">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,11 +75,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=170" sizes="any">
+<link rel="icon" href="favicon.ico?v=171" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=170">
+<link rel="stylesheet" href="style.css?v=171">
 </head>
 <body>
   <!-- 🧪 TEST BUILD marker -->
@@ -245,8 +245,63 @@
           <h3>Rules</h3>
           <p>Browse games &amp; their rules</p>
         </div>
+        <div class="homepage-btn" onclick="showCards()">
+          <div class="icon"><svg class="ic"><use href="#i-cards"/></svg></div>
+          <h3>Cards</h3>
+          <p>Open boosters &amp; collect characters</p>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- 🎴 ANIME CARDS — booster collection (cardgame.js) -->
+  <div class="screen" id="cardsScreen">
+    <div class="cards-page">
+      <h2 class="cards-title"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button><svg class="ic"><use href="#i-cards"/></svg> <span class="btn-label">Anime Cards</span></h2>
+
+      <div class="cards-hero">
+        <div class="cards-pack">
+          <div class="cards-pack-art"><svg class="ic"><use href="#i-cards"/></svg></div>
+          <div class="cards-pack-meta">
+            <div class="cards-pack-count"><b id="cardsBoosterCount">0</b><span id="cardsPackMax">/ 15</span></div>
+            <div class="cards-pack-timer" id="cardsTimer">…</div>
+          </div>
+        </div>
+        <div class="cards-hero-actions">
+          <select id="cardsSeries" aria-label="Booster series"></select>
+          <button class="cards-open" id="cardsOpenBtn" onclick="cardsOpenBooster()"><svg class="ic"><use href="#i-plus"/></svg> <span class="btn-label">Open a booster</span></button>
+        </div>
+      </div>
+      <p class="cards-save-note" id="cardsSaveNote"></p>
+
+      <div class="cards-stats" id="cardsStats"></div>
+
+      <div class="cards-tools">
+        <input type="search" id="cardsSearch" placeholder="Search a character or a series…" oninput="cardsRenderAlbum()">
+        <select id="cardsRarityFilter" onchange="cardsRenderAlbum()" aria-label="Rarity"></select>
+        <select id="cardsSort" onchange="cardsRenderAlbum()" aria-label="Sort">
+          <option value="rank">AniList rank</option>
+          <option value="rarity">Rarity</option>
+          <option value="name">A → Z</option>
+        </select>
+        <label class="cards-owned"><input type="checkbox" id="cardsOwnedOnly" checked onchange="cardsRenderAlbum()"> <span class="btn-label">Owned only</span></label>
+      </div>
+
+      <div class="cards-album" id="cardsAlbum"></div>
+      <div class="cards-more"><button class="secondary" id="cardsMoreBtn" onclick="cardsShowMore()" style="display:none"></button></div>
+    </div>
+
+    <!-- booster reveal: tap each card to flip it -->
+    <div class="cards-reveal" id="cardsReveal">
+      <div class="cards-reveal-inner">
+        <h3 id="cardsRevealTitle">Tap each card to flip it!</h3>
+        <div class="cards-reveal-grid" id="cardsRevealGrid"></div>
+        <button class="cards-reveal-done" id="cardsRevealDone" onclick="cardsCloseReveal()">Nice!</button>
+      </div>
+    </div>
+
+    <!-- single card detail -->
+    <div class="cards-detail" id="cardsDetail" onclick="cardsCloseDetail()"></div>
   </div>
 
   <div class="screen" id="playMenuScreen">
@@ -324,6 +379,13 @@
           <div class="game-card-content">
             <h3>Snapshot!</h3>
             <p>Solo or up to 12 players! 4 random stills from ONE anime join the frame one by one, each EASIER than the last (the 4th is the official art). Name the anime as early as you can: stage 1 pays 4 pts, and the fastest correct guesses add a +3/+2/+1 speed bonus!</p>
+          </div>
+        </div>
+        <div class="game-card" onclick="openHowTo('cards')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('cards')">
+          <div class="game-card-img"><svg class="ic"><use href="#i-cards"/></svg></div>
+          <div class="game-card-content">
+            <h3>Anime Cards</h3>
+            <p>Solo, free, no room needed! Every character of the library is a collectible card with a rarity. A new booster lands every 10 minutes (up to 15 in reserve) — 5 cards a pack, six rarities, one album to complete.</p>
           </div>
         </div>
       </div>
@@ -1585,7 +1647,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=170', 'charanimes.js?v=170', 'animes.js?v=170', 'nsfwdata.js?v=170', 'snappics.js?v=170'];
+        var files = ['characters.js?v=171', 'charanimes.js?v=171', 'animes.js?v=171', 'nsfwdata.js?v=171', 'snappics.js?v=171'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1600,10 +1662,12 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="undercover.js?v=170"></script>
-  <script src="music.js?v=170"></script>
-  <script src="lang.js?v=170"></script>
-  <script src="app.js?v=170"></script>
+  <script src="card-rarity.js?v=171"></script>
+  <script src="cardgame.js?v=171"></script>
+  <script src="undercover.js?v=171"></script>
+  <script src="music.js?v=171"></script>
+  <script src="lang.js?v=171"></script>
+  <script src="app.js?v=171"></script>
   <script src="test-panel.js"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
@@ -1612,5 +1676,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a50ac0ee78c7e237',t:'MTc5MzAzMTI2Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

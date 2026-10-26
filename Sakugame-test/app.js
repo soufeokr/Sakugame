@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '170';
+    const SAKU_BUILD = '171';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -100,6 +100,8 @@
     var HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
     var HT_SNAP_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (((typeof SNAP_PICS !== 'undefined' ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {}).b)) || HT_BLUR_IMG : '';
     var HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+    var HT_CARD_IMG = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS[0].image : '';
+    var HT_CARD_NAME = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS[0].name : 'Levi';
     var HT_BOARD = '', HT_BOARD_OUT = '';
     var HT_SNAP_SEQ = [];
     var HT_UW = { a: 'Blue Lock', b: 'Ao Ashi', imgA: '', imgB: '' }; // fallback till undercover.js lands
@@ -233,6 +235,30 @@
         { t: 'Build your streak', d: 'Rounds chain and the leaderboard remembers everything. In multiplayer, the most consistent eye wins — learn studios, eras and art styles!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 24 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 19 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 14 pts</p></div>') }
       ]},
+      cards: {
+        title: 'Anime Cards', icon: 'cards', players: 'solo · free boosters', solo: true, cta: 'Open the cards',
+        slides: [
+          { t: 'A collectible card game', d: 'Every character of the Sakugame library is a card — real art, real name, real series. Open boosters, keep the cards you like, and fill your album one pull at a time. No money, no accounts required: just play.',
+            s: htScene('<div class="mk-cards-row">' +
+              '<div class="mk-card"><img src="' + (HT_CARD_IMG || '') + '" alt=""><b>' + (HT_CARD_NAME || 'Levi') + '</b><i>Common</i></div>' +
+              '<div class="mk-card rare"><img src="' + (HT_CARD_IMG || '') + '" alt=""><b>' + (HT_CARD_NAME || 'Levi') + '</b><i>Rare</i></div>' +
+              '<div class="mk-card mythic"><img src="' + (HT_CARD_IMG || '') + '" alt=""><b>' + (HT_CARD_NAME || 'Levi') + '</b><i>Mythic</i></div>' +
+              '</div><div class="mk-note">5000 characters, six rarities, one album.</div>') },
+          { t: 'One free booster every 10 minutes', d: 'A booster holds 5 cards. A new free one lands every 10 minutes and you can stack up to 15 — log in, grab yours, come back later. Pick a series to aim your booster at the characters you love.',
+            s: htScene(htBadges([['5 cards', 'ok'], ['Free', 'ok'], ['Every 10 min', 'warn']]) +
+              '<div class="mk-chips">' + htChip('Any series', 'ok') + htChip('Shonen', 'dim') + htChip('Seinen', 'dim') + htChip('Isekai', 'dim') + '</div>' +
+              '<div class="mk-note">The reserve caps at 15 boosters.</div>') },
+          { t: 'Six rarities', d: 'Common, Uncommon, Rare, Epic, Legendary and Mythic. The rarest cards are the hardest to pull — and a duplicate simply adds a copy to your collection. Chase the Mythics!',
+            s: htScene('<div class="mk-chips">' +
+              htChip('Common', 'dim') + htChip('Uncommon', 'dim') + htChip('Rare', 'dim') +
+              htChip('Epic', 'dim') + htChip('Legendary', 'dim') + htChip('Mythic', 'dim') + '</div>' +
+              '<div class="mk-note">Rarity colours: grey · green · blue · violet · orange · red.</div>') },
+          { t: 'Your album, everywhere', d: 'The album shows what you own, what is missing and how close you are to completing each rarity. Guests keep their collection in their browser; signing in with Discord syncs it to your account so it follows you on any device.',
+            s: htScene('<div class="mk-board-list"><p>' + htChip('1248 / 5000 collected', 'ok') + '</p><p>' +
+              htChip('Mythic 12', 'dim') + ' ' + htChip('Legendary 47', 'dim') + '</p></div>' +
+              '<div class="mk-note">Guests: this browser only. Discord account: synced.</div>') }
+        ]
+      },
       snapshot: { title: 'Snapshot!', icon: 'image', players: 'solo or up to 12', slides: [
         { t: 'Name that anime!', d: 'Play solo to train, or race up to 12 players at once! Every round, up to 4 stills from ONE anime (out of 700+ shows) join the frame one by one — first one to type the right title banks the points!',
           s: htScene(htBadges([['Round 1/10', 'dim'], ['Stills 1/4', 'ok'], ['8s', 'warn']]) + (HT_SNAP_SEQ[0] ? '<img class="mk-img mk-bigimg" src="' + HT_SNAP_SEQ[0] + '" alt="anime still demo">' : '<div class="mk-note">4 stills per round!</div>') + '<div class="mk-who">Which anime is this?!</div>' + htQ('Type the anime title…', 'GUESS!')) },
@@ -326,11 +352,12 @@
       document.getElementById('howtoDots').innerHTML = meta.slides.map(function(_, i) {
         return '<span class="howto-dot' + (i === HT.idx ? ' on' : '') + '" onclick="howtoGo(' + i + ')"></span>';
       }).join('');
-      document.getElementById('howtoCta').innerHTML = ic('play') + ' Host a room';
+      document.getElementById('howtoCta').innerHTML = ic(meta.solo ? 'cards' : 'play') + ' ' + (meta.cta || 'Host a room');
     }
     function howtoPlayNow() {
       const g = HT.game;
       closeHowTo();
+      if (HOWTO[g] && HOWTO[g].solo) { showCards(); return; }   // 🎴 no room for the card game
       showHostRoom();
       const sel = document.getElementById('gameSelect');
       if (sel) { sel.value = g; try { onGameSelectChange(); } catch (e) {} }
@@ -539,8 +566,10 @@
         uid: 'dc_' + dc.id, username: sakuAcctName(a),
         wins: a.wins || 0, losses: a.losses || 0, uWins: a.uWins || 0, uLosses: a.uLosses || 0,
         anilist: a.anilist || null, avatar: a.avatar || (a.dc && a.dc.avatar) || null, watchStatuses: a.watchStatuses || null,
-        dcAvatar: (a.dc && a.dc.avatar) || null
+        cards: a.cards || null, dcAvatar: (a.dc && a.dc.avatar) || null
       };
+      // 🎴 fold the guest card collection into the freshly signed-in account
+      try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
       playerName = currentAccount.username;
       updateUserButton();
       try { sakuRenderDiscordBox(dc); } catch (e) {}
@@ -1337,7 +1366,7 @@
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
-    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen' };
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen' };
     const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
@@ -1376,6 +1405,7 @@
         else if (route === 'rooms') showPlayMenu();
         else if (route === 'join') showJoinRoom();
         else if (route === 'setup') showHostRoom();
+        else if (route === 'cards') showCards();
         else showScreen('homepageScreen');
       } catch (e) {}
       R_fromRouter = false;
