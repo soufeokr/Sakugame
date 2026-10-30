@@ -2313,3 +2313,107 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
 .mk-card.rare i { color: #02a9ff; }
 .mk-card.mythic { border-color: rgba(255,82,82,.6); }
 .mk-card.mythic i { color: #ff5252; }
+
+/* ============================================================
+   📖 ENCYCLOPEDIA — the collection binder (enc.js)
+   A medallium-style catalogue: one block per anime franchise,
+   cards numbered 1..N, Mythic first inside every franchise.
+   ============================================================ */
+.enc-wrap { max-width: 1440px; margin: 0 auto; }
+.enc-title { display: flex; align-items: center; gap: 10px; font-size: 1.6rem; color: var(--accent); margin-bottom: 4px; }
+.enc-sub { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
+
+.enc-hero { background: var(--card); border: 2px solid rgba(255,255,255,.06); border-radius: 16px;
+  padding: 14px 16px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; }
+.enc-hero-total { display: flex; align-items: baseline; gap: 8px; }
+.enc-hero-total b { font-size: 1.9rem; font-weight: 900; color: var(--text); line-height: 1; }
+.enc-hero-total span { font-size: .8rem; color: var(--muted); }
+.enc-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .78rem; color: var(--muted); }
+.enc-legend-chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08); border-radius: 999px; padding: 3px 10px; }
+.enc-legend-chip i { width: 9px; height: 9px; border-radius: 3px; }
+.enc-legend-chip b { color: var(--text); font-weight: 800; }
+
+.enc-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.enc-tools input[type="search"] { flex: 1 1 240px; min-width: 0; }
+.enc-count-note { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+
+.enc-body { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .enc-body { grid-template-columns: 1fr; } }
+
+/* ---- franchise index (left rail) ---- */
+.enc-index { background: var(--card); border: 2px solid rgba(255,255,255,.06); border-radius: 14px;
+  padding: 8px; position: sticky; top: 12px; max-height: calc(100vh - 40px); display: flex; flex-direction: column; }
+.enc-index h4 { font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+  padding: 4px 8px 8px; }
+.enc-index-list { overflow-y: auto; flex: 1; min-height: 120px; scrollbar-width: thin; }
+.enc-idx { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: none;
+  border: 0; color: var(--text); font: inherit; font-size: .8rem; padding: 5px 8px; border-radius: 8px; cursor: pointer; }
+.enc-idx:hover { background: rgba(2,169,255,.14); }
+.enc-idx.on { background: rgba(2,169,255,.22); }
+.enc-idx b { margin-left: auto; color: var(--muted); font-weight: 700; font-size: .72rem; }
+.enc-idx.pinned b { color: var(--accent); }
+@media (max-width: 900px) { .enc-index { position: static; max-height: 220px; } }
+
+/* ---- the binder ---- */
+.enc-binder { min-width: 0; }
+.enc-block { margin-bottom: 22px; scroll-margin-top: 12px; }
+.enc-block-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px;
+  background: linear-gradient(90deg, rgba(2,169,255,.16), rgba(2,169,255,.02));
+  border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; margin-bottom: 10px; }
+.enc-block-head h3 { font-size: 1.02rem; font-weight: 800; color: var(--text); }
+.enc-block-nums { font-size: .74rem; color: var(--accent); font-weight: 800; letter-spacing: .04em; }
+.enc-block-tally { display: flex; gap: 5px; flex-wrap: wrap; margin-left: auto; font-size: .68rem; }
+.enc-block-tally span { padding: 1px 6px; border-radius: 999px; font-weight: 800; color: #0b1020; }
+
+.enc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .enc-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; } }
+
+/* ---- one slot, medallium style ---- */
+.enc-slot { position: relative; display: block; border-radius: 12px; overflow: hidden; background: #101426;
+  border: 2px solid var(--er, rgba(255,255,255,.14)); box-shadow: 0 6px 14px rgba(0,0,0,.34);
+  cursor: pointer; transition: transform .12s, box-shadow .12s; }
+.enc-slot:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,.45); }
+.enc-slot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.enc-slot.mythic { box-shadow: 0 6px 16px rgba(255,82,82,.28), 0 0 0 1px rgba(255,82,82,.35) inset; }
+.enc-art { display: block; position: relative; width: 100%; aspect-ratio: 1 / 1; background: #0a0e1c; overflow: hidden; }
+.enc-art img { width: 100%; height: 100%; object-fit: cover; object-position: center 16%; display: block; }
+.enc-num { position: absolute; top: 6px; left: 6px; z-index: 3; font-size: .64rem; font-weight: 900; letter-spacing: .03em;
+  color: #fff; background: rgba(6,10,24,.78); border: 1px solid var(--er, rgba(255,255,255,.3));
+  border-radius: 6px; padding: 1px 5px; font-variant-numeric: tabular-nums; }
+.enc-rank { position: absolute; top: 6px; right: 6px; z-index: 3; font-size: .6rem; font-weight: 700;
+  color: rgba(255,255,255,.82); background: rgba(6,10,24,.7); border-radius: 6px; padding: 1px 5px; }
+.enc-rar-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; z-index: 2; background: var(--er); }
+.enc-name { display: block; font-size: .76rem; font-weight: 700; color: var(--text); padding: 6px 7px 0;
+  line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.enc-meta { display: flex; align-items: center; justify-content: flex-start; gap: 5px; padding: 3px 7px 7px; font-size: .64rem; }
+.enc-meta b { font-weight: 800; color: var(--er); }
+.enc-meta i { font-style: normal; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.enc-season { display: block; font-size: .62rem; color: var(--muted); padding: 0 7px 6px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: italic; }
+
+.enc-more { text-align: center; margin: 18px 0 34px; }
+.enc-empty { text-align: center; color: var(--muted); padding: 40px 10px; font-size: .92rem; }
+
+/* ---- card detail ---- */
+.enc-detail { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center;
+  background: rgba(4,8,20,.82); padding: 18px; }
+.enc-detail.show { display: flex; }
+.enc-detail-card { width: 250px; flex: none; border-radius: 14px; overflow: hidden; background: #101426;
+  border: 3px solid var(--er, rgba(255,255,255,.2)); box-shadow: 0 18px 44px rgba(0,0,0,.6); }
+.enc-detail-card .enc-art { aspect-ratio: 1 / 1; }
+.enc-detail-card .enc-num, .enc-detail-card .enc-rank { font-size: .72rem; }
+.enc-detail-card .enc-name { font-size: .92rem; padding: 9px 10px 0; white-space: normal; }
+.enc-detail-card .enc-meta { font-size: .74rem; padding: 5px 10px 10px; }
+.enc-detail-meta { max-width: 340px; color: var(--text); }
+.enc-detail-meta h3 { font-size: 1.5rem; margin-bottom: 4px; }
+.enc-detail-meta p { color: var(--muted); font-size: .9rem; margin-bottom: 8px; }
+.enc-detail-meta .enc-big-num { font-size: 2.6rem; font-weight: 900; color: var(--er, var(--accent)); line-height: 1; }
+.enc-detail-meta a { display: inline-block; margin-top: 6px; text-decoration: none; }
+.enc-detail-alt { font-size: .8rem; color: var(--muted); line-height: 1.45; }
+@media (max-width: 640px) {
+  .enc-detail { flex-direction: column; gap: 14px; overflow-y: auto; }
+  .enc-detail-card { width: 190px; }
+  .enc-detail-meta { max-width: 100%; }
+  .enc-detail-meta h3 { font-size: 1.2rem; }
+}

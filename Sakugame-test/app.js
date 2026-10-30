@@ -1406,6 +1406,7 @@
         else if (route === 'join') showJoinRoom();
         else if (route === 'setup') showHostRoom();
         else if (route === 'cards') showCards();
+        else if (route === 'encyclopedia') encOpen();
         else showScreen('homepageScreen');
       } catch (e) {}
       R_fromRouter = false;
