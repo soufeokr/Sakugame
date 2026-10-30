@@ -40,7 +40,9 @@ let encQuery = '', encRarity = '', encSort = 'num';
    and it is remembered in this browser (localStorage), so a re-open,
    a reload or a search keeps it.  `card.r0` always holds the rarity
    the build shipped, so an edit can always be undone.                */
-const ENC_RARITY_KEY = 'saku-enc-rarity';
+const ENC_RARITY_KEY = 'saku-enc-rarity';        // v1: keyed by binder number
+const ENC_RARITY_ID_KEY = 'saku-enc-rar-by-id';    // v2: keyed by AniList id
+const ENC_RARITY_MIGRATED = 'saku-enc-rar-migrated';
 let encRarEdits = {};
 
 /* ---------------- helpers ---------------- */
@@ -59,21 +61,55 @@ function encFranchiseLabel(raw) {
 }
 function encNum(n) { return '#' + String(n).padStart(4, '0'); }
 
+/* The binder only ever shows a ~130 px square, so it pulls the CDN's
+   `medium` render - about a quarter of the bytes of `large`.  The open
+   card asks for the full `large` file again.                            */
+function encThumb(url) {
+  const u = String(url || '');
+  return u.indexOf('/character/large/') >= 0 ? u.replace('/character/large/', '/character/medium/') : u;
+}
+
 function encRarLoad() {
-  try { encRarEdits = JSON.parse(localStorage.getItem(ENC_RARITY_KEY) || '{}') || {}; }
-  catch (e) { encRarEdits = {}; }
-  if (!encRarEdits || typeof encRarEdits !== 'object') encRarEdits = {};
-  return encRarEdits;
+  let store = {};
+  try { store = JSON.parse(localStorage.getItem(ENC_RARITY_ID_KEY) || '{}') || {}; }
+  catch (e) { store = {}; }
+  if (!store || typeof store !== 'object') store = {};
+  /* First run since the switch: the old store was keyed by binder number,
+     and those numbers are rewritten every time a rarity changes.  Re-key
+     them onto the AniList character id so the edits survive.            */
+  if (!localStorage.getItem(ENC_RARITY_MIGRATED)) {
+    let legacy = {};
+    try { legacy = JSON.parse(localStorage.getItem(ENC_RARITY_KEY) || '{}') || {}; }
+    catch (e) { legacy = {}; }
+    let moved = 0;
+    if (legacy && typeof legacy === 'object') {
+      const byNum = {};
+      encData.list.forEach(b => b.cards.forEach(c => { byNum[c.n0] = c; }));
+      Object.keys(legacy).forEach(k => {
+        const c = byNum[k];
+        if (c && ENC_RARITIES.indexOf(legacy[k]) >= 0 && !store[String(c.i)]) {
+          store[String(c.i)] = legacy[k];
+          moved++;
+        }
+      });
+      if (moved) { try { localStorage.setItem(ENC_RARITY_ID_KEY, JSON.stringify(store)); } catch (e) {} }
+    }
+    try { localStorage.setItem(ENC_RARITY_MIGRATED, '1'); } catch (e) {}
+    if (moved && window.console) console.log('encyclopedia: ' + moved +
+      ' rarity edit(s) re-keyed to AniList ids');
+  }
+  encRarEdits = store;
+  return store;
 }
 function encRarSave() {
-  try { localStorage.setItem(ENC_RARITY_KEY, JSON.stringify(encRarEdits)); } catch (e) {}
+  try { localStorage.setItem(ENC_RARITY_ID_KEY, JSON.stringify(encRarEdits)); } catch (e) {}
 }
 function encRarOriginal(card) { return card.r0 || card.r; }
 function encRarityOf(card) {
-  const o = encRarEdits[String(card.n)];
+  const o = encRarEdits[String(card.i)];
   return (o && ENC_RARITIES.indexOf(o) >= 0) ? o : encRarOriginal(card);
 }
-function encRarEdited(card) { return !!encRarEdits[String(card.n)]; }
+function encRarEdited(card) { return !!encRarEdits[String(card.i)]; }
 function encTally() {
   const out = {};
   ENC_RARITIES.forEach(r => { out[r] = 0; });
@@ -93,18 +129,51 @@ function encBlockTally(block) {
 function encReady() {
   return typeof ENCYCLOPEDIA !== 'undefined' && ENCYCLOPEDIA && ENCYCLOPEDIA.list;
 }
+/* Re-sort every franchise and re-number the whole binder from the
+   rarities the user actually sees: anime-major, rarity-minor, then the
+   AniList fame rank, then the name.  `n0` keeps the shipped number so the
+   v1 store can still be migrated.                                     */
+function encRenumber() {
+  let n = 0;
+  const tally = {};
+  ENC_RARITIES.forEach(r => { tally[r] = 0; });
+  encData.list.forEach(block => {
+    block.cards.sort((a, b) =>
+      (ENC_RARITIES.indexOf(a.r) - ENC_RARITIES.indexOf(b.r)) ||
+      ((a.k || 99999) - (b.k || 99999)) ||
+      String(a.m).localeCompare(String(b.m)) ||
+      String(a.i).localeCompare(String(b.i)));
+    block.from = n + 1;
+    const rar = {};
+    block.cards.forEach(c => {
+      n += 1;
+      c.n = n;
+      rar[c.r] = (rar[c.r] || 0) + 1;
+      tally[c.r] += 1;
+    });
+    block.to = n;
+    block.rar = rar;
+  });
+  encData.total = n;
+  encData.tally = tally;
+}
+/* data only - no repaint */
+function encSyncRarities() {
+  if (!encData) return;
+  encData.list.forEach(block => block.cards.forEach(c => { c.r = encRarityOf(c); }));
+  encRenumber();
+  encFlat = [];
+  encData.list.forEach((block, bi) => block.cards.forEach(card => encFlat.push({ card, block, bi })));
+}
 function encBuild() {
   if (!encReady()) return false;
   encData = ENCYCLOPEDIA;
+  encData.list.forEach(block => block.cards.forEach(card => {
+    if (card.n0 === undefined) card.n0 = card.n;   // the number the build shipped
+    if (!card.r0) card.r0 = card.r;
+  }));
   encRarLoad();
-  encFlat = [];
-  encData.list.forEach((block, bi) => {
-    block.cards.forEach(card => {
-      if (!card.r0) card.r0 = card.r;      // the rarity the build shipped
-      card.r = encRarityOf(card);          // the rarity actually shown
-      encFlat.push({ card: card, block: block, bi: bi });
-    });
-  });
+  encSyncRarities();
   return true;
 }
 
@@ -166,8 +235,9 @@ function encSlotHtml(card) {
     'title="' + encEsc(card.m) + '">' +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
     '<span class="enc-rank" title="' + encEsc(encTr('AniList rank', 'AniList rank')) + '">A#' + card.k + '</span>' +
-    '<span class="enc-art"><img src="' + encEsc(card.u) + '" alt="' + encEsc(card.m) + '" loading="lazy" ' +
-    'onerror="this.style.opacity=0"></span>' +
+    '<span class="enc-art"><img src="' + encEsc(encThumb(card.u)) + '" alt="' + encEsc(card.m) + '" ' +
+    'loading="lazy" decoding="async" fetchpriority="low" ' +
+    'onload="this.classList.add(\'in\')" onerror="this.style.opacity=0"></span>' +
     '<span class="enc-rar-bar"></span>' +
     '<span class="enc-name">' + encEsc(card.m) + '</span>' +
     (card.s ? '<span class="enc-season">' + encEsc(card.s) + '</span>' : '') +
@@ -284,7 +354,7 @@ function encOpenCard(n) {
   box.innerHTML =
     '<div class="enc-detail-card" style="--er:' + meta.edge + '">' +
     '<span class="enc-art"><img src="' + encEsc(card.u) + '" alt="' + encEsc(card.m) + '" ' +
-    'onerror="this.style.opacity=0"></span>' +
+    'decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
     '<span class="enc-rank">AniList #' + card.k + '</span>' +
     '<span class="enc-rar-bar"></span>' +
@@ -335,29 +405,71 @@ function encSetRarity(n, r) {
   const found = encFind(n);
   if (!found || ENC_RARITIES.indexOf(r) < 0) return;
   const card = found.card;
-  if (r === encRarOriginal(card)) delete encRarEdits[String(n)];   // back to the build value
-  else encRarEdits[String(n)] = r;
-  card.r = encRarityOf(card);
+  if (r === encRarOriginal(card)) delete encRarEdits[String(card.i)];   // back to the build value
+  else encRarEdits[String(card.i)] = r;
   encRarSave();
+  encSyncRarities();      // re-sorts and re-numbers the binder
   encApplyEdits();
-  encScrollToCard(n);
-  encOpenCard(n);          // re-open so the picker shows the new state
+  encScrollToCard(card.n);
+  encOpenCard(card.n);          // re-open so the picker shows the new state
 }
 function encResetRarity(n) {
   const found = encFind(n);
   if (!found) return;
-  delete encRarEdits[String(n)];
-  found.card.r = encRarOriginal(found.card);
+  delete encRarEdits[String(found.card.i)];
   encRarSave();
+  encSyncRarities();
   encApplyEdits();
-  encScrollToCard(n);
-  encOpenCard(n);
+  encScrollToCard(found.card.n);
+  encOpenCard(found.card.n);
 }
 function encResetAllRarity() {
   encRarEdits = {};
   encRarSave();
-  if (encFlat) encFlat.forEach(r => { r.card.r = encRarOriginal(r.card); });
+  encSyncRarities();
   encApplyEdits();
+}
+/* Back up / restore the edits as a file, so a cleared cache, another
+   browser or a second machine can pick them up again.                 */
+function encExportRarities() {
+  const n = Object.keys(encRarEdits).length;
+  if (!n) { alert(encTr('No rarity edits to save yet.', 'No rarity edits to save yet.')); return; }
+  const names = {};
+  encData.list.forEach(b => b.cards.forEach(c => { names[String(c.i)] = c.m; }));
+  const blob = new Blob([JSON.stringify({
+    kind: 'sakugame-encyclopedia-rarities', version: 2, saved: new Date().toISOString(),
+    edits: encRarEdits, names: names
+  }, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sakugame-rarities.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+function encImportRarities(file) {
+  const fr = new FileReader();
+  fr.onload = () => {
+    let data = null;
+    try { data = JSON.parse(String(fr.result)); } catch (e) { data = null; }
+    const edits = data && (data.edits || (data.kind === undefined ? data : null));
+    if (!edits || typeof edits !== 'object') {
+      alert(encTr('That file does not look like a rarity backup.', 'That file does not look like a rarity backup.'));
+      return;
+    }
+    const clean = {};
+    Object.keys(edits).forEach(k => {
+      if (ENC_RARITIES.indexOf(edits[k]) >= 0) clean[String(k)] = edits[k];
+    });
+    encRarEdits = clean;
+    encRarSave();
+    try { localStorage.setItem(ENC_RARITY_MIGRATED, '1'); } catch (e) {}
+    encSyncRarities();
+    encApplyEdits();
+    alert(encTr('{n} rarity edit(s) restored.', '{n} rarity edit(s) restored.')
+      .replace('{n}', Object.keys(clean).length));
+  };
+  fr.readAsText(file);
 }
 
 function encCloseDetail() {
@@ -383,7 +495,13 @@ function encRenderHero() {
         ? '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-all="1">' +
           '&#8635; ' + encEsc(encTr('Reset all edits', 'Reset all edits')) +
           ' (' + Object.keys(encRarEdits).length + ')</button>'
-        : '');
+        : '') +
+      /* Save / Load stay visible even with no edits, so a backup can be
+         put back after a cleared cache or on another machine.        */
+      '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-save="1">' +
+      '&#8681; ' + encEsc(encTr('Save', 'Save')) + '</button>' +
+      '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-load="1">' +
+      '&#8679; ' + encEsc(encTr('Load', 'Load')) + '</button>';
   }
   const sub = document.getElementById('encSub');
   if (sub) sub.textContent = d.groups.toLocaleString('en-US') + ' ' +
@@ -428,6 +546,15 @@ function encWire() {
     if (slot) { encOpenCard(parseInt(slot.getAttribute('data-enc-card'), 10)); return; }
     const rarAll = e.target.closest && e.target.closest('[data-enc-rar-all]');
     if (rarAll) { encResetAllRarity(); return; }
+    if (e.target.closest && e.target.closest('[data-enc-rar-save]')) { encExportRarities(); return; }
+    if (e.target.closest && e.target.closest('[data-enc-rar-load]')) {
+      const inp = document.createElement('input');
+      inp.type = 'file';
+      inp.accept = '.json,application/json';
+      inp.addEventListener('change', () => { if (inp.files && inp.files[0]) encImportRarities(inp.files[0]); });
+      inp.click();
+      return;
+    }
     const rarBtn = e.target.closest && e.target.closest('[data-enc-rar]');
     if (rarBtn) {
       encSetRarity(parseInt(rarBtn.getAttribute('data-enc-num'), 10),
