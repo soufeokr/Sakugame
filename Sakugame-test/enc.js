@@ -35,6 +35,14 @@ let encShown = 0;          // how many cards are in the DOM
 let encBlockEls = {};      // franchise block index -> its <section> element
 let encQuery = '', encRarity = '', encSort = 'num';
 
+/* ---------------- rarity edits ----------------
+   The binder is also the curation desk: pick a new rarity on any card
+   and it is remembered in this browser (localStorage), so a re-open,
+   a reload or a search keeps it.  `card.r0` always holds the rarity
+   the build shipped, so an edit can always be undone.                */
+const ENC_RARITY_KEY = 'saku-enc-rarity';
+let encRarEdits = {};
+
 /* ---------------- helpers ---------------- */
 function encEsc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
@@ -51,6 +59,36 @@ function encFranchiseLabel(raw) {
 }
 function encNum(n) { return '#' + String(n).padStart(4, '0'); }
 
+function encRarLoad() {
+  try { encRarEdits = JSON.parse(localStorage.getItem(ENC_RARITY_KEY) || '{}') || {}; }
+  catch (e) { encRarEdits = {}; }
+  if (!encRarEdits || typeof encRarEdits !== 'object') encRarEdits = {};
+  return encRarEdits;
+}
+function encRarSave() {
+  try { localStorage.setItem(ENC_RARITY_KEY, JSON.stringify(encRarEdits)); } catch (e) {}
+}
+function encRarOriginal(card) { return card.r0 || card.r; }
+function encRarityOf(card) {
+  const o = encRarEdits[String(card.n)];
+  return (o && ENC_RARITIES.indexOf(o) >= 0) ? o : encRarOriginal(card);
+}
+function encRarEdited(card) { return !!encRarEdits[String(card.n)]; }
+function encTally() {
+  const out = {};
+  ENC_RARITIES.forEach(r => { out[r] = 0; });
+  if (encFlat) encFlat.forEach(r => {
+    const k = encRarityOf(r.card);
+    out[k] = (out[k] || 0) + 1;
+  });
+  return out;
+}
+function encBlockTally(block) {
+  const rar = {};
+  block.cards.forEach(c => { const r = encRarityOf(c); rar[r] = (rar[r] || 0) + 1; });
+  return rar;
+}
+
 /* ---------------- boot ---------------- */
 function encReady() {
   return typeof ENCYCLOPEDIA !== 'undefined' && ENCYCLOPEDIA && ENCYCLOPEDIA.list;
@@ -58,9 +96,14 @@ function encReady() {
 function encBuild() {
   if (!encReady()) return false;
   encData = ENCYCLOPEDIA;
+  encRarLoad();
   encFlat = [];
   encData.list.forEach((block, bi) => {
-    block.cards.forEach(card => encFlat.push({ card: card, block: block, bi: bi }));
+    block.cards.forEach(card => {
+      if (!card.r0) card.r0 = card.r;      // the rarity the build shipped
+      card.r = encRarityOf(card);          // the rarity actually shown
+      encFlat.push({ card: card, block: block, bi: bi });
+    });
   });
   return true;
 }
@@ -133,7 +176,7 @@ function encSlotHtml(card) {
 }
 
 function encBlockHeadHtml(block, st) {
-  const rar = (st && st.rar) || block.rar || {};
+  const rar = (st && st.rar) || encBlockTally(block);
   const tally = ENC_RARITIES.filter(r => rar[r]).map(r =>
     '<span style="background:' + (ENC_RARITY_META[r] || {}).color + '">' +
     (r === 'uncommon' ? 'U' : r.charAt(0).toUpperCase()) + rar[r] + '</span>').join('');
@@ -206,6 +249,29 @@ function encRender(reset) {
 function encShowMore() { encRender(false); }
 
 /* ---------------- detail ---------------- */
+function encRarPickerHtml(card) {
+  const cur = encRarityOf(card);
+  const btns = ENC_RARITIES.map(r => {
+    const on = r === cur ? ' on' : '';
+    return '<button type="button" class="enc-rar-btn' + on + '" data-enc-num="' + card.n + '" ' +
+      'data-enc-rar="' + r + '" style="--rc:' + (ENC_RARITY_META[r] || {}).color + '" ' +
+      'aria-pressed="' + (r === cur) + '" title="' + encEsc(encRarLabel(r)) + '">' +
+      '<i style="background:' + (ENC_RARITY_META[r] || {}).color + '"></i>' +
+      '<span>' + encEsc(encRarLabel(r)) + '</span></button>';
+  }).join('');
+  return '<div class="enc-rar-edit">' +
+    '<span class="enc-rar-edit-lab">' + encEsc(encTr('Change rarity', 'Change rarity')) +
+    (encRarEdited(card) ? ' <em class="enc-rar-flag">' +
+      encEsc(encTr('edited', 'edited')) + '</em>' : '') + '</span>' +
+    '<div class="enc-rar-pick" role="group" aria-label="' +
+    encEsc(encTr('Change rarity', 'Change rarity')) + '">' + btns + '</div>' +
+    (encRarEdited(card)
+      ? '<button type="button" class="enc-rar-undo" data-enc-num="' + card.n + '" ' +
+        'data-enc-rar-reset="1">&#8635; ' + encEsc(encTr('Reset', 'Reset')) + '</button>'
+      : '') +
+    '</div>';
+}
+
 function encOpenCard(n) {
   if (!encFlat) return;
   let found = null;
@@ -234,6 +300,7 @@ function encOpenCard(n) {
     (card.s ? ' · <i>' + encEsc(card.s) + '</i>' : '') + '</p>' +
     '<p><b style="color:' + meta.color + '">' + encEsc(encRarLabel(card.r)) + '</b> · ' +
     encEsc(encTr('AniList rank', 'AniList rank')) + ' #' + card.k + '</p>' +
+    encRarPickerHtml(card) +
     (card.a && card.a.length
       ? '<p class="enc-detail-alt"><b>' + encEsc(encTr('Also known as', 'Also known as')) + ':</b> ' +
         encEsc(card.a.join(' · ')) + '</p>'
@@ -243,6 +310,56 @@ function encOpenCard(n) {
   box.classList.add('show');
   try { document.body.style.overflow = 'hidden'; } catch (e) {}
 }
+/* ---------------- rarity editing ---------------- */
+function encFind(n) {
+  if (!encFlat) return null;
+  for (let i = 0; i < encFlat.length; i++) if (encFlat[i].card.n === n) return encFlat[i];
+  return null;
+}
+function encApplyEdits() {
+  // repaint every slot / header that is already on screen
+  encRenderHero();
+  encRenderIndex();
+  encRender(true);
+}
+function encScrollToCard(n) {
+  const rows = encVisible();
+  let idx = -1;
+  for (let i = 0; i < rows.length; i++) if (rows[i].card.n === n) { idx = i; break; }
+  let guard = 0;
+  while (idx >= 0 && encShown <= idx && guard++ < 90) encRender(false);
+  const el = document.querySelector('[data-enc-card="' + n + '"]');
+  if (el && el.scrollIntoView) { try { el.scrollIntoView({ block: 'center' }); } catch (e) {} }
+}
+function encSetRarity(n, r) {
+  const found = encFind(n);
+  if (!found || ENC_RARITIES.indexOf(r) < 0) return;
+  const card = found.card;
+  if (r === encRarOriginal(card)) delete encRarEdits[String(n)];   // back to the build value
+  else encRarEdits[String(n)] = r;
+  card.r = encRarityOf(card);
+  encRarSave();
+  encApplyEdits();
+  encScrollToCard(n);
+  encOpenCard(n);          // re-open so the picker shows the new state
+}
+function encResetRarity(n) {
+  const found = encFind(n);
+  if (!found) return;
+  delete encRarEdits[String(n)];
+  found.card.r = encRarOriginal(found.card);
+  encRarSave();
+  encApplyEdits();
+  encScrollToCard(n);
+  encOpenCard(n);
+}
+function encResetAllRarity() {
+  encRarEdits = {};
+  encRarSave();
+  if (encFlat) encFlat.forEach(r => { r.card.r = encRarOriginal(r.card); });
+  encApplyEdits();
+}
+
 function encCloseDetail() {
   const box = document.getElementById('encDetail');
   if (box) box.classList.remove('show');
@@ -258,18 +375,27 @@ function encRenderHero() {
     encEsc(encTr('cards', 'cards')) + '</span>';
   const leg = document.getElementById('encLegend');
   if (leg) {
+    const tal = encTally();
     leg.innerHTML = ENC_RARITIES.map(r =>
       '<span class="enc-legend-chip"><i style="background:' + (ENC_RARITY_META[r] || {}).color + '"></i>' +
-      encEsc(encRarLabel(r)) + ' <b>' + (d.tally[r] || 0) + '</b></span>').join('');
+      encEsc(encRarLabel(r)) + ' <b>' + (tal[r] || 0) + '</b></span>').join('') +
+      (encRarEdits && Object.keys(encRarEdits).length
+        ? '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-all="1">' +
+          '&#8635; ' + encEsc(encTr('Reset all edits', 'Reset all edits')) +
+          ' (' + Object.keys(encRarEdits).length + ')</button>'
+        : '');
   }
   const sub = document.getElementById('encSub');
   if (sub) sub.textContent = d.groups.toLocaleString('en-US') + ' ' +
     encTr('anime franchises', 'anime franchises') + ' · ' +
     encTr('numbered 1 to {n}', 'numbered 1 to ' + d.total).replace('{n}', d.total);
   const rf = document.getElementById('encRarityFilter');
-  if (rf && !rf.dataset.filled) {
+  if (rf) {
+    const tal = encTally();
+    const keep = rf.value;
     rf.innerHTML = '<option value="">' + encEsc(encTr('All rarities', 'All rarities')) + '</option>' +
-      ENC_RARITIES.map(r => '<option value="' + r + '">' + encEsc(encRarLabel(r)) + ' (' + (d.tally[r] || 0) + ')</option>').join('');
+      ENC_RARITIES.map(r => '<option value="' + r + '">' + encEsc(encRarLabel(r)) + ' (' + (tal[r] || 0) + ')</option>').join('');
+    rf.value = keep;
     rf.dataset.filled = '1';
   }
 }
@@ -300,6 +426,16 @@ function encWire() {
     if (jump) { encJump(parseInt(jump.getAttribute('data-enc-jump'), 10)); return; }
     const slot = e.target.closest && e.target.closest('[data-enc-card]');
     if (slot) { encOpenCard(parseInt(slot.getAttribute('data-enc-card'), 10)); return; }
+    const rarAll = e.target.closest && e.target.closest('[data-enc-rar-all]');
+    if (rarAll) { encResetAllRarity(); return; }
+    const rarBtn = e.target.closest && e.target.closest('[data-enc-rar]');
+    if (rarBtn) {
+      encSetRarity(parseInt(rarBtn.getAttribute('data-enc-num'), 10),
+                   rarBtn.getAttribute('data-enc-rar'));
+      return;
+    }
+    const rarUndo = e.target.closest && e.target.closest('[data-enc-rar-reset]');
+    if (rarUndo) { encResetRarity(parseInt(rarUndo.getAttribute('data-enc-num'), 10)); return; }
     if (e.target.id === 'encDetail') encCloseDetail();
   });
   document.addEventListener('keydown', e => {

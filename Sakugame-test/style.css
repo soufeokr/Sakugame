@@ -2417,3 +2417,45 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
   .enc-detail-meta { max-width: 100%; }
   .enc-detail-meta h3 { font-size: 1.2rem; }
 }
+
+/* ===== 📖 Encyclopedia — rarity editing (the binder is also the desk) ===== */
+.enc-rar-edit { margin: 14px 0 4px; }
+.enc-rar-edit-lab {
+  display: block; font-size: .72rem; font-weight: 700; letter-spacing: .7px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 7px;
+}
+.enc-rar-flag {
+  font-style: normal; font-size: .62rem; font-weight: 800; letter-spacing: .4px;
+  padding: 1px 6px; margin-left: 4px; border-radius: 999px; vertical-align: 1px;
+  color: #ffd98a; background: rgba(255, 167, 38, .16); border: 1px solid rgba(255, 167, 38, .4);
+}
+.enc-rar-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.enc-rar-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font: 700 .74rem/1 'Outfit', system-ui, sans-serif;
+  padding: 7px 10px; border-radius: 999px; cursor: pointer;
+  color: var(--muted); background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .12);
+  transition: color .15s, background .15s, border-color .15s, transform .1s;
+}
+.enc-rar-btn i { width: 9px; height: 9px; border-radius: 50%; background: var(--rc, #888); flex: none; }
+.enc-rar-btn:hover { color: #fff; border-color: rgba(255, 255, 255, .3); }
+.enc-rar-btn:active { transform: translateY(1px); }
+.enc-rar-btn.on {
+  color: #fff; background: color-mix(in srgb, var(--rc, #02a9ff) 20%, transparent);
+  border-color: var(--rc, #02a9ff);
+  box-shadow: 0 0 0 1px var(--rc, #02a9ff) inset;
+}
+@supports not (color: color-mix(in srgb, red 10%, transparent)) {
+  .enc-rar-btn.on { background: rgba(255, 255, 255, .12); }
+}
+.enc-rar-undo {
+  margin-top: 8px; font: 600 .72rem/1 'Outfit', system-ui, sans-serif;
+  padding: 6px 10px; border-radius: 8px; cursor: pointer;
+  color: var(--muted); background: none; border: 1px dashed rgba(255, 255, 255, .2);
+}
+.enc-rar-undo:hover { color: #fff; border-color: rgba(255, 255, 255, .4); }
+
+/* the "↺ Reset all edits" chip that shows up in the legend once something changed */
+.enc-legend-reset { cursor: pointer; color: #ffd98a; border-color: rgba(255, 167, 38, .45); }
+.enc-legend-reset:hover { background: rgba(255, 167, 38, .16); color: #fff; }
