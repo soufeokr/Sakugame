@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="174">
+<meta name="saku-build" content="176">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,13 +75,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=174" sizes="any">
+<link rel="icon" href="favicon.ico?v=176" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=174">
+<link rel="stylesheet" href="style.css?v=176">
 <!-- 🔒 TEST BUILD entrance gate (test build only — never shipped) -->
-<link rel="stylesheet" href="gate.css?v=174">
+<link rel="stylesheet" href="gate.css?v=176">
 </head>
 <body>
   <!-- 🧪 TEST BUILD marker -->
@@ -162,7 +162,7 @@
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 2.6l1.7 5.1a3 3 0 0 0 1.9 1.9l5.1 1.7-5.1 1.7a3 3 0 0 0-1.9 1.9L12 20.4l-1.7-5.1a3 3 0 0 0-1.9-1.9L3.3 11.7l5.1-1.7a3 3 0 0 0 1.9-1.9z" fill="#a5d2ff" stroke="#02a9ff" stroke-width="0.9" stroke-linejoin="round"/><path d="M19.4 15.6l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z" fill="#e6f3ff" opacity=".9"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.5 6 .8-4.4 4.1 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.3l6-.8z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-slash" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m5.7 5.7 12.6 12.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 6.5V12l3.8 2.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M9.5 14.5a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7l-1.3 1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 9.5a4 4 0 0 0-5.7 0l-3 3a4 4 0 1 0 5.7 5.7l1.3-1.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
@@ -327,7 +327,25 @@
         </div>
         <div class="cards-hero-actions">
           <select id="cardsSeries" aria-label="Booster series"></select>
-          <button class="cards-open" id="cardsOpenBtn" onclick="cardsOpenBooster()"><svg class="ic"><use href="#i-plus"/></svg> <span class="btn-label">Open a booster</span></button>
+          <button class="cards-open" id="cardsOpenBtn" type="button" onclick="cardsTearPack(this)">
+            <!-- 🎁 a real foil booster pack: crimped top, holographic sheen, tear notch -->
+            <span class="pack" aria-hidden="true">
+              <span class="pack-foil"></span>
+              <span class="pack-crimp"></span>
+              <span class="pack-face">
+                <span class="pack-brand">SAKUGAME</span>
+                <span class="pack-art"><svg class="ic"><use href="#i-cards"/></svg></span>
+                <span class="pack-kind">BOOSTER</span>
+                <span class="pack-cards">5 CARDS</span>
+              </span>
+              <span class="pack-shine"></span>
+              <span class="pack-notch"></span>
+            </span>
+            <span class="cards-open-text">
+              <b class="btn-label">Open a booster</b>
+              <small>5 cards · 6 rarities</small>
+            </span>
+          </button>
         </div>
       </div>
       <p class="cards-save-note" id="cardsSaveNote"></p>
@@ -1486,6 +1504,12 @@
           <label class="radio-option selected" id="barPosBottom" onclick="setBarPos('bottom')"><input type="radio" name="barpos" value="bottom" checked><div><svg class="ic"><use href="#i-layers"/></svg> Bottom</div></label>
           <label class="radio-option" id="barPosTop" onclick="setBarPos('top')"><input type="radio" name="barpos" value="top"><div><svg class="ic"><use href="#i-bolt"/></svg> Top</div></label>
         </div>
+        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-sparkle"/></svg> Graphics quality</h4>
+        <p class="gfx-hint">High keeps the falling petals and full-size character pictures. Low removes the petals and loads the smaller pictures — easier on phones and slow connections.</p>
+        <div class="radio-group" style="gap: 8px;">
+          <label class="radio-option selected" id="gfxHigh" onclick="sakuSetGfx(true)"><input type="radio" name="gfx" value="high" checked><div><svg class="ic"><use href="#i-sparkle"/></svg> High</div></label>
+          <label class="radio-option" id="gfxLow" onclick="sakuSetGfx(false)"><input type="radio" name="gfx" value="low"><div><svg class="ic"><use href="#i-bolt"/></svg> Low</div></label>
+        </div>
       </div>
       <div id="unamePaneSupport" class="acct-pane" role="tabpanel" style="display: none;">
         <h4 class="profile-section-title"><svg class="ic"><use href="#i-chat"/></svg> Contact & Support</h4>
@@ -1732,7 +1756,7 @@
   </div>
 
   <!-- 🔒 entrance gate first — nothing else may run until it is open -->
-  <script src="gate.js?v=174"></script>
+  <script src="gate.js?v=176"></script>
   <!-- 🧪 TEST BUILD — the real Firebase scripts are replaced by this local stub,
        so nothing you do here can touch the public database. -->
   <script src="test-stub.js"></script>
@@ -1744,7 +1768,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=174', 'charanimes.js?v=174', 'animes.js?v=174', 'nsfwdata.js?v=174', 'snappics.js?v=174'];
+        var files = ['characters.js?v=176', 'charanimes.js?v=176', 'animes.js?v=176', 'nsfwdata.js?v=176', 'snappics.js?v=176'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1759,14 +1783,14 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="card-rarity.js?v=174"></script>
-  <script src="cardgame.js?v=174"></script>
-  <script src="encyclopedia.js?v=174"></script>
-  <script src="enc.js?v=174"></script>
-  <script src="undercover.js?v=174"></script>
-  <script src="music.js?v=174"></script>
-  <script src="lang.js?v=174"></script>
-  <script src="app.js?v=174"></script>
+  <script src="card-rarity.js?v=176"></script>
+  <script src="cardgame.js?v=176"></script>
+  <script src="encyclopedia.js?v=176"></script>
+  <script src="enc.js?v=176"></script>
+  <script src="undercover.js?v=176"></script>
+  <script src="music.js?v=176"></script>
+  <script src="lang.js?v=176"></script>
+  <script src="app.js?v=176"></script>
   <script src="test-panel.js"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
@@ -1775,5 +1799,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a52cd9a57965e209',t:'MTc5MzM4ODc5MA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a52cd9a57965e209',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a52e54270a26f9b5',t:'MTc5MzQwNDI5NA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a52e54270a26f9b5',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

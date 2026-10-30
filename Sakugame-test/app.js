@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '174';
+    const SAKU_BUILD = '176';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1242,6 +1242,29 @@
       showNotification(t(pos === 'top' ? 'Menu bar pinned to the top.' : 'Menu bar pinned to the bottom.'));
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncBarPos); else sakuSyncBarPos();
+
+    // ================= 🖼️ GRAPHICS QUALITY (user setting: High / Low) =================
+    // Settings → Display.  HIGH keeps the falling sakura petals and asks the
+    // AniList CDN for its full-size renders.  LOW drops the petals (they cost
+    // a compositor layer per petal) and pulls the CDN's small render instead
+    // — about a quarter of the bytes.  Same choice, both grids.
+    function sakuGfxHigh() { try { return localStorage.getItem('saku-graphics') !== 'low'; } catch (e) { return true; } }
+    function sakuGfxLow() { return !sakuGfxHigh(); }
+    function sakuSyncGfx() {
+      const low = sakuGfxLow();
+      if (document.documentElement) document.documentElement.classList.toggle('gfx-low', low);
+      // repaint the two image grids so the new render size is picked up
+      try { if (typeof cardsRenderAlbum === 'function') cardsRenderAlbum(); } catch (e) {}
+      try { if (typeof encRender === 'function' && typeof encData !== 'undefined' && encData) encRender(true); } catch (e) {}
+      ['gfxHigh', 'gfxHigh2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('selected', !low); });
+      ['gfxLow', 'gfxLow2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('selected', low); });
+    }
+    function sakuSetGfx(high) {
+      try { localStorage.setItem('saku-graphics', high ? 'high' : 'low'); } catch (e) {}
+      sakuSyncGfx();
+      showNotification(t(high ? 'Graphics quality: high.' : 'Graphics quality: low — lighter on slow devices.'));
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncGfx); else sakuSyncGfx();
 
     // ================= 🎮 DISCORD ACCOUNT LINK (OAuth2 · static-safe, b121) =================
     // SETUP (5 minutes, no server needed):

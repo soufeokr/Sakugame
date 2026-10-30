@@ -61,12 +61,20 @@ function encFranchiseLabel(raw) {
 }
 function encNum(n) { return '#' + String(n).padStart(4, '0'); }
 
-/* The binder only ever shows a ~130 px square, so it pulls the CDN's
-   `medium` render - about a quarter of the bytes of `large`.  The open
-   card asks for the full `large` file again.                            */
+/* Graphics quality (Settings → Display → High / Low).  HIGH asks the CDN
+   for its full-size render everywhere; LOW always takes the small one —
+   about a quarter of the bytes.  app.js owns the setting; this guard keeps
+   enc.js working when it is loaded on its own (tests, previews).        */
+function encGfxLow() {
+  if (typeof sakuGfxLow === 'function') return sakuGfxLow();
+  try { return localStorage.getItem('saku-graphics') === 'low'; } catch (e) { return false; }
+}
+/* The binder tile is only ~130 px, so LOW takes the CDN's `medium` render.
+   HIGH keeps the full `large` file.  The open card always uses `large`.   */
 function encThumb(url) {
   const u = String(url || '');
-  return u.indexOf('/character/large/') >= 0 ? u.replace('/character/large/', '/character/medium/') : u;
+  if (u.indexOf('/character/large/') < 0) return u;
+  return encGfxLow() ? u.replace('/character/large/', '/character/medium/') : u;
 }
 
 function encRarLoad() {
