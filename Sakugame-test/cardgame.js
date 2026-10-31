@@ -237,6 +237,15 @@ function cardsRollPack(series) {
 }
 
 /* ---------------- booster opening UI ---------------- */
+/* The pack tears itself open before the reveal lands — same click, one
+   beat of theatre.  If there is no booster to open we skip the theatre
+   and let cardsOpenBooster() say why.                                  */
+function cardsTearPack(btn) {
+  const ready = cardState && cardState.boosters > 0;
+  if (!ready || !btn || btn.classList.contains('tearing')) { cardsOpenBooster(); return; }
+  btn.classList.add('tearing');
+  setTimeout(() => { btn.classList.remove('tearing'); cardsOpenBooster(); }, 420);
+}
 function cardsOpenBooster() {
   if (!cardPoolReady()) { showNotification('The character data is still loading — try again in a second.'); return; }
   cardsLoad();
@@ -306,7 +315,15 @@ function cardsRenderReveal() {
     slot.style.setProperty('--ac-color', meta.color);
     slot.innerHTML =
       '<div class="ac-flip-inner">' +
-      '<div class="ac-face ac-face-front"><span class="ac-q">?</span></div>' +
+      '<div class="ac-face ac-face-front">' +
+        '<span class="ac-back" aria-hidden="true">' +
+          '<span class="ac-back-foil"></span>' +
+          '<span class="ac-back-crimp"></span>' +
+          '<span class="ac-back-mark">SAKUGAME</span>' +
+          '<span class="ac-back-q">?</span>' +
+          '<span class="ac-back-shine"></span>' +
+        '</span>' +
+      '</div>' +
       '<div class="ac-face ac-face-back"></div>' +
       '</div>';
     slot.addEventListener('click', () => cardsRevealAt(i));
@@ -330,6 +347,22 @@ function cardsCloseReveal() {
 }
 
 /* ---------------- the card face ---------------- */
+/* Graphics quality (Settings → Display → High / Low).  HIGH asks the CDN
+   for its full-size render everywhere; LOW always takes the small one —
+   about a quarter of the bytes.  app.js owns the setting; this guard keeps
+   cardgame.js working when it is loaded on its own (tests, previews).   */
+function cardGfxLow() {
+  if (typeof sakuGfxLow === 'function') return sakuGfxLow();
+  try { return localStorage.getItem('saku-graphics') === 'low'; } catch (e) { return false; }
+}
+/* The album tile is only ~130 px, so LOW takes the CDN's `medium` render.
+   HIGH keeps the full `large` file.  Booster faces and the detail modal
+   always use `large`.                                                   */
+function cardThumb(url) {
+  const u = String(url || '');
+  if (u.indexOf('/character/large/') < 0) return u;
+  return cardGfxLow() ? u.replace('/character/large/', '/character/medium/') : u;
+}
 function cardsCardFace(char, count, big) {
   const meta = cardRarityMeta(char.rarity);
   const badge = count > 1
@@ -337,8 +370,8 @@ function cardsCardFace(char, count, big) {
     : '<span class="ac-new">' + ((typeof t === 'function') ? t('NEW') : 'NEW') + '</span>';
   return '' +
     '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
-    '<span class="ac-art"><img src="' + escapeHtml(String(char.image)) + '" alt="' + escapeHtml(String(char.name)) + '" loading="lazy" ' +
-      'onerror="this.style.opacity=0"></span>' +
+    '<span class="ac-art"><img src="' + escapeHtml(String(char.image)) + '" alt="' + escapeHtml(String(char.name)) + '" ' +
+      'loading="lazy" decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
     '<span class="ac-name">' + escapeHtml(String(char.name)) + '</span>' +
     '<span class="ac-series">' + escapeHtml(String(char.series || '')) + '</span>' +
     '<span class="ac-foot"><b style="color:' + meta.color + '">' + escapeHtml(cardRarityLabel(char.rarity)) + '</b>' +
@@ -433,8 +466,9 @@ function cardsRenderAlbum() {
       'onclick="cardsOpenDetail(' + r.p.id + ')" role="button" tabindex="0" ' +
       'onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + r.p.id + ')">' +
       '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
-      '<span class="ac-art"><img src="' + escapeHtml(String(r.p.image)) + '" alt="' + escapeHtml(String(r.p.name)) + '" loading="lazy" ' +
-      'onerror="this.style.opacity=0"></span>' +
+      '<span class="ac-art"><img src="' + escapeHtml(cardThumb(r.p.image)) + '" alt="' + escapeHtml(String(r.p.name)) + '" ' +
+      'loading="lazy" decoding="async" fetchpriority="low" ' +
+      'onload="this.classList.add(\'in\')" onerror="this.style.opacity=0"></span>' +
       '<span class="ac-name">' + escapeHtml(String(r.p.name)) + '</span>' +
       '<span class="ac-series">' + escapeHtml(String(r.p.series || '')) + '</span>' +
       '<span class="ac-foot"><b style="color:' + meta.color + '">' + escapeHtml(cardRarityLabel(r.p.rarity)) + '</b>' +
