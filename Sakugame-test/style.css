@@ -2601,3 +2601,11 @@ h3 .info-btn, h4 .info-btn { vertical-align: 0; }
 /* the "↺ Reset all edits" chip that shows up in the legend once something changed */
 .enc-legend-reset { cursor: pointer; color: #ffd98a; border-color: rgba(255, 167, 38, .45); }
 .enc-legend-reset:hover { background: rgba(255, 167, 38, .16); color: #fff; }
+
+/* Édition The Strongest : reprend le modèle complet, pas la vignette Basic. */
+.strongest-tile { background:#0c0908; border:1px solid rgba(232,196,105,.48); }
+.strongest-tile .strongest-art, .strongest-detail .strongest-art { display:block; width:100%; }
+.strongest-art .sp-card { display:block; width:100%; height:auto; border-radius:4px; }
+.strongest-tile.missing { opacity:.8; filter:none; }
+.strongest-ownership { display:block; text-align:center; padding:3px; color:#e7c780; background:#100c09; font-size:.65rem; }
+.strongest-detail { background:#0a0807; border:1px solid #ba9958; padding:0; }

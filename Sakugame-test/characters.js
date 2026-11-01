@@ -59888,5 +59888,581 @@ const GENERIC_CHARACTERS =
   "al": [
    "三鳥柚葉"
   ]
+ },
+ {
+  "id": 11771,
+  "name": "Arslan",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b11771-LsttI1dS8fy1.jpg",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 14126,
+  "name": "Daryun",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14126-iZ4QeXQbXr4C.jpg",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 17213,
+  "name": "Gieve",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/17213-xHZVc924GSMb.jpg",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 14884,
+  "name": "Narsus",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b14884-b6YOeoYcbdNt.png",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 17212,
+  "name": "Farangis",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/n17212-BRmwlANdwlfV.jpg",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 17049,
+  "name": "Elam",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/n17049-KIrqjpiVsQ9M.jpg",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 26239,
+  "name": "Hilmes",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b26239-NyzVV2sphg4v.png",
+  "series": "The Heroic Legend of Arslan"
+ },
+ {
+  "id": 402683,
+  "name": "Talia Yang",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b402683-OE7PEewCJi1v.png",
+  "series": "Cyberpunk: Edgerunners"
+ },
+ {
+  "id": 402555,
+  "name": "D",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b402555-eLAUsujYzeuk.jpg",
+  "series": "Cyberpunk: Edgerunners"
+ },
+ {
+  "id": 402428,
+  "name": "Weak Kingsley",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b402428-c0n4Cmw4J8Bc.jpg",
+  "series": "Cyberpunk: Edgerunners"
+ },
+ {
+  "id": 402617,
+  "name": "Roman Carax",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b402617-yMF7AH5pKfM7.png",
+  "series": "Cyberpunk: Edgerunners"
+ },
+ {
+  "id": 388635,
+  "name": "Aoteru Misumi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b388635-j7RGESbnBeJA.png",
+  "series": "Nippon Sangoku"
+ },
+ {
+  "id": 391997,
+  "name": "Yoshitsune Asama",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b391997-sWWMwiHGYMWC.jpg",
+  "series": "Nippon Sangoku"
+ },
+ {
+  "id": 330954,
+  "name": "Luke Braveheart",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b330954-AirJGdSVyucH.png",
+  "series": "ZENSHU"
+ },
+ {
+  "id": 53521,
+  "name": "Togepy",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b53521-5reh4aWyEZfN.png",
+  "series": "Pokémon"
+ },
+ {
+  "id": 144635,
+  "name": "Sonans",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b144635-gUHUUYtPcxuV.png",
+  "series": "Pokémon"
+ },
+ {
+  "id": 88709,
+  "name": "Sapphire Kawashima",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88709-ZMWJDPePOmF8.jpg",
+  "series": "Sound! Euphonium"
+ },
+ {
+  "id": 14021,
+  "name": "Sharon Rainsworth",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/n14021-JVeMfEbulePe.jpg",
+  "series": "PandoraHearts"
+ },
+ {
+  "id": 229668,
+  "name": "Uryuu Kamihate",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b229668-xdzj9edPq1PZ.jpg",
+  "series": "Tying the Knot with an Amagami Sister"
+ },
+ {
+  "id": 300898,
+  "name": "Yorishige Suwa",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b300898-srI6TPvY23SO.jpg",
+  "series": "The Elusive Samurai"
+ },
+ {
+  "id": 3157,
+  "name": "Hanon Houshou",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3157-duMzOmwSxU07.png",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 3159,
+  "name": "Rina Touin",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3159-LCXwkrT5LEF5.png",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 3160,
+  "name": "Kaito Doumoto",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/3160.jpg",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 432,
+  "name": "Arashi Nagase",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b432-DeCme2RqDXbF.png",
+  "series": "Paradise Kiss"
+ },
+ {
+  "id": 2208,
+  "name": "Raki",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/2208.jpg",
+  "series": "Claymore"
+ },
+ {
+  "id": 354442,
+  "name": "Miki Azumi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b354442-FdfLbziapdYB.jpg",
+  "series": "The Ramparts of Ice"
+ },
+ {
+  "id": 8270,
+  "name": "Kazuki Fuse",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8270-KrdIZbsCk3SJ.png",
+  "series": "Jin-Roh"
+ },
+ {
+  "id": 8271,
+  "name": "Kei Amemiya",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b8271-Yw7yNGFPa9ab.png",
+  "series": "Jin-Roh"
+ },
+ {
+  "id": 6871,
+  "name": "Atsushi Henmi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b6871-DOG1KGxvATWH.png",
+  "series": "Jin-Roh"
+ },
+ {
+  "id": 299766,
+  "name": "Melina",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b299766-SuKkhfUrgwX7.jpg",
+  "series": "Elden Ring"
+ },
+ {
+  "id": 299767,
+  "name": "Aseo",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b299767-9pcr9jblNed5.jpg",
+  "series": "Elden Ring"
+ },
+ {
+  "id": 289009,
+  "name": "Ranni",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b289009-zrLj3wk39PMG.jpg",
+  "series": "Elden Ring"
+ },
+ {
+  "id": 299765,
+  "name": "Malenia",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b299765-hRQoXwscGpjJ.jpg",
+  "series": "Elden Ring"
+ },
+ {
+  "id": 367138,
+  "name": "Marika",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b367138-4OBMuYEsWQy1.png",
+  "series": "Elden Ring"
+ },
+ {
+  "id": 143349,
+  "name": "Nagao  Kagetora",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b143349-OxjVeJL3YfJg.png",
+  "series": "Fate"
+ },
+ {
+  "id": 175582,
+  "name": "Rui Arneb",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b175582-hDwS4CVocZa5.png",
+  "series": "Re:Zero"
+ },
+ {
+  "id": 330956,
+  "name": "Memmeln",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b330956-2ZY0N6J3hQbb.png",
+  "series": "ZENSHU"
+ },
+ {
+  "id": 355053,
+  "name": "Justice",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b355053-JNHS6kCxc6ng.png",
+  "series": "ZENSHU"
+ },
+ {
+  "id": 330955,
+  "name": "Unio",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b330955-CqOLp9Nj7MIx.png",
+  "series": "ZENSHU"
+ },
+ {
+  "id": 330957,
+  "name": "QJ",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b330957-PjN110hLTr39.png",
+  "series": "ZENSHU"
+ },
+ {
+  "id": 5118,
+  "name": "Lordgenome",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/5118.jpg",
+  "series": "Gurren Lagann"
+ },
+ {
+  "id": 5115,
+  "name": "Anti-Spiral",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b5115-Aph7LPvS4LvR.png",
+  "series": "Gurren Lagann"
+ },
+ {
+  "id": 3404,
+  "name": "Adiane",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/3404.jpg",
+  "series": "Gurren Lagann"
+ },
+ {
+  "id": 3437,
+  "name": "Kiyal Bachika",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/3437.jpg",
+  "series": "Gurren Lagann"
+ },
+ {
+  "id": 136296,
+  "name": "Koduck",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b136296-2N0Jp2pV8DeV.png",
+  "series": "Pokémon"
+ },
+ {
+  "id": 180037,
+  "name": "Lizardon",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b180037-u3b2oiaWdfAm.png",
+  "series": "Pokémon"
+ },
+ {
+  "id": 181415,
+  "name": "Zenigame",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b181415-PDKBuX4s07HF.png",
+  "series": "Pokémon"
+ },
+ {
+  "id": 177038,
+  "name": "Fushigidane",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b177038-GJvYbR5PhCaE.png",
+  "series": "Pokémon"
+ },
+ {
+  "id": 88918,
+  "name": "Noboru Taki",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88918-a29L2V2BHvVD.png",
+  "series": "Sound! Euphonium"
+ },
+ {
+  "id": 88921,
+  "name": "Haruka Ogasawara",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88921-BebUQkezSiaO.jpg",
+  "series": "Sound! Euphonium"
+ },
+ {
+  "id": 88922,
+  "name": "Kaori Nakaseko",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88922-Be95DStzuOM6.png",
+  "series": "Sound! Euphonium"
+ },
+ {
+  "id": 88917,
+  "name": "Shuuichi Tsukamoto",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b88917-knJmXRWZf0kG.png",
+  "series": "Sound! Euphonium"
+ },
+ {
+  "id": 21420,
+  "name": "Abyss no Ishi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/21420.jpg",
+  "series": "PandoraHearts"
+ },
+ {
+  "id": 23838,
+  "name": "Glen Baskerville",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b23838-iRC4tKL8IUA7.png",
+  "series": "PandoraHearts"
+ },
+ {
+  "id": 19573,
+  "name": "Oscar Vessalius",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b19573-kDNWw3W59Hok.jpg",
+  "series": "PandoraHearts"
+ },
+ {
+  "id": 20609,
+  "name": "Cheshire Cat",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b20609-bbfFHBTTqZAS.png",
+  "series": "PandoraHearts"
+ },
+ {
+  "id": 174878,
+  "name": "Kaie Taniya",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b174878-UUIgGeJqHarv.png",
+  "series": "86 EIGHTY-SIX"
+ },
+ {
+  "id": 210923,
+  "name": "Henrietta von Penrose",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b210923-q3ND01Sd08RP.png",
+  "series": "86 EIGHTY-SIX"
+ },
+ {
+  "id": 210911,
+  "name": "Daiya Irma",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b210911-YtxQQzl8DBug.png",
+  "series": "86 EIGHTY-SIX"
+ },
+ {
+  "id": 210922,
+  "name": "Mina Atomica",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b210922-hKvw63IJ5F41.png",
+  "series": "86 EIGHTY-SIX"
+ },
+ {
+  "id": 123400,
+  "name": "Yellow Diamond",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123400-RDGUEopzSghD.jpg",
+  "series": "Land of the Lustrous"
+ },
+ {
+  "id": 123386,
+  "name": "Alexandrite",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123386-l078Jx6Ntddg.png",
+  "series": "Land of the Lustrous"
+ },
+ {
+  "id": 123391,
+  "name": "Euclase",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123391-PEkRhJcaMOhW.png",
+  "series": "Land of the Lustrous"
+ },
+ {
+  "id": 123393,
+  "name": "Jade",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b123393-VX1rN5Jkkhnj.png",
+  "series": "Land of the Lustrous"
+ },
+ {
+  "id": 298961,
+  "name": "August Stilza",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b298961-rm1FALxMHvKK.png",
+  "series": "Gachiakuta"
+ },
+ {
+  "id": 336645,
+  "name": "Fu Orostor",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b336645-9F01WXTyb3Ek.jpg",
+  "series": "Gachiakuta"
+ },
+ {
+  "id": 306966,
+  "name": "Zodyl Typhon",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b306966-TzwtOoEHRWrU.jpg",
+  "series": "Gachiakuta"
+ },
+ {
+  "id": 266437,
+  "name": "Regto",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b266437-sUIpywq7P310.jpg",
+  "series": "Gachiakuta"
+ },
+ {
+  "id": 288217,
+  "name": "Karen Moriya",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b288217-mQ8wZIn5B3Dj.png",
+  "series": "Blue Box"
+ },
+ {
+  "id": 288213,
+  "name": "Shuuji Yusa",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b288213-0wcgDwOry4F8.jpg",
+  "series": "Blue Box"
+ },
+ {
+  "id": 300436,
+  "name": "Ryousuke Nishida",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b300436-fnG6uCSiOn19.png",
+  "series": "Blue Box"
+ },
+ {
+  "id": 288216,
+  "name": "Shouta Hyoudou",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b288216-8JnfPmYMPxRP.png",
+  "series": "Blue Box"
+ },
+ {
+  "id": 294184,
+  "name": "Shirahi Tsuruyama",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b294184-MdAn3m4bJW8W.jpg",
+  "series": "Tying the Knot with an Amagami Sister"
+ },
+ {
+  "id": 244658,
+  "name": "Mahiru Anekouji",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b244658-dX7t6UVEDoDi.jpg",
+  "series": "Tying the Knot with an Amagami Sister"
+ },
+ {
+  "id": 345245,
+  "name": "Yomiko Tsukigami",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b345245-0f27lvn192Jw.png",
+  "series": "Tying the Knot with an Amagami Sister"
+ },
+ {
+  "id": 345248,
+  "name": "Mitsuko Umenoki",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b345248-qj6rBgE6OwAp.png",
+  "series": "Tying the Knot with an Amagami Sister"
+ },
+ {
+  "id": 300902,
+  "name": "Shizuku",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b300902-KUbST43hFFnH.jpg",
+  "series": "The Elusive Samurai"
+ },
+ {
+  "id": 300905,
+  "name": "Ayako Mochizuki",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b300905-2rFbvRj3x19v.png",
+  "series": "The Elusive Samurai"
+ },
+ {
+  "id": 300906,
+  "name": "Genba Kazama",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b300906-d5uZg3GHCLXM.png",
+  "series": "The Elusive Samurai"
+ },
+ {
+  "id": 320996,
+  "name": "Fubuki",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b320996-Y6gjkjSOZzyF.png",
+  "series": "The Elusive Samurai"
+ },
+ {
+  "id": 3161,
+  "name": "Hippo",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3161-Wk71o3hT7CnS.png",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 4062,
+  "name": "Sara",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4062-vptRIQ9IQQyq.jpg",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 3162,
+  "name": "Noel",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/3162.jpg",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 3166,
+  "name": "Gaito",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b3166-RgntWyfrV0OF.png",
+  "series": "Mermaid Melody: Pichi Pichi Pitch"
+ },
+ {
+  "id": 4406,
+  "name": "Risa Kanzaki",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b4406-lccs4ggzfx11.png",
+  "series": "Paradise Kiss"
+ },
+ {
+  "id": 1242,
+  "name": "Tsutomu Yamaguchi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/1242.jpg",
+  "series": "Paradise Kiss"
+ },
+ {
+  "id": 1244,
+  "name": "Hiroyuki Tokumori",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/1244.jpg",
+  "series": "Paradise Kiss"
+ },
+ {
+  "id": 34486,
+  "name": "Seiji Kisaragi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/34486.jpg",
+  "series": "Paradise Kiss"
+ },
+ {
+  "id": 2771,
+  "name": "Galatea",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2771-6dxfEck03vTC.png",
+  "series": "Claymore"
+ },
+ {
+  "id": 2623,
+  "name": "Irene",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2623-OA6RnqAZY85B.png",
+  "series": "Claymore"
+ },
+ {
+  "id": 2732,
+  "name": "Helen",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b2732-5VWqCclHaR11.png",
+  "series": "Claymore"
+ },
+ {
+  "id": 2622,
+  "name": "Riful",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/2622.jpg",
+  "series": "Claymore"
+ },
+ {
+  "id": 393702,
+  "name": "Tsukiko Shimojima",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b393702-1WPqdqg3C7nE.png",
+  "series": "The Ramparts of Ice"
+ },
+ {
+  "id": 394747,
+  "name": "Akine Atagawa",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b394747-KYdCV3Xx8BuS.png",
+  "series": "The Ramparts of Ice"
+ },
+ {
+  "id": 394746,
+  "name": "Yuki Azumi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b394746-xhQtlpbzWLv6.png",
+  "series": "The Ramparts of Ice"
+ },
+ {
+  "id": 390626,
+  "name": "Tsubasa Igarashi",
+  "image": "https://s4.anilist.co/file/anilistcdn/character/large/b390626-pPHbiSKtwjQi.png",
+  "series": "The Ramparts of Ice"
  }
 ];

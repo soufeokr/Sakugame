@@ -122,6 +122,7 @@ function encTally() {
   const out = {};
   ENC_RARITIES.forEach(r => { out[r] = 0; });
   if (encFlat) encFlat.forEach(r => {
+    if (r.card.edition === 'strongest') return;
     const k = encRarityOf(r.card);
     out[k] = (out[k] || 0) + 1;
   });
@@ -129,7 +130,7 @@ function encTally() {
 }
 function encBlockTally(block) {
   const rar = {};
-  block.cards.forEach(c => { const r = encRarityOf(c); rar[r] = (rar[r] || 0) + 1; });
+  block.cards.forEach(c => { if (c.edition === 'strongest') return; const r = encRarityOf(c); rar[r] = (rar[r] || 0) + 1; });
   return rar;
 }
 
@@ -156,8 +157,7 @@ function encRenumber() {
     block.cards.forEach(c => {
       n += 1;
       c.n = n;
-      rar[c.r] = (rar[c.r] || 0) + 1;
-      tally[c.r] += 1;
+      if (c.edition !== 'strongest') { rar[c.r] = (rar[c.r] || 0) + 1; tally[c.r] += 1; }
     });
     block.to = n;
     block.rar = rar;
@@ -172,6 +172,10 @@ function encSyncRarities() {
   encRenumber();
   encFlat = [];
   encData.list.forEach((block, bi) => block.cards.forEach(card => encFlat.push({ card, block, bi })));
+}
+function sakuStrongestRefreshEnc() {
+  if (!encData) return;
+  encSyncRarities();encRenderHero();encRenderIndex();encRender(true);
 }
 function encBuild() {
   if (!encReady()) return false;
@@ -189,12 +193,13 @@ function encBuild() {
 function encVisible() {
   const q = encQuery.trim().toLowerCase();
   let rows = encFlat;
-  if (encRarity) rows = rows.filter(r => r.card.r === encRarity);
+  if (encRarity) rows = rows.filter(r => r.card.edition !== 'strongest' && r.card.r === encRarity);
   if (q) {
     rows = rows.filter(r => {
       if (r.card.m.toLowerCase().indexOf(q) >= 0) return true;
       if (r.block.label.toLowerCase().indexOf(q) >= 0) return true;
       if (r.card.s && r.card.s.toLowerCase().indexOf(q) >= 0) return true;
+      if (r.card.edition === 'strongest' && r.card.series && r.card.series.toLowerCase().indexOf(q) >= 0) return true;
       if (r.card.a) for (let i = 0; i < r.card.a.length; i++) if (r.card.a[i].toLowerCase().indexOf(q) >= 0) return true;
       return false;
     });
@@ -237,12 +242,16 @@ function encJump(i) {
 
 /* ---------------- the binder ---------------- */
 function encSlotHtml(card) {
+  if (card.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
+    return '<div class="enc-slot strongest-tile" role="button" tabindex="0" data-enc-card="' + card.n + '" title="' + encEsc(card.m) + ' — The Strongest">' +
+      '<span class="strongest-art">' + window.sakuStrongestCard(card) + '</span></div>';
+  }
   const meta = ENC_RARITY_META[card.r] || ENC_RARITY_META.common;
   return '<div class="enc-slot' + (card.r === 'mythic' ? ' mythic' : '') + '" ' +
     'style="--er:' + meta.edge + '" role="button" tabindex="0" data-enc-card="' + card.n + '" ' +
     'title="' + encEsc(card.m) + '">' +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
-    '<span class="enc-rank" title="' + encEsc(encTr('AniList rank', 'AniList rank')) + '">A#' + card.k + '</span>' +
+    (/^\d+$/.test(String(card.i)) ? '<span class="enc-rank" title="AniList">A#' + card.k + '</span>' : '') +
     '<span class="enc-art"><img src="' + encEsc(encThumb(card.u)) + '" alt="' + encEsc(card.m) + '" ' +
     'loading="lazy" decoding="async" fetchpriority="low" ' +
     'onload="this.classList.add(\'in\')" onerror="this.style.opacity=0"></span>' +
@@ -359,12 +368,18 @@ function encOpenCard(n) {
   const meta = ENC_RARITY_META[card.r] || ENC_RARITY_META.common;
   const box = document.getElementById('encDetail');
   if (!box) return;
+  if (card.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
+    box.innerHTML = '<div class="enc-detail-card strongest-detail"><span class="strongest-art">' + window.sakuStrongestCard(card) + '</span></div>' +
+      '<div class="enc-detail-meta"><div class="enc-big-num">' + encNum(card.n) + '</div><h3>' + encEsc(card.m) + '</h3><p>' + encEsc(card.series || '') +
+      '</p><p>Édition The Strongest · collection uniquement</p></div>';
+    box.classList.add('show');try { document.body.style.overflow = 'hidden'; } catch(e) {} return;
+  }
   box.innerHTML =
     '<div class="enc-detail-card" style="--er:' + meta.edge + '">' +
     '<span class="enc-art"><img src="' + encEsc(card.u) + '" alt="' + encEsc(card.m) + '" ' +
     'decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
-    '<span class="enc-rank">AniList #' + card.k + '</span>' +
+    (/^\d+$/.test(String(card.i)) ? '<span class="enc-rank">AniList #' + card.k + '</span>' : '') +
     '<span class="enc-rar-bar"></span>' +
     '<span class="enc-name">' + encEsc(card.m) + '</span>' +
     (card.s ? '<span class="enc-season">' + encEsc(card.s) + '</span>' : '') +
@@ -377,13 +392,13 @@ function encOpenCard(n) {
     '<p>' + encEsc(encFranchiseLabel(block.label)) +
     (card.s ? ' · <i>' + encEsc(card.s) + '</i>' : '') + '</p>' +
     '<p><b style="color:' + meta.color + '">' + encEsc(encRarLabel(card.r)) + '</b> · ' +
-    encEsc(encTr('AniList rank', 'AniList rank')) + ' #' + card.k + '</p>' +
+    (/^\d+$/.test(String(card.i)) ? encEsc(encTr('AniList rank', 'AniList rank')) + ' #' + card.k : 'Personnage ajouté manuellement') + '</p>' +
     encRarPickerHtml(card) +
     (card.a && card.a.length
       ? '<p class="enc-detail-alt"><b>' + encEsc(encTr('Also known as', 'Also known as')) + ':</b> ' +
         encEsc(card.a.join(' · ')) + '</p>'
       : '') +
-    '<a class="secondary" href="https://anilist.co/character/' + encEsc(card.i) + '" target="_blank" rel="noopener">AniList ↗</a>' +
+    (/^Q[1-9]\d*$/.test(String(card.i)) ? '<a class="secondary" href="https://www.wikidata.org/wiki/' + encEsc(card.i) + '" target="_blank" rel="noopener">Wikidata ↗</a>' : (/^\d+$/.test(String(card.i)) ? '<a class="secondary" href="https://anilist.co/character/' + encEsc(card.i) + '" target="_blank" rel="noopener">AniList ↗</a>' : '')) +
     '</div>';
   box.classList.add('show');
   try { document.body.style.overflow = 'hidden'; } catch (e) {}

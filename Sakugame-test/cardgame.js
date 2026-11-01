@@ -92,14 +92,17 @@ function cardRarityFor(char, rank) {
 /* The pool is built lazily: characters.js arrives with sakuDataReady. */
 function cardBuildPool() {
   if (cardPool) return cardPool;
-  const list = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS) ? GENERIC_CHARACTERS : [];
+  const base = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS) ? GENERIC_CHARACTERS : [];
+  const extra = (typeof CARD_EXTRA_CHARACTERS !== 'undefined' && Array.isArray(CARD_EXTRA_CHARACTERS)) ? CARD_EXTRA_CHARACTERS : [];
+  const special = (typeof CARD_STRONGEST !== 'undefined' && Array.isArray(CARD_STRONGEST)) ? CARD_STRONGEST : [];
+  const list = base.concat(extra, special);
   cardPool = [];
   cardPoolBySeries = {};
   cardPoolById = {};
   list.forEach((c, i) => {
     if (!c || !c.id || !c.image) return;
     const rank = i + 1;
-    const entry = { id: c.id, name: c.name || '?', image: c.image, series: c.series || '', rank: rank, rarity: cardRarityFor(c, rank) };
+    const entry = { id: c.id, name: c.name || '?', image: c.image, series: c.series || '', rank: rank, rarity: cardRarityFor(c, rank), edition: c.edition || '', collectibleOnly: !!c.collectibleOnly };
     const idx = cardPool.length;
     cardPool.push(entry);
     const key = entry.series || '';
@@ -108,6 +111,19 @@ function cardBuildPool() {
     cardPoolById[String(entry.id)] = entry;
   });
   return cardPool;
+}
+/* Incorporer les nouvelles éditions à un pool déjà initialisé, sans le réinitialiser. */
+function sakuStrongestSyncPool() {
+  if (!cardPool || typeof CARD_STRONGEST === 'undefined') return;
+  CARD_STRONGEST.forEach(function(p) {
+    const id=String(p.id), old=cardPoolById[id];
+    if (old) { old.name=p.name; old.image=p.image; return; }
+    const entry={id:p.id,name:p.name,image:p.image,series:p.series,rank:99999,rarity:'common',edition:'strongest',collectibleOnly:true};
+    const idx=cardPool.length;cardPool.push(entry);cardPoolById[id]=entry;
+    if (!cardPoolBySeries[entry.series]) cardPoolBySeries[entry.series]=[];
+    cardPoolBySeries[entry.series].push(idx);
+  });
+  if (cardState) cardsRenderAlbum();
 }
 function cardPoolReady() {
   cardBuildPool();
@@ -221,16 +237,18 @@ function cardsPickOf(candidates, rarity) {
 }
 function cardsRollPack(series) {
   cardBuildPool();
-  let candidates = cardPool;
+  const basicPool = cardPool.filter(c => !c.collectibleOnly);
+  let candidates = basicPool;
   if (series) {
     const idx = cardPoolBySeries[series] || [];
-    candidates = idx.map(i => cardPool[i]);
+    candidates = idx.map(i => cardPool[i]).filter(c => !c.collectibleOnly);
   }
-  if (!candidates.length) candidates = cardPool;
+  if (!candidates.length) candidates = basicPool;
+  if (!candidates.length) return [];
   const picks = [];
   for (let i = 0; i < CARD_PACK_SIZE; i++) {
     const rarity = cardsRollRarity();
-    const c = cardsPickOf(candidates, rarity) || cardPool[Math.floor(Math.random() * cardPool.length)];
+    const c = cardsPickOf(candidates, rarity) || basicPool[Math.floor(Math.random() * basicPool.length)];
     picks.push(c);
   }
   return picks;
@@ -364,6 +382,9 @@ function cardThumb(url) {
   return cardGfxLow() ? u.replace('/character/large/', '/character/medium/') : u;
 }
 function cardsCardFace(char, count, big) {
+  if (char.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
+    return '<span class="strongest-art">' + window.sakuStrongestCard(char) + '</span>';
+  }
   const meta = cardRarityMeta(char.rarity);
   const badge = count > 1
     ? '<span class="ac-count">×' + count + '</span>'
@@ -392,7 +413,7 @@ function cardsRenderStats() {
   CARD_RARITY_ORDER.forEach(k => {
     const have = Object.keys(cardState.cards).filter(id => {
       const e = cardPoolById && cardPoolById[String(id)];
-      return e && e.rarity === k;
+      return e && e.edition !== 'strongest' && e.rarity === k;
     }).length;
     const meta = cardRarityMeta(k);
     tiers += '<span class="ac-tier"><i style="background:' + meta.color + '"></i>' + escapeHtml(cardRarityLabel(k)) +
@@ -443,7 +464,7 @@ function cardsRenderAlbum() {
     return { p: p, count: count, key: count ? (1000000 - count) * 100000 + p.rank : 100000000 + p.rank };
   });
   if (ownedOnly) rows = rows.filter(r => r.count > 0);
-  if (rf) rows = rows.filter(r => r.p.rarity === rf);
+  if (rf) rows = rows.filter(r => r.p.edition !== 'strongest' && r.p.rarity === rf);
   if (q) rows = rows.filter(r => r.p.name.toLowerCase().indexOf(q) >= 0 || (r.p.series || '').toLowerCase().indexOf(q) >= 0);
   if (sort === 'name') rows.sort((a, b) => a.p.name.localeCompare(b.p.name));
   else if (sort === 'rarity') rows.sort((a, b) => CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
@@ -462,9 +483,16 @@ function cardsRenderAlbum() {
   }
   grid.innerHTML = shown.map(r => {
     const meta = cardRarityMeta(r.p.rarity);
+    const idArg = escapeHtml(JSON.stringify(String(r.p.id)));
+    if (r.p.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
+      return '<div class="ac-tile strongest-tile' + (r.count ? '' : ' missing') + '" role="button" tabindex="0" ' +
+        'onclick="cardsOpenDetail(' + idArg + ')" onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
+        '<span class="strongest-art">' + window.sakuStrongestCard(r.p) + '</span>' +
+        (r.count ? '<span class="strongest-ownership">×' + r.count + '</span>' : '<span class="strongest-ownership">Non obtenue</span>') + '</div>';
+    }
     return '<div class="ac-tile' + (r.count ? '' : ' missing') + '" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '" ' +
-      'onclick="cardsOpenDetail(' + r.p.id + ')" role="button" tabindex="0" ' +
-      'onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + r.p.id + ')">' +
+      'onclick="cardsOpenDetail(' + idArg + ')" role="button" tabindex="0" ' +
+      'onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
       '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
       '<span class="ac-art"><img src="' + escapeHtml(cardThumb(r.p.image)) + '" alt="' + escapeHtml(String(r.p.name)) + '" ' +
       'loading="lazy" decoding="async" fetchpriority="low" ' +
@@ -486,6 +514,12 @@ function cardsOpenDetail(id) {
   if (!entry || !box) return;
   const count = (cardState && cardState.cards[String(id)]) || 0;
   const meta = cardRarityMeta(entry.rarity);
+  if (entry.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
+    box.innerHTML = '<div class="ac-detail-card strongest-detail"><span class="strongest-art">' + window.sakuStrongestCard(entry) + '</span></div>' +
+      '<div class="ac-detail-meta"><h3>' + escapeHtml(entry.name) + '</h3><p>' + escapeHtml(entry.series || '') + '</p>' +
+      '<p>Édition The Strongest · collection uniquement</p><p>' + (count ? 'Possédée : ' + count : 'Non obtenue') + '</p></div>';
+    box.classList.add('show'); try { document.body.style.overflow = 'hidden'; } catch(e) {} return;
+  }
   box.innerHTML =
     '<div class="ac-detail-card" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '">' +
     cardsCardFace(entry, count, true) +
@@ -494,11 +528,11 @@ function cardsOpenDetail(id) {
     '<h3>' + escapeHtml(entry.name) + '</h3>' +
     '<p>' + escapeHtml(entry.series || '—') + '</p>' +
     '<p><b style="color:' + meta.color + '">' + escapeHtml(cardRarityLabel(entry.rarity)) + '</b> · ' +
-    ((typeof t === 'function') ? t('AniList rank') : 'AniList rank') + ' #' + entry.rank + '</p>' +
+    (/^\d+$/.test(String(entry.id)) ? ((typeof t === 'function') ? t('AniList rank') : 'AniList rank') + ' #' + entry.rank : 'Personnage ajouté manuellement') + '</p>' +
     '<p>' + (count
       ? ((typeof t === 'function') ? t('You own {n} copy(ies)') : 'You own {n} copy(ies)').replace('{n}', count)
       : ((typeof t === 'function') ? t('Not in your collection yet') : 'Not in your collection yet')) + '</p>' +
-    '<a class="secondary" href="https://anilist.co/character/' + entry.id + '" target="_blank" rel="noopener">AniList ↗</a>' +
+    (/^Q[1-9]\d*$/.test(String(entry.id)) ? '<a class="secondary" href="https://www.wikidata.org/wiki/' + escapeHtml(String(entry.id)) + '" target="_blank" rel="noopener">Wikidata ↗</a>' : (/^\d+$/.test(String(entry.id)) ? '<a class="secondary" href="https://anilist.co/character/' + encodeURIComponent(String(entry.id)) + '" target="_blank" rel="noopener">AniList ↗</a>' : '')) +
     '</div>';
   box.classList.add('show');
   try { document.body.style.overflow = 'hidden'; } catch (e) {}

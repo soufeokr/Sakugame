@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="177">
+<meta name="saku-build" content="181">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,13 +75,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=177" sizes="any">
+<link rel="icon" href="favicon.ico?v=181" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=177">
+<link rel="stylesheet" href="style.css?v=181">
 <!-- 🔒 TEST BUILD entrance gate (test build only — never shipped) -->
-<link rel="stylesheet" href="gate.css?v=177">
+<link rel="stylesheet" href="gate.css?v=181">
 </head>
 <body>
   <!-- 🧪 TEST BUILD marker -->
@@ -1756,7 +1756,7 @@
   </div>
 
   <!-- 🔒 entrance gate first — nothing else may run until it is open -->
-  <script src="gate.js?v=177"></script>
+  <script src="gate.js?v=181"></script>
   <!-- 🧪 TEST BUILD — the real Firebase scripts are replaced by this local stub,
        so nothing you do here can touch the public database. -->
   <script src="test-stub.js"></script>
@@ -1768,7 +1768,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=177', 'charanimes.js?v=177', 'animes.js?v=177', 'nsfwdata.js?v=177', 'snappics.js?v=177'];
+        var files = ['characters.js?v=181', 'charanimes.js?v=181', 'animes.js?v=181', 'nsfwdata.js?v=181', 'snappics.js?v=181'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1783,14 +1783,19 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="card-rarity.js?v=177"></script>
-  <script src="cardgame.js?v=177"></script>
-  <script src="encyclopedia.js?v=177"></script>
-  <script src="enc.js?v=177"></script>
-  <script src="undercover.js?v=177"></script>
-  <script src="music.js?v=177"></script>
-  <script src="lang.js?v=177"></script>
-  <script src="app.js?v=177"></script>
+  <script src="card-rarity.js?v=181"></script>
+  <script src="card-extra.js?v=181"></script>
+  <script src="strongest-data.js?v=181"></script>
+  <script src="strongest-render.js?v=181"></script>
+  <script src="cardgame.js?v=181"></script>
+  <script src="encyclopedia.js?v=181"></script>
+  <script src="enc.js?v=181"></script>
+  <script src="strongest-sync.js?v=181"></script>
+  <script src="pic-sync.js?v=181"></script>
+  <script src="undercover.js?v=181"></script>
+  <script src="music.js?v=181"></script>
+  <script src="lang.js?v=181"></script>
+  <script src="app.js?v=181"></script>
   <script src="test-panel.js"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
@@ -1799,5 +1804,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a534575a386cebe8',t:'MTc5MzQ2NzMzOQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a534575a386cebe8',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
