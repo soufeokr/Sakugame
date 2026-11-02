@@ -44,6 +44,25 @@ const ENC_RARITY_KEY = 'saku-enc-rarity';        // v1: keyed by binder number
 const ENC_RARITY_ID_KEY = 'saku-enc-rar-by-id';    // v2: keyed by AniList id
 const ENC_RARITY_MIGRATED = 'saku-enc-rar-migrated';
 let encRarEdits = {};
+const ENC_REMOTE_DRAFT_KEY = 'saku-remote-rarity-drafts';
+let encRemoteDrafts = {};
+function encRemoteRarity(card) {
+  if (!card || card.edition === 'strongest') return '';
+  const v = window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[String(card.i)];
+  return ENC_RARITIES.indexOf(v) >= 0 ? v : '';
+}
+function encSaveRemoteDrafts() {
+  try { localStorage.setItem(ENC_REMOTE_DRAFT_KEY, JSON.stringify(encRemoteDrafts)); } catch(e) {}
+}
+function encPruneRemoteDrafts() {
+  const published = window.SAKU_REMOTE_RARITIES || {};
+  let changed = false;
+  Object.keys(encRemoteDrafts).forEach(k => {
+    if (published[k] && published[k] === encRemoteDrafts[k]) { delete encRemoteDrafts[k]; changed = true; }
+  });
+  if (changed) encSaveRemoteDrafts();
+}
+
 
 /* ---------------- helpers ---------------- */
 function encEsc(s) {
@@ -107,6 +126,8 @@ function encRarLoad() {
       ' rarity edit(s) re-keyed to AniList ids');
   }
   encRarEdits = store;
+  try { const v=JSON.parse(localStorage.getItem(ENC_REMOTE_DRAFT_KEY) || '{}'); encRemoteDrafts = v && typeof v==='object' && !Array.isArray(v) ? v : {}; } catch(e) { encRemoteDrafts = {}; }
+  encPruneRemoteDrafts();
   return store;
 }
 function encRarSave() {
@@ -114,6 +135,8 @@ function encRarSave() {
 }
 function encRarOriginal(card) { return card.r0 || card.r; }
 function encRarityOf(card) {
+  const remote = encRemoteRarity(card);
+  if (remote) return remote;
   const o = encRarEdits[String(card.i)];
   return (o && ENC_RARITIES.indexOf(o) >= 0) ? o : encRarOriginal(card);
 }
@@ -337,7 +360,8 @@ function encShowMore() { encRender(false); }
 
 /* ---------------- detail ---------------- */
 function encRarPickerHtml(card) {
-  const cur = encRarityOf(card);
+  const remote = encRemoteRarity(card), draft = encRemoteDrafts[String(card.i)];
+  const cur = remote && ENC_RARITIES.indexOf(draft) >= 0 ? draft : encRarityOf(card);
   const btns = ENC_RARITIES.map(r => {
     const on = r === cur ? ' on' : '';
     return '<button type="button" class="enc-rar-btn' + on + '" data-enc-num="' + card.n + '" ' +
@@ -347,12 +371,13 @@ function encRarPickerHtml(card) {
       '<span>' + encEsc(encRarLabel(r)) + '</span></button>';
   }).join('');
   return '<div class="enc-rar-edit">' +
+    (remote ? '<p class="enc-rar-edit-lab">Rareté officielle : ' + encEsc(encRarLabel(remote)) + '. Toute modification est un brouillon à exporter et publier.</p>' : '') +
     '<span class="enc-rar-edit-lab">' + encEsc(encTr('Change rarity', 'Change rarity')) +
-    (encRarEdited(card) ? ' <em class="enc-rar-flag">' +
+    ((remote ? !!draft : encRarEdited(card)) ? ' <em class="enc-rar-flag">' +
       encEsc(encTr('edited', 'edited')) + '</em>' : '') + '</span>' +
     '<div class="enc-rar-pick" role="group" aria-label="' +
     encEsc(encTr('Change rarity', 'Change rarity')) + '">' + btns + '</div>' +
-    (encRarEdited(card)
+    ((remote ? !!draft : encRarEdited(card))
       ? '<button type="button" class="enc-rar-undo" data-enc-num="' + card.n + '" ' +
         'data-enc-rar-reset="1">&#8635; ' + encEsc(encTr('Reset', 'Reset')) + '</button>'
       : '') +
@@ -428,6 +453,11 @@ function encSetRarity(n, r) {
   const found = encFind(n);
   if (!found || ENC_RARITIES.indexOf(r) < 0) return;
   const card = found.card;
+  const remote = encRemoteRarity(card);
+  if (remote) {
+    if (r === remote) delete encRemoteDrafts[String(card.i)]; else encRemoteDrafts[String(card.i)] = r;
+    encSaveRemoteDrafts(); encOpenCard(card.n); return;
+  }
   if (r === encRarOriginal(card)) delete encRarEdits[String(card.i)];   // back to the build value
   else encRarEdits[String(card.i)] = r;
   encRarSave();
@@ -439,6 +469,7 @@ function encSetRarity(n, r) {
 function encResetRarity(n) {
   const found = encFind(n);
   if (!found) return;
+  if (encRemoteRarity(found.card)) { delete encRemoteDrafts[String(found.card.i)]; encSaveRemoteDrafts(); encOpenCard(found.card.n); return; }
   delete encRarEdits[String(found.card.i)];
   encRarSave();
   encSyncRarities();
@@ -447,7 +478,7 @@ function encResetRarity(n) {
   encOpenCard(found.card.n);
 }
 function encResetAllRarity() {
-  encRarEdits = {};
+  encRarEdits = {}; encRemoteDrafts = {}; encSaveRemoteDrafts();
   encRarSave();
   encSyncRarities();
   encApplyEdits();
@@ -455,13 +486,19 @@ function encResetAllRarity() {
 /* Back up / restore the edits as a file, so a cleared cache, another
    browser or a second machine can pick them up again.                 */
 function encExportRarities() {
-  const n = Object.keys(encRarEdits).length;
+  // Le fichier publié fait autorité ; conserver toutes ses entrées, ajouter
+  // les éditions locales des autres cartes et les nouveaux brouillons.
+  const published = window.SAKU_REMOTE_RARITIES || {};
+  const merged = Object.assign({}, published);
+  Object.keys(encRarEdits).forEach(k => { if (!published[k]) merged[k] = encRarEdits[k]; });
+  Object.keys(encRemoteDrafts).forEach(k => { if (ENC_RARITIES.indexOf(encRemoteDrafts[k]) >= 0) merged[k] = encRemoteDrafts[k]; });
+  const n = Object.keys(merged).length;
   if (!n) { alert(encTr('No rarity edits to save yet.', 'No rarity edits to save yet.')); return; }
   const names = {};
   encData.list.forEach(b => b.cards.forEach(c => { names[String(c.i)] = c.m; }));
   const blob = new Blob([JSON.stringify({
     kind: 'sakugame-encyclopedia-rarities', version: 2, saved: new Date().toISOString(),
-    edits: encRarEdits, names: names
+    edits: merged, names: names
   }, null, 1)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -484,6 +521,14 @@ function encImportRarities(file) {
     Object.keys(edits).forEach(k => {
       if (ENC_RARITIES.indexOf(edits[k]) >= 0) clean[String(k)] = edits[k];
     });
+    // Un import prépare les changements des cartes pilotées par le fichier
+    // officiel, sans modifier immédiatement les valeurs publiées.
+    encRemoteDrafts = {};
+    Object.keys(clean).forEach(k => {
+      const published = window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[k];
+      if (published && clean[k] !== published) encRemoteDrafts[k] = clean[k];
+    });
+    encSaveRemoteDrafts();
     encRarEdits = clean;
     encRarSave();
     try { localStorage.setItem(ENC_RARITY_MIGRATED, '1'); } catch (e) {}

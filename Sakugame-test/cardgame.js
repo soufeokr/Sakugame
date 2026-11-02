@@ -79,6 +79,8 @@ function cardRarityMeta(key) { return CARD_RARITY_BY_KEY[key] || CARD_RARITY_BY_
 
 /* Rarity of one character: the imported sheet wins, else the AniList rank. */
 function cardRarityFor(char, rank) {
+  const remote = char.edition !== 'strongest' && window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[String(char.id)];
+  if (remote && CARD_RARITY_BY_KEY[remote]) return remote;
   if (typeof CARD_RARITY !== 'undefined' && CARD_RARITY) {
     const v = CARD_RARITY[char.id] || CARD_RARITY[String(char.id)];
     if (v && CARD_RARITY_BY_KEY[String(v).toLowerCase()]) return String(v).toLowerCase();
