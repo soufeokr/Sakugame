@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="182">
+<meta name="saku-build" content="184">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
@@ -75,66 +75,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=182" sizes="any">
+<link rel="icon" href="favicon.ico?v=184" sizes="any">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v=182">
-<!-- 🔒 TEST BUILD entrance gate (test build only — never shipped) -->
-<link rel="stylesheet" href="gate.css?v=182">
+<link rel="stylesheet" href="style.css?v=184">
 </head>
 <body>
-  <!-- 🧪 TEST BUILD marker -->
-  <div id="testBuildBadge" style="position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:2147483001;pointer-events:none;background:rgba(88,101,242,.92);color:#fff;font:600 11px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.3px;padding:5px 10px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.35);">🧪 TEST BUILD — fake backend, nothing public is touched</div>
-
-  <!-- ══════ 🔒 ENTRANCE GATE — test build only ═══════════════════════════
-       Full-screen lock in front of the whole app — the code itself lives in
-       gate.js, never in the markup.  Once accepted it is remembered in
-       localStorage, so it is asked once per browser.
-       The live build (../Sakugame) has no gate at all. -->
-  <div id="sakuGate" hidden aria-hidden="true">
-    <form class="gate-card" id="sakuGateForm" autocomplete="off" novalidate>
-      <div class="gate-lock" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4.5" y="10.5" width="15" height="10.5" rx="2.6"/>
-          <path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/>
-          <circle cx="12" cy="15.6" r="1.35" fill="currentColor" stroke="none"/>
-          <path d="M12 17v1.9"/>
-        </svg>
-      </div>
-      <h1>Test build — locked</h1>
-      <p class="gate-sub">This sandbox copy is private. Type the passcode to get in —<br>
-        the same one <b>admin mode</b> uses.</p>
-      <div class="gate-row">
-        <input id="sakuGateInput" type="password" inputmode="text" autocomplete="current-password"
-               placeholder="Passcode" aria-label="Passcode" maxlength="64" spellcheck="false">
-        <button type="submit" class="gate-go" id="sakuGateGo">Enter</button>
-        <button type="button" id="sakuGateEye" aria-label="Show passcode"
-                style="flex:0 0 auto;width:44px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(8,12,26,.85);color:#9fdcff;font-size:1rem;cursor:pointer">👁</button>
-      </div>
-      <p class="gate-err" id="sakuGateErr" role="alert"></p>
-      <p class="gate-foot">Sakugame · test build 173</p>
-    </form>
-  </div>
-  <script>
-    /* Shown synchronously, before the rest of the page paints, so a returning
-       visitor never sees a flash of the app and a first-time visitor never
-       sees the app at all.  gate.js then wires the form and does the check
-       again once the DOM is ready. */
-    (function () {
-      var ok = false;
-      try { ok = localStorage.getItem('sakuGateOk') === '1'; } catch (e) {}
-      var g = document.getElementById('sakuGate');
-      if (!g) return;
-      if (ok) { g.hidden = true; g.setAttribute('aria-hidden', 'true'); }
-      else {
-        g.hidden = false;
-        g.removeAttribute('aria-hidden');
-        document.documentElement.className += ' gate-locked';
-      }
-    })();
-  </script>
 
 
 <!-- ══════ SVG ICON SPRITE — all UI icons (stroke = currentColor, inherits text color) ══════ -->
@@ -1755,20 +1702,19 @@
     </div>
   </div>
 
-  <!-- 🔒 entrance gate first — nothing else may run until it is open -->
-  <script src="gate.js?v=182"></script>
-  <!-- 🧪 TEST BUILD — the real Firebase scripts are replaced by this local stub,
-       so nothing you do here can touch the public database. -->
-  <script src="test-stub.js"></script>
 
-  <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
+  <!-- 🐢   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
        the three scripts on window 'load' (async=false keeps classic-script order)
        and exposes window.sakuDataReady — app.js awaits it before dealing a game. -->
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=182', 'charanimes.js?v=182', 'animes.js?v=182', 'nsfwdata.js?v=182', 'snappics.js?v=182'];
+        var files = ['characters.js?v=184', 'charanimes.js?v=184', 'animes.js?v=184', 'nsfwdata.js?v=184', 'snappics.js?v=184'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1783,20 +1729,19 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="card-rarity.js?v=182"></script>
-  <script src="card-extra.js?v=182"></script>
-  <script src="strongest-data.js?v=182"></script>
-  <script src="strongest-render.js?v=182"></script>
-  <script src="cardgame.js?v=182"></script>
-  <script src="encyclopedia.js?v=182"></script>
-  <script src="enc.js?v=182"></script>
-  <script src="strongest-sync.js?v=182"></script>
-  <script src="pic-sync.js?v=182"></script>
-  <script src="undercover.js?v=182"></script>
-  <script src="music.js?v=182"></script>
-  <script src="lang.js?v=182"></script>
-  <script src="app.js?v=182"></script>
-  <script src="test-panel.js"></script>
+  <script src="card-rarity.js?v=184"></script>
+  <script src="card-extra.js?v=184"></script>
+  <script src="strongest-data.js?v=184"></script>
+  <script src="strongest-render.js?v=184"></script>
+  <script src="cardgame.js?v=184"></script>
+  <script src="encyclopedia.js?v=184"></script>
+  <script src="enc.js?v=184"></script>
+  <script src="strongest-sync.js?v=184"></script>
+  <script src="pic-sync.js?v=184"></script>
+  <script src="undercover.js?v=184"></script>
+  <script src="music.js?v=184"></script>
+  <script src="lang.js?v=184"></script>
+  <script src="app.js?v=184"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -1804,5 +1749,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5425f560b38d0be',t:'MTc5MzYxNDQ2Nw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5425f560b38d0be',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
