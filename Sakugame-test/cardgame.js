@@ -31,7 +31,7 @@ const CARD_RARITIES = [
   { key: 'rare',      odds: 15, color: '#02a9ff', edge: 'rgba(2,169,255,.55)' },
   { key: 'epic',      odds: 8,  color: '#9d6bff', edge: 'rgba(157,107,255,.60)' },
   { key: 'legendary', odds: 3,  color: '#ffa726', edge: 'rgba(255,167,38,.60)' },
-  { key: 'mythic',    odds: 1,  color: '#ff5252', edge: 'rgba(255,82,82,.60)' }
+  { key: 'mythic',    odds: 1,  color: '#c5bcff', edge: 'rgba(190,180,255,.75)' }
 ];
 const CARD_RARITY_ORDER = CARD_RARITIES.map(r => r.key);
 const CARD_RARITY_BY_KEY = {};
@@ -77,8 +77,10 @@ function cardRarityLabel(key) {
 }
 function cardRarityMeta(key) { return CARD_RARITY_BY_KEY[key] || CARD_RARITY_BY_KEY.common; }
 
-/* Rarity of one character: the imported sheet wins, else the AniList rank. */
+/* Player overrides first, then the published sheet, then the shipped value. */
 function cardRarityFor(char, rank) {
+  const local = char.edition !== 'strongest' && !char.collectibleOnly && window.SAKU_LOCAL_RARITIES && window.SAKU_LOCAL_RARITIES[String(char.id)];
+  if (local && CARD_RARITY_BY_KEY[local]) return local;
   const remote = char.edition !== 'strongest' && window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[String(char.id)];
   if (remote && CARD_RARITY_BY_KEY[remote]) return remote;
   if (typeof CARD_RARITY !== 'undefined' && CARD_RARITY) {
@@ -328,7 +330,7 @@ function cardsRenderReveal() {
   grid.innerHTML = '';
   cardReveal.forEach((item, i) => {
     const slot = document.createElement('div');
-    slot.className = 'ac-slot';
+    slot.className = 'ac-slot' + (typeof window.sakuBasicBack === 'function' ? ' basic-rendered' : '') + (item.char.rarity === 'mythic' && item.char.edition !== 'strongest' ? ' mythic' : '');
     slot.id = 'cardsSlot' + i;
     const meta = cardRarityMeta(item.char.rarity);
     slot.style.setProperty('--ac-edge', meta.edge);
@@ -336,6 +338,7 @@ function cardsRenderReveal() {
     slot.innerHTML =
       '<div class="ac-flip-inner">' +
       '<div class="ac-face ac-face-front">' +
+        (typeof window.sakuBasicBack === 'function' ? '<span class="basic-card-art">' + window.sakuBasicBack() + '</span>' : '') +
         '<span class="ac-back" aria-hidden="true">' +
           '<span class="ac-back-foil"></span>' +
           '<span class="ac-back-crimp"></span>' +
@@ -392,6 +395,7 @@ function cardsCardFace(char, count, big) {
     ? '<span class="ac-count">×' + count + '</span>'
     : '<span class="ac-new">' + ((typeof t === 'function') ? t('NEW') : 'NEW') + '</span>';
   return '' +
+    (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(char, false) + '</span>' : '') +
     '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
     '<span class="ac-art"><img src="' + escapeHtml(String(char.image)) + '" alt="' + escapeHtml(String(char.name)) + '" ' +
       'loading="lazy" decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
@@ -418,7 +422,7 @@ function cardsRenderStats() {
       return e && e.edition !== 'strongest' && e.rarity === k;
     }).length;
     const meta = cardRarityMeta(k);
-    tiers += '<span class="ac-tier"><i style="background:' + meta.color + '"></i>' + escapeHtml(cardRarityLabel(k)) +
+    tiers += '<span class="ac-tier' + (k === 'mythic' ? ' mythic' : '') + '"><i style="background:' + meta.color + '"></i>' + escapeHtml(cardRarityLabel(k)) +
       ' <b>' + have + '</b></span>';
   });
   box.innerHTML =
@@ -478,6 +482,7 @@ function cardsRenderAlbum() {
     more.style.display = rows.length > cardAlbumLimit ? '' : 'none';
     more.textContent = ((typeof t === 'function') ? t('Show more') : 'Show more') + ' (' + (rows.length - cardAlbumLimit) + ')';
   }
+  if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
   if (!shown.length) {
     grid.innerHTML = '<p class="ac-empty">' + ((typeof t === 'function')
       ? t('No card matches — open a booster to start your collection!') : 'No card matches — open a booster to start your collection!') + '</p>';
@@ -485,17 +490,19 @@ function cardsRenderAlbum() {
   }
   grid.innerHTML = shown.map(r => {
     const meta = cardRarityMeta(r.p.rarity);
-    const idArg = escapeHtml(JSON.stringify(String(r.p.id)));
+    const idArg = JSON.stringify(String(r.p.id)).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
     if (r.p.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
       return '<div class="ac-tile strongest-tile' + (r.count ? '' : ' missing') + '" role="button" tabindex="0" ' +
         'onclick="cardsOpenDetail(' + idArg + ')" onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
         '<span class="strongest-art">' + window.sakuStrongestCard(r.p) + '</span>' +
         (r.count ? '<span class="strongest-ownership">×' + r.count + '</span>' : '<span class="strongest-ownership">Non obtenue</span>') + '</div>';
     }
-    return '<div class="ac-tile' + (r.count ? '' : ' missing') + '" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '" ' +
+    return '<div class="ac-tile' + (typeof window.sakuBasicCard === 'function' ? ' basic-rendered' : '') + (r.p.rarity === 'mythic' ? ' mythic' : '') + (r.count ? '' : ' missing') + '" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '" ' +
       'onclick="cardsOpenDetail(' + idArg + ')" role="button" tabindex="0" ' +
       'onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
+      (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(r.p, true, {image:cardThumb(r.p.image)}) + '</span>' : '') +
       '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
+      (r.count > 1 ? '<span class="ac-count">×' + r.count + '</span>' : '') +
       '<span class="ac-art"><img src="' + escapeHtml(cardThumb(r.p.image)) + '" alt="' + escapeHtml(String(r.p.name)) + '" ' +
       'loading="lazy" decoding="async" fetchpriority="low" ' +
       'onload="this.classList.add(\'in\')" onerror="this.style.opacity=0"></span>' +
@@ -505,6 +512,7 @@ function cardsRenderAlbum() {
       (r.count > 1 ? '<i class="ac-own">×' + r.count + '</i>' : '') + '</span>' +
       '</div>';
   }).join('');
+  if (window.sakuBasicObserve) window.sakuBasicObserve(grid);
 }
 function cardsShowMore() { cardAlbumLimit += CARD_ALBUM_STEP; cardsRenderAlbum(); }
 
@@ -523,13 +531,13 @@ function cardsOpenDetail(id) {
     box.classList.add('show'); try { document.body.style.overflow = 'hidden'; } catch(e) {} return;
   }
   box.innerHTML =
-    '<div class="ac-detail-card" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '">' +
-    cardsCardFace(entry, count, true) +
+    '<div class="ac-detail-card' + (typeof window.sakuBasicCard === 'function' ? ' basic-rendered' : '') + (entry.rarity === 'mythic' ? ' mythic' : '') + '" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '">' +
+    cardsCardFace(entry, count, false) +
     '</div>' +
     '<div class="ac-detail-meta">' +
     '<h3>' + escapeHtml(entry.name) + '</h3>' +
     '<p>' + escapeHtml(entry.series || '—') + '</p>' +
-    '<p><b style="color:' + meta.color + '">' + escapeHtml(cardRarityLabel(entry.rarity)) + '</b> · ' +
+    '<p><b class="' + (entry.rarity === 'mythic' ? 'mythic-label' : '') + '" style="color:' + meta.color + '">' + escapeHtml(cardRarityLabel(entry.rarity)) + '</b> · ' +
     (/^\d+$/.test(String(entry.id)) ? ((typeof t === 'function') ? t('AniList rank') : 'AniList rank') + ' #' + entry.rank : 'Personnage ajouté manuellement') + '</p>' +
     '<p>' + (count
       ? ((typeof t === 'function') ? t('You own {n} copy(ies)') : 'You own {n} copy(ies)').replace('{n}', count)
@@ -571,7 +579,25 @@ function showCards() {
   showScreen('cardsScreen');
   cardsEnsureReady();
 }
+function showCollection() {
+  showScreen('collectionScreen');
+  cardsEnsureReady();
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
 function cardsEnsureReady() {
+  // The base catalogue is injected after first paint: never cache only the
+  // extra/special cards when a visitor opens a direct link immediately.
+  if (typeof GENERIC_CHARACTERS === 'undefined' || !GENERIC_CHARACTERS.length) {
+    const stats = document.getElementById('cardsStats');
+    if (stats) stats.textContent = typeof t === 'function' ? t('Loading cards…') : 'Loading cards…';
+    if (window.sakuDataReady && window.sakuDataReady.then) window.sakuDataReady.then(function () {
+      const active = document.querySelector('#cardsScreen.active, #collectionScreen.active');
+      if (active) cardsEnsureReady();
+    }).catch(function () {
+      if (stats) stats.textContent = typeof t === 'function' ? t('Could not load the cards. Please reload the page.') : 'Could not load the cards. Please reload the page.';
+    });
+    return;
+  }
   cardsLoad();
   cardsTickFree(true);
   cardsFillFilters();
@@ -592,7 +618,7 @@ function cardsEnsureReady() {
   const kick = () => {
     if (!cardPoolReady()) { setTimeout(kick, 400); return; }
     cardsFillFilters();
-    if (document.getElementById('cardsScreen') && document.getElementById('cardsScreen').classList.contains('active')) {
+    if ((document.getElementById('cardsScreen') && document.getElementById('cardsScreen').classList.contains('active')) || (document.getElementById('collectionScreen') && document.getElementById('collectionScreen').classList.contains('active'))) {
       cardsRenderTop(); cardsRenderStats(); cardsRenderAlbum();
     }
   };

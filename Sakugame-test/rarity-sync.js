@@ -1,10 +1,26 @@
-/* Raretés officielles : fichier exporté à côté de index.html sur le site.
-   Le fichier publié prime sur les éditions locales des IDs qu'il contient. */
+/* Raretés publiées : les choix locaux du joueur restent prioritaires
+   pour chaque personnage modifié dans ce navigateur. */
 (function () {
   'use strict';
   var KEY = 'saku-published-rarities-v1', URL = './sakugame-rarities.json', TTL = 5 * 60 * 1000;
   var allowed = {common:1, uncommon:1, rare:1, epic:1, legendary:1, mythic:1};
   var inflight = null;
+  function loadLocal() {
+    var local = {}, drafts = {};
+    try { local = JSON.parse(localStorage.getItem('saku-enc-rar-by-id') || '{}') || {}; } catch(e) {}
+    try { drafts = JSON.parse(localStorage.getItem('saku-remote-rarity-drafts') || '{}') || {}; } catch(e) {}
+    if (!local || typeof local !== 'object' || Array.isArray(local)) local = {};
+    if (!drafts || typeof drafts !== 'object' || Array.isArray(drafts)) drafts = {};
+    var keys = Object.keys(drafts);
+    keys.forEach(function(id) { if (Object.prototype.hasOwnProperty.call(allowed, drafts[id])) local[id] = drafts[id]; });
+    // Preserve earlier unpublished choices as active local edits; only remove
+    // the old draft store if the merged copy was successfully persisted.
+    if (keys.length) { try { localStorage.setItem('saku-enc-rar-by-id', JSON.stringify(local)); localStorage.removeItem('saku-remote-rarity-drafts'); } catch(e) {} }
+    window.SAKU_LOCAL_RARITIES = local;
+    return local;
+  }
+  window.sakuRarityLoadLocal = loadLocal;
+  loadLocal();
   function parse(data) {
     if (!data || data.kind !== 'sakugame-encyclopedia-rarities' || data.version !== 2 ||
         !data.edits || typeof data.edits !== 'object' || Array.isArray(data.edits)) throw new Error('Format de raretés invalide');
@@ -19,10 +35,9 @@
   }
   function apply(map) {
     window.SAKU_REMOTE_RARITIES = map;
-    if (typeof encPruneRemoteDrafts === 'function') encPruneRemoteDrafts();
     if (typeof cardPool !== 'undefined' && cardPool) {
       cardPool.forEach(function(card) { if (!card.collectibleOnly && card.edition !== 'strongest') card.rarity = cardRarityFor(card, card.rank); });
-      try { if (typeof cardState !== 'undefined' && cardState && typeof cardsRenderAlbum === 'function') cardsRenderAlbum(); } catch(e) { console.warn('rarity album refresh:', e); }
+      try { if (typeof cardState !== 'undefined' && cardState) { if (typeof cardsRenderStats === 'function') cardsRenderStats(); if (typeof cardsRenderAlbum === 'function') cardsRenderAlbum(); } } catch(e) { console.warn('rarity album refresh:', e); }
     }
     try {
       var selected = null, box = document.getElementById('encDetail');

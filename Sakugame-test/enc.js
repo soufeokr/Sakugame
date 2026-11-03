@@ -20,7 +20,7 @@
 const ENC_STEP = 240;              // cards per "show more" chunk
 const ENC_RARITIES = ['mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
 const ENC_RARITY_META = {
-  mythic:    { color: '#ff5252', edge: 'rgba(255,82,82,.60)' },
+  mythic:    { color: '#c5bcff', edge: 'rgba(190,180,255,.75)' },
   legendary: { color: '#ffa726', edge: 'rgba(255,167,38,.60)' },
   epic:      { color: '#9d6bff', edge: 'rgba(157,107,255,.60)' },
   rare:      { color: '#02a9ff', edge: 'rgba(2,169,255,.55)' },
@@ -54,14 +54,8 @@ function encRemoteRarity(card) {
 function encSaveRemoteDrafts() {
   try { localStorage.setItem(ENC_REMOTE_DRAFT_KEY, JSON.stringify(encRemoteDrafts)); } catch(e) {}
 }
-function encPruneRemoteDrafts() {
-  const published = window.SAKU_REMOTE_RARITIES || {};
-  let changed = false;
-  Object.keys(encRemoteDrafts).forEach(k => {
-    if (published[k] && published[k] === encRemoteDrafts[k]) { delete encRemoteDrafts[k]; changed = true; }
-  });
-  if (changed) encSaveRemoteDrafts();
-}
+// Old remote-only drafts are migrated to local choices in encRarLoad.
+function encPruneRemoteDrafts() { /* kept for backwards compatibility */ }
 
 
 /* ---------------- helpers ---------------- */
@@ -125,20 +119,30 @@ function encRarLoad() {
     if (moved && window.console) console.log('encyclopedia: ' + moved +
       ' rarity edit(s) re-keyed to AniList ids');
   }
+  // A draft was the player's latest choice under the former priority rule.
+  // Keep it and promote it to an active local preference, including when
+  // the matching published value happens to be the same today.
+  let drafts = {};
+  try { drafts = JSON.parse(localStorage.getItem(ENC_REMOTE_DRAFT_KEY) || '{}') || {}; } catch(e) {}
+  if (drafts && typeof drafts === 'object' && !Array.isArray(drafts)) {
+    Object.keys(drafts).forEach(k => { if (ENC_RARITIES.indexOf(drafts[k]) >= 0) store[k] = drafts[k]; });
+    if (Object.keys(drafts).length) { try { localStorage.setItem(ENC_RARITY_ID_KEY, JSON.stringify(store)); localStorage.removeItem(ENC_REMOTE_DRAFT_KEY); } catch(e) {} }
+  }
   encRarEdits = store;
-  try { const v=JSON.parse(localStorage.getItem(ENC_REMOTE_DRAFT_KEY) || '{}'); encRemoteDrafts = v && typeof v==='object' && !Array.isArray(v) ? v : {}; } catch(e) { encRemoteDrafts = {}; }
-  encPruneRemoteDrafts();
+  encRemoteDrafts = {};
+  window.SAKU_LOCAL_RARITIES = encRarEdits;
   return store;
 }
 function encRarSave() {
+  window.SAKU_LOCAL_RARITIES = encRarEdits;
   try { localStorage.setItem(ENC_RARITY_ID_KEY, JSON.stringify(encRarEdits)); } catch (e) {}
 }
 function encRarOriginal(card) { return card.r0 || card.r; }
 function encRarityOf(card) {
-  const remote = encRemoteRarity(card);
-  if (remote) return remote;
+  if (card.edition === 'strongest') return encRarOriginal(card);
   const o = encRarEdits[String(card.i)];
-  return (o && ENC_RARITIES.indexOf(o) >= 0) ? o : encRarOriginal(card);
+  if (o && ENC_RARITIES.indexOf(o) >= 0) return o;
+  return encRemoteRarity(card) || encRarOriginal(card);
 }
 function encRarEdited(card) { return !!encRarEdits[String(card.i)]; }
 function encTally() {
@@ -209,6 +213,10 @@ function encBuild() {
   }));
   encRarLoad();
   encSyncRarities();
+  // Opening the encyclopedia can also migrate old number-keyed preferences.
+  if (typeof cardPool !== 'undefined' && cardPool && typeof cardRarityFor === 'function') {
+    cardPool.forEach(c => { if (c.edition !== 'strongest' && !c.collectibleOnly) c.rarity = cardRarityFor(c, c.rank); });
+  }
   return true;
 }
 
@@ -270,9 +278,10 @@ function encSlotHtml(card) {
       '<span class="strongest-art">' + window.sakuStrongestCard(card) + '</span></div>';
   }
   const meta = ENC_RARITY_META[card.r] || ENC_RARITY_META.common;
-  return '<div class="enc-slot' + (card.r === 'mythic' ? ' mythic' : '') + '" ' +
+  return '<div class="enc-slot' + (typeof window.sakuBasicCard === 'function' ? ' basic-rendered' : '') + (card.r === 'mythic' ? ' mythic' : '') + '" ' +
     'style="--er:' + meta.edge + '" role="button" tabindex="0" data-enc-card="' + card.n + '" ' +
     'title="' + encEsc(card.m) + '">' +
+    (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(card, true, {image:encThumb(card.u)}) + '</span>' : '') +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
     (/^\d+$/.test(String(card.i)) ? '<span class="enc-rank" title="AniList">A#' + card.k + '</span>' : '') +
     '<span class="enc-art"><img src="' + encEsc(encThumb(card.u)) + '" alt="' + encEsc(card.m) + '" ' +
@@ -288,7 +297,7 @@ function encSlotHtml(card) {
 function encBlockHeadHtml(block, st) {
   const rar = (st && st.rar) || encBlockTally(block);
   const tally = ENC_RARITIES.filter(r => rar[r]).map(r =>
-    '<span style="background:' + (ENC_RARITY_META[r] || {}).color + '">' +
+    '<span class="enc-tally-' + r + '" style="background:' + (ENC_RARITY_META[r] || {}).color + '">' +
     (r === 'uncommon' ? 'U' : r.charAt(0).toUpperCase()) + rar[r] + '</span>').join('');
   const from = st ? st.from : block.from, to = st ? st.to : block.to;
   return '<div class="enc-block-head">' +
@@ -301,7 +310,7 @@ function encBlockHeadHtml(block, st) {
 function encRender(reset) {
   const grid = document.getElementById('encBinder');
   if (!grid || !encData) return;
-  if (reset) { encShown = 0; encBlockEls = {}; grid.innerHTML = ''; }
+  if (reset) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); encShown = 0; encBlockEls = {}; grid.innerHTML = ''; }
 
   const rows = encVisible();
   const total = rows.length;
@@ -347,6 +356,7 @@ function encRender(reset) {
     }
   }
 
+  if (window.sakuBasicObserve) window.sakuBasicObserve(grid);
   const left = total - encShown;
   const more = document.getElementById('encMoreBtn');
   if (more) {
@@ -360,8 +370,8 @@ function encShowMore() { encRender(false); }
 
 /* ---------------- detail ---------------- */
 function encRarPickerHtml(card) {
-  const remote = encRemoteRarity(card), draft = encRemoteDrafts[String(card.i)];
-  const cur = remote && ENC_RARITIES.indexOf(draft) >= 0 ? draft : encRarityOf(card);
+  const remote = encRemoteRarity(card);
+  const cur = encRarityOf(card);
   const btns = ENC_RARITIES.map(r => {
     const on = r === cur ? ' on' : '';
     return '<button type="button" class="enc-rar-btn' + on + '" data-enc-num="' + card.n + '" ' +
@@ -371,13 +381,13 @@ function encRarPickerHtml(card) {
       '<span>' + encEsc(encRarLabel(r)) + '</span></button>';
   }).join('');
   return '<div class="enc-rar-edit">' +
-    (remote ? '<p class="enc-rar-edit-lab">Rareté officielle : ' + encEsc(encRarLabel(remote)) + '. Toute modification est un brouillon à exporter et publier.</p>' : '') +
+    (remote ? '<p class="enc-rar-edit-lab">' + encEsc(encTr('Published rarity:', 'Published rarity:')) + ' ' + encEsc(encRarLabel(remote)) + '. ' + encEsc(encTr('Your local choice takes priority.', 'Your local choice takes priority.')) + '</p>' : '') +
     '<span class="enc-rar-edit-lab">' + encEsc(encTr('Change rarity', 'Change rarity')) +
-    ((remote ? !!draft : encRarEdited(card)) ? ' <em class="enc-rar-flag">' +
+    (encRarEdited(card) ? ' <em class="enc-rar-flag">' +
       encEsc(encTr('edited', 'edited')) + '</em>' : '') + '</span>' +
     '<div class="enc-rar-pick" role="group" aria-label="' +
     encEsc(encTr('Change rarity', 'Change rarity')) + '">' + btns + '</div>' +
-    ((remote ? !!draft : encRarEdited(card))
+    (encRarEdited(card)
       ? '<button type="button" class="enc-rar-undo" data-enc-num="' + card.n + '" ' +
         'data-enc-rar-reset="1">&#8635; ' + encEsc(encTr('Reset', 'Reset')) + '</button>'
       : '') +
@@ -400,7 +410,8 @@ function encOpenCard(n) {
     box.classList.add('show');try { document.body.style.overflow = 'hidden'; } catch(e) {} return;
   }
   box.innerHTML =
-    '<div class="enc-detail-card" style="--er:' + meta.edge + '">' +
+    '<div class="enc-detail-card' + (typeof window.sakuBasicCard === 'function' ? ' basic-rendered' : '') + (card.r === 'mythic' ? ' mythic' : '') + '" style="--er:' + meta.edge + '">' +
+    (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(card, false, {series:encFranchiseLabel(block.label)}) + '</span>' : '') +
     '<span class="enc-art"><img src="' + encEsc(card.u) + '" alt="' + encEsc(card.m) + '" ' +
     'decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
@@ -416,7 +427,7 @@ function encOpenCard(n) {
     '<h3>' + encEsc(card.m) + '</h3>' +
     '<p>' + encEsc(encFranchiseLabel(block.label)) +
     (card.s ? ' · <i>' + encEsc(card.s) + '</i>' : '') + '</p>' +
-    '<p><b style="color:' + meta.color + '">' + encEsc(encRarLabel(card.r)) + '</b> · ' +
+    '<p><b class="' + (card.r === 'mythic' ? 'mythic-label' : '') + '" style="color:' + meta.color + '">' + encEsc(encRarLabel(card.r)) + '</b> · ' +
     (/^\d+$/.test(String(card.i)) ? encEsc(encTr('AniList rank', 'AniList rank')) + ' #' + card.k : 'Personnage ajouté manuellement') + '</p>' +
     encRarPickerHtml(card) +
     (card.a && card.a.length
@@ -435,6 +446,11 @@ function encFind(n) {
   return null;
 }
 function encApplyEdits() {
+  // Keep collection, owned statistics and future booster rolls in sync too.
+  if (typeof cardPool !== 'undefined' && cardPool && typeof cardRarityFor === 'function') {
+    cardPool.forEach(c => { if (c.edition !== 'strongest' && !c.collectibleOnly) c.rarity = cardRarityFor(c, c.rank); });
+    if (typeof cardState !== 'undefined' && cardState) { if (typeof cardsRenderStats === 'function') cardsRenderStats(); if (typeof cardsRenderAlbum === 'function') cardsRenderAlbum(); }
+  }
   // repaint every slot / header that is already on screen
   encRenderHero();
   encRenderIndex();
@@ -453,13 +469,9 @@ function encSetRarity(n, r) {
   const found = encFind(n);
   if (!found || ENC_RARITIES.indexOf(r) < 0) return;
   const card = found.card;
-  const remote = encRemoteRarity(card);
-  if (remote) {
-    if (r === remote) delete encRemoteDrafts[String(card.i)]; else encRemoteDrafts[String(card.i)] = r;
-    encSaveRemoteDrafts(); encOpenCard(card.n); return;
-  }
-  if (r === encRarOriginal(card)) delete encRarEdits[String(card.i)];   // back to the build value
-  else encRarEdits[String(card.i)] = r;
+  // Explicit selections remain local overrides, even if they currently match
+  // the published/build value; Reset removes the override instead.
+  encRarEdits[String(card.i)] = r;
   encRarSave();
   encSyncRarities();      // re-sorts and re-numbers the binder
   encApplyEdits();
@@ -469,7 +481,6 @@ function encSetRarity(n, r) {
 function encResetRarity(n) {
   const found = encFind(n);
   if (!found) return;
-  if (encRemoteRarity(found.card)) { delete encRemoteDrafts[String(found.card.i)]; encSaveRemoteDrafts(); encOpenCard(found.card.n); return; }
   delete encRarEdits[String(found.card.i)];
   encRarSave();
   encSyncRarities();
@@ -486,11 +497,10 @@ function encResetAllRarity() {
 /* Back up / restore the edits as a file, so a cleared cache, another
    browser or a second machine can pick them up again.                 */
 function encExportRarities() {
-  // Le fichier publié fait autorité ; conserver toutes ses entrées, ajouter
-  // les éditions locales des autres cartes et les nouveaux brouillons.
+  // Export the published base, overlaid by the player's local choices.
   const published = window.SAKU_REMOTE_RARITIES || {};
   const merged = Object.assign({}, published);
-  Object.keys(encRarEdits).forEach(k => { if (!published[k]) merged[k] = encRarEdits[k]; });
+  Object.keys(encRarEdits).forEach(k => { if (ENC_RARITIES.indexOf(encRarEdits[k]) >= 0) merged[k] = encRarEdits[k]; });
   Object.keys(encRemoteDrafts).forEach(k => { if (ENC_RARITIES.indexOf(encRemoteDrafts[k]) >= 0) merged[k] = encRemoteDrafts[k]; });
   const n = Object.keys(merged).length;
   if (!n) { alert(encTr('No rarity edits to save yet.', 'No rarity edits to save yet.')); return; }
@@ -521,15 +531,10 @@ function encImportRarities(file) {
     Object.keys(edits).forEach(k => {
       if (ENC_RARITIES.indexOf(edits[k]) >= 0) clean[String(k)] = edits[k];
     });
-    // Un import prépare les changements des cartes pilotées par le fichier
-    // officiel, sans modifier immédiatement les valeurs publiées.
+    // Import updates matching choices without deleting unrelated local edits.
     encRemoteDrafts = {};
-    Object.keys(clean).forEach(k => {
-      const published = window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[k];
-      if (published && clean[k] !== published) encRemoteDrafts[k] = clean[k];
-    });
     encSaveRemoteDrafts();
-    encRarEdits = clean;
+    encRarEdits = Object.assign({}, encRarEdits, clean);
     encRarSave();
     try { localStorage.setItem(ENC_RARITY_MIGRATED, '1'); } catch (e) {}
     encSyncRarities();
@@ -557,7 +562,7 @@ function encRenderHero() {
   if (leg) {
     const tal = encTally();
     leg.innerHTML = ENC_RARITIES.map(r =>
-      '<span class="enc-legend-chip"><i style="background:' + (ENC_RARITY_META[r] || {}).color + '"></i>' +
+      '<span class="enc-legend-chip' + (r === 'mythic' ? ' mythic' : '') + '"><i style="background:' + (ENC_RARITY_META[r] || {}).color + '"></i>' +
       encEsc(encRarLabel(r)) + ' <b>' + (tal[r] || 0) + '</b></span>').join('') +
       (encRarEdits && Object.keys(encRarEdits).length
         ? '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-all="1">' +

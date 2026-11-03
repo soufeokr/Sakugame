@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '185';
+    const SAKU_BUILD = '213';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -447,6 +447,8 @@
       if (!btn) return;
       const av = myAvatar();
       btn.innerHTML = (av ? '<span class="ava ava-btn"><img src="' + escapeHtml(String(av)) + '" alt="" onerror="this.parentNode.classList.add(\'ava-empty\'); this.remove();"></span> ' : '<span class="ava ava-btn ava-empty"></span> ') + escapeHtml(String(playerName));
+      if (window.sakuFriendsPublish && currentAccount) window.sakuFriendsPublish();
+      if (document.getElementById('accountScreen') && document.getElementById('accountScreen').classList.contains('active')) sakuAccountRender();
     }
 
     // Show/hide a standalone circular <img> (game screens).
@@ -568,6 +570,9 @@
         anilist: a.anilist || null, avatar: a.avatar || (a.dc && a.dc.avatar) || null, watchStatuses: a.watchStatuses || null,
         cards: a.cards || null, dcAvatar: (a.dc && a.dc.avatar) || null
       };
+      if (window.sakuProgressAttach) window.sakuProgressAttach();
+      if (window.sakuPlayerAttach) window.sakuPlayerAttach();
+      if (window.sakuFriendsAttach) window.sakuFriendsAttach();
       // 🎴 fold the guest card collection into the freshly signed-in account
       try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
       playerName = currentAccount.username;
@@ -601,7 +606,8 @@
     else setTimeout(sakuRestoreSession, 0);
 
     function onUserButton() {
-      if (currentAccount) openAuthModal(); else changeUsername();
+      if (currentAccount) { if (window.sakuPlayerToggle) window.sakuPlayerToggle(); }
+      else changeUsername();
     }
 
     // 🗂️ Account menu tabs (Game / Account / Support) + Discord copy
@@ -672,6 +678,9 @@
     async function logoutAccount() {
       sakuSessionClear();
       currentAccount = null;
+      if (window.sakuProgressDetach) window.sakuProgressDetach();
+      if (window.sakuPlayerDetach) window.sakuPlayerDetach();
+      if (window.sakuFriendsDetach) window.sakuFriendsDetach();
       anilistAutoSyncDone = false;
       updateUserButton();
       try { sakuRenderDiscordBox(null); } catch (e) {}
@@ -785,12 +794,14 @@
     function recordGameResult(won) {
       if (!currentAccount) return; // guests: no stats
       sakuAcctRef(sakuMyDcId()).child(won ? 'wins' : 'losses').transaction(v => (v || 0) + 1);
+      if (window.sakuProgressGame) window.sakuProgressGame('classic', currentRoom.progressGameId, won);
     }
 
     // Same, but for Undercover games — counted in separate counters (uWins/uLosses).
     function recordUndercoverResult(won) {
       if (!currentAccount) return; // guests: no stats
       sakuAcctRef(sakuMyDcId()).child(won ? 'uWins' : 'uLosses').transaction(v => (v || 0) + 1);
+      if (window.sakuProgressGame && currentRoom.uc && (currentRoom.players[playerId] || {}).outInGame !== currentRoom.uc.gameId) window.sakuProgressGame('undercover', currentRoom.uc.gameId, won);
     }
 
     const ANILIST_API = 'https://graphql.anilist.co';
@@ -1085,11 +1096,21 @@
     let publicRoomsRef = null;     // live 🌐 list listener (join screen only)
 
     function changeUsername() {
-      try { switchUnameTab('account'); } catch (e) {} // guests always land on the Account tab
-      document.getElementById('newUsernameInput').value = playerName;
+      const input = document.getElementById('newUsernameInput');
+      input.value = playerName;
       document.getElementById('usernameModal').classList.add('show');
+      input.focus();
+      input.select();
     }
-    function closeUsernameModal() { document.getElementById('usernameModal').classList.remove('show'); }
+    function closeUsernameModal() {
+      const modal = document.getElementById('usernameModal');
+      const wasOpen = modal.classList.contains('show');
+      modal.classList.remove('show');
+      if (wasOpen) { const trigger = document.getElementById('usernameBtn'); if (trigger) trigger.focus(); }
+    }
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && document.getElementById('usernameModal').classList.contains('show')) closeUsernameModal();
+    });
     // 📑 guest modal tabs (Account / Support — same support content as the account modal)
     function switchUnameTab(tab) {
       ['account', 'support', 'perso'].forEach(t => {
@@ -1126,6 +1147,7 @@
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
+      document.body.classList.toggle('summon-view', screenId === 'summonScreen');
       document.getElementById('winningScreen').classList.remove('show');
       document.getElementById('ucEndScreen').classList.remove('show');
       document.getElementById('multiEndScreen').classList.remove('show');
@@ -1243,26 +1265,31 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncBarPos); else sakuSyncBarPos();
 
-    // ================= 🖼️ GRAPHICS QUALITY (user setting: High / Low) =================
-    // Settings → Display.  HIGH keeps the falling sakura petals and asks the
-    // AniList CDN for its full-size renders.  LOW drops the petals (they cost
-    // a compositor layer per petal) and pulls the CDN's small render instead
-    // — about a quarter of the bytes.  Same choice, both grids.
-    function sakuGfxHigh() { try { return localStorage.getItem('saku-graphics') !== 'low'; } catch (e) { return true; } }
-    function sakuGfxLow() { return !sakuGfxHigh(); }
+    // Graphics: medium preserves full-size images but removes animated petals.
+    function sakuGfxMode() {
+      try { const mode = localStorage.getItem('saku-graphics'); return ['high','medium','low'].includes(mode) ? mode : 'high'; } catch (e) { return 'high'; }
+    }
+    function sakuGfxHigh() { return sakuGfxMode() !== 'low'; }
+    function sakuGfxLow() { return sakuGfxMode() === 'low'; }
     function sakuSyncGfx() {
-      const low = sakuGfxLow();
-      if (document.documentElement) document.documentElement.classList.toggle('gfx-low', low);
-      // repaint the two image grids so the new render size is picked up
+      const mode = sakuGfxMode();
+      if (document.documentElement) {
+        document.documentElement.classList.toggle('gfx-low', mode === 'low');
+        document.documentElement.classList.toggle('gfx-medium', mode === 'medium');
+      }
       try { if (typeof cardsRenderAlbum === 'function') cardsRenderAlbum(); } catch (e) {}
       try { if (typeof encRender === 'function' && typeof encData !== 'undefined' && encData) encRender(true); } catch (e) {}
-      ['gfxHigh', 'gfxHigh2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('selected', !low); });
-      ['gfxLow', 'gfxLow2'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.toggle('selected', low); });
+      ['High','Medium','Low'].forEach(name => ['gfx' + name, 'gfx' + name + '2'].forEach(id => {
+        const el = document.getElementById(id); if (el) { const selected = name.toLowerCase() === mode; el.classList.toggle('selected', selected); const radio = el.querySelector('input'); if (radio) radio.checked = selected; }
+      }));
+      const select = document.getElementById('navGraphics'); if (select) select.value = mode;
     }
-    function sakuSetGfx(high) {
-      try { localStorage.setItem('saku-graphics', high ? 'high' : 'low'); } catch (e) {}
+    function sakuSetGfx(value) {
+      const mode = value === true ? 'high' : value === false ? 'low' : value;
+      if (!['high','medium','low'].includes(mode)) return;
+      try { localStorage.setItem('saku-graphics', mode); } catch (e) {}
       sakuSyncGfx();
-      showNotification(t(high ? 'Graphics quality: high.' : 'Graphics quality: low — lighter on slow devices.'));
+      showNotification(t(mode === 'high' ? 'Graphics quality: high.' : mode === 'medium' ? 'Graphics quality: medium.' : 'Graphics quality: low — lighter on slow devices.'));
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncGfx); else sakuSyncGfx();
 
@@ -1316,7 +1343,7 @@
       try {
         const ref = sakuAcctRef(dcId);
         const cur = (await ref.once('value')).val() || {};
-        await ref.set({
+        await ref.update({
           dc: clean, session,
           createdAt: cur.createdAt || Date.now(),
           name: cur.name || null,
@@ -1342,7 +1369,7 @@
       } else {
         box.innerHTML = '<span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85Z"/></svg></span>' +
           '<div class="dc-mid"><div class="dc-label">Discord</div><div class="dc-handle">' + tt('Not signed in') + '</div></div>' +
-          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink()"><svg class="ic"><use href="#i-door"/></svg> ' + tt('Sign in with Discord') + '</button>';
+          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink()"><svg class="ic"><use href="#i-discord"/></svg> ' + tt('Sign in with Discord') + '</button>';
       }
     }
     // fresh read from the DB (when the Account tab opens) so other devices' links show up too
@@ -1389,7 +1416,7 @@
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
-    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen' };
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', collection: 'collectionScreen', quests: 'questsScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', account: 'accountScreen', support: 'supportScreen' };
     const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
@@ -1429,6 +1456,11 @@
         else if (route === 'join') showJoinRoom();
         else if (route === 'setup') showHostRoom();
         else if (route === 'cards') showCards();
+        else if (route === 'collection') showCollection();
+        else if (route === 'quests') showQuests();
+        else if (route === 'summon') showScreen('summonScreen');
+        else if (route === 'support') showScreen('supportScreen');
+        else if (route === 'account') showAccountPage();
         else if (route === 'encyclopedia') encOpen();
         else showScreen('homepageScreen');
       } catch (e) {}
@@ -1460,6 +1492,8 @@
     function sakuLangNow() { return (window.SAKU_I18N && SAKU_I18N.lang) || 'en'; }
     function sakuSyncLangRadios() {
       const l = sakuLangNow();
+      const navFlag = document.getElementById('navCurrentFlagUse'); if (navFlag) navFlag.setAttribute('href', '#nav-flag-' + l);
+      document.querySelectorAll('#navLanguagePicker [data-language]').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.language === l)));
       ['langPickEn', 'langPickFr', 'langPickEs', 'langPickEn2', 'langPickFr2', 'langPickEs2'].forEach(id => {
         const el = document.getElementById(id);
         if (!el || !el.classList) return;
@@ -2720,9 +2754,13 @@
       const btn = document.getElementById('deleteAccountBtn');
       btn.disabled = true;
       try {
+        await database.ref('publicPlayers/' + sakuMyDcId()).remove();
         await sakuAcctRef(sakuMyDcId()).remove();   // profile + stats + AniList link + avatar
         sakuSessionClear();
         currentAccount = null;
+        if (window.sakuProgressDetach) window.sakuProgressDetach();
+      if (window.sakuPlayerDetach) window.sakuPlayerDetach();
+      if (window.sakuFriendsDetach) window.sakuFriendsDetach();
         updateUserButton();
         try { sakuRenderDiscordBox(null); } catch (e) {}
         closeDeleteAccountModal();
@@ -5590,6 +5628,7 @@
       const sid = activeScreen ? activeScreen.id : '';
       if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen' && sid !== 'codenamesScreen' && sid !== 'snapshotScreen') { screen.classList.remove('show'); return; }
       const players = currentRoom.players || {};
+      if (window.sakuProgressMulti) window.sakuProgressMulti(kind, currentRoom);
       const title = document.getElementById('meTitle');
       const sub = document.getElementById('meSub');
       const list = document.getElementById('meList');
@@ -7401,6 +7440,7 @@
       const end = document.getElementById('hcEndScreen');
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
+      if (window.sakuProgressGame && hc.gameId && hcOrderOf().includes(playerId) && players[playerId] && players[playerId].outInGame !== hc.gameId) window.sakuProgressGame('hotcold', hc.gameId, winner === playerId);
       const totals = hc.totals || {};
       const ptsMode = hcGuessMode() !== 'individual'; // 🎯 shared guesses score POINTS
       const title = document.getElementById('hcWinTitle');
@@ -7621,6 +7661,7 @@
 
       await database.ref('rooms/' + roomCode).update({
         state: 'selection',
+        progressGameId: Date.now(),
         characters: selectedChars,
         selections: {},
         currentTurn: null,
@@ -9175,3 +9216,228 @@
         database.ref('rooms/' + roomCode + '/queue/' + playerId).remove();
       }
     });
+
+
+// Right-hand navigation: keep the current room connected just like browser navigation.
+function sakuNavOpen() {
+  const panel = document.getElementById('sideNavigation');
+  document.getElementById('navBackdrop').hidden = false;
+  panel.hidden = false;
+  panel.setAttribute('aria-hidden', 'false');
+  document.getElementById('navMenuToggle').setAttribute('aria-expanded', 'true');
+  panel.querySelector('.side-nav-close').focus();
+}
+function sakuNavClose(restoreFocus = true) {
+  const panel = document.getElementById('sideNavigation');
+  panel.hidden = true;
+  panel.setAttribute('aria-hidden', 'true');
+  document.getElementById('navBackdrop').hidden = true;
+  const toggle = document.getElementById('navMenuToggle');
+  toggle.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) toggle.focus();
+}
+function sakuNavGo(destination) {
+  sakuNavClose(false);
+  if (destination === 'host') showHostRoom();
+  else if (destination === 'join') showJoinRoom();
+  else if (destination === 'rules') showGamesMenu();
+  else if (destination === 'encyclopedia') encOpen();
+  else if (destination === 'support') showScreen('supportScreen');
+  else if (destination === 'account') showAccountPage();
+  else if (destination === 'summon') { showScreen('summonScreen'); window.scrollTo(0, 0); requestAnimationFrame(summonUpdateAtmosphere); }
+  else if (destination === 'collection') showCollection();
+  else if (destination === 'quests') showQuests();
+}
+document.addEventListener('keydown', function (event) {
+  const panel = document.getElementById('sideNavigation');
+  if (!panel || panel.hidden) return;
+  if (event.key === 'Escape') { event.preventDefault(); sakuNavClose(); }
+  else if (event.key === 'Tab') {
+    const controls = Array.from(panel.querySelectorAll('button:not([disabled]), summary, select:not([disabled])')).filter(el => el.getClientRects().length);
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
+});
+
+function sakuChooseLanguage(lang) {
+  sakuSetLang(lang);
+  const picker = document.getElementById('navLanguagePicker');
+  picker.open = false;
+  document.getElementById('navLanguageButton').focus();
+}
+
+// A circular, visual-only carousel: input controls its position directly.
+let summonPosition = 0;
+let summonFrame = 0, summonSettleTimer = 0, summonWheelOrigin = null;
+let summonTouchX = null, summonTouchY = null, summonTouchPosition = 0;
+let summonTouchMoved = false, summonIgnoreClickUntil = 0;
+function summonNormalize(n) { return ((n % 4) + 4) % 4; }
+function summonUpdateAtmosphere() {
+  const screen = document.getElementById('summonScreen');
+  if (!screen || !screen.classList.contains('active')) return;
+  const slides = Array.from(screen.querySelectorAll('.summon-slide'));
+  const backgrounds = Array.from(screen.querySelectorAll('.summon-bg'));
+  const captions = Array.from(screen.querySelectorAll('.summon-caption'));
+  const dots = Array.from(screen.querySelectorAll('.summon-pagination button'));
+  const stage = screen.querySelector('.summon-stage');
+  if (slides.length !== 4 || !stage) return;
+  const width = stage.clientWidth;
+  const step = window.innerWidth <= 700 ? Math.min(width * .39, 220) : Math.min(Math.max(width * .31, 220), 365);
+  const nearest = summonNormalize(Math.round(summonPosition));
+  slides.forEach((slide, i) => {
+    const distance = ((i - summonPosition + 2) % 4 + 4) % 4 - 2;
+    const away = Math.abs(distance), near = Math.min(away, 1);
+    const scale = 1 - .30 * near - .10 * Math.max(0, away - 1);
+    const opacity = away <= 1 ? 1 - .48 * away : Math.max(0, .52 * (2 - away));
+    slide.style.transform = `translate(calc(-50% + ${distance * step}px), -50%) scale(${scale})`;
+    slide.style.opacity = String(opacity);
+    slide.style.filter = `brightness(${1 - .28 * near}) drop-shadow(0 20px 24px rgba(0,0,0,.48))`;
+    slide.style.zIndex = String(10 - Math.round(away * 3));
+    slide.style.pointerEvents = away < 1.45 ? 'auto' : 'none';
+    slide.classList.toggle('is-active', i === nearest && away < .025 && !summonTouchMoved);
+    slide.querySelector('button').setAttribute('aria-current', String(i === nearest));
+    slide.querySelector('button').tabIndex = away < 1.45 ? 0 : -1;
+    captions[i].hidden = i !== nearest;
+    dots[i].setAttribute('aria-current', String(i === nearest));
+  });
+  const left = Math.floor(summonPosition), t = summonPosition - left;
+  const a = summonNormalize(left), b = summonNormalize(left + 1);
+  backgrounds.forEach(bg => { bg.style.opacity = '0'; });
+  if (a < b) { backgrounds[a].style.opacity = '1'; backgrounds[b].style.opacity = String(t); }
+  else { backgrounds[b].style.opacity = '1'; backgrounds[a].style.opacity = String(1 - t); }
+}
+function summonCancelMotion() {
+  if (summonFrame) cancelAnimationFrame(summonFrame);
+  summonFrame = 0; clearTimeout(summonSettleTimer); summonWheelOrigin = null;
+}
+function summonAnimateTo(target) {
+  summonCancelMotion();
+  const from = summonPosition;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced || Math.abs(target - from) < .001) { summonPosition = target; summonUpdateAtmosphere(); return; }
+  const duration = 380 + Math.min(220, Math.abs(target - from) * 100), start = performance.now();
+  const frame = now => {
+    const p = Math.min(1, (now - start) / duration), ease = 1 - Math.pow(1 - p, 3);
+    summonPosition = from + (target - from) * ease;
+    summonUpdateAtmosphere();
+    if (p < 1) summonFrame = requestAnimationFrame(frame);
+    else { summonPosition = summonNormalize(target); summonFrame = 0; summonUpdateAtmosphere(); }
+  };
+  summonFrame = requestAnimationFrame(frame);
+}
+function summonSelect(index) {
+  if (Date.now() < summonIgnoreClickUntil) return;
+  // Shortest circular path: Cinema and Basic are adjacent, not opposite ends.
+  const distance = ((index - summonPosition + 2) % 4 + 4) % 4 - 2;
+  summonAnimateTo(summonPosition + distance);
+}
+function summonStep(step) { summonAnimateTo(Math.round(summonPosition) + step); }
+(function setupSummonCarousel() {
+  const init = () => {
+    const carousel = document.getElementById('summonCarousel');
+    if (!carousel) return;
+    carousel.addEventListener('wheel', event => {
+      if (event.ctrlKey) return;
+      const vertical = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+      // On a very short screen, keep page scrolling available for accessibility.
+      if (vertical && window.innerHeight < 650) return;
+      let delta = vertical ? event.deltaY : event.deltaX;
+      if (event.deltaMode === 1) delta *= 16;
+      else if (event.deltaMode === 2) delta *= carousel.clientWidth;
+      if (Math.abs(delta) < .5) return;
+      event.preventDefault();
+      const origin = summonWheelOrigin === null ? Math.round(summonPosition) : summonWheelOrigin;
+      summonCancelMotion(); summonWheelOrigin = origin; summonTouchMoved = false;
+      summonPosition += Math.max(-.5, Math.min(.5, delta / 430));
+      summonUpdateAtmosphere();
+      summonSettleTimer = setTimeout(() => {
+        let target = Math.round(summonPosition);
+        if (target === origin && Math.abs(summonPosition - origin) > .12) target += Math.sign(summonPosition - origin);
+        summonWheelOrigin = null; summonAnimateTo(target);
+      }, 160);
+    }, {passive:false});
+    carousel.addEventListener('touchstart', event => {
+      const t = event.touches[0]; summonTouchX = t.clientX; summonTouchY = t.clientY;
+      summonTouchPosition = summonPosition; summonTouchMoved = false; summonCancelMotion();
+    }, {passive:true});
+    carousel.addEventListener('touchmove', event => {
+      if (summonTouchX === null) return;
+      const t = event.touches[0], dx = t.clientX - summonTouchX, dy = t.clientY - summonTouchY;
+      if (!summonTouchMoved && (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy) * 1.2)) return;
+      summonTouchMoved = true;
+      const stage = document.querySelector('.summon-stage');
+      const step = window.innerWidth <= 700 ? Math.min(stage.clientWidth * .39, 220) : Math.min(Math.max(stage.clientWidth * .31, 220), 365);
+      summonPosition = summonTouchPosition - dx / step; summonUpdateAtmosphere();
+    }, {passive:true});
+    carousel.addEventListener('touchend', event => {
+      if (summonTouchX === null) return;
+      const dx = event.changedTouches[0].clientX - summonTouchX;
+      summonTouchX = summonTouchY = null;
+      if (summonTouchMoved) {
+        summonTouchMoved = false; summonIgnoreClickUntil = Date.now() + 500;
+        let target = Math.round(summonPosition);
+        if (Math.abs(dx) > 35 && target === Math.round(summonTouchPosition)) target += dx < 0 ? 1 : -1;
+        summonAnimateTo(target);
+      }
+    }, {passive:true});
+    carousel.addEventListener('touchcancel', () => { summonTouchX = summonTouchY = null; summonTouchMoved = false; summonAnimateTo(Math.round(summonPosition)); });
+    carousel.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); summonStep(event.key === 'ArrowRight' ? 1 : -1); }
+    });
+    window.addEventListener('resize', summonUpdateAtmosphere);
+    summonUpdateAtmosphere();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+// Dedicated account page reuses the existing account/session operations.
+function showAccountPage() {
+  showScreen('accountScreen');
+  sakuAccountRender();
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
+function sakuAccountRender() {
+  const screen = document.getElementById('accountScreen'); if (!screen) return;
+  const signed = !!currentAccount;
+  if (window.sakuProgressRender) window.sakuProgressRender();
+  const put = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
+  const tr = text => typeof t === 'function' ? t(text) : text;
+  put('accountPageName', playerName);
+  put('accountPageStatus', tr(signed ? 'Signed in' : 'Guest'));
+  put('accountPageIntro', tr(signed ? 'Your Sakugame profile is linked to Discord.' : 'Your progress stays in this browser while you play as a guest.'));
+  put('accountPageDiscordNote', tr(signed ? 'Your profile is linked to your Discord account.' : 'Sign in to keep your profile across devices.'));
+  put('accountPageAniNote', signed && currentAccount.anilist ? tr('Linked AniList account:') + ' ' + currentAccount.anilist : tr(signed ? 'Link AniList to use your anime lists in games.' : 'Sign in to link an AniList account.'));
+  put('accountPageNameHint', tr(signed ? '3–20 letters, numbers or underscores.' : 'At least 2 characters, up to 20.'));
+  document.getElementById('accountPageNameInput').value = playerName;
+  document.getElementById('accountPageLogin').hidden = signed;
+  document.getElementById('accountPageLogout').hidden = !signed;
+  document.getElementById('accountPageAvatarBtn').hidden = !signed;
+  document.getElementById('accountPageAdvanced').hidden = !signed;
+  document.getElementById('accountPageAniForm').hidden = !signed;
+  document.getElementById('accountPageAniInput').value = signed ? (currentAccount.anilist || '') : '';
+  const holder = document.getElementById('accountPageAvatar');
+  const url = myAvatar();
+  holder.innerHTML = url ? '<img alt="" src="' + escapeHtml(String(url)) + '">' : '<svg class="ic"><use href="#i-user"/></svg>';
+  try { setNsfwSwitchStates(); } catch (e) {}
+}
+async function sakuAccountSaveName(event) {
+  event.preventDefault();
+  const input = document.getElementById('accountPageNameInput');
+  const name = input.value.trim();
+  if (currentAccount && !/^[A-Za-z0-9_]{3,20}$/.test(name)) { showNotification(t('Username: 3-20 characters, letters, numbers and _ only.')); return; }
+  if (!currentAccount && (name.length < 2 || name.length > 20)) { showNotification(t('Please enter a valid username (at least 2 characters)')); return; }
+  if (currentAccount) await changeAccountUsername(name);
+  else { document.getElementById('newUsernameInput').value = name; await confirmUsernameChange(); }
+  sakuAccountRender();
+}
+async function sakuAccountPageLogout() { await logoutAccount(); sakuAccountRender(); }
+function sakuAccountAdvanced() { openAuthModal(); switchAcctTab('account'); }
+
+async function sakuAccountSyncAniList(event) {
+  event.preventDefault();
+  if (!currentAccount) return;
+  document.getElementById('anilistSyncInput').value = document.getElementById('accountPageAniInput').value;
+  await saveAnilistSync();
+  sakuAccountRender();
+}
