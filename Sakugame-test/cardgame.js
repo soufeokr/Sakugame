@@ -107,6 +107,7 @@ function cardBuildPool() {
     if (!c || !c.id || !c.image) return;
     const rank = i + 1;
     const entry = { id: c.id, name: c.name || '?', image: c.image, series: c.series || '', rank: rank, rarity: cardRarityFor(c, rank), edition: c.edition || '', collectibleOnly: !!c.collectibleOnly };
+    if (typeof window.sakuBindCharacterName === 'function') window.sakuBindCharacterName(entry, 'name', entry.id);
     const idx = cardPool.length;
     cardPool.push(entry);
     const key = entry.series || '';
