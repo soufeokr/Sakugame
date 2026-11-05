@@ -18,8 +18,10 @@
    ============================================================ */
 
 const ENC_STEP = 240;              // cards per "show more" chunk
-const ENC_RARITIES = ['mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
+const ENC_RARITIES = ['special', 'mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
+const ENC_EDITABLE_RARITIES = ENC_RARITIES.filter(r => r !== 'special');
 const ENC_RARITY_META = {
+  special: { color: '#f4d389', edge: 'rgba(244,211,137,.8)' },
   mythic:    { color: '#c5bcff', edge: 'rgba(190,180,255,.75)' },
   legendary: { color: '#ffa726', edge: 'rgba(255,167,38,.60)' },
   epic:      { color: '#9d6bff', edge: 'rgba(157,107,255,.60)' },
@@ -49,7 +51,7 @@ let encRemoteDrafts = {};
 function encRemoteRarity(card) {
   if (!card || card.edition === 'strongest') return '';
   const v = window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[String(card.i)];
-  return ENC_RARITIES.indexOf(v) >= 0 ? v : '';
+  return ENC_EDITABLE_RARITIES.indexOf(v) >= 0 ? v : '';
 }
 function encSaveRemoteDrafts() {
   try { localStorage.setItem(ENC_REMOTE_DRAFT_KEY, JSON.stringify(encRemoteDrafts)); } catch(e) {}
@@ -108,7 +110,7 @@ function encRarLoad() {
       encData.list.forEach(b => b.cards.forEach(c => { byNum[c.n0] = c; }));
       Object.keys(legacy).forEach(k => {
         const c = byNum[k];
-        if (c && ENC_RARITIES.indexOf(legacy[k]) >= 0 && !store[String(c.i)]) {
+        if (c && ENC_EDITABLE_RARITIES.indexOf(legacy[k]) >= 0 && !store[String(c.i)]) {
           store[String(c.i)] = legacy[k];
           moved++;
         }
@@ -125,7 +127,7 @@ function encRarLoad() {
   let drafts = {};
   try { drafts = JSON.parse(localStorage.getItem(ENC_REMOTE_DRAFT_KEY) || '{}') || {}; } catch(e) {}
   if (drafts && typeof drafts === 'object' && !Array.isArray(drafts)) {
-    Object.keys(drafts).forEach(k => { if (ENC_RARITIES.indexOf(drafts[k]) >= 0) store[k] = drafts[k]; });
+    Object.keys(drafts).forEach(k => { if (ENC_EDITABLE_RARITIES.indexOf(drafts[k]) >= 0) store[k] = drafts[k]; });
     if (Object.keys(drafts).length) { try { localStorage.setItem(ENC_RARITY_ID_KEY, JSON.stringify(store)); localStorage.removeItem(ENC_REMOTE_DRAFT_KEY); } catch(e) {} }
   }
   encRarEdits = store;
@@ -141,7 +143,7 @@ function encRarOriginal(card) { return card.r0 || card.r; }
 function encRarityOf(card) {
   if (card.edition === 'strongest') return encRarOriginal(card);
   const o = encRarEdits[String(card.i)];
-  if (o && ENC_RARITIES.indexOf(o) >= 0) return o;
+  if (o && ENC_EDITABLE_RARITIES.indexOf(o) >= 0) return o;
   return encRemoteRarity(card) || encRarOriginal(card);
 }
 function encRarEdited(card) { return !!encRarEdits[String(card.i)]; }
@@ -149,7 +151,6 @@ function encTally() {
   const out = {};
   ENC_RARITIES.forEach(r => { out[r] = 0; });
   if (encFlat) encFlat.forEach(r => {
-    if (r.card.edition === 'strongest') return;
     const k = encRarityOf(r.card);
     out[k] = (out[k] || 0) + 1;
   });
@@ -157,7 +158,7 @@ function encTally() {
 }
 function encBlockTally(block) {
   const rar = {};
-  block.cards.forEach(c => { if (c.edition === 'strongest') return; const r = encRarityOf(c); rar[r] = (rar[r] || 0) + 1; });
+  block.cards.forEach(c => { const r = encRarityOf(c); rar[r] = (rar[r] || 0) + 1; });
   return rar;
 }
 
@@ -184,7 +185,7 @@ function encRenumber() {
     block.cards.forEach(c => {
       n += 1;
       c.n = n;
-      if (c.edition !== 'strongest') { rar[c.r] = (rar[c.r] || 0) + 1; tally[c.r] += 1; }
+      rar[c.r] = (rar[c.r] || 0) + 1; tally[c.r] = (tally[c.r] || 0) + 1;
     });
     block.to = n;
     block.rar = rar;
@@ -224,10 +225,11 @@ function encBuild() {
 function encVisible() {
   const q = encQuery.trim().toLowerCase();
   let rows = encFlat;
-  if (encRarity) rows = rows.filter(r => r.card.edition !== 'strongest' && r.card.r === encRarity);
+  if (encRarity) rows = rows.filter(r => r.card.r === encRarity);
   if (q) {
     rows = rows.filter(r => {
       if (r.card.m.toLowerCase().indexOf(q) >= 0) return true;
+      if (r.card.edition==='strongest' && window.sakuSpecialNumber && (window.sakuSpecialNumber(r.card)||'').toLowerCase().indexOf(q)>=0) return true;
       if (r.block.label.toLowerCase().indexOf(q) >= 0) return true;
       if (r.card.s && r.card.s.toLowerCase().indexOf(q) >= 0) return true;
       if (r.card.edition === 'strongest' && r.card.series && r.card.series.toLowerCase().indexOf(q) >= 0) return true;
@@ -239,7 +241,7 @@ function encVisible() {
     rows = rows.slice().sort((a, b) => a.card.m.localeCompare(b.card.m) || a.card.n - b.card.n);
   } else if (encSort === 'rarity') {
     rows = rows.slice().sort((a, b) =>
-      ENC_RARITIES.indexOf(b.card.r) - ENC_RARITIES.indexOf(a.card.r) || a.card.n - b.card.n);
+      ENC_RARITIES.indexOf(a.card.r) - ENC_RARITIES.indexOf(b.card.r) || a.card.n - b.card.n);
   }
   return rows;
 }
@@ -283,7 +285,7 @@ function encSlotHtml(card) {
     'title="' + encEsc(card.m) + '">' +
     (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(card, true, {image:encThumb(card.u)}) + '</span>' : '') +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
-    (/^\d+$/.test(String(card.i)) ? '<span class="enc-rank" title="AniList">A#' + card.k + '</span>' : '') +
+    (/^\d+$/.test(String(card.i)) && card.k < 99999 ? '<span class="enc-rank" title="AniList">A#' + card.k + '</span>' : '') +
     '<span class="enc-art"><img src="' + encEsc(encThumb(card.u)) + '" alt="' + encEsc(card.m) + '" ' +
     'loading="lazy" decoding="async" fetchpriority="low" ' +
     'onload="this.classList.add(\'in\')" onerror="this.style.opacity=0"></span>' +
@@ -302,7 +304,7 @@ function encBlockHeadHtml(block, st) {
   const from = st ? st.from : block.from, to = st ? st.to : block.to;
   return '<div class="enc-block-head">' +
     '<h3>' + encEsc(encFranchiseLabel(block.label)) + '</h3>' +
-    '<span class="enc-block-nums">' + encNum(from) + ' – ' + encNum(to) + '</span>' +
+    '<span class="enc-block-nums">' + (block.edition==='strongest' ? 'S-000 – S-999' : encNum(from) + ' – ' + encNum(to)) + '</span>' +
     '<span class="enc-block-tally">' + tally + '</span>' +
     '</div>';
 }
@@ -372,7 +374,7 @@ function encShowMore() { encRender(false); }
 function encRarPickerHtml(card) {
   const remote = encRemoteRarity(card);
   const cur = encRarityOf(card);
-  const btns = ENC_RARITIES.map(r => {
+  const btns = ENC_EDITABLE_RARITIES.map(r => {
     const on = r === cur ? ' on' : '';
     return '<button type="button" class="enc-rar-btn' + on + '" data-enc-num="' + card.n + '" ' +
       'data-enc-rar="' + r + '" style="--rc:' + (ENC_RARITY_META[r] || {}).color + '" ' +
@@ -405,8 +407,8 @@ function encOpenCard(n) {
   if (!box) return;
   if (card.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
     box.innerHTML = '<div class="enc-detail-card strongest-detail"><span class="strongest-art">' + window.sakuStrongestCard(card) + '</span></div>' +
-      '<div class="enc-detail-meta"><div class="enc-big-num">' + encNum(card.n) + '</div><h3>' + encEsc(card.m) + '</h3><p>' + encEsc(card.series || '') +
-      '</p><p>Édition The Strongest · collection uniquement</p></div>';
+      '<div class="enc-detail-meta"><div class="enc-big-num">' + encEsc(window.sakuSpecialNumber(card) || '—') + '</div><h3>' + encEsc(card.m) + '</h3><p>' + encEsc(card.series || '') +
+      '</p><p>' + encEsc(encRarLabel('special')) + ' · The Strongest</p></div>'; 
     box.classList.add('show');try { document.body.style.overflow = 'hidden'; } catch(e) {} return;
   }
   box.innerHTML =
@@ -415,7 +417,7 @@ function encOpenCard(n) {
     '<span class="enc-art"><img src="' + encEsc(card.u) + '" alt="' + encEsc(card.m) + '" ' +
     'decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
     '<span class="enc-num">' + encNum(card.n) + '</span>' +
-    (/^\d+$/.test(String(card.i)) ? '<span class="enc-rank">AniList #' + card.k + '</span>' : '') +
+    (/^\d+$/.test(String(card.i)) && card.k < 99999 ? '<span class="enc-rank">AniList #' + card.k + '</span>' : '') +
     '<span class="enc-rar-bar"></span>' +
     '<span class="enc-name">' + encEsc(card.m) + '</span>' +
     (card.s ? '<span class="enc-season">' + encEsc(card.s) + '</span>' : '') +
@@ -428,7 +430,7 @@ function encOpenCard(n) {
     '<p>' + encEsc(encFranchiseLabel(block.label)) +
     (card.s ? ' · <i>' + encEsc(card.s) + '</i>' : '') + '</p>' +
     '<p><b class="' + (card.r === 'mythic' ? 'mythic-label' : '') + '" style="color:' + meta.color + '">' + encEsc(encRarLabel(card.r)) + '</b> · ' +
-    (/^\d+$/.test(String(card.i)) ? encEsc(encTr('AniList rank', 'AniList rank')) + ' #' + card.k : 'Personnage ajouté manuellement') + '</p>' +
+    (/^\d+$/.test(String(card.i)) ? (card.k < 99999 ? encEsc(encTr('AniList rank', 'AniList rank')) + ' #' + card.k : 'AniList') : encEsc(encTr('Manually added character', 'Manually added character'))) + '</p>' +
     encRarPickerHtml(card) +
     (card.a && card.a.length
       ? '<p class="enc-detail-alt"><b>' + encEsc(encTr('Also known as', 'Also known as')) + ':</b> ' +
@@ -467,7 +469,7 @@ function encScrollToCard(n) {
 }
 function encSetRarity(n, r) {
   const found = encFind(n);
-  if (!found || ENC_RARITIES.indexOf(r) < 0) return;
+  if (!found || found.card.edition === 'strongest' || ENC_EDITABLE_RARITIES.indexOf(r) < 0) return;
   const card = found.card;
   // Explicit selections remain local overrides, even if they currently match
   // the published/build value; Reset removes the override instead.
@@ -500,8 +502,8 @@ function encExportRarities() {
   // Export the published base, overlaid by the player's local choices.
   const published = window.SAKU_REMOTE_RARITIES || {};
   const merged = Object.assign({}, published);
-  Object.keys(encRarEdits).forEach(k => { if (ENC_RARITIES.indexOf(encRarEdits[k]) >= 0) merged[k] = encRarEdits[k]; });
-  Object.keys(encRemoteDrafts).forEach(k => { if (ENC_RARITIES.indexOf(encRemoteDrafts[k]) >= 0) merged[k] = encRemoteDrafts[k]; });
+  Object.keys(encRarEdits).forEach(k => { if (ENC_EDITABLE_RARITIES.indexOf(encRarEdits[k]) >= 0) merged[k] = encRarEdits[k]; });
+  Object.keys(encRemoteDrafts).forEach(k => { if (ENC_EDITABLE_RARITIES.indexOf(encRemoteDrafts[k]) >= 0) merged[k] = encRemoteDrafts[k]; });
   const n = Object.keys(merged).length;
   if (!n) { alert(encTr('No rarity edits to save yet.', 'No rarity edits to save yet.')); return; }
   const names = {};
@@ -529,7 +531,7 @@ function encImportRarities(file) {
     }
     const clean = {};
     Object.keys(edits).forEach(k => {
-      if (ENC_RARITIES.indexOf(edits[k]) >= 0) clean[String(k)] = edits[k];
+      if (ENC_EDITABLE_RARITIES.indexOf(edits[k]) >= 0) clean[String(k)] = edits[k];
     });
     // Import updates matching choices without deleting unrelated local edits.
     encRemoteDrafts = {};
@@ -579,7 +581,7 @@ function encRenderHero() {
   const sub = document.getElementById('encSub');
   if (sub) sub.textContent = d.groups.toLocaleString('en-US') + ' ' +
     encTr('anime franchises', 'anime franchises') + ' · ' +
-    encTr('numbered 1 to {n}', 'numbered 1 to ' + d.total).replace('{n}', d.total);
+    encTr('including special cards', 'including special cards');
   const rf = document.getElementById('encRarityFilter');
   if (rf) {
     const tal = encTally();

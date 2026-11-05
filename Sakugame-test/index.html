@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="216">
+<meta name="saku-build" content="235">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=216">
+<link rel="manifest" href="manifest.json?v=235">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,17 +75,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=216" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=216">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=216">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=216">
-<link rel="stylesheet" href="style.css?v=216">
+<link rel="icon" href="favicon.ico?v=235" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=235">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=235">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=235">
+<link rel="stylesheet" href="style.css?v=235">
 <!-- 🔒 TEST BUILD entrance gate (test build only — never shipped) -->
-<link rel="stylesheet" href="gate.css?v=216">
+<link rel="stylesheet" href="gate.css?v=235">
 </head>
 <body>
   <!-- 🧪 TEST BUILD marker -->
-  <div id="testBuildBadge" style="position:fixed;top:6px;left:50%;transform:translateX(-50%);z-index:2147483001;pointer-events:none;background:rgba(88,101,242,.92);color:#fff;font:600 11px/1 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.3px;padding:5px 10px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.35);">🧪 TEST BUILD — fake backend, nothing public is touched</div>
+  <div id="testBuildBadge" title="Test build — fake backend, nothing public is touched" data-noi18n>🧪 TEST</div>
 
   <!-- ══════ 🔒 ENTRANCE GATE — test build only ═══════════════════════════
        Full-screen lock in front of the whole app — the code itself lives in
@@ -143,6 +143,16 @@
   <symbol id="i-logo" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="8" y="8.5" width="13" height="12.5" rx="2" fill="#0f0f1a" stroke="currentColor" stroke-width="2"/><path d="M14.5 11.5l.8 1.6 1.8.3-1.3 1.3.3 1.8-1.6-.8-1.6.8.3-1.8-1.3-1.3 1.8-.3z" fill="#bfe4ff"/></symbol>
   <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="3.5" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.9"/><circle cx="9.2" cy="9.2" r="1.6" fill="#16335f"/><circle cx="14.8" cy="9.2" r="1.6" fill="#16335f"/><circle cx="12" cy="12" r="1.6" fill="#16335f"/><circle cx="9.2" cy="14.8" r="1.6" fill="#16335f"/><circle cx="14.8" cy="14.8" r="1.6" fill="#16335f"/></symbol>
   <symbol id="i-gamepad" viewBox="0 0 24 24"><rect x="2.6" y="7.8" width="18.8" height="9.6" rx="4.8" fill="#16335f" stroke="#dfe9ff" stroke-width="1.5"/><rect x="6.3" y="11.8" width="3.6" height="1.6" rx="0.8" fill="#dfe9ff"/><rect x="7.3" y="10.8" width="1.6" height="3.6" rx="0.8" fill="#dfe9ff"/><circle cx="16.6" cy="10.9" r="1.05" fill="#ff5252"/><circle cx="18.35" cy="12.65" r="1.05" fill="#00c853"/><circle cx="16.6" cy="14.4" r="1.05" fill="#ffca3a"/><circle cx="14.85" cy="12.65" r="1.05" fill="#29b6f6"/></symbol>
+
+  <symbol id="i-game-guesswho" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#153354" stroke="#5cbbed" stroke-width="1"/><path d="M8 8.5h10v14H8z" fill="#244e78" stroke="#8bd8ff" stroke-width="1.3"/><path d="M14 6.5h10v14H14z" fill="#d9effc" stroke="#f2fbff" stroke-width="1.2"/><path d="M17.2 11.5a2 2 0 1 1 3.9.6c-.4.7-1.5 1-1.5 2.2" fill="none" stroke="#2173aa" stroke-width="1.7" stroke-linecap="round"/><circle cx="19.6" cy="17" r=".9" fill="#2173aa"/></symbol>
+  <symbol id="i-game-undercover" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#292548" stroke="#a99cf0"/><path d="M7.5 22.5c1.2-3.5 4.3-5 8.5-5s7.3 1.5 8.5 5" fill="#8174bd"/><path d="M11 12.8c0-3 2-5.4 5-5.4s5 2.4 5 5.4-2 5.3-5 5.3-5-2.3-5-5.3Z" fill="#e9e6ff"/><path d="M9 11.5h14M11 8.3l1-3h8l1 3" fill="#8d80d0" stroke="#d8d1ff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 13h7" stroke="#403963" stroke-width="2.2" stroke-linecap="round"/><circle cx="14" cy="13" r=".55" fill="#fff"/><circle cx="18" cy="13" r=".55" fill="#fff"/></symbol>
+  <symbol id="i-game-battle" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#312743" stroke="#e4a8d5"/><path d="M7 11 11 13l5-6 5 6 4-2-1.5 11H8.5z" fill="#f1d39a" stroke="#ffefd2" stroke-width="1.2" stroke-linejoin="round"/><path d="M8.5 22h15M11.5 17l4.5 2 4.5-2" fill="none" stroke="#a86f88" stroke-width="1.3" stroke-linecap="round"/><circle cx="16" cy="13.8" r="1.4" fill="#e783a2"/></symbol>
+  <symbol id="i-game-race" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#3a2d2b" stroke="#e9b77a"/><circle cx="16" cy="16" r="8.5" fill="none" stroke="#f3d8a9" stroke-width="1.4"/><circle cx="16" cy="16" r="4.8" fill="none" stroke="#f3d8a9" stroke-width="1.2"/><path d="M16 5v4M16 23v4M5 16h4M23 16h4" stroke="#ffcf89" stroke-width="1.5" stroke-linecap="round"/><path d="m17.7 9.8-4.7 7h3l-.7 5.3 5.1-7.2h-3z" fill="#ffc267" stroke="#fff2c7" stroke-width=".7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-game-blur" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#173946" stroke="#7ed8d5"/><path d="M8 8h16v16H8z" fill="#2c6b7b" stroke="#b8f3ee" stroke-width="1.2"/><circle cx="14" cy="14" r="3" fill="#c0e9e7" opacity=".65"/><path d="m10 21 3.5-3.4 2.6 2 3.5-4 3 5.4z" fill="#7dd4d4"/><path d="M6 11h4M6 16h3M6 21h4M22 11h4M23 16h3M22 21h4" stroke="#d5ffff" stroke-width="1" stroke-linecap="round" opacity=".75"/></symbol>
+  <symbol id="i-game-hotcold" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#1a3450" stroke="#90c8ef"/><path d="M16 6v20M7.3 11l17.4 10M7.3 21l17.4-10M13.7 8.2 16 10.5l2.3-2.3M13.7 23.8l2.3-2.3 2.3 2.3M8.7 13.8l3.2-.8-.4-3.2M23.3 18.2l-3.2.8.4 3.2M8.7 18.2l3.2.8-.4 3.2M23.3 13.8l-3.2-.8.4-3.2" fill="none" stroke="#b9e9ff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="16" r="2.3" fill="#ffb6aa" stroke="#fff" stroke-width=".7"/></symbol>
+  <symbol id="i-game-codenames" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#3b2638" stroke="#e8a7c8"/><path d="M9 8.5h14v13.8H9z" fill="#f4dab7" stroke="#fff2d8" stroke-width="1.1"/><path d="M7.5 8.5h17M7.5 22.3h17" stroke="#cf8da4" stroke-width="2" stroke-linecap="round"/><path d="M12 12h8M12 15.5h6M12 19h4" stroke="#9e6a85" stroke-width="1.2" stroke-linecap="round"/><circle cx="21.3" cy="19.2" r="2.2" fill="#d96c8e" stroke="#fff1eb" stroke-width=".8"/></symbol>
+  <symbol id="i-game-snapshot" viewBox="0 0 32 32"><rect x="2.5" y="2.5" width="27" height="27" rx="9" fill="#27334c" stroke="#9dbcf2"/><rect x="7.5" y="10" width="17" height="12.5" rx="3" fill="#6a87bc" stroke="#dfebff" stroke-width="1.3"/><path d="M11 10 12.5 7.8h5L19 10" fill="#adc9f0" stroke="#dfebff" stroke-width="1"/><circle cx="16" cy="16.1" r="4" fill="#263c60" stroke="#e4f2ff" stroke-width="1.2"/><circle cx="16" cy="16.1" r="2" fill="#9de3ff"/><circle cx="21.7" cy="13" r=".8" fill="#ffe4ac"/></symbol>
+  <symbol id="i-market" viewBox="0 0 24 24"><path d="M3 9h18l-1.5-5h-15L3 9Zm1.5 0v10h15V9M9 19v-6h6v6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 9c0 1.8 3 2.3 3.7 0 .5 2 3.1 2 3.6 0 .6 2 3 2 3.6 0 .6 2 3.1 2 3.7 0 .7 2.3 3.4 1.8 3.4 0" fill="none" stroke="currentColor" stroke-width="1.4"/></symbol>
   <symbol id="i-mask" viewBox="0 0 24 24"><g transform="rotate(-10 9.5 12)"><rect x="4.5" y="4.5" width="10.5" height="14.5" rx="2" fill="#16335f" stroke="#7fa8e8" stroke-width="1.3"/></g><g transform="rotate(6 14 12)"><rect x="8.8" y="5" width="10.7" height="14.8" rx="2" fill="#f4f9ff" stroke="#c7d4ea" stroke-width="0.8"/></g><g transform="translate(14.15 12.3) rotate(6)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#02a9ff" stroke-width="1.8" stroke-linecap="round" transform="scale(1.15)"/><circle cx="0" cy="3.8524999999999996" r="1.15" fill="#02a9ff"/></g></symbol>
   <symbol id="i-spy" viewBox="0 0 24 24"><path d="M4.5 20.8a7.5 4.6 0 0 1 15 0z" fill="#16335f"/><circle cx="12" cy="10.8" r="4.5" fill="#f4f9ff"/><rect x="7.7" y="9.3" width="8.6" height="2.7" rx="1.35" fill="#16335f"/><circle cx="10.2" cy="10.65" r="0.85" fill="#f4f9ff"/><circle cx="13.8" cy="10.65" r="0.85" fill="#f4f9ff"/><rect x="5.2" y="5.9" width="13.6" height="1.9" rx="0.95" fill="#2c4a80"/><path d="M8.1 6.2a3.9 2.9 0 0 1 7.8 0z" fill="#16335f"/></symbol>
   <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M2.6 8.2h3.6M3.2 16.2h3.2" stroke="#f4f9ff" stroke-width="1.7" stroke-linecap="round" opacity="0.85"/><path d="M12.8 2 5.2 13.2h4.9L9 22l8.7-11.6h-5L12.8 2z" fill="#ffca3a" stroke="#ff8f00" stroke-width="0.9" stroke-linejoin="round"/></symbol>
@@ -305,7 +315,9 @@
 
 <!-- ===== decorative sakura backdrop — pure CSS + SVG (no JS), sits behind all screens ===== -->
 <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden"><defs><symbol id="nav-flag-en" viewBox="0 0 24 16"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></symbol><symbol id="nav-flag-fr" viewBox="0 0 24 16"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#fff"/><rect x="16" width="8" height="16" fill="#EF4135"/></symbol><symbol id="nav-flag-es" viewBox="0 0 24 16"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></symbol></defs></svg>
-<div id="sakuraBg" aria-hidden="true"><svg id="sakuraBranch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 330"><defs><radialGradient id="sakGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#cfe6ff" stop-opacity="0.3"/><stop offset="55%" stop-color="#7fb0f0" stop-opacity="0.1"/><stop offset="100%" stop-color="#7fb0f0" stop-opacity="0"/></radialGradient></defs><ellipse cx="672" cy="66" rx="119" ry="96" fill="url(#sakGlow)"/><path d="M700 6 C 612 18 546 56 484 108 C 432 152 378 196 326 226 C 312 234 306 244 312 254 C 315 260 322 260 328 256 C 388 224 442 180 500 136 C 568 84 634 52 700 42 Z" fill="#1a2f66"/><path d="M588 0 C 584 40 568 76 540 108" fill="none" stroke="#1a2f66" stroke-width="16" stroke-linecap="round"/><path d="M500 128 C 486 166 462 196 430 216" fill="none" stroke="#1a2f66" stroke-width="9" stroke-linecap="round"/><path d="M624 44 C 614 80 594 110 566 132" fill="none" stroke="#1a2f66" stroke-width="10" stroke-linecap="round"/><path d="M428 162 C 414 188 394 208 370 220" fill="none" stroke="#1a2f66" stroke-width="7" stroke-linecap="round"/><path d="M660 40 C 654 66 644 90 628 110" fill="none" stroke="#1a2f66" stroke-width="7" stroke-linecap="round"/><path d="M545 120 v22" stroke="#1a2f66" stroke-width="4" stroke-linecap="round"/><path d="M380 210 v18" stroke="#1a2f66" stroke-width="4" stroke-linecap="round"/><g transform="translate(635 80) rotate(260) scale(1.17)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(613 133) rotate(202) scale(1.21)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(626 102) rotate(24) scale(1.02)" color="#2f4d95" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(668 162) rotate(337) scale(1.17)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(634 149) rotate(298) scale(0.97)" color="#4368b8" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(520 194) rotate(303) scale(1.47)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(587 180) rotate(44) scale(1.1)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(571 70) rotate(244) scale(1.22)" color="#c8e2f1" opacity="0.5"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(550 132) rotate(46) scale(1.09)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(414 251) rotate(175) scale(1.14)" color="#c8e2f1" opacity="0.5"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(497 154) rotate(63) scale(1.09)" color="#2f4d95" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(380 257) rotate(240) scale(1.04)" color="#4368b8" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(396 258) rotate(31) scale(0.97)" color="#4368b8" opacity="1"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(232 258) rotate(200) scale(0.80)" color="#4368b8" opacity="0.8"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(310 251) rotate(23) scale(0.87)" color="#2f4d95" opacity="0.95"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g fill="#a5d2ff" opacity="0.65"><circle cx="520" cy="240" r="4.5"/><circle cx="300" cy="236" r="3.5"/><circle cx="470" cy="150" r="3.5"/><circle cx="610" cy="44" r="4.5"/><circle cx="432" cy="180" r="3.5"/><circle cx="490" cy="262" r="3.5"/><circle cx="650" cy="230" r="4.5"/><circle cx="591" cy="36" r="2.5"/><circle cx="759" cy="56" r="3.5"/><circle cx="519" cy="82" r="2.5"/><circle cx="687" cy="102" r="3.5"/><circle cx="569" cy="140" r="2.5"/><circle cx="737" cy="160" r="3.5"/><circle cx="447" cy="128" r="2.5"/><circle cx="615" cy="148" r="3.5"/><circle cx="479" cy="50" r="2.5"/><circle cx="647" cy="70" r="3.5"/><circle cx="381" cy="176" r="2.5"/><circle cx="549" cy="196" r="3.5"/></g></svg><svg class="petal" style="--x:56%;--s:10px;--d:12s;--dl:-4s;--sw:2.5vw;--fx:-29vw;--c:#dceefa;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:58%;--s:13px;--d:15s;--dl:-12s;--sw:3vw;--fx:-32vw;--c:#b8dbee;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:60%;--s:8px;--d:10s;--dl:-1s;--sw:2.5vw;--fx:-27vw;--c:#c8e2f1;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:61%;--s:15px;--d:17s;--dl:-19s;--sw:3.5vw;--fx:-35vw;--c:#dceefa;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:63%;--s:9px;--d:12s;--dl:-7s;--sw:2.5vw;--fx:-30vw;--c:#8dbbd7;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:65%;--s:11px;--d:14s;--dl:-15s;--sw:3vw;--fx:-33vw;--c:#b5cde5;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:67%;--s:16px;--d:18s;--dl:-9s;--sw:3.5vw;--fx:-38vw;--c:#b8dbee;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:69%;--s:8px;--d:11s;--dl:-3s;--sw:2.5vw;--fx:-28vw;--c:#dceefa;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:70%;--s:12px;--d:13s;--dl:-21s;--sw:3vw;--fx:-34vw;--c:#c8e2f1;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:72%;--s:10px;--d:12s;--dl:-6s;--sw:2.5vw;--fx:-31vw;--c:#8dbbd7;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:74%;--s:14px;--d:16s;--dl:-13s;--sw:3vw;--fx:-36vw;--c:#dceefa;--o:1" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:76%;--s:13px;--d:15s;--dl:-17s;--sw:3vw;--fx:-35vw;--c:#b8dbee;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:78%;--s:9px;--d:11s;--dl:-2s;--sw:2.5vw;--fx:-32vw;--c:#b5cde5;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:80%;--s:17px;--d:20s;--dl:-24s;--sw:4vw;--fx:-42vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:81%;--s:11px;--d:13s;--dl:-8s;--sw:3vw;--fx:-34vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:83%;--s:8px;--d:11s;--dl:-18s;--sw:2.5vw;--fx:-30vw;--c:#b8dbee;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:85%;--s:15px;--d:17s;--dl:-11s;--sw:3.5vw;--fx:-39vw;--c:#dceefa;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:86%;--s:12px;--d:14s;--dl:-22s;--sw:3vw;--fx:-37vw;--c:#8dbbd7;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:87%;--s:10px;--d:12s;--dl:-5s;--sw:2.5vw;--fx:-33vw;--c:#c8e2f1;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:89%;--s:18px;--d:21s;--dl:-26s;--sw:4vw;--fx:-44vw;--c:#dceefa;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:90%;--s:9px;--d:11s;--dl:-14s;--sw:2.5vw;--fx:-32vw;--c:#b5cde5;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:92%;--s:14px;--d:16s;--dl:-20s;--sw:3.5vw;--fx:-40vw;--c:#b8dbee;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:93%;--s:11px;--d:13s;--dl:-10s;--sw:3vw;--fx:-36vw;--c:#dceefa;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:94%;--s:16px;--d:19s;--dl:-27s;--sw:3.5vw;--fx:-41vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:95%;--s:8px;--d:10s;--dl:-0.5s;--sw:2.5vw;--fx:-29vw;--c:#8dbbd7;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:13px;--d:15s;--dl:-23s;--sw:3vw;--fx:-38vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:97%;--s:10px;--d:12s;--dl:-16s;--sw:2.5vw;--fx:-34vw;--c:#b8dbee;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:98%;--s:12px;--d:14s;--dl:-25s;--sw:3vw;--fx:-37vw;--c:#c8e2f1;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:99%;--s:9px;--d:11s;--dl:-0.2s;--sw:2.5vw;--fx:-31vw;--c:#dceefa;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:100%;--s:14px;--d:16s;--dl:-28s;--sw:3vw;--fx:-39vw;--c:#b5cde5;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:57%;--s:8px;--d:12s;--dl:-9.5s;--sw:2.5vw;--fx:-27vw;--c:#dceefa;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:66%;--s:20px;--d:23s;--dl:-29s;--sw:4vw;--fx:-46vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:75%;--s:11px;--d:13s;--dl:-11.5s;--sw:3vw;--fx:-33vw;--c:#8dbbd7;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:84%;--s:12px;--d:15s;--dl:-20.5s;--sw:3vw;--fx:-36vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:88%;--s:10px;--d:12s;--dl:-13.5s;--sw:2.5vw;--fx:-33vw;--c:#b8dbee;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:91%;--s:15px;--d:18s;--dl:-30s;--sw:3.5vw;--fx:-41vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:11px;--d:14s;--dl:-17.5s;--sw:3vw;--fx:-35vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:68%;--s:40px;--d:28s;--dl:-26s;--sw:4vw;--fx:-48vw;--c:#c8e2f1;--o:0.45" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:92%;--s:44px;--d:32s;--dl:-15s;--sw:5vw;--fx:-56vw;--c:#b8dbee;--o:0.4" viewBox="0 0 24 24"><use href="#i-petal"/></svg></div>
+<div id="sakuraBg" aria-hidden="true"><svg id="sakuraBranch" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 330"><defs><linearGradient id="branchWood" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#486894"/><stop offset=".42" stop-color="#263d62"/><stop offset="1" stop-color="#101d37"/></linearGradient><radialGradient id="branchHaze"><stop stop-color="#a4d8f3" stop-opacity=".11"/><stop offset="1" stop-color="#a4d8f3" stop-opacity="0"/></radialGradient></defs><ellipse cx="604" cy="113" rx="220" ry="152" fill="url(#branchHaze)"/><path d="M708 1 C676 19 653 30 631 54 C610 77 597 83 574 102 C555 118 545 136 522 148 C505 158 494 160 474 175 C453 190 435 199 412 213 C392 226 374 233 350 240 L310 251 C337 249 359 245 377 240 C403 232 422 223 443 211 C466 199 483 189 501 181 C524 171 539 158 556 144 C577 126 591 116 608 106 C631 91 644 72 659 60 C674 48 694 36 708 30 Z" fill="url(#branchWood)"/>
+<g fill="none" stroke="#233c60" stroke-linecap="round" stroke-linejoin="round"><path d="M603 111 C612 126 614 146 603 163 C591 181 570 186 550 191 C536 194 527 204 516 221" stroke-width="7"/><path d="M560 111 C548 100 547 84 550 68 C553 52 545 41 532 32" stroke-width="6"/><path d="M493 170 C481 181 480 195 487 206 C493 217 483 230 472 238" stroke-width="4.5"/><path d="M650 68 C666 74 673 90 670 105 C668 119 672 131 679 145" stroke-width="6"/><path d="M432 207 C418 199 406 195 395 199 C382 204 373 212 360 213" stroke-width="3.5"/><path d="M548 69 C537 68 530 72 527 77 M605 141 C613 134 619 135 626 139 M577 163 C583 166 587 165 591 160 M671 120 C660 117 653 120 648 126 M517 220 C526 217 532 218 538 224" stroke-width="2.5"/></g>
+<g fill="none" stroke="#89b8dd" stroke-opacity=".28" stroke-linecap="round"><path d="M700 10 C668 25 647 38 626 61 C607 82 587 91 568 109 C550 126 537 142 518 152 C499 162 486 169 468 181 C445 197 425 206 401 220 C371 235 348 242 323 247" stroke-width="1.3"/><path d="M600 117 C605 132 606 146 596 159 C582 177 565 177 550 188" stroke-width="1"/><path d="M555 106 C547 91 547 77 550 67" stroke-width="1"/></g><g transform="translate(685 51) rotate(-6) scale(1.02)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(650 62) rotate(12) scale(0.74)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(613 86) rotate(-5) scale(0.81)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(574 117) rotate(15) scale(0.75)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(538 148) rotate(-15) scale(0.72)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(501 168) rotate(10) scale(0.6)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(466 188) rotate(-7) scale(0.68)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(426 214) rotate(12) scale(0.55)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(389 235) rotate(4) scale(0.46)" opacity="0.9"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(617 137) rotate(8) scale(0.62)" opacity="0.76"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(588 162) rotate(-8) scale(0.48)" opacity="0.76"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(559 56) rotate(10) scale(0.6)" opacity="0.76"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(527 77) rotate(-8) scale(0.48)" opacity="0.76"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(671 146) rotate(12) scale(0.72)" opacity="0.76"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g transform="translate(515 221) rotate(-10) scale(0.46)" opacity="0.76"><use href="#i-flower" x="-24" y="-24" width="48" height="48"/></g><g fill="#9ac8e1" opacity=".7"><ellipse cx="544" cy="42" rx="5" ry="3" transform="rotate(-25 544 42)"/><ellipse cx="625" cy="133" rx="5" ry="3" transform="rotate(35 625 133)"/><ellipse cx="643" cy="122" rx="5" ry="3" transform="rotate(-42 643 122)"/><ellipse cx="479" cy="230" rx="4.5" ry="3" transform="rotate(-35 479 230)"/><ellipse cx="357" cy="210" rx="4" ry="2.5"/></g></svg><svg class="petal" style="--x:56%;--s:10px;--d:12s;--dl:-4s;--sw:2.5vw;--fx:-29vw;--c:#dceefa;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:58%;--s:13px;--d:15s;--dl:-12s;--sw:3vw;--fx:-32vw;--c:#b8dbee;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:60%;--s:8px;--d:10s;--dl:-1s;--sw:2.5vw;--fx:-27vw;--c:#c8e2f1;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:61%;--s:15px;--d:17s;--dl:-19s;--sw:3.5vw;--fx:-35vw;--c:#dceefa;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:63%;--s:9px;--d:12s;--dl:-7s;--sw:2.5vw;--fx:-30vw;--c:#8dbbd7;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:65%;--s:11px;--d:14s;--dl:-15s;--sw:3vw;--fx:-33vw;--c:#b5cde5;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:67%;--s:16px;--d:18s;--dl:-9s;--sw:3.5vw;--fx:-38vw;--c:#b8dbee;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:69%;--s:8px;--d:11s;--dl:-3s;--sw:2.5vw;--fx:-28vw;--c:#dceefa;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:70%;--s:12px;--d:13s;--dl:-21s;--sw:3vw;--fx:-34vw;--c:#c8e2f1;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:72%;--s:10px;--d:12s;--dl:-6s;--sw:2.5vw;--fx:-31vw;--c:#8dbbd7;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:74%;--s:14px;--d:16s;--dl:-13s;--sw:3vw;--fx:-36vw;--c:#dceefa;--o:1" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:76%;--s:13px;--d:15s;--dl:-17s;--sw:3vw;--fx:-35vw;--c:#b8dbee;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:78%;--s:9px;--d:11s;--dl:-2s;--sw:2.5vw;--fx:-32vw;--c:#b5cde5;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:80%;--s:17px;--d:20s;--dl:-24s;--sw:4vw;--fx:-42vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:81%;--s:11px;--d:13s;--dl:-8s;--sw:3vw;--fx:-34vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:83%;--s:8px;--d:11s;--dl:-18s;--sw:2.5vw;--fx:-30vw;--c:#b8dbee;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:85%;--s:15px;--d:17s;--dl:-11s;--sw:3.5vw;--fx:-39vw;--c:#dceefa;--o:0.95" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:86%;--s:12px;--d:14s;--dl:-22s;--sw:3vw;--fx:-37vw;--c:#8dbbd7;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:87%;--s:10px;--d:12s;--dl:-5s;--sw:2.5vw;--fx:-33vw;--c:#c8e2f1;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:89%;--s:18px;--d:21s;--dl:-26s;--sw:4vw;--fx:-44vw;--c:#dceefa;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:90%;--s:9px;--d:11s;--dl:-14s;--sw:2.5vw;--fx:-32vw;--c:#b5cde5;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:92%;--s:14px;--d:16s;--dl:-20s;--sw:3.5vw;--fx:-40vw;--c:#b8dbee;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:93%;--s:11px;--d:13s;--dl:-10s;--sw:3vw;--fx:-36vw;--c:#dceefa;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:94%;--s:16px;--d:19s;--dl:-27s;--sw:3.5vw;--fx:-41vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:95%;--s:8px;--d:10s;--dl:-0.5s;--sw:2.5vw;--fx:-29vw;--c:#8dbbd7;--o:0.65" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:13px;--d:15s;--dl:-23s;--sw:3vw;--fx:-38vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:97%;--s:10px;--d:12s;--dl:-16s;--sw:2.5vw;--fx:-34vw;--c:#b8dbee;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:98%;--s:12px;--d:14s;--dl:-25s;--sw:3vw;--fx:-37vw;--c:#c8e2f1;--o:0.8" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:99%;--s:9px;--d:11s;--dl:-0.2s;--sw:2.5vw;--fx:-31vw;--c:#dceefa;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:100%;--s:14px;--d:16s;--dl:-28s;--sw:3vw;--fx:-39vw;--c:#b5cde5;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:57%;--s:8px;--d:12s;--dl:-9.5s;--sw:2.5vw;--fx:-27vw;--c:#dceefa;--o:0.7" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:66%;--s:20px;--d:23s;--dl:-29s;--sw:4vw;--fx:-46vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:75%;--s:11px;--d:13s;--dl:-11.5s;--sw:3vw;--fx:-33vw;--c:#8dbbd7;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:84%;--s:12px;--d:15s;--dl:-20.5s;--sw:3vw;--fx:-36vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:88%;--s:10px;--d:12s;--dl:-13.5s;--sw:2.5vw;--fx:-33vw;--c:#b8dbee;--o:0.75" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:91%;--s:15px;--d:18s;--dl:-30s;--sw:3.5vw;--fx:-41vw;--c:#c8e2f1;--o:0.9" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal" style="--x:96%;--s:11px;--d:14s;--dl:-17.5s;--sw:3vw;--fx:-35vw;--c:#dceefa;--o:0.85" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:68%;--s:40px;--d:28s;--dl:-26s;--sw:4vw;--fx:-48vw;--c:#c8e2f1;--o:0.45" viewBox="0 0 24 24"><use href="#i-petal"/></svg><svg class="petal big" style="--x:92%;--s:44px;--d:32s;--dl:-15s;--sw:5vw;--fx:-56vw;--c:#b8dbee;--o:0.4" viewBox="0 0 24 24"><use href="#i-petal"/></svg></div>
 
 <!-- Custom Notifications -->
 <div class="notification-container" id="notificationContainer"></div>
@@ -380,8 +392,9 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="goHome()" aria-label="Sakugame — Home"><img src="icons/logo-master.png?v=216" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="goHome()" aria-label="Sakugame — Home"><img src="icons/logo-master.png?v=235" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Beta</span>
+    <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <button class="username-change-btn" id="usernameBtn" aria-expanded="false" aria-controls="playerPopover" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
     <button type="button" class="nav-menu-toggle" id="navMenuToggle" aria-label="Open menu" aria-controls="sideNavigation" aria-expanded="false" onclick="sakuNavOpen()"><span></span><span></span><span></span></button>
   </div>
@@ -398,15 +411,8 @@
     <div class="side-nav-heading"><div><span class="side-nav-eyebrow" data-noi18n>SAKUGAME</span><div class="side-nav-tabs" role="tablist"><button type="button" class="side-nav-tab active" id="sideMenuTab" role="tab" aria-selected="true" onclick="sakuSocialTab('menu')">Menu</button><button type="button" class="side-nav-tab" id="sideFriendsTab" role="tab" aria-selected="false" onclick="sakuSocialTab('friends')">Friends <span id="friendRequestBadge" class="friend-badge" hidden></span></button></div></div><button class="side-nav-close" type="button" aria-label="Close menu" onclick="sakuNavClose()">×</button></div>
     <nav id="sideMenuView" aria-label="Navigation">
       <details class="side-nav-section" open><summary><span>Settings</span><svg class="nav-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></summary>
-        <div class="nav-setting-row"><span class="nav-setting-label"><svg class="ic"><use href="#i-globe"/></svg><span>Language</span></span><details class="nav-language-picker" id="navLanguagePicker"><summary id="navLanguageButton" aria-label="Language"><span id="navCurrentFlag"><svg class="nav-flag" viewBox="0 0 24 16" aria-hidden="true"><use id="navCurrentFlagUse" href="#nav-flag-en"/></svg></span><svg class="nav-small-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></summary><div class="nav-language-options"><button type="button" data-language="en" aria-label="English" title="English" onclick="sakuChooseLanguage('en')"><svg class="nav-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#012169"/><path d="M0 0l24 16M24 0L0 16" stroke="#fff" stroke-width="3.2"/><path d="M0 0l24 16M24 0L0 16" stroke="#C8102E" stroke-width="1.3"/><path d="M12 0v16M0 8h24" stroke="#fff" stroke-width="5.4"/><path d="M12 0v16M0 8h24" stroke="#C8102E" stroke-width="3.2"/></svg></button><button type="button" data-language="fr" aria-label="Français" title="Français" onclick="sakuChooseLanguage('fr')"><svg class="nav-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="8" height="16" fill="#0055A4"/><rect x="8" width="8" height="16" fill="#fff"/><rect x="16" width="8" height="16" fill="#EF4135"/></svg></button><button type="button" data-language="es" aria-label="Español" title="Español" onclick="sakuChooseLanguage('es')"><svg class="nav-flag" viewBox="0 0 24 16" aria-hidden="true"><rect width="24" height="16" fill="#F1BF00"/><rect width="24" height="4" fill="#AA151B"/><rect y="12" width="24" height="4" fill="#AA151B"/></svg></button></div></details></div>
-        <div class="nav-setting-row"><label for="navGraphics"><svg class="ic"><use href="#i-sparkle"/></svg><span>Graphics</span></label><select id="navGraphics" aria-label="Graphics" onchange="sakuSetGfx(this.value)"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
-        <div class="bar-position-config">
-        <h4 class="profile-section-title" style="margin-top: 14px;"><svg class="ic"><use href="#i-gear"/></svg> Menu bar</h4>
-        <div class="radio-group" style="gap: 8px;">
-          <label class="radio-option selected" id="barPosBottom" onclick="setBarPos('bottom')"><input type="radio" name="barpos" value="bottom" checked><div><svg class="ic"><use href="#i-layers"/></svg> Bottom</div></label>
-          <label class="radio-option" id="barPosTop" onclick="setBarPos('top')"><input type="radio" name="barpos" value="top"><div><svg class="ic"><use href="#i-bolt"/></svg> Top</div></label>
-        </div>
-        </div>
+        <div class="nav-setting-row"><span class="nav-setting-label"><svg class="ic"><use href="#i-globe"/></svg><span>Language</span></span><details id="navLanguagePicker" class="nav-language-picker"><summary id="navLanguageButton" aria-label="Language"><svg class="nav-flag" viewBox="0 0 24 16"><use id="navCurrentFlagUse" href="#nav-flag-en"/></svg><svg class="nav-small-chevron" viewBox="0 0 20 20"><path d="m6 8 4 4 4-4" fill="none" stroke="currentColor" stroke-width="2"/></svg></summary><div class="nav-language-options"><button type="button" data-language="fr" aria-label="Français" title="Français" onclick="sakuChooseLanguage('fr')"><svg class="nav-flag" viewBox="0 0 24 16"><use href="#nav-flag-fr"/></svg></button><button type="button" data-language="en" aria-label="English" title="English" onclick="sakuChooseLanguage('en')"><svg class="nav-flag" viewBox="0 0 24 16"><use href="#nav-flag-en"/></svg></button><button type="button" data-language="es" aria-label="Español" title="Español" onclick="sakuChooseLanguage('es')"><svg class="nav-flag" viewBox="0 0 24 16"><use href="#nav-flag-es"/></svg></button></div></details></div>
+        <div class="nav-setting-row"><label class="nav-setting-label" for="navGraphics"><svg class="ic"><use href="#i-sparkle"/></svg><span>Graphics</span></label><select id="navGraphics" onchange="sakuSetGfx(this.value);sakuPreferencesSync()"><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div>
         <button type="button" onclick="sakuNavGo('account')"><svg class="ic"><use href="#i-user"/></svg><span>Account</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('support')"><svg class="ic"><use href="#i-chat"/></svg><span>Support</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
       </details>
@@ -416,10 +422,11 @@
         <button type="button" onclick="sakuNavGo('rules')"><svg class="ic"><use href="#i-gamepad"/></svg><span>Rules</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
       </details>
       <details class="side-nav-section" open><summary><span>Cards</span><svg class="nav-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></summary>
+        <button type="button" onclick="sakuNavGo('showcase')"><svg class="ic"><use href="#i-user"/></svg><span>Showcase</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('summon')"><svg class="ic"><use href="#i-vending"/></svg><span>Summon</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
+        <button type="button" onclick="sakuNavGo('market')"><svg class="ic"><use href="#i-market"/></svg><span>Market</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('collection')"><svg class="ic"><use href="#i-cards"/></svg><span>Collection</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('quests')"><span class="side-nav-symbol" aria-hidden="true">✦</span><span>Quests</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
-        <button type="button" disabled><span class="side-nav-symbol" aria-hidden="true">◇</span><span>Market</span><small>Coming soon</small></button>
         <button type="button" disabled><span class="side-nav-symbol" aria-hidden="true">⚔</span><span>Arena</span><small>Coming soon</small></button>
         <button type="button" onclick="sakuNavGo('encyclopedia')"><svg class="ic"><use href="#i-book"/></svg><span>Encyclopedia</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
       </details>
@@ -437,38 +444,101 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-master.png?v=216" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-master.png?v=235" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
 
   <div class="screen active" id="homepageScreen">
-    <div class="homepage-container">
-      <h1 class="homepage-title">Welcome to Sakugame!</h1>
-      <p class="homepage-subtitle">Play anime-themed games with friends online</p>
-      <div class="homepage-buttons">
-        <div class="homepage-btn" onclick="showPlayMenu()">
-          <div class="icon"><svg class="ic"><use href="#i-play"/></svg></div>
-          <h3>Play</h3>
-          <p>Host or join a game room</p>
+    <button type="button" class="home-swipe-arrow home-swipe-next" onclick="sakuHomeSwitch(1)" aria-label="Go to card game">›</button>
+    <main class="home-shell">
+      <section class="game-dashboard" aria-labelledby="homeTitle">
+        <div class="dashboard-header"><div><span class="dashboard-kicker" data-noi18n>SAKUGAME / GAMES</span><h1 id="homeTitle">Games</h1></div><button type="button" class="dashboard-join" onclick="showJoinRoom()"><svg class="ic"><use href="#i-door"/></svg><span>Join Room</span><span aria-hidden="true">→</span></button></div>
+        <div class="game-dashboard-layout">
+          <div class="game-picker"><p class="game-picker-label">Choose a game</p><div class="game-picker-grid" role="group" aria-label="Choose a game">
+            <button type="button" data-home-game="guesswho" onclick="sakuHomeGameSelect('guesswho')"><svg class="ic"><use href="#i-game-guesswho"/></svg><span>Detective Showdown</span></button>
+            <button type="button" data-home-game="undercover" onclick="sakuHomeGameSelect('undercover')"><svg class="ic"><use href="#i-game-undercover"/></svg><span>Undercover</span></button>
+            <button type="button" data-home-game="battle" onclick="sakuHomeGameSelect('battle')"><svg class="ic"><use href="#i-game-battle"/></svg><span>Detective Royale</span></button>
+            <button type="button" data-home-game="race" onclick="sakuHomeGameSelect('race')"><svg class="ic"><use href="#i-game-race"/></svg><span>Wanted!</span></button>
+            <button type="button" data-home-game="blur" onclick="sakuHomeGameSelect('blur')"><svg class="ic"><use href="#i-game-blur"/></svg><span>Blur Guess</span></button>
+            <button type="button" data-home-game="hotcold" onclick="sakuHomeGameSelect('hotcold')"><svg class="ic"><use href="#i-game-hotcold"/></svg><span>Cold Case</span></button>
+            <button type="button" data-home-game="codenames" onclick="sakuHomeGameSelect('codenames')"><svg class="ic"><use href="#i-game-codenames"/></svg><span>Ninja Scrolls</span></button>
+            <button type="button" data-home-game="snapshot" onclick="sakuHomeGameSelect('snapshot')"><svg class="ic"><use href="#i-game-snapshot"/></svg><span>Snapshot!</span></button>
+          </div></div>
+          <div class="game-selected" aria-live="polite"><div class="game-selected-top"><span class="game-selected-icon"><svg class="ic"><use id="homeGameIcon" href="#i-game-guesswho"/></svg></span><span id="homeGamePlayers" class="game-selected-players">2 players</span></div><div><span class="game-selected-label">Selected game</span><h2 id="homeGameName">Detective Showdown</h2><p id="homeGameDesc">Ask questions to find your opponent’s character.</p></div><div class="game-selected-actions"><button type="button" class="dashboard-create" onclick="sakuHomeGameHost()"><span>Host Room</span><span aria-hidden="true">→</span></button><button type="button" class="dashboard-rules" onclick="sakuHomeGameRules()">How to play</button></div></div>
         </div>
-        <div class="homepage-btn" onclick="showGamesMenu()">
-          <div class="icon"><svg class="ic"><use href="#i-gamepad"/></svg></div>
-          <h3>Rules</h3>
-          <p>Browse games &amp; their rules</p>
-        </div>
-        <div class="homepage-btn" onclick="showCards()">
-          <div class="icon"><svg class="ic"><use href="#i-cards"/></svg></div>
-          <h3>Cards</h3>
-          <p>Open boosters &amp; collect characters</p>
-        </div>
-        <div class="homepage-btn" onclick="encOpen()">
-          <div class="icon"><svg class="ic"><use href="#i-book"/></svg></div>
-          <h3>Encyclopedia</h3>
-          <p>Every card, numbered 1 to 6765</p>
+      </section>
+      <section class="home-quest-board" aria-labelledby="homeQuestTitle"><div class="home-quest-clip" aria-hidden="true"></div><header class="home-quest-head"><div><span class="dashboard-kicker">YOUR OBJECTIVES</span><h2 id="homeQuestTitle">Mission board</h2><p>Daily quests and your closest milestones.</p></div><button type="button" onclick="showQuests()"><span>All quests</span> →</button></header><div id="homeQuestContent" class="home-quest-content"></div></section>
+      <section class="home-cards-entry" hidden aria-label="Card game"><span class="home-cards-entry-icon"><svg class="ic"><use href="#i-cards"/></svg></span><div><span class="dashboard-kicker" data-noi18n>SAKUGAME / CARDS</span><h2>Card game</h2><p>Summon, collect and explore your cards.</p></div><button type="button" onclick="showCardHome()"><span>Open card game</span><span aria-hidden="true">→</span></button></section>
+    </main>
+  </div>
+
+  <div class="screen" id="cardHomeScreen">
+    <button type="button" class="home-swipe-arrow home-swipe-prev" onclick="sakuHomeSwitch(-1)" aria-label="Go to games">‹</button>
+    <main class="card-home">
+      <header class="card-home-head"><button type="button" class="page-back" onclick="goHome()" aria-label="Back to Home">←</button><div><span class="card-home-kicker" data-noi18n>SAKUGAME / CARDS</span><h1>Card game</h1><p>Manage your collection and explore the cards.</p></div></header>
+      <div class="card-home-layout card-home-redesign">
+        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true">→</span></button><small>Visual preview · summoning is not active yet.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img src="summon-machines/basic-mini.svg?v=235" alt="" draggable="false"></div></section>
+        <div class="card-home-right"><button type="button" class="card-home-collection" onclick="showCollection()"><span class="card-home-symbol"><svg class="ic"><use href="#i-cards"/></svg></span><span class="card-home-collection-text"><span class="card-home-kicker">YOUR COLLECTION</span><strong>My cards</strong><span><b id="cardHomeOwned">—</b> <span>different cards owned</span></span></span><span id="cardHomePreview" class="card-home-preview" aria-hidden="true"></span><span class="card-home-link-arrow" aria-hidden="true">↗</span></button>
+          <div class="card-home-shortcuts"><button type="button" onclick="showMarket()"><svg class="ic"><use href="#i-market"/></svg><strong>Market</strong><small>Buy, bid and trade</small><span aria-hidden="true">→</span></button><button type="button" onclick="showShowcase()"><svg class="ic"><use href="#i-user"/></svg><strong>Showcase</strong><small>Your public profile</small><span aria-hidden="true">→</span></button><button type="button" onclick="encOpen()"><svg class="ic"><use href="#i-book"/></svg><strong>Encyclopedia</strong><small>Browse all cards</small><span aria-hidden="true">→</span></button></div>
         </div>
       </div>
-    </div>
+    </main>
+  </div>
+
+  <div class="screen" id="showcaseScreen">
+    <main class="showcase-page">
+      <header class="showcase-header"><button type="button" class="page-back" onclick="showCardHome()" aria-label="Back to cards">←</button><div><span class="showcase-kicker" data-noi18n>SAKUGAME / SHOWCASE</span><h1>Showcase</h1><p>Public player profile</p></div></header>
+      <div class="showcase-topline"><div id="showcaseStatus" class="showcase-status" role="status"></div><button type="button" id="showcaseEdit" class="showcase-edit-btn" aria-expanded="false" aria-controls="showcaseEditor" hidden>✎ <span>Edit showcase</span></button></div>
+      <section id="showcasePreview" class="showcase-preview" hidden>
+        <div class="showcase-left"><div class="showcase-cover"><div class="showcase-avatar" id="showcaseAvatar">✦</div><div class="showcase-identity"><span class="showcase-kicker">PLAYER PROFILE</span><h2 id="showcaseName"></h2></div><div class="showcase-ranks"><div class="showcase-rank showcase-level"><small>Level</small><strong id="showcaseLevel">—</strong></div><div class="showcase-rank showcase-arena"><small>Arena rank</small><strong>Coming soon</strong></div></div>
+          <div id="showcaseConnections" class="showcase-connections" hidden><span id="showcaseDiscordWrap" hidden><svg class="ic"><use href="#i-discord"/></svg><b>Discord</b><span id="showcaseDiscord"></span></span><span id="showcaseAniWrap" hidden><svg class="ic"><use href="#i-andlist"/></svg><b>AniList</b><span id="showcaseAni"></span></span></div>
+        </div>
+        <section class="showcase-collection-stat"><div><span class="showcase-kicker">COLLECTION</span><h3>Collection progress</h3></div><div class="showcase-ring" id="showcaseProgress" role="progressbar" aria-label="Collection progress" aria-valuemin="0" aria-valuemax="100"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="showcase-ring-track" cx="60" cy="60" r="51"/><circle class="showcase-ring-value" cx="60" cy="60" r="51" pathLength="100"/></svg><b id="showcasePercent">—</b></div><div class="showcase-collection-count"><strong id="showcaseOwned">—</strong><span id="showcaseTotal"></span></div><small>Unique cards · Basic and The Strongest</small></section></div>
+        <div class="showcase-body">
+          <div class="showcase-section-head showcase-favorites-head"><div><span class="showcase-kicker">THE COLLECTION</span><h3>Favorite cards</h3></div><small id="showcaseCount"></small></div><div class="showcase-cards-wrap"><div id="showcaseCards" class="showcase-cards"></div></div><p id="showcaseEmpty" class="showcase-empty" hidden>No cards selected yet.</p><p class="showcase-swipe-note">Swipe to see all cards</p>
+
+        </div>
+        <section class="showcase-game-panel">          <div class="showcase-section-head showcase-stats-head"><div><span class="showcase-kicker">PLAYER STATS</span><h3>Game statistics</h3></div></div>
+          <div class="showcase-game-columns" aria-hidden="true"><span></span><span>Games played</span><span>Wins</span></div><div id="showcaseGameStats" class="showcase-games"></div>
+          <p class="showcase-stats-note">Other game statistics are available only since progression tracking began.</p><p id="showcaseStatsNote" class="showcase-stats-note" hidden>Some older victories were not recorded; ≥ indicates a minimum.</p>
+
+        </section>
+      </section>
+      <section id="showcaseEditor" class="showcase-editor" hidden><div class="showcase-editor-head"><div><span class="showcase-kicker">YOUR SHOWCASE</span><h2>Customize your showcase</h2><p>Your showcase is public. Changes are saved automatically.</p></div><button type="button" id="showcaseDone" class="showcase-edit-btn">Done</button></div>
+        <div class="showcase-editor-block"><strong>Colors</strong><div class="showcase-colors"><label>Primary color <input id="showcaseBg" type="color" value="#141d3d"></label><label>Secondary color <input id="showcaseBg2" type="color" value="#272047"></label><label>Accent color <input id="showcaseAccent" type="color" value="#9fd8ff"></label></div></div>
+        <div class="showcase-editor-block"><strong>Linked accounts</strong><p>Account names are private by default. Choose what visitors can see.</p><div class="showcase-privacy"><label><input id="showcaseShowDiscord" type="checkbox"><span>Show my Discord account</span></label><label><input id="showcaseShowAni" type="checkbox"><span>Show my AniList account</span></label></div></div>
+        <div class="showcase-editor-title"><strong>Choose up to 10 owned cards</strong><span id="showcaseSelectedCount">0 / 10</span></div><input id="showcaseSearch" type="search" placeholder="Search your cards…" autocomplete="off"><div id="showcaseChoices" class="showcase-choices"></div><div class="showcase-more-row"><span id="showcaseChoicesCount"></span><button type="button" id="showcaseMore" class="showcase-edit-btn" hidden>Show more cards</button></div><p class="showcase-editor-note">Only cards you own can be displayed.</p><p id="showcaseSaveStatus" role="status"></p>
+      </section>
+      <section id="showcaseGuest" class="showcase-guest" hidden><h2>Sign in to create your showcase</h2><p>Your public profile is linked to your Discord account.</p><button type="button" class="hub-primary hub-discord" onclick="openAuthModal()"><svg class="ic"><use href="#i-discord"/></svg><span>Continue with Discord</span></button></section>
+    </main>
+  </div>
+
+  <div class="screen" id="marketScreen">
+    <main class="market-page">
+      <header class="market-header"><button type="button" class="page-back" onclick="showCardHome()" aria-label="Back to cards">←</button><div><span class="market-kicker" data-noi18n>SAKUGAME / MARKET</span><h1>Market</h1><p>Buy, bid and trade cards with other players.</p></div><div class="market-wallet"><img src="summon-machines/coin.svg" alt=""><div><small>Available balance</small><strong id="marketBalance">—</strong></div></div></header>
+      <p class="market-test-note">Test market · Transactions are local to this browser, not the live site. Use one tab.</p>
+      <div id="marketGuest" class="market-panel" hidden><h2>Sign in to use the market</h2><p>Use a test account to buy, bid or exchange cards.</p><button class="market-button" type="button" onclick="openAuthModal()">Continue with Discord</button></div>
+      <div id="marketApp" hidden><div class="market-tabs" role="tablist" aria-label="Market"><button type="button" role="tab" data-market-tab="buy" aria-selected="true">Buy &amp; auctions</button><button type="button" role="tab" data-market-tab="sell" aria-selected="false">Sell a card</button><button type="button" role="tab" data-market-tab="trades" aria-selected="false">Exchanges</button></div>
+        <div id="marketMessage" class="market-message" role="status" aria-live="polite"></div>
+        <section class="market-tab" id="marketBuy"><div class="market-section-title"><div><span class="market-kicker">MARKETPLACE</span><h2>Cards on the market</h2><p>Fixed-price offers and 24-hour auctions.</p></div><button type="button" class="market-subtle" id="marketRefresh">Refresh</button></div><input type="search" id="marketSearch" placeholder="Search a card or series…"><div id="marketListings" class="market-listings"></div></section>
+        <section class="market-tab market-panel" id="marketSell" hidden><div class="market-section-title"><div><span class="market-kicker">YOUR LISTING</span><h2>Put a card on sale</h2><p>The card is reserved until the sale ends or is cancelled.</p></div></div><form id="marketSellForm" class="market-form"><label>Search your collection<input id="marketSellSearch" type="search" placeholder="Search a card or series…"></label><label>Card to sell<select id="marketSellCard" required></select></label><label>Sale type<select id="marketSaleType"><option value="fixed">Fixed price</option><option value="auction">Auction · 24 hours</option></select></label><label>Price in coins<input id="marketPrice" type="number" min="1" max="100000000" step="1" required value="100"></label><button class="market-button" type="submit">Create listing</button></form><p class="market-help">Auctions settle when the test market is opened or refreshed after the deadline. You can cancel only before the first bid.</p></section>
+        <section class="market-tab" id="marketTrades" hidden><div class="market-trade-layout"><div class="market-panel"><div class="market-section-title"><div><span class="market-kicker">DIRECT TRADE</span><h2>Propose an exchange</h2><p>Offer one card and request one in return.</p></div></div><form id="marketTradeForm" class="market-form"><label>Player<select id="marketTradePlayer" required></select></label><label>Search your collection<input id="marketGiveSearch" type="search" placeholder="Search a card or series…"></label><label>Your offered card<select id="marketGiveCard" required></select></label><label>Search the catalogue<input id="marketWantSearch" type="search" placeholder="Search a card or series…"></label><label>Requested card<select id="marketWantCard" required></select></label><button class="market-button" type="submit">Send proposal</button></form><p class="market-help">Your offered card is reserved. The other player must own the requested card to accept.</p></div><div class="market-panel"><div class="market-section-title"><div><span class="market-kicker">YOUR EXCHANGES</span><h2>Proposals</h2><p>Accept, decline or cancel pending exchanges.</p></div></div><div id="marketTradeList" class="market-trade-list"></div></div></div></section>
+      </div>
+    </main>
+  </div>
+
+  <div class="screen" id="preferencesScreen">
+    <main class="preferences-page">
+      <header class="preferences-header"><button type="button" class="page-back" onclick="goHome()" aria-label="Back to Home">←</button><div><span class="preferences-kicker" data-noi18n>SAKUGAME / SETTINGS</span><h1>Settings</h1><p>Make Sakugame feel like yours.</p></div></header>
+      <div class="preferences-grid">
+        <section class="preferences-card"><div class="preferences-card-head"><span class="preferences-icon"><svg class="ic"><use href="#i-globe"/></svg></span><div><h2>Language</h2><p>Choose the language of the interface.</p></div></div><div class="preferences-flags" role="group" aria-label="Language"><button type="button" data-pref-lang="fr" aria-label="Français" title="Français" onclick="sakuSetLang('fr'); sakuPreferencesSync()"><svg viewBox="0 0 24 16" aria-hidden="true"><use href="#nav-flag-fr"/></svg></button><button type="button" data-pref-lang="en" aria-label="English" title="English" onclick="sakuSetLang('en'); sakuPreferencesSync()"><svg viewBox="0 0 24 16" aria-hidden="true"><use href="#nav-flag-en"/></svg></button><button type="button" data-pref-lang="es" aria-label="Español" title="Español" onclick="sakuSetLang('es'); sakuPreferencesSync()"><svg viewBox="0 0 24 16" aria-hidden="true"><use href="#nav-flag-es"/></svg></button></div></section>
+        <section class="preferences-card"><div class="preferences-card-head"><span class="preferences-icon"><svg class="ic"><use href="#i-sparkle"/></svg></span><div><h2>Graphics</h2><p>Balance visual effects and performance.</p></div></div><div class="preferences-options" role="group" aria-label="Graphics"><button type="button" data-pref-gfx="high" onclick="sakuSetGfx('high'); sakuPreferencesSync()">High</button><button type="button" data-pref-gfx="medium" onclick="sakuSetGfx('medium'); sakuPreferencesSync()">Medium</button><button type="button" data-pref-gfx="low" onclick="sakuSetGfx('low'); sakuPreferencesSync()">Low</button></div></section>
+        <section class="preferences-card preferences-mobile-bar"><div class="preferences-card-head"><span class="preferences-icon"><svg class="ic"><use href="#i-layers"/></svg></span><div><h2>Menu bar</h2><p>Choose where the mobile menu appears.</p></div></div><div class="preferences-options" role="group" aria-label="Menu bar"><button type="button" data-pref-bar="bottom" onclick="setBarPos('bottom'); sakuPreferencesSync()">Bottom</button><button type="button" data-pref-bar="top" onclick="setBarPos('top'); sakuPreferencesSync()">Top</button></div></section>
+        <section class="preferences-card preferences-account"><div class="preferences-card-head"><span class="preferences-icon"><svg class="ic"><use href="#i-user"/></svg></span><div><h2>Account</h2><p>Manage your profile and connections.</p></div></div><button type="button" class="preferences-account-link" onclick="showAccountPage()"><span>Open account</span><span aria-hidden="true">→</span></button></section>
+      </div>
+      <p class="preferences-note">Your preferences are saved in this browser.</p>
+    </main>
   </div>
 
   <div class="screen" id="accountScreen">
@@ -480,7 +550,15 @@
           <section class="hub-card progression-account" id="accountProgress" hidden></section>
           <section class="hub-card"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-user"/></svg></span><div><h2>Profile</h2><p>Choose the name shown to other players.</p></div></div><form class="hub-form" onsubmit="sakuAccountSaveName(event)"><label for="accountPageNameInput">Username</label><div class="hub-form-row"><input id="accountPageNameInput" type="text" maxlength="20" autocomplete="nickname" required><button type="submit" class="hub-primary">Save</button></div><p class="hub-helper" id="accountPageNameHint"></p></form></section>
           <section class="hub-card"><div class="hub-card-head"><span class="hub-icon discord"><svg class="ic"><use href="#i-discord"/></svg></span><div><h2>Discord account</h2><p id="accountPageDiscordNote"></p></div></div><button type="button" class="hub-primary hub-discord" id="accountPageLogin" onclick="loginWithDiscord()"><svg class="ic"><use href="#i-discord"/></svg><span>Continue with Discord</span></button><button type="button" class="hub-subtle" id="accountPageLogout" onclick="sakuAccountPageLogout()" hidden>Log Out</button></section>
-          <section class="hub-card" id="accountPageAniCard"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-andlist"/></svg></span><div><h2>AniList Account</h2><p id="accountPageAniNote"></p></div></div><form class="hub-form hub-anilist-form" id="accountPageAniForm" onsubmit="sakuAccountSyncAniList(event)" hidden><label for="accountPageAniInput">Your AniList username</label><div class="hub-form-row"><input id="accountPageAniInput" type="text" maxlength="50" placeholder="Your AniList username"><button type="submit" class="hub-primary">Sync</button></div></form><button type="button" class="hub-subtle" id="accountPageAdvanced" onclick="sakuAccountAdvanced()">Manage account settings</button></section>
+          <section class="hub-card" id="accountPageAniCard"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-andlist"/></svg></span><div><h2>AniList Account</h2><p id="accountPageAniNote"></p></div></div><form class="hub-form hub-anilist-form" id="accountPageAniForm" onsubmit="sakuAccountSyncAniList(event)" hidden><label for="accountPageAniInput">Your AniList username</label><div class="hub-form-row"><input id="accountPageAniInput" type="text" maxlength="50" placeholder="Your AniList username"><button type="submit" class="hub-primary">Sync</button></div></form><div id="accountPageWatchSettings" class="account-watch-settings" hidden>
+          <span class="ws-lead">Count as watched:</span>
+          <div class="ws-row" id="watchStatusRow">
+            <label><input type="checkbox" id="wsWatching" checked onchange="saveWatchStatuses()"> Watching</label>
+            <label><input type="checkbox" id="wsCompleted" checked onchange="saveWatchStatuses()"> Completed</label>
+            <label><input type="checkbox" id="wsPaused" checked onchange="saveWatchStatuses()"> Paused</label>
+            <label><input type="checkbox" id="wsDropped" onchange="saveWatchStatuses()"> Dropped</label>
+            <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
+          </div></div></section>
           <section class="hub-card"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-gear"/></svg></span><div><h2>Preferences</h2><p>Adjust your experience on this device.</p></div></div><div class="hub-preference"><label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label></div><div class="hub-preference music-block"><label for="accountPageVolume">Music Volume</label><input id="accountPageVolume" type="range" class="music-volume-slider" min="0" max="100" value="50"></div></section>
         </div>
       </div>
@@ -512,7 +590,7 @@
     <div class="summon-atmosphere" aria-hidden="true"><div class="summon-bg bg-basic"></div><div class="summon-bg bg-strongest"></div><div class="summon-bg bg-retro"></div><div class="summon-bg bg-cinema"></div></div>
     <main class="summon-page">
       <header class="summon-header">
-        <div class="summon-heading"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button><div><span class="summon-kicker" data-noi18n>SAKUGAME · PORTALS</span><h1>Summon</h1><p>Choose your portal and discover its universe.</p></div></div>
+        <div class="summon-heading"><button type="button" class="page-back" onclick="showCardHome()" title="Back to Home" aria-label="Back to Home">←</button><div><span class="summon-kicker" data-noi18n>SAKUGAME · PORTALS</span><h1>Summon</h1><p>Choose your portal and discover its universe.</p></div></div>
         <span class="summon-preview"><span aria-hidden="true">✦</span> Visual preview</span>
       </header>
       <div class="summon-carousel-track" id="summonTrack">
@@ -552,60 +630,10 @@
     </main>
   </div>
 
-  <!-- 🎴 ANIME CARDS — booster collection (cardgame.js) -->
-  <div class="screen" id="cardsScreen">
-    <div class="cards-page">
-      <h2 class="cards-title"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button><svg class="ic"><use href="#i-cards"/></svg> <span class="btn-label">Anime Cards</span></h2>
-
-      <div class="cards-hero">
-        <div class="cards-pack">
-          <div class="cards-pack-art"><svg class="ic"><use href="#i-cards"/></svg></div>
-          <div class="cards-pack-meta">
-            <div class="cards-pack-count"><b id="cardsBoosterCount">0</b><span id="cardsPackMax">/ 15</span></div>
-            <div class="cards-pack-timer" id="cardsTimer">…</div>
-          </div>
-        </div>
-        <div class="cards-hero-actions">
-          <select id="cardsSeries" aria-label="Booster series"></select>
-          <button class="cards-open" id="cardsOpenBtn" type="button" onclick="cardsTearPack(this)">
-            <!-- 🎁 a real foil booster pack: crimped top, holographic sheen, tear notch -->
-            <span class="pack" aria-hidden="true">
-              <span class="pack-foil"></span>
-              <span class="pack-crimp"></span>
-              <span class="pack-face">
-                <span class="pack-brand">SAKUGAME</span>
-                <span class="pack-art"><svg class="ic"><use href="#i-cards"/></svg></span>
-                <span class="pack-kind">BOOSTER</span>
-                <span class="pack-cards">5 CARDS</span>
-              </span>
-              <span class="pack-shine"></span>
-              <span class="pack-notch"></span>
-            </span>
-            <span class="cards-open-text">
-              <b class="btn-label">Open a booster</b>
-              <small>5 cards · 6 rarities</small>
-            </span>
-          </button>
-        </div>
-      </div>
-      <button class="secondary" type="button" onclick="showCollection()">View my collection</button>
-    </div>
-
-    <!-- booster reveal: tap each card to flip it -->
-    <div class="cards-reveal" id="cardsReveal">
-      <div class="cards-reveal-inner">
-        <h3 id="cardsRevealTitle">Tap each card to flip it!</h3>
-        <div class="cards-reveal-grid" id="cardsRevealGrid"></div>
-        <button class="cards-reveal-done" id="cardsRevealDone" onclick="cardsCloseReveal()">Nice!</button>
-      </div>
-    </div>
-
-  </div>
-
   <!-- Collection is a separate page, backed by the same saved album. -->
   <div class="screen" id="collectionScreen">
     <main class="collection-page">
-      <header class="library-header"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button><div><span class="library-kicker" data-noi18n>SAKUGAME / COLLECTION</span><h1>Your collection</h1><p>Your cards, all in one place.</p></div><button type="button" class="library-link" onclick="encOpen()"><svg class="ic"><use href="#i-book"/></svg><span>Explore the encyclopedia</span></button></header>
+      <header class="library-header"><button type="button" class="page-back" onclick="showCardHome()" title="Back to Home" aria-label="Back to Home">←</button><div><span class="library-kicker" data-noi18n>SAKUGAME / COLLECTION</span><h1>Your collection</h1><p>Your cards, all in one place.</p></div><button type="button" class="library-link" onclick="encOpen()"><svg class="ic"><use href="#i-book"/></svg><span>Explore the encyclopedia</span></button></header>
       <p class="cards-save-note" id="cardsSaveNote"></p>
 
       <div class="cards-stats" id="cardsStats"></div>
@@ -631,7 +659,7 @@
   <!-- 📖 ENCYCLOPEDIA — the collection binder (enc.js) -->
   <div class="screen" id="encyclopediaScreen">
     <div class="enc-wrap">
-      <header class="library-header"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">&larr;</button><div><span class="library-kicker" data-noi18n>SAKUGAME / ENCYCLOPEDIA</span><h1>Encyclopedia</h1><p>Discover every character and their rarity.</p></div><button type="button" class="library-link" onclick="showCollection()"><svg class="ic"><use href="#i-cards"/></svg><span>View my collection</span></button></header>
+      <header class="library-header"><button type="button" class="page-back" onclick="showCardHome()" title="Back to Home" aria-label="Back to Home">&larr;</button><div><span class="library-kicker" data-noi18n>SAKUGAME / ENCYCLOPEDIA</span><h1>Encyclopedia</h1><p>Discover every character and their rarity.</p></div><button type="button" class="library-link" onclick="showCollection()"><svg class="ic"><use href="#i-cards"/></svg><span>View my collection</span></button></header>
       <p class="enc-sub" id="encSub"></p>
 
       <div class="enc-hero">
@@ -665,88 +693,65 @@
     <div class="enc-detail" id="encDetail" onclick="encCloseDetail()"></div>
   </div>
 
-  <div class="screen" id="playMenuScreen">
-    <div class="play-menu">
-      <h2><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button>Play</h2>
-      <div class="play-options">
-        <div class="play-option" " onclick="showHostRoom()">
-          <div class="icon"><svg class="ic"><use href="#i-home"/></svg></div>
-          <div class="content"><h3>Host Room</h3><p>Create a new game room and invite friends</p></div>
-        </div>
-        <div class="play-option" onclick="showJoinRoom()">
-          <div class="icon"><svg class="ic"><use href="#i-door"/></svg></div>
-          <div class="content"><h3>Join Room</h3><p>Enter a room code to join an existing game</p></div>
-        </div>
-      </div>
-      <button class="full back-btn" style="display:none" onclick="goHome()">← Back to Home</button>
-    </div>
-  </div>
 
   <div class="screen" id="gamesMenuScreen">
-    <div style="max-width: 1200px; margin: 0 auto;">
-      <h2 style="text-align: center; font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button>Rules</h2>
+    <div class="rules-page">
+      <header class="renovated-head"><button type="button" class="page-back" onclick="goHome()" title="Back to Home" aria-label="Back to Home">←</button><div><span class="join-kicker" data-noi18n>SAKUGAME / GUIDE</span><h1>Rules</h1><p>Choose a game to discover how to play.</p></div></header>
       <div class="games-grid">
         <div class="game-card" onclick="openHowTo('guesswho')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('guesswho')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-guesswho"/></svg></div>
           <div class="game-card-content">
             <h3>Detective Showdown</h3>
-            <p>Classic guessing game with your favorite anime characters from AniList. Eliminate characters and guess your opponent's secret!</p>
+            <p>Find your opponent’s secret with yes/no questions.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('undercover')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('undercover')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-undercover"/></svg></div>
           <div class="game-card-content">
             <h3>Undercover</h3>
-            <p>3-12 players! Everyone secretly gets an anime word — except the Undercover (a similar word) and Mr. White (no word at all). Give a clue each round, discuss, and vote out the impostor!</p>
+            <p>Give clues, spot the impostors and vote.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('battle')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('battle')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-users"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-battle"/></svg></div>
           <div class="game-card-content">
             <h3>Detective Royale</h3>
-            <p>3-12 players! Everyone has a secret character. Ask questions to the whole table, track each opponent on their own glowing board, guess their secrets, and climb the points ranking!</p>
+            <p>Track each rival’s secret and score points.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('race')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('race')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-race"/></svg></div>
           <div class="game-card-content">
             <h3>Wanted!</h3>
-            <p>3-12 players! One player is the TARGET with a mystery character. Hunters take turns ASKING questions — but everyone can GUESS at any moment (wrong guess = -1 life)! First to find the mystery character wins!</p>
+            <p>A target, hunters and a race to the right answer.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('blur')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('blur')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-blur"/></svg></div>
           <div class="game-card-content">
             <h3>Blur Guess</h3>
-            <p>Solo or up to 12 players! A blurred character or anime cover slowly clears over 5 stages — name it as early as you can for big points. The fastest correct guesses score a speed bonus!</p>
+            <p>Name a blurred image before it becomes clear.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('hotcold')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('hotcold')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-target"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-hotcold"/></svg></div>
           <div class="game-card-content">
             <h3>Cold Case</h3>
-            <p>2-12 players! One hides a character, everyone else proposes characters at their own pace and the hider scores each 0-100. Every guess counts — find each secret in the fewest total guesses to win!</p>
+            <p>Find a hidden character with hot-or-cold ratings.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('codenames')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-key"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-codenames"/></svg></div>
           <div class="game-card-content">
             <h3>Ninja Scrolls</h3>
-            <p>4-12 players, 2 teams! The Ninja gives a ONE-word clue — tap your agents' cards, dodge the assassin, and find all your agents first!</p>
+            <p>Use clues to reveal your team’s agents, not the assassin.</p>
           </div>
         </div>
         <div class="game-card" onclick="openHowTo('snapshot')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('snapshot')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-image"/></svg></div>
+          <div class="game-card-img"><svg class="ic"><use href="#i-game-snapshot"/></svg></div>
           <div class="game-card-content">
             <h3>Snapshot!</h3>
-            <p>Solo or up to 12 players! 4 random stills from ONE anime join the frame one by one, each EASIER than the last (the 4th is the official art). Name the anime as early as you can: stage 1 pays 4 pts, and the fastest correct guesses add a +3/+2/+1 speed bonus!</p>
-          </div>
-        </div>
-        <div class="game-card" onclick="openHowTo('cards')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('cards')">
-          <div class="game-card-img"><svg class="ic"><use href="#i-cards"/></svg></div>
-          <div class="game-card-content">
-            <h3>Anime Cards</h3>
-            <p>Solo, free, no room needed! Every character of the library is a collectible card with a rarity. A new booster lands every 10 minutes (up to 15 in reserve) — 5 cards a pack, six rarities, one album to complete.</p>
+            <p>Identify an anime from images revealed one by one.</p>
           </div>
         </div>
       </div>
@@ -755,7 +760,7 @@
   </div>
 
   <!-- HOW TO PLAY — game presentation slideshow -->
-  <div id="howtoModal" class="howto-modal" style="display:none" onclick="if(event.target===this)closeHowTo()">
+  <div id="howtoModal" class="howto-modal" role="dialog" aria-modal="true" aria-labelledby="howtoTitle" style="display:none" onclick="if(event.target===this)closeHowTo()">
     <div class="howto-panel">
       <div class="howto-head">
         <span class="howto-gameicon" id="howtoIcon"></span>
@@ -766,7 +771,7 @@
       </div>
       <div class="howto-body">
         <button class="howto-arrow" id="howtoPrev" onclick="howtoNav(-1)" aria-label="Previous step">‹</button>
-        <div class="howto-slide" id="howtoSlide"></div>
+        <div class="howto-slide" id="howtoSlide" tabindex="0"></div>
         <button class="howto-arrow" id="howtoNext" onclick="howtoNav(1)" aria-label="Next step">›</button>
       </div>
       <div class="howto-foot">
@@ -778,7 +783,7 @@
 
   <div class="screen" id="hostRoomScreen">
     <div class="panel">
-      <h2><button type="button" class="page-back" onclick="showPlayMenu()" title="Back" aria-label="Back">←</button>Create Game Room</h2>
+      <header class="renovated-head host-head"><button type="button" class="page-back" onclick="goHome()" title="Back" aria-label="Back">←</button><div><span class="join-kicker" data-noi18n>SAKUGAME / HOST</span><h1>Create Game Room</h1><p>Choose a game and make the room your own.</p></div></header>
       <!-- 💾📂 named configs — save the current game's settings, reload anytime -->
       <div class="cfg-quick">
         <button class="secondary small" onclick="openConfigSave()"><svg class="ic"><use href="#i-check"/></svg> Save</button>
@@ -792,35 +797,35 @@
             <label>Choose a Game</label>
             <div class="game-pick-grid" id="hostGamePick">
               <div class="game-pick-card selected" data-game="guesswho" onclick="selectHostGame('guesswho')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-mask"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-guesswho"/></svg></div>
                 <div class="game-pick-content"><h4>Detective Showdown</h4><small>2 players</small></div>
               </div>
               <div class="game-pick-card" data-game="battle" onclick="selectHostGame('battle')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-users"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-battle"/></svg></div>
                 <div class="game-pick-content"><h4>Detective Royale</h4><small>3-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="race" onclick="selectHostGame('race')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-bolt"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-race"/></svg></div>
                 <div class="game-pick-content"><h4>Wanted!</h4><small>3-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="blur" onclick="selectHostGame('blur')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-layers"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-blur"/></svg></div>
                 <div class="game-pick-content"><h4>Blur Guess</h4><small>1-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="undercover" onclick="selectHostGame('undercover')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-spy"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-undercover"/></svg></div>
                 <div class="game-pick-content"><h4>Undercover</h4><small>3-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="hotcold" onclick="selectHostGame('hotcold')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-target"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-hotcold"/></svg></div>
                 <div class="game-pick-content"><h4>Cold Case</h4><small>2-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="codenames" onclick="selectHostGame('codenames')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-codenames"/></svg></div>
                 <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="snapshot" onclick="selectHostGame('snapshot')">
-                <div class="game-pick-img"><svg class="ic"><use href="#i-image"/></svg></div>
+                <div class="game-pick-img"><svg class="ic"><use href="#i-game-snapshot"/></svg></div>
                 <div class="game-pick-content"><h4>Snapshot!</h4><small>1-12 players</small></div>
               </div>
             </div>
@@ -963,33 +968,22 @@
         </div>
       </div>
       <button class="full success" onclick="createGameRoom()">Create Room</button>
-      <button class="full back-btn" style="display:none" onclick="showPlayMenu()">← Back</button>
+      <button class="full back-btn" style="display:none" onclick="goHome()">← Back</button>
     </div>
   </div>
 
   <div class="screen" id="joinRoomScreen">
-    <div class="panel">
-      <h2><button type="button" class="page-back" onclick="showPlayMenu()" title="Back" aria-label="Back">←</button>Join Game Room</h2>
-      <p>Enter the room code to join</p>
-      <div class="input-group">
-        <label>Room Code</label>
-        <input type="text" id="joinRoomInput" placeholder="Enter 4-digit code" maxlength="4" style="text-transform: uppercase;">
-      </div>
-      <button class="full success" onclick="joinGameRoom()">Join Room</button>
-      <div class="public-rooms">
-        <div class="public-rooms-head">
-          <h3><svg class="ic"><use href="#i-globe"/></svg> Public Rooms</h3>
-          <button class="secondary pub-refresh" onclick="refreshPublicRooms()" title="Refresh the list"><svg class="ic"><use href="#i-refresh"/></svg></button>
-        </div>
-        <div id="publicRoomsList" class="public-rooms-list"><p class="pub-empty">Looking for open rooms…</p></div>
-      </div>
-      <button class="full back-btn" style="display:none" onclick="showPlayMenu()">← Back</button>
-    </div>
+    <main class="join-page"><header class="join-header"><button type="button" class="page-back" onclick="goHome()" aria-label="Back">←</button><div><span class="join-kicker" data-noi18n>SAKUGAME / ROOMS</span><h1>Join a room</h1><p>Find an open game or join friends with a code.</p></div><button type="button" class="join-create" onclick="showHostRoom()">Create a room <span aria-hidden="true">→</span></button></header>
+      <div class="join-layout"><section class="join-code-panel"><span class="join-icon"><svg class="ic"><use href="#i-key"/></svg></span><h2>Have a code?</h2><p>Enter the four-character code shared by your friends.</p><label for="joinRoomInput">Room code</label><div class="join-code-form"><input type="text" id="joinRoomInput" placeholder="ABCD" maxlength="4" autocomplete="off" style="text-transform:uppercase"><button type="button" onclick="joinGameRoom()">Join</button></div></section>
+      <section class="join-browser"><div class="join-browser-head"><div><span class="join-kicker">EXPLORE</span><h2>Public rooms <small id="publicRoomsCount"></small></h2><p>Choose a room that suits you.</p></div><button type="button" class="join-refresh" onclick="refreshPublicRooms()" aria-label="Refresh the list"><svg class="ic"><use href="#i-refresh"/></svg></button></div>
+       <div class="join-filters"><input type="search" id="publicRoomsSearch" placeholder="Search a player or code…" oninput="filterPublicRooms()"><select id="publicRoomsGameFilter" aria-label="Game" onchange="filterPublicRooms()"><option value="">All games</option><option value="guesswho">Detective Showdown</option><option value="undercover">Undercover</option><option value="battle">Detective Royale</option><option value="race">Wanted!</option><option value="blur">Blur Guess</option><option value="hotcold">Cold Case</option><option value="codenames">Ninja Scrolls</option><option value="snapshot">Snapshot!</option></select></div>
+       <div id="publicRoomsList" class="public-rooms-list"><p class="pub-empty">Looking for open rooms…</p></div></section></div>
+    </main>
   </div>
 
   <div class="screen" id="lobbyScreen">
     <div class="lobby-container">
-      <div class="lobby-left" style="position: relative;">
+      <div class="lobby-left" style="position: relative;"><section class="lobby-identity">
         <div class="settings-icon" id="lobbySettingsIcon" onclick="openRoomSettings()" style="display: none;"><svg class="ic"><use href="#i-gear"/></svg></div>
         <h2 style="text-align: center; color: var(--accent); margin-bottom: 10px;">Game Lobby</h2>
         <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code — or the link — with your friends</p>
@@ -998,7 +992,7 @@
           <button class="blur-code-btn secondary" onclick="toggleBlur()"><svg class="ic"><use href="#i-eye"/></svg> Blur Code</button>
         </div>
         <div class="room-code" id="displayRoomCode">----</div>
-        <div class="queue-banner" id="queueBanner" style="display: none;"></div>
+        </section><section class="lobby-details"><h3 class="lobby-section-title">Players and game</h3><div class="queue-banner" id="queueBanner" style="display: none;"></div>
         <div class="players-list" id="playersList"></div>
         <div id="queueSection" style="display: none;">
           <h3 style="color: var(--accent); font-size: 0.95rem; margin: 14px 0 8px;"><svg class="ic"><use href="#i-hourglass"/></svg> Waiting queue <small style="color: var(--muted); font-weight: 400;" id="queueAutoNote">— joins automatically when a seat opens</small></h3>
@@ -1057,7 +1051,7 @@
           <button class="secondary" id="afkBtn" onclick="toggleAfk()" style="display: none;"><svg class="ic"><use href="#i-eye"/></svg> <span id="afkBtnLabel">Spectate</span></button>
           <button class="danger" onclick="leaveRoom()"><svg class="ic"><use href="#i-door"/></svg> Leave Room</button>
         </div>
-      </div>
+      </section></div>
     </div>
   </div>
 
@@ -1491,10 +1485,10 @@
     <p id="hcRestartStatus" style="color: var(--muted); margin-top: 15px; font-size: 0.9rem;"></p>
   </div>
 
-  <div class="modal" id="settingsModal">
+  <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="roomSettingsTitle">
     <div class="modal-content">
       <div class="modal-close" onclick="closeSettings()">×</div>
-      <h2><svg class="ic"><use href="#i-gear"/></svg> Settings</h2>
+      <h2 id="roomSettingsTitle"><svg class="ic"><use href="#i-gear"/></svg> Settings</h2>
       <!-- 💾📂 named configs — save the room's current settings, reload anytime -->
       <div class="cfg-quick">
         <button class="secondary small" onclick="openConfigSave('room')"><svg class="ic"><use href="#i-check"/></svg> Save</button>
@@ -1792,15 +1786,7 @@
             <input type="text" id="anilistSyncInput" placeholder="Your AniList username" maxlength="50">
             <button class="secondary" id="anilistSaveBtn" onclick="saveAnilistSync()">Sync</button>
           </div>
-          <!-- 👀 Which AniList list-statuses count as "watched" for the HC/Blur Watched pools -->
-          <span class="ws-lead">Count as watched:</span>
-          <div class="ws-row" id="watchStatusRow">
-            <label><input type="checkbox" id="wsWatching" checked onchange="saveWatchStatuses()"> Watching</label>
-            <label><input type="checkbox" id="wsCompleted" checked onchange="saveWatchStatuses()"> Completed</label>
-            <label><input type="checkbox" id="wsPaused" checked onchange="saveWatchStatuses()"> Paused</label>
-            <label><input type="checkbox" id="wsDropped" onchange="saveWatchStatuses()"> Dropped</label>
-            <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
-          </div>
+
 
           <h4 class="profile-section-title"><svg class="ic"><use href="#i-discord"/></svg> Discord account <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Discord is how you sign in: the official popup verifies your account and gives Sakugame your username and avatar. Sign out any time from this card.</span></button></h4>
           <div class="discord-card dc-sync" id="discordLinkBox"></div>
@@ -1929,7 +1915,7 @@
   </div>
 
   <!-- 🔒 entrance gate first — nothing else may run until it is open -->
-  <script src="gate.js?v=216"></script>
+  <script src="gate.js?v=235"></script>
   <!-- 🧪 TEST BUILD — the real Firebase scripts are replaced by this local stub,
        so nothing you do here can touch the public database. -->
   <script src="test-stub.js"></script>
@@ -1941,7 +1927,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=216', 'charanimes.js?v=216', 'animes.js?v=216', 'nsfwdata.js?v=216', 'snappics.js?v=216'];
+        var files = ['characters.js?v=235', 'charanimes.js?v=235', 'animes.js?v=235', 'nsfwdata.js?v=235', 'snappics.js?v=235'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1956,25 +1942,29 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script src="card-rarity.js?v=216"></script>
-  <script src="card-extra.js?v=216"></script>
-  <script src="strongest-data.js?v=216"></script>
-  <script src="strongest-render.js?v=216"></script>
-  <script src="basic-render.js?v=216"></script>
-  <script src="cardgame.js?v=216"></script>
-  <script src="encyclopedia.js?v=216"></script>
-  <script src="character-localization.js?v=216"></script>
-  <script src="enc.js?v=216"></script>
-  <script src="rarity-sync.js?v=216"></script>
-  <script src="strongest-sync.js?v=216"></script>
-  <script src="pic-sync.js?v=216"></script>
-  <script src="undercover.js?v=216"></script>
-  <script src="music.js?v=216"></script>
-  <script src="lang.js?v=216"></script>
-  <script src="app.js?v=216"></script>
-  <script src="progression.js?v=216"></script>
-  <script src="player-popover.js?v=216"></script>
-  <script src="friends.js?v=216"></script>
+  <script src="card-rarity.js?v=235"></script>
+  <script src="card-extra.js?v=235"></script>
+  <script src="strongest-data.js?v=235"></script>
+  <script src="strongest-render.js?v=235"></script>
+  <script src="basic-render.js?v=235"></script>
+  <script src="cardgame.js?v=235"></script>
+  <script src="encyclopedia.js?v=235"></script>
+  <script src="character-localization.js?v=235"></script>
+  <script src="enc.js?v=235"></script>
+  <script src="rarity-sync.js?v=235"></script>
+  <script src="strongest-sync.js?v=235"></script>
+  <script src="pic-sync.js?v=235"></script>
+  <script src="undercover.js?v=235"></script>
+  <script src="music.js?v=235"></script>
+  <script src="lang.js?v=235"></script>
+  <script src="game-guides.js?v=235"></script>
+  <script src="app.js?v=235"></script>
+  <script src="progression.js?v=235"></script>
+  <script src="player-popover.js?v=235"></script>
+  <script src="friends.js?v=235"></script>
+  <script src="showcase.js?v=235"></script>
+  <script src="test-ninja-cards.js?v=235"></script>
+  <script src="market.js?v=235"></script>
   <script src="test-panel.js"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
@@ -1983,5 +1973,5 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings &amp; progress in your own browser's local storage — no tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5548bce1e0c07ea',t:'MTc5MzgwNTAzMg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5548bce1e0c07ea',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a55d39507e8d019e',t:'MTc5Mzg5NjAyNQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a55d39507e8d019e',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

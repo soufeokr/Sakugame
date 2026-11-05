@@ -31,7 +31,8 @@ const CARD_RARITIES = [
   { key: 'rare',      odds: 15, color: '#02a9ff', edge: 'rgba(2,169,255,.55)' },
   { key: 'epic',      odds: 8,  color: '#9d6bff', edge: 'rgba(157,107,255,.60)' },
   { key: 'legendary', odds: 3,  color: '#ffa726', edge: 'rgba(255,167,38,.60)' },
-  { key: 'mythic',    odds: 1,  color: '#c5bcff', edge: 'rgba(190,180,255,.75)' }
+  { key: 'mythic',    odds: 1,  color: '#c5bcff', edge: 'rgba(190,180,255,.75)' },
+  { key: 'special', odds: 0, color: '#f4d389', edge: 'rgba(244,211,137,.8)' }
 ];
 const CARD_RARITY_ORDER = CARD_RARITIES.map(r => r.key);
 const CARD_RARITY_BY_KEY = {};
@@ -43,6 +44,7 @@ const CARD_AUTO_BANDS = [[50, 'mythic'], [300, 'legendary'], [1000, 'epic'],
 /* ---------------- state ---------------- */
 let cardState = null;          // { cards:{id:count}, boosters, nextFree, opened, dupes }
 let cardPool = null;           // [{ id,name,image,series,rank,rarity }]
+let cardPoolBuiltWithBase = false;
 let cardPoolBySeries = null;   // { series: [poolIndex…] }
 let cardPoolById = null;       // { id: entry }
 let cardReveal = null;         // [{ char, isNew }] while a booster is open
@@ -79,13 +81,14 @@ function cardRarityMeta(key) { return CARD_RARITY_BY_KEY[key] || CARD_RARITY_BY_
 
 /* Player overrides first, then the published sheet, then the shipped value. */
 function cardRarityFor(char, rank) {
+  if (char.edition === 'strongest') return 'special';
   const local = char.edition !== 'strongest' && !char.collectibleOnly && window.SAKU_LOCAL_RARITIES && window.SAKU_LOCAL_RARITIES[String(char.id)];
-  if (local && CARD_RARITY_BY_KEY[local]) return local;
+  if (local && local !== 'special' && CARD_RARITY_BY_KEY[local]) return local;
   const remote = char.edition !== 'strongest' && window.SAKU_REMOTE_RARITIES && window.SAKU_REMOTE_RARITIES[String(char.id)];
-  if (remote && CARD_RARITY_BY_KEY[remote]) return remote;
+  if (remote && remote !== 'special' && CARD_RARITY_BY_KEY[remote]) return remote;
   if (typeof CARD_RARITY !== 'undefined' && CARD_RARITY) {
     const v = CARD_RARITY[char.id] || CARD_RARITY[String(char.id)];
-    if (v && CARD_RARITY_BY_KEY[String(v).toLowerCase()]) return String(v).toLowerCase();
+    if (v && String(v).toLowerCase() !== 'special' && CARD_RARITY_BY_KEY[String(v).toLowerCase()]) return String(v).toLowerCase();
   }
   for (let i = 0; i < CARD_AUTO_BANDS.length; i++) {
     if (rank <= CARD_AUTO_BANDS[i][0]) return CARD_AUTO_BANDS[i][1];
@@ -95,8 +98,11 @@ function cardRarityFor(char, rank) {
 
 /* The pool is built lazily: characters.js arrives with sakuDataReady. */
 function cardBuildPool() {
-  if (cardPool) return cardPool;
   const base = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS) ? GENERIC_CHARACTERS : [];
+  // A route can request the pool before the deferred game data loads. Rebuild that
+  // provisional pool once the full character list arrives.
+  if (cardPool && (cardPoolBuiltWithBase || !base.length)) return cardPool;
+  cardPoolBuiltWithBase = !!base.length;
   const extra = (typeof CARD_EXTRA_CHARACTERS !== 'undefined' && Array.isArray(CARD_EXTRA_CHARACTERS)) ? CARD_EXTRA_CHARACTERS : [];
   const special = (typeof CARD_STRONGEST !== 'undefined' && Array.isArray(CARD_STRONGEST)) ? CARD_STRONGEST : [];
   const list = base.concat(extra, special);
@@ -106,7 +112,7 @@ function cardBuildPool() {
   list.forEach((c, i) => {
     if (!c || !c.id || !c.image) return;
     const rank = i + 1;
-    const entry = { id: c.id, name: c.name || '?', image: c.image, series: c.series || '', rank: rank, rarity: cardRarityFor(c, rank), edition: c.edition || '', collectibleOnly: !!c.collectibleOnly };
+    const entry = { id: c.id, name: c.name || '?', image: c.image, series: c.series || '', rank: rank, rarity: cardRarityFor(c, rank), edition: c.edition || '', collectibleOnly: !!c.collectibleOnly, specialNumber:c.specialNumber };
     if (typeof window.sakuBindCharacterName === 'function') window.sakuBindCharacterName(entry, 'name', entry.id);
     const idx = cardPool.length;
     cardPool.push(entry);
@@ -122,8 +128,8 @@ function sakuStrongestSyncPool() {
   if (!cardPool || typeof CARD_STRONGEST === 'undefined') return;
   CARD_STRONGEST.forEach(function(p) {
     const id=String(p.id), old=cardPoolById[id];
-    if (old) { old.name=p.name; old.image=p.image; return; }
-    const entry={id:p.id,name:p.name,image:p.image,series:p.series,rank:99999,rarity:'common',edition:'strongest',collectibleOnly:true};
+    if (old) { old.name=p.name; old.image=p.image; old.rarity='special';old.specialNumber=p.specialNumber; return; }
+    const entry={id:p.id,name:p.name,image:p.image,series:p.series,rank:99999,rarity:'special',edition:'strongest',collectibleOnly:true,specialNumber:p.specialNumber};
     const idx=cardPool.length;cardPool.push(entry);cardPoolById[id]=entry;
     if (!cardPoolBySeries[entry.series]) cardPoolBySeries[entry.series]=[];
     cardPoolBySeries[entry.series].push(idx);
@@ -142,26 +148,43 @@ function cardReadLocal() {
 function cardWriteLocal() {
   try { localStorage.setItem(CARD_LS, JSON.stringify(cardState)); } catch (e) {}
 }
+/* Bring catalogue-only owned cards into the album without adding them to draws. */
+function sakuIncludeOwnedCards() {
+  if (!cardState || !cardPool || typeof ENCYCLOPEDIA === 'undefined') return;
+  const owned=cardState.cards||{};
+  ENCYCLOPEDIA.list.forEach(group=>(group.cards||[]).forEach(c=>{
+    const id=String(c.i);if(!owned[id]||cardPoolById[id]||!c.u)return;
+    const v={id:id,name:c.m,image:c.u,series:c.series||group.label,rank:c.k||99999,rarity:c.r||'common',edition:c.edition||group.edition||'',collectibleOnly:true};
+    if(window.sakuBindCharacterName)window.sakuBindCharacterName(v,'name',id);
+    const i=cardPool.length;cardPool.push(v);cardPoolById[id]=v;(cardPoolBySeries[v.series]||(cardPoolBySeries[v.series]=[])).push(i);
+  }));
+}
 function cardsLoad() {
   if (currentAccount && currentAccount.cards) cardState = cardNormalize(currentAccount.cards);
   else cardState = cardReadLocal();
+  if (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) cardBuildPool();
+  sakuIncludeOwnedCards();
   return cardState;
 }
 function cardsSave(now) {
   if (!cardState) return;
-  cardWriteLocal();                                   // always keep a local mirror
+  if (!currentAccount) { cardWriteLocal(); try { localStorage.setItem('saku-cards-guest-only','1'); } catch(e){} }
   if (cardSaveTimer) { clearTimeout(cardSaveTimer); cardSaveTimer = null; }
+  const saveUid = currentAccount ? sakuMyDcId() : null;
+  const savedState = cardNormalize(cardState);
   const push = () => {
     cardSaveTimer = null;
-    if (!currentAccount) return;
-    try { sakuAcctRef(sakuMyDcId()).child('cards').set(cardState); } catch (e) {}
+    if (!currentAccount || sakuMyDcId() !== saveUid) return;
+    try { sakuAcctRef(saveUid).child('cards').set(savedState); } catch (e) {}
   };
   if (now) push();
   else cardSaveTimer = setTimeout(push, 1200);        // debounce rapid clicks
 }
 /* Called when a Discord account is adopted: fold the guest collection in. */
 function cardsMergeOnSignIn(node) {
-  const local = cardReadLocal();
+  // A signed-in account is authoritative. Never merge an old account mirror into another player.
+  let guestOnly=false;try { guestOnly=localStorage.getItem('saku-cards-guest-only')==='1'; } catch(e){}
+  const local = guestOnly ? cardReadLocal() : cardDefaultState();
   const remote = cardNormalize((node && node.cards) || null);
   const merged = cardNormalize(null);
   const all = {};
@@ -174,7 +197,7 @@ function cardsMergeOnSignIn(node) {
   merged.nextFree = Math.min(local.nextFree || Infinity, remote.nextFree || Infinity);
   if (!isFinite(merged.nextFree)) merged.nextFree = 0;
   cardState = merged;
-  cardWriteLocal();
+  if (guestOnly) { try { localStorage.removeItem(CARD_LS); localStorage.removeItem('saku-cards-guest-only'); } catch(e){} }
   if (currentAccount) {
     currentAccount.cards = merged;
     try { sakuAcctRef(sakuMyDcId()).child('cards').set(merged); } catch (e) {}
@@ -408,7 +431,7 @@ function cardsCardFace(char, count, big) {
 }
 
 /* ---------------- album ---------------- */
-function cardsOwnedCount() { return cardState ? Object.keys(cardState.cards).length : 0; }
+function cardsOwnedCount() { return cardState ? Object.keys(cardState.cards).filter(id => Number(cardState.cards[id]) > 0 && (!cardPoolById || !!cardPoolById[id])).length : 0; }
 function cardsTotalCount() { return Object.keys((cardState && cardState.cards) || {}).length; }
 function cardsRenderStats() {
   const box = document.getElementById('cardsStats');
@@ -420,7 +443,7 @@ function cardsRenderStats() {
   CARD_RARITY_ORDER.forEach(k => {
     const have = Object.keys(cardState.cards).filter(id => {
       const e = cardPoolById && cardPoolById[String(id)];
-      return e && e.edition !== 'strongest' && e.rarity === k;
+      return e && e.rarity === k;
     }).length;
     const meta = cardRarityMeta(k);
     tiers += '<span class="ac-tier' + (k === 'mythic' ? ' mythic' : '') + '"><i style="background:' + meta.color + '"></i>' + escapeHtml(cardRarityLabel(k)) +
@@ -471,8 +494,8 @@ function cardsRenderAlbum() {
     return { p: p, count: count, key: count ? (1000000 - count) * 100000 + p.rank : 100000000 + p.rank };
   });
   if (ownedOnly) rows = rows.filter(r => r.count > 0);
-  if (rf) rows = rows.filter(r => r.p.edition !== 'strongest' && r.p.rarity === rf);
-  if (q) rows = rows.filter(r => r.p.name.toLowerCase().indexOf(q) >= 0 || (r.p.series || '').toLowerCase().indexOf(q) >= 0);
+  if (rf) rows = rows.filter(r => r.p.rarity === rf);
+  if (q) rows = rows.filter(r => r.p.name.toLowerCase().indexOf(q) >= 0 || (r.p.series || '').toLowerCase().indexOf(q) >= 0 || (r.p.edition === 'strongest' && (window.sakuSpecialNumber(r.p)||'').toLowerCase().indexOf(q)>=0));
   if (sort === 'name') rows.sort((a, b) => a.p.name.localeCompare(b.p.name));
   else if (sort === 'rarity') rows.sort((a, b) => CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
   else rows.sort((a, b) => a.key - b.key);
@@ -528,7 +551,7 @@ function cardsOpenDetail(id) {
   if (entry.edition === 'strongest' && typeof window.sakuStrongestCard === 'function') {
     box.innerHTML = '<div class="ac-detail-card strongest-detail"><span class="strongest-art">' + window.sakuStrongestCard(entry) + '</span></div>' +
       '<div class="ac-detail-meta"><h3>' + escapeHtml(entry.name) + '</h3><p>' + escapeHtml(entry.series || '') + '</p>' +
-      '<p>Édition The Strongest · collection uniquement</p><p>' + (count ? 'Possédée : ' + count : 'Non obtenue') + '</p></div>';
+      '<p>' + escapeHtml(cardRarityLabel('special')) + ' · The Strongest · ' + escapeHtml(window.sakuSpecialNumber(entry) || '—') + '</p><p>' + (count ? 'Possédée : ' + count : 'Non obtenue') + '</p></div>';
     box.classList.add('show'); try { document.body.style.overflow = 'hidden'; } catch(e) {} return;
   }
   box.innerHTML =
@@ -577,8 +600,7 @@ function cardsFillFilters() {
 
 /* ---------------- entry point ---------------- */
 function showCards() {
-  showScreen('cardsScreen');
-  cardsEnsureReady();
+  if (typeof showCardHome === 'function') showCardHome();
 }
 function showCollection() {
   showScreen('collectionScreen');
@@ -600,13 +622,11 @@ function cardsEnsureReady() {
     return;
   }
   cardsLoad();
-  cardsTickFree(true);
   cardsFillFilters();
   cardsRenderTop();
   cardsRenderStats();
   cardAlbumLimit = CARD_ALBUM_STEP;
   cardsRenderAlbum();
-  cardsStartClock();
   const note = document.getElementById('cardsSaveNote');
   if (note) {
     note.textContent = currentAccount
