@@ -5660,6 +5660,7 @@
         });
         const winner = ranking[0];
         const meWin = winner === playerId;
+        if(meWin && window.SakuSfx){const game=kind==='battle'?(currentRoom.br||{}):kind==='snapshot'?(currentRoom.sn||{}):(currentRoom.bg||{}); if(game.gameId)window.SakuSfx.winOnce('win:'+roomCode+':'+kind+':'+game.gameId);}
         title.textContent = meWin ? 'You win the Battle Royale!' : 'Battle Royale over!';
         sub.textContent = meWin ? 'Champion hunter!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5679,6 +5680,7 @@
         const ranking = snParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
         const winner = ranking[0];
         const meWin = winner === playerId;
+        if(meWin && window.SakuSfx){const game=kind==='battle'?(currentRoom.br||{}):kind==='snapshot'?(currentRoom.sn||{}):(currentRoom.bg||{}); if(game.gameId)window.SakuSfx.winOnce('win:'+roomCode+':'+kind+':'+game.gameId);}
         title.textContent = meWin ? 'You win Snapshot!' : 'Snapshot! over!';
         sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5694,6 +5696,7 @@
         const ranking = bgParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
         const winner = ranking[0];
         const meWin = winner === playerId;
+        if(meWin && window.SakuSfx){const game=kind==='battle'?(currentRoom.br||{}):kind==='snapshot'?(currentRoom.sn||{}):(currentRoom.bg||{}); if(game.gameId)window.SakuSfx.winOnce('win:'+roomCode+':'+kind+':'+game.gameId);}
         title.textContent = meWin ? 'You win Blur Guess!' : 'Blur Guess over!';
         sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5714,6 +5717,7 @@
         const cn = currentRoom.cn || {};
         const winTeam = cn.winner ? cn.winner.team : null;
         const myTeam = cnTeamOf(playerId, cn);
+        if(winTeam && myTeam===winTeam && cn.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':cn:'+cn.gameId);
         title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Ninja Scrolls over') : 'Ninja Scrolls over');
         sub.innerHTML = (!cn.winner || !cn.winner.reason) ? ''
           : cn.winner.reason === 'assassin' ? (myTeam === winTeam ? (window.t ? t('The other team hit the 💀 assassin — lucky break!') : 'The other team hit the 💀 assassin — lucky break!') : (window.t ? t('Your team hit the 💀 assassin card…') : 'Your team hit the 💀 assassin card…'))
@@ -5746,6 +5750,7 @@
         const winner = rc.winner;
         const secretChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
         const targetWon = rc.endReason === 'hunters-out' || (winner && winner === rc.targetPid);
+        if((winner===playerId || (targetWon && rc.targetPid===playerId)) && rc.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':rc:'+rc.gameId);
         if (targetWon) {
           title.textContent = winner === playerId ? 'You WIN, target!' : 'Race over — TARGET wins!';
           sub.textContent = 'All the hunters ran out of lives — the secret stays safe with ' + ((players[rc.targetPid] || {}).name || '?') + '!';
@@ -7456,6 +7461,7 @@
       const end = document.getElementById('hcEndScreen');
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
+      if(winner===playerId && hc.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':hc:'+hc.gameId);
       if (window.sakuProgressGame && hc.gameId && hcOrderOf().includes(playerId) && players[playerId] && players[playerId].outInGame !== hc.gameId) window.sakuProgressGame('hotcold', hc.gameId, winner === playerId);
       const totals = hc.totals || {};
       const ptsMode = hcGuessMode() !== 'individual'; // 🎯 shared guesses score POINTS
@@ -8047,6 +8053,7 @@
       const playerNameEl = document.getElementById('winPlayerName');
 
       const isWinner = winnerId === playerId;
+      if(isWinner && currentRoom.progressGameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':classic:'+currentRoom.progressGameId);
       if (isWinner) {
         title.textContent = 'You Win!';
         title.style.color = 'var(--success)';
@@ -8980,6 +8987,7 @@
       const roles = uc.roles || {};
       const wpids = Array.isArray(uc.winnerPids) ? uc.winnerPids : Object.values(uc.winnerPids || {});
       const iWon = wpids.indexOf(playerId) !== -1;
+      if(iWon && uc.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':uc:'+uc.gameId);
 
       const title = document.getElementById('ucWinTitle');
       if (uc.winner === 'undercover') title.textContent = 'The Undercover Wins!';

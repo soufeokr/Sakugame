@@ -16,7 +16,7 @@ async function upgrade(id,level,container){
  if(!actor||!window.sakuBackend){if(typeof showNotification==='function')showNotification('Connecte-toi pour améliorer cette carte.');return;}
  working=true;render(container,id);
  try{
-  await window.sakuBackend.upgradeCard(String(id),level);
+  await window.sakuBackend.upgradeCard(String(id),level);if(window.SakuSfx)window.SakuSfx.play('level');
   const state=await window.sakuBackend.gameCollection();if(window.sakuSecureUserId!==actor)return;
   cardState=cardNormalize(state);if(currentAccount)currentAccount.cards=cardNormalize(state);
   if(typeof cardsRenderStats==='function')cardsRenderStats();if(typeof cardsRenderAlbum==='function'&&document.getElementById('collectionScreen')?.classList.contains('active'))cardsRenderAlbum();

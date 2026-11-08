@@ -525,7 +525,7 @@
             <label><input type="checkbox" id="wsDropped" onchange="saveWatchStatuses()"> Dropped</label>
             <label><input type="checkbox" id="wsPlanning" onchange="saveWatchStatuses()"> Planning</label>
           </div></div></section>
-          <section class="hub-card"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-gear"/></svg></span><div><h2>Preferences</h2><p>Adjust your experience on this device.</p></div></div><div class="hub-preference"><label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label></div><div class="hub-preference music-block"><label for="accountPageVolume">Music Volume</label><input id="accountPageVolume" type="range" class="music-volume-slider" min="0" max="100" value="50"></div></section>
+          <section class="hub-card"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-gear"/></svg></span><div><h2>Preferences</h2><p>Adjust your experience on this device.</p></div></div><div class="hub-preference"><label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label></div><div class="hub-preference"><label for="sakuSfxVolume">Sound effects / Bruitages</label><input id="sakuSfxVolume" data-saku-sfx-volume type="range" min="0" max="100" value="35" aria-label="Volume des bruitages"></div><div class="hub-preference music-block"><label for="accountPageVolume">Music Volume</label><input id="accountPageVolume" type="range" class="music-volume-slider" min="0" max="100" value="50"></div></section>
         </div>
       </div>
     </main>
@@ -563,13 +563,13 @@
       <div class="summon-carousel" id="summonCarousel" role="region" aria-label="Summoning portals" tabindex="0">
         <div class="summon-stage">
           <div class="summon-slide" id="summon-basic" data-index="0">
-            <button type="button" class="summon-machine-button" onclick="summonSelect(0)" aria-label="Basic summoning machine" aria-current="true"><img class="summon-still" src="summon-machines/basic-static.svg" alt="" draggable="false"><img class="summon-animated" src="summon-machines/basic.svg" alt="" draggable="false"></button>
+            <button type="button" class="summon-machine-button" onclick="summonSelect(0)" aria-label="Basic summoning machine" aria-current="true"><img class="summon-still" src="summon-machines/basic-static.svg?v=262" alt="" draggable="false"><img class="summon-animated" src="summon-machines/basic.svg?v=262" alt="" draggable="false"></button>
           </div>
           <div class="summon-slide" id="summon-strongest" data-index="1">
             <button type="button" class="summon-machine-button" onclick="summonSelect(1)" aria-label="The Strongest summoning machine" aria-current="false"><img class="summon-still" src="summon-machines/strongest.svg" alt="" draggable="false"><img class="summon-animated" src="summon-machines/strongest.svg" alt="" draggable="false"></button>
           </div>
           <div class="summon-slide" id="summon-retro" data-index="2">
-            <button type="button" class="summon-machine-button" onclick="summonSelect(2)" aria-label="Retro summoning machine" aria-current="false"><img class="summon-still" src="summon-machines/retro-static.svg" alt="" draggable="false"><img class="summon-animated" src="summon-machines/retro.svg" alt="" draggable="false"></button>
+            <button type="button" class="summon-machine-button" onclick="summonSelect(2)" aria-label="Retro summoning machine" aria-current="false"><img class="summon-still" src="summon-machines/retro-static.svg?v=262" alt="" draggable="false"><img class="summon-animated" src="summon-machines/retro.svg?v=262" alt="" draggable="false"></button>
           </div>
           <div class="summon-slide" id="summon-cinema" data-index="3">
             <button type="button" class="summon-machine-button" onclick="summonSelect(3)" aria-label="Cinema summoning machine" aria-current="false"><img class="summon-still" src="summon-machines/cinema-static.svg" alt="" draggable="false"><img class="summon-animated" src="summon-machines/cinema.svg" alt="" draggable="false"></button>
@@ -1920,7 +1920,8 @@
   <script src="character-localization.js?v=261"></script>
   <script src="enc.js?v=261"></script>
   <script src="card-tilt.js?v=261"></script>
-  <script src="card-levels.js?v=261"></script>
+  <script src="saku-sfx.js?v=262"></script>
+  <script src="card-levels.js?v=262"></script>
   <script src="card-controls.js?v=261"></script>
   <script src="library-tools.js?v=261"></script>
   <script src="rarity-sync.js?v=261"></script>
@@ -1931,16 +1932,16 @@
   <script src="music.js?v=261"></script>
   <script src="lang.js?v=261"></script>
   <script src="game-guides.js?v=261"></script>
-  <script src="app.js?v=261"></script>
+  <script src="app.js?v=262"></script>
   <script src="supabase-client.js?v=261"></script>
   <script src="saku-session.js?v=261"></script>
   <script src="retro-index.js?v=261"></script>
   <script src="cinema-index.js?v=261"></script>
   <script src="portal-rates.js?v=261"></script>
-  <script src="portal-info.js?v=261"></script>
+  <script src="portal-info.js?v=262"></script>
   <script src="portal-showcase.js?v=261"></script>
   <script src="card-backs.js?v=261"></script>
-  <script src="portal-summon.js?v=261"></script>
+  <script src="portal-summon.js?v=262"></script>
   <script src="market.js?v=261"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
