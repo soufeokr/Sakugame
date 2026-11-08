@@ -36,15 +36,21 @@
   a { color: #4fb9fb; }
   a:focus-visible, button:focus-visible { outline: 2px solid #02a9ff; outline-offset: 3px; border-radius: 4px; }
   .note { text-align: center; color: #8ba0c8; font-size: 0.8rem; margin-top: 26px; }
-  .back { display: block; text-align: center; margin-top: 28px; font-weight: 700; text-decoration: none; }
+  .back { display: flex; align-items:center; justify-content:center; gap:10px; width:max-content; max-width:100%; margin:28px auto 0; padding:11px 16px; border:1px solid #86b9d65c; border-radius:12px; background:#152a45; color:#d8f1ff; font-weight:700; text-decoration:none; } .back:hover{background:#214260;border-color:#a7daf6}.back:focus-visible{outline:3px solid #b5e7ff;outline-offset:3px}.back .saku-arrow-icon{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .legal-back-top{width:44px;height:44px;display:grid;place-items:center;border:1px solid #9dc9e659;border-radius:14px;background:linear-gradient(145deg,#1c3855,#12263f);color:#c6eaff;text-decoration:none;flex:none}.legal-back-top:hover{background:#274c6b;border-color:#b1e3ff}.legal-back-top .saku-arrow-icon{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   [data-lang] { display: none; }
   [data-lang].on { display: block; }
   @media (max-width: 520px) { body { font-size: 16px; } h1 { font-size: 1.3rem; } .card { padding: 16px 16px; } }
+  /* Editorial legal reader; the document text remains unchanged. */
+  body{background:radial-gradient(900px 500px at 100% 0%,#25496a80,transparent 70%),linear-gradient(145deg,#0b1428,#142342);color:#dcebf8;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+  .wrap{max-width:1250px;padding:30px 22px 80px}.brand{justify-content:space-between;margin-bottom:25px;padding:0 0 18px;border-bottom:1px solid #a4c9e32d}.brand span{font-size:1.3rem}.brand img{width:38px;height:38px}.langs{width:auto;margin:0 0 0 auto;justify-content:flex-end}.langs button{color:#b6cadb;border-color:#95bbd248;padding:7px 13px}.langs button[aria-pressed="true"]{background:#b5e5ff;color:#10243b;border-color:#b5e5ff}
+  .legal-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}.legal-nav{position:sticky;top:20px;max-height:calc(100vh - 40px);overflow:auto;padding:19px;background:#142740;border:1px solid #98bed63b;border-radius:15px}.legal-nav strong{display:block;font-size:.7rem;color:#8ebbd7;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}.legal-nav a{display:block;text-decoration:none;color:#bdcfdd;font-size:.75rem;line-height:1.4;padding:6px 0;overflow-wrap:anywhere}.legal-nav a:hover{color:#fff}.legal-nav a.part-link{font-weight:750;color:#d7f0ff;margin-top:8px}.legal-layout section[data-lang]{min-width:0}.legal-layout h1{text-align:left;color:#f0f8ff;letter-spacing:-.03em;font-size:clamp(1.8rem,3.4vw,2.5rem);line-height:1.15;margin:4px 0 10px}.updated{text-align:left;color:#a0b8ca;margin-bottom:25px}.part{font-size:1.15rem;color:#d5edfc;border-color:#a6c9dd33;margin-top:28px}.card{background:linear-gradient(145deg,#182d48,#101f35);border:1px solid #9bc4dd35;border-radius:15px;padding:21px 24px;box-shadow:0 10px 26px #020a1930}.card h2{color:#d0edff}.card p,.card ul{color:#c1d3e1}.card.summary{border-left:3px solid #9bd8f9;background:linear-gradient(120deg,#24445e,#142a43)}th{background:#0e2037;color:#c0e9ff}th,td{border-color:#779cb43a;color:#c5d9e6}a{color:#a5dbfa}.back{text-align:left;color:#b9e6ff}
+  @media(max-width:760px){.legal-layout{grid-template-columns:minmax(0,1fr)!important}.legal-layout>div{min-width:0}.card{overflow-wrap:anywhere}.wrap{padding:20px 14px 65px}.brand{gap:8px}.brand span{font-size:1.1rem}.langs{width:100%;justify-content:flex-start}.legal-layout{grid-template-columns:1fr}.legal-nav{position:static;max-height:none}.legal-nav a:not(.part-link){display:none}.legal-layout h1{font-size:1.8rem}.card{padding:17px}.card table{max-width:100%}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="brand"><img src="icons/logo-master.png" alt="Sakugame logo"><span>SAKUGAME</span>
+  <div class="brand"><a href="./" class="legal-back-top" id="legalBackTop" aria-label="Back to Sakugame" title="Back to Sakugame"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg></a><img src="icons/logo-master.png" alt="Sakugame logo"><span>SAKUGAME</span>
     <nav class="langs" aria-label="Language">
       <button type="button" data-set="en" aria-pressed="true">English</button>
       <button type="button" data-set="fr" aria-pressed="false">Français</button>
@@ -52,6 +58,7 @@
     </nav>
   </div>
 
+<div class="legal-layout"><nav class="legal-nav" id="legalNav" aria-label="On this page"></nav><div>
 <!-- ===================== ENGLISH ===================== -->
 <section data-lang="en" class="on">
 
@@ -67,7 +74,7 @@
   <div class="card">
     <h2>🛡️ Who runs Sakugame</h2>
     <p>Sakugame is run by a private individual, as a personal and non-commercial project. Under French law, a non-professional publisher may withhold their identity from the public provided it has been given to their host, which is the case here.</p>
-    <p>Contact: <a href="/cdn-cgi/l/email-protection#17647862717e7679727c653967657857636263767a767e7b3974787a"><span class="__cf_email__" data-cfemail="c9baa6bcafa0a8a7aca2bbe7b9bba689bdbcbda8a4a8a0a5e7aaa6a4">[email&#160;protected]</span></a> — or the <a href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener">Sakugame Discord server</a> (DMs: <strong>@soufiane_jv</strong>).</p>
+    <p>Contact: <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> — or the <a href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener">Sakugame Discord server</a> (DMs: <strong>@soufiane_jv</strong>).</p>
     <p>Hosting providers:</p>
     <ul>
       <li><strong>GitHub Pages</strong> — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA (site files).</li>
@@ -137,7 +144,7 @@
   <div class="card">
     <h2>🧾 Your rights</h2>
     <p>You have the right to access, correct, erase, restrict, object to and port your data, and to withdraw your consent at any time.</p>
-    <p>To use these rights, write to <a href="/cdn-cgi/l/email-protection#9ceff3e9faf5fdf2f9f7eeb2eceef3dce8e9e8fdf1fdf5f0b2fff3f1"><span class="__cf_email__" data-cfemail="0b78647e6d626a656e6079257b79644b7f7e7f6a666a626725686466">[email&#160;protected]</span></a> from the username concerned, or message me on Discord. I usually reply within a few days. Since accounts have no email attached, you may be asked to show you control the account, for example by logging into it while we talk.</p>
+    <p>To use these rights, write to <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> from the username concerned, or message me on Discord. I usually reply within a few days. Since accounts have no email attached, you may be asked to show you control the account, for example by logging into it while we talk.</p>
     <p>If you believe your rights are not being respected, you can lodge a complaint with the French data protection authority, the CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>), or with your own national authority.</p>
   </div>
 
@@ -173,7 +180,7 @@
     <h2>🌸 A fan project, with no affiliation</h2>
     <p>Sakugame is a personal, non-commercial project with no affiliation to any anime studio, publisher, rights holder or to AniList.</p>
     <p>Titles, character names and artwork shown belong to their respective rights holders. They come from the public <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> database and its API, plus episode stills from the public <a href="https://kitsu.io" target="_blank" rel="noopener">Kitsu</a> API, and are used for identification in a fan context only.</p>
-    <p>Any rights holder wanting content removed can write to <a href="/cdn-cgi/l/email-protection#1a69756f7c737b747f7168346a68755a6e6f6e7b777b737634797577"><span class="__cf_email__" data-cfemail="fe8d918b98979f909b958cd08e8c91be8a8b8a9f939f9792d09d9193">[email&#160;protected]</span></a> and it will be taken down promptly.</p>
+    <p>Any rights holder wanting content removed can write to <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> and it will be taken down promptly.</p>
   </div>
 
   <div class="card">
@@ -228,7 +235,7 @@
     <p>These terms are governed by French law. Failing an amicable settlement, the French courts have jurisdiction. If you are a consumer resident in another EU country, the protective provisions of your country of residence still apply.</p>
   </div>
 
-  <a class="back" href="./">← Back to Sakugame</a>
+  <a class="back" href="./"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg> Back to Sakugame</a>
 </section>
 
 <!-- ===================== FRANÇAIS ===================== -->
@@ -246,7 +253,7 @@
   <div class="card">
     <h2>🛡️ Qui édite Sakugame</h2>
     <p>Sakugame est édité par un particulier, à titre personnel et non commercial. Conformément à l'article 6 de la loi pour la confiance dans l'économie numérique, un éditeur non professionnel peut ne pas publier son identité, à condition de l'avoir communiquée à son hébergeur. C'est le cas ici.</p>
-    <p>Contact : <a href="/cdn-cgi/l/email-protection#493a263c2f2028272c223b67393b26093d3c3d2824282025672a2624"><span class="__cf_email__" data-cfemail="62110d17040b030c0709104c12100d22161716030f030b0e4c010d0f">[email&#160;protected]</span></a> — ou via le <a href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener">serveur Discord de Sakugame</a> (DM : <strong>@soufiane_jv</strong>).</p>
+    <p>Contact : <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> — ou via le <a href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener">serveur Discord de Sakugame</a> (DM : <strong>@soufiane_jv</strong>).</p>
     <p>Hébergeurs :</p>
     <ul>
       <li><strong>GitHub Pages</strong> — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (pages du site).</li>
@@ -315,7 +322,7 @@
   <div class="card">
     <h2>🧾 Vos droits</h2>
     <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité de vos données, ainsi que du droit de retirer votre consentement à tout moment.</p>
-    <p>Pour les exercer, écrivez à <a href="/cdn-cgi/l/email-protection#b1c2dec4d7d8d0dfd4dac39fc1c3def1c5c4c5d0dcd0d8dd9fd2dedc"><span class="__cf_email__" data-cfemail="3f4c504a59565e515a544d114f4d507f4b4a4b5e525e5653115c5052">[email&#160;protected]</span></a> depuis le pseudo concerné, ou contactez-moi sur Discord. Je réponds généralement sous quelques jours. Comme aucun e-mail n'est rattaché aux comptes, il pourra vous être demandé de prouver que vous contrôlez bien le compte concerné, par exemple en vous y connectant pendant l'échange.</p>
+    <p>Pour les exercer, écrivez à <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> depuis le pseudo concerné, ou contactez-moi sur Discord. Je réponds généralement sous quelques jours. Comme aucun e-mail n'est rattaché aux comptes, il pourra vous être demandé de prouver que vous contrôlez bien le compte concerné, par exemple en vous y connectant pendant l'échange.</p>
     <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la CNIL : <a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>.</p>
   </div>
 
@@ -351,7 +358,7 @@
     <h2>🌸 Un projet de fan, sans affiliation</h2>
     <p>Sakugame est un projet personnel, non commercial et sans affiliation avec un studio d'animation, un éditeur, un ayant droit ou avec AniList.</p>
     <p>Les titres, noms de personnages et illustrations affichés appartiennent à leurs ayants droit respectifs. Ils proviennent de la base publique <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> et de son API, ainsi que d'images d'épisodes issues de l'API publique <a href="https://kitsu.io" target="_blank" rel="noopener">Kitsu</a>, et ne sont utilisés qu'à des fins d'identification dans le cadre d'un usage de fan.</p>
-    <p>Tout ayant droit souhaitant le retrait d'un contenu peut écrire à <a href="/cdn-cgi/l/email-protection#6a19051f0c030b040f0118441a18052a1e1f1e0b070b030644090507"><span class="__cf_email__" data-cfemail="f88b978d9e9199969d938ad6888a97b88c8d8c9995999194d69b9795">[email&#160;protected]</span></a> : le contenu sera retiré dans les meilleurs délais.</p>
+    <p>Tout ayant droit souhaitant le retrait d'un contenu peut écrire à <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> : le contenu sera retiré dans les meilleurs délais.</p>
   </div>
 
   <div class="card">
@@ -406,7 +413,7 @@
     <p>Ces conditions sont régies par le droit français. À défaut de résolution amiable, les tribunaux français sont compétents. Si vous êtes consommateur et résidez dans un autre pays de l'Union européenne, les dispositions protectrices de votre pays de résidence restent applicables.</p>
   </div>
 
-  <a class="back" href="./">← Retour à Sakugame</a>
+  <a class="back" href="./"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg> Retour à Sakugame</a>
 </section>
 
 <!-- ===================== ESPAÑOL ===================== -->
@@ -424,7 +431,7 @@
   <div class="card">
     <h2>🛡️ Quién gestiona Sakugame</h2>
     <p>Sakugame está gestionado por un particular, como proyecto personal y no comercial. Según la ley francesa, un editor no profesional puede no publicar su identidad siempre que se la haya comunicado a su proveedor de alojamiento, como ocurre aquí.</p>
-    <p>Contacto: <a href="/cdn-cgi/l/email-protection#96e5f9e3f0fff7f8f3fde4b8e6e4f9d6e2e3e2f7fbf7fffab8f5f9fb"><span class="__cf_email__" data-cfemail="ec9f83998a858d8289879ec29c9e83ac9899988d818d8580c28f8381">[email&#160;protected]</span></a> — o en el <a href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener">servidor de Discord de Sakugame</a> (mensajes privados: <strong>@soufiane_jv</strong>).</p>
+    <p>Contacto: <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> — o en el <a href="https://discord.gg/Uh26KzWMzm" target="_blank" rel="noopener">servidor de Discord de Sakugame</a> (mensajes privados: <strong>@soufiane_jv</strong>).</p>
     <p>Proveedores de alojamiento:</p>
     <ul>
       <li><strong>GitHub Pages</strong> — GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, EE. UU. (archivos del sitio).</li>
@@ -493,7 +500,7 @@
   <div class="card">
     <h2>🧾 Tus derechos</h2>
     <p>Tienes derecho a acceder, rectificar, suprimir, limitar, oponerte y portar tus datos, así como a retirar tu consentimiento en cualquier momento.</p>
-    <p>Para ejercerlos, escribe a <a href="/cdn-cgi/l/email-protection#2a59455f4c434b444f4158045a58456a5e5f5e4b474b434604494547"><span class="__cf_email__" data-cfemail="9fecf0eaf9f6fef1faf4edb1efedf0dfebeaebfef2fef6f3b1fcf0f2">[email&#160;protected]</span></a> indicando el usuario afectado, o contáctame por Discord. Suelo responder en unos días. Como las cuentas no tienen correo asociado, puede pedírsete que demuestres que controlas la cuenta, por ejemplo conectándote a ella durante el intercambio.</p>
+    <p>Para ejercerlos, escribe a <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> indicando el usuario afectado, o contáctame por Discord. Suelo responder en unos días. Como las cuentas no tienen correo asociado, puede pedírsete que demuestres que controlas la cuenta, por ejemplo conectándote a ella durante el intercambio.</p>
     <p>Si consideras que tus derechos no se respetan, puedes reclamar ante la autoridad francesa de protección de datos, la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener">www.cnil.fr</a>), o ante la autoridad de tu país.</p>
   </div>
 
@@ -529,7 +536,7 @@
     <h2>🌸 Un proyecto de fans, sin afiliación</h2>
     <p>Sakugame es un proyecto personal, no comercial y sin afiliación con ningún estudio de animación, editorial, titular de derechos ni con AniList.</p>
     <p>Los títulos, nombres de personajes e ilustraciones mostrados pertenecen a sus respectivos titulares de derechos. Proceden de la base pública <a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> y de su API, además de imágenes de episodios de la API pública de <a href="https://kitsu.io" target="_blank" rel="noopener">Kitsu</a>, y se usan únicamente con fines de identificación en un contexto de fans.</p>
-    <p>Cualquier titular de derechos que desee la retirada de un contenido puede escribir a <a href="/cdn-cgi/l/email-protection#3a49554f5c535b545f5148144a48557a4e4f4e5b575b535614595557"><span class="__cf_email__" data-cfemail="8efde1fbe8e7efe0ebe5fca0fefce1cefafbfaefe3efe7e2a0ede1e3">[email&#160;protected]</span></a> y se retirará a la mayor brevedad.</p>
+    <p>Cualquier titular de derechos que desee la retirada de un contenido puede escribir a <a href="mailto:soufianekr.pro@tutamail.com">soufianekr.pro@tutamail.com</a> y se retirará a la mayor brevedad.</p>
   </div>
 
   <div class="card">
@@ -584,12 +591,12 @@
     <p>Estas condiciones se rigen por la ley francesa. A falta de acuerdo amistoso, serán competentes los tribunales franceses. Si eres consumidor y resides en otro país de la UE, seguirán aplicándose las disposiciones protectoras de tu país de residencia.</p>
   </div>
 
-  <a class="back" href="./">← Volver a Sakugame</a>
+  <a class="back" href="./"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg> Volver a Sakugame</a>
 </section>
 
-</div>
+</div></div></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 (function(){
   var sections = document.querySelectorAll('[data-lang]');
   var buttons  = document.querySelectorAll('.langs button');
@@ -597,10 +604,14 @@
     sections.forEach(function(s){ s.classList.toggle('on', s.dataset.lang === code); });
     buttons.forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.set === code)); });
     document.documentElement.lang = code;
+    var back=document.getElementById('legalBackTop'), label={en:'Back to Sakugame',fr:'Retour à Sakugame',es:'Volver a Sakugame'}[code];back.setAttribute('aria-label',label);back.title=label;
+    var navBox = document.getElementById('legalNav'), section = document.querySelector('section[data-lang="'+code+'"]');
+    navBox.textContent = ''; var title = document.createElement('strong');title.textContent = {en:'On this page',fr:'Sur cette page',es:'En esta página'}[code];navBox.appendChild(title);
+    section.querySelectorAll('h2').forEach(function(h,i){h.id='legal-'+code+'-'+i;var link=document.createElement('a');link.href='#'+h.id;link.textContent=h.textContent;link.className=h.classList.contains('part')?'part-link':'';navBox.appendChild(link);});
     try { localStorage.setItem('saku-legal-lang', code); } catch(e){}
   }
   var saved;
-  try { saved = localStorage.getItem('saku-legal-lang') || localStorage.getItem('saku-lang'); } catch(e){}
+  try { saved = localStorage.getItem('saku-legal-lang') || localStorage.getItem('sakugame_lang'); } catch(e){}
   var nav = (navigator.language || 'en').slice(0,2);
   var start = ['en','fr','es'].indexOf(saved) > -1 ? saved
             : (['en','fr','es'].indexOf(nav) > -1 ? nav : 'en');
@@ -608,5 +619,5 @@
   buttons.forEach(function(b){ b.addEventListener('click', function(){ setLang(b.dataset.set); }); });
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4c8cf1328d13108',t:'MTc5MjMzOTc4MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

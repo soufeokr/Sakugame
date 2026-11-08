@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '170';
+    const SAKU_BUILD = '261';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -100,6 +100,8 @@
     var HT_BLUR_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].image : '';
     var HT_SNAP_IMG = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? (((typeof SNAP_PICS !== 'undefined' ? (SNAP_PICS[ANIME_COVERS[0].id] || {}) : {}).b)) || HT_BLUR_IMG : '';
     var HT_BLUR_NAME = (typeof ANIME_COVERS !== 'undefined' && ANIME_COVERS.length) ? ANIME_COVERS[0].name : 'anime cover';
+    var HT_CARD_IMG = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS[0].image : '';
+    var HT_CARD_NAME = (typeof GENERIC_CHARACTERS !== 'undefined' && GENERIC_CHARACTERS.length) ? GENERIC_CHARACTERS[0].name : 'Levi';
     var HT_BOARD = '', HT_BOARD_OUT = '';
     var HT_SNAP_SEQ = [];
     var HT_UW = { a: 'Blue Lock', b: 'Ao Ashi', imgA: '', imgB: '' }; // fallback till undercover.js lands
@@ -179,7 +181,7 @@
     function buildHowto() {
       htRefreshDataRefs(); // scenes always reflect the currently available pools
       return {
-      guesswho: { title: 'Detective Showdown', icon: 'mask', players: '2 players', slides: [
+      guesswho: { title: 'Detective Showdown', icon: 'game-guesswho', players: '2 players', slides: [
         { t: 'Two players, two secrets', d: 'You each receive a secret anime character from a shared AniList board. Take turns asking yes/no questions — the first player to name the opponent\'s secret wins.',
           s: htScene(htStrip('Mikasa Ackerman', 'Your secret — tap to hide', '?') + HT_BOARD + '<div class="mk-note">The real screen: your secret strip on top, the shared board of true characters below.</div>') },
         { t: 'Ask smart questions', d: 'On your turn, type one yes/no question about appearance, powers or series. The answer is public — pick questions that cut your remaining cards in half!',
@@ -189,7 +191,7 @@
         { t: 'Make the final call', d: 'Confident about the secret? Fire your guess! A correct name wins the game instantly — a wrong one gives your opponent free information.',
           s: htScene(htQ('My guess: Mikasa Ackerman', 'GUESS!') + '<div class="mk-chips">' + htChip('Correct — you win!', 'ok') + '</div>') }
       ]},
-      undercover: { title: 'Undercover', icon: 'spy', players: '3-12 players', slides: [
+      undercover: { title: 'Undercover', icon: 'game-undercover', players: '3-12 players', slides: [
         { t: 'Secret roles', d: 'Everyone receives the same secret word… except one Undercover (a very similar word) and one Mr. White (no word at all). Peek at your card and keep it secret!',
           s: htScene('<div class="mk-roles3"><div class="mk-role">' + htChip('Citizen', 'ok') + '<div class="mk-word">' + htUwCard(HT_UW.a, HT_UW.imgA) + '</div></div><div class="mk-role">' + htChip('Undercover', 'no') + '<div class="mk-word">' + htUwCard(HT_UW.b, HT_UW.imgB) + '</div></div><div class="mk-role">' + htChip('Mr. White', 'dim') + '<div class="mk-word">???</div></div></div><div class="mk-note">A real pair straight from the game\'s own decks — close enough to fool everyone.</div>') },
         { t: 'One clue each', d: 'Round after round, every player gives a one-word clue about their word. Citizens must prove they know it — without making it obvious for the impostors.',
@@ -201,7 +203,7 @@
         { t: 'How it ends', d: 'Citizens win by voting out every impostor. Impostors win once they equal the citizens. And Mr. White can steal everything: when caught, one correct guess of the secret word = instant solo win!',
           s: htScene('<div class="mk-chips">' + htChip('Citizens win!', 'ok') + htChip('Impostors win!', 'no') + htChip('Mr. White steals it!', 'dim') + '</div>') }
       ]},
-      battle: { title: 'Detective Royale', icon: 'users', players: '3-12 players', slides: [
+      battle: { title: 'Detective Royale', icon: 'game-battle', players: '3-12 players', slides: [
         { t: 'Everyone hides a secret', d: 'Each player secretly receives a character. 3 to 12 detectives sit at one big table — and everyone is both hunter and prey.',
           s: htScene(htBadges([['Question time', 'ok'], ['3-12 detectives', 'dim']]) + htStrip('Mikasa Ackerman', 'Your secret — tap to hide', '0 pts') + htColorRow([['You', '#02a9ff', true], ['Aria', '#ff9800'], ['Rex', '#ab47bc'], ['Noa', '#26c6da']]) + HT_BOARD) },
         { t: 'One board PER rival', d: 'This is the key to Battle Royale: you do NOT share one big board. Every opponent has their OWN private suspect board on your screen. Cross out cards independently — Aria\'s answers only shrink Aria\'s board!',
@@ -213,7 +215,7 @@
         { t: 'Ranking decides the winner', d: 'Points for exposed secrets, sharp guesses and keeping your own secret alive. When the game ends, the top of the leaderboard takes the crown.',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — Aria', 'ok') + ' 340 pts</p><p>' + htChip('2nd — You', 'dim') + ' 290 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 210 pts</p></div>') }
       ]},
-      race: { title: 'Wanted!', icon: 'bolt', players: '3-12 players', slides: [
+      race: { title: 'Wanted!', icon: 'game-race', players: '3-12 players', slides: [
         { t: 'The Target and the Hunters', d: 'One player is the TARGET — only they know the mystery character. Everyone else is a hunter racing to name it first and win the game.',
           s: htScene(htBadges([['Question time', 'ok'], ['Free guesses!', 'warn']]) + htHunters([{ n: 'Aria 👑 TARGET', h: '' }, { n: 'You', h: '♥♥♥', me: true }, { n: 'Rex', h: '♥♥♥' }, { n: 'Noa', h: '♥♥♥' }]) + HT_BOARD + '<div class="mk-note">The real hunters bar: lives per hunter — the Target sees the mystery character, hunters only see the board.</div>') },
         { t: 'Inside the Target seat', d: 'When YOU are the Target: only your screen shows the mystery character. Answer every question honestly with YES or NO — then sit back and enjoy the hunt. If every hunter burns all their lives on wrong guesses, the win is yours!',
@@ -223,7 +225,7 @@
         { t: 'Guess at ANY moment', d: 'No turns for guessing — fire it whenever inspiration strikes! But every wrong guess costs 1 of your 3 lives. Lose all three and you watch the rest of the hunt from the bench.',
           s: htScene('<div class="mk-lives">' + ic('heart') + ic('heart') + '<span class="mk-dead">' + ic('heart') + '</span></div>' + htQ('It\'s Mikasa Ackerman!', 'GUESS') + '<div class="mk-note">High risk, high reward — bold guesses win races.</div>') }
       ]},
-      blur: { title: 'Blur Guess', icon: 'layers', players: 'solo or up to 12', slides: [
+      blur: { title: 'Blur Guess', icon: 'game-blur', players: 'solo or up to 12', slides: [
         { t: 'Pick your mode', d: 'Play solo to train, or with up to 12 players. Two modes: blurred anime characters, or blurred anime covers from 1500 anime.',
           s: htScene(htBadges([['Round 1/10', 'dim'], ['Blur stage 1/5', 'ok'], ['12s', 'warn']]) + (HT_BLUR_IMG ? '<img class="mk-img b3 mk-bigimg" src="' + HT_BLUR_IMG + '" alt="anime cover demo">' : '<div class="mk-note">1500 covers in the pool!</div>') + '<div class="mk-who">Who is this?!</div>' + htQ('Type the name…', 'GUESS!') + '<div class="mk-chips" style="justify-content:center">' + htChip('Characters mode', 'ok') + htChip('Anime covers mode') + '</div>') },
         { t: 'Five stages, five payouts', d: 'The image unblurs over 5 stages, and the payout melts as it clears: stage 1 pays 5 pts… stage 5 pays only 1 pt. Trust your gut early!',
@@ -233,7 +235,31 @@
         { t: 'Build your streak', d: 'Rounds chain and the leaderboard remembers everything. In multiplayer, the most consistent eye wins — learn studios, eras and art styles!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 24 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 19 pts</p><p>' + htChip('3rd — Rex', 'dim') + ' 14 pts</p></div>') }
       ]},
-      snapshot: { title: 'Snapshot!', icon: 'image', players: 'solo or up to 12', slides: [
+      cards: {
+        title: 'Anime Cards', icon: 'cards', players: 'solo · free boosters', solo: true, cta: 'Open the cards',
+        slides: [
+          { t: 'A collectible card game', d: 'Every character of the Sakugame library is a card — real art, real name, real series. Open boosters, keep the cards you like, and fill your album one pull at a time. No money, no accounts required: just play.',
+            s: htScene('<div class="mk-cards-row">' +
+              '<div class="mk-card"><img src="' + (HT_CARD_IMG || '') + '" alt=""><b>' + (HT_CARD_NAME || 'Levi') + '</b><i>Common</i></div>' +
+              '<div class="mk-card rare"><img src="' + (HT_CARD_IMG || '') + '" alt=""><b>' + (HT_CARD_NAME || 'Levi') + '</b><i>Rare</i></div>' +
+              '<div class="mk-card mythic"><img src="' + (HT_CARD_IMG || '') + '" alt=""><b>' + (HT_CARD_NAME || 'Levi') + '</b><i>Mythic</i></div>' +
+              '</div><div class="mk-note">5000 characters, six rarities, one album.</div>') },
+          { t: 'One free booster every 10 minutes', d: 'A booster holds 5 cards. A new free one lands every 10 minutes and you can stack up to 15 — log in, grab yours, come back later. Pick a series to aim your booster at the characters you love.',
+            s: htScene(htBadges([['5 cards', 'ok'], ['Free', 'ok'], ['Every 10 min', 'warn']]) +
+              '<div class="mk-chips">' + htChip('Any series', 'ok') + htChip('Shonen', 'dim') + htChip('Seinen', 'dim') + htChip('Isekai', 'dim') + '</div>' +
+              '<div class="mk-note">The reserve caps at 15 boosters.</div>') },
+          { t: 'Six rarities', d: 'Common, Uncommon, Rare, Epic, Legendary and Mythic. The rarest cards are the hardest to pull — and a duplicate simply adds a copy to your collection. Chase the Mythics!',
+            s: htScene('<div class="mk-chips">' +
+              htChip('Common', 'dim') + htChip('Uncommon', 'dim') + htChip('Rare', 'dim') +
+              htChip('Epic', 'dim') + htChip('Legendary', 'dim') + htChip('Mythic', 'dim') + '</div>' +
+              '<div class="mk-note">Rarity colours: grey · green · blue · violet · orange · red.</div>') },
+          { t: 'Your album, everywhere', d: 'The album shows what you own, what is missing and how close you are to completing each rarity. Guests keep their collection in their browser; signing in with Discord syncs it to your account so it follows you on any device.',
+            s: htScene('<div class="mk-board-list"><p>' + htChip('1248 / 5000 collected', 'ok') + '</p><p>' +
+              htChip('Mythic 12', 'dim') + ' ' + htChip('Legendary 47', 'dim') + '</p></div>' +
+              '<div class="mk-note">Guests: this browser only. Discord account: synced.</div>') }
+        ]
+      },
+      snapshot: { title: 'Snapshot!', icon: 'game-snapshot', players: 'solo or up to 12', slides: [
         { t: 'Name that anime!', d: 'Play solo to train, or race up to 12 players at once! Every round, up to 4 stills from ONE anime (out of 700+ shows) join the frame one by one — first one to type the right title banks the points!',
           s: htScene(htBadges([['Round 1/10', 'dim'], ['Stills 1/4', 'ok'], ['8s', 'warn']]) + (HT_SNAP_SEQ[0] ? '<img class="mk-img mk-bigimg" src="' + HT_SNAP_SEQ[0] + '" alt="anime still demo">' : '<div class="mk-note">4 stills per round!</div>') + '<div class="mk-who">Which anime is this?!</div>' + htQ('Type the anime title…', 'GUESS!')) },
         { t: 'Four stills, four payouts', d: 'Stage 1 shows ONE deep-cut still (brutal!)… then three easier ones at 8-second beats, ending with the official art AND a hint. Payout melts as it gets easy: stage 1 = 4 pts, stage 4 = 1 pt. Trust your gut early!',
@@ -243,7 +269,7 @@
         { t: 'Fast fingers win big', d: 'The FIRST correct guess in a round adds a +3 speed bonus (then +2 and +1). A stage-1 first guess is the jackpot: 4 + 3 = 7 points! The host picks 4-20 rounds — most points at the end wins.',
           s: htScene(htQ('Attack on Titan', 'SUBMIT') + '<div class="mk-chips">' + htChip('Correct! +7 pts', 'ok') + htChip('4 base + 3 speed bonus', 'dim') + '</div>' + '<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' 21 pts</p><p>' + htChip('2nd — Aria', 'dim') + ' 17 pts</p></div>') }
       ]},
-      hotcold: { title: 'Cold Case', icon: 'target', players: '2-12 players', slides: [
+      hotcold: { title: 'Cold Case', icon: 'game-hotcold', players: '2-12 players', slides: [
         { t: 'One hides, everyone hunts', d: 'The HIDER picks any character from the whole pool. Every other player hunts at the same time, in their own lane — proposing characters at their own pace, one proposal at a time.',
           s: htScene(htBadges([['Round 1/2', 'dim'], ['You are the HIDER', 'warn']]) + htStrip('Levi', 'Hide this one?', 'Hide it! ✓') + htQ('Type a character name…', '🎲') + '<div class="mk-note">The hider picks ANY character — the seekers never see this strip.</div>') },
         { t: 'Hot or cold, 0 to 100', d: 'The hider scores every proposal: 0 = nothing alike… 90+ = so close it burns. An exact hit is found instantly — no scoring needed! Each seeker stops when THEY find it (or after 100 tries).',
@@ -251,7 +277,7 @@
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]},
-      codenames: { title: 'Ninja Scrolls', icon: 'key', players: '4-12 players', slides: [
+      codenames: { title: 'Ninja Scrolls', icon: 'game-codenames', players: '4-12 players', slides: [
         { t: 'Two teams, 24 characters', d: 'Split into RED and BLUE (2+ each). A 4×6 grid of anime characters is dealt — 🔵 8, 🔴 7, 8 bystanders… and ONE 💀 assassin. BLUE always starts (it owns the extra agent!). Only the two NINJAS see the color key.',
           s: htScene(htBadges([['🔴 0/7', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a SHOGUN — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 4×6 board — names only, all colors hidden.</div>') },
         { t: 'One word, then tap the targets', d: 'On your team\'s turn its Ninja gives ONE word — "sword" — then TAPS the cards it targets (2 taps = 2 picks allowed). Teammates flip up to that many cards. Every correct pick keeps the turn alive… and finishing the count with only good picks earns a +1 BONUS, chainable until a wrong pick or a pass!',
@@ -301,11 +327,13 @@
       document.body.style.overflow = 'hidden';
     }
     function closeHowTo() {
+      const preview=document.getElementById('guideImageDialog');if(preview&&preview.open)preview.close();
       const m = document.getElementById('howtoModal');
       if (m) m.style.display = 'none';
       document.body.style.overflow = '';
     }
     function howtoNav(d) {
+      if(window.sakuGameGuide&&window.sakuGameGuide(HT.game))return;
       const n = HOWTO[HT.game].slides.length;
       HT.idx = Math.min(n - 1, Math.max(0, HT.idx + d));
       renderHowTo();
@@ -313,6 +341,11 @@
     function howtoGo(i) { HT.idx = i; renderHowTo(); }
     function renderHowTo() {
       const meta = HOWTO[HT.game]; if (!meta) return;
+      const guide=window.sakuGameGuide && window.sakuGameGuide(HT.game);
+      const slide=document.getElementById('howtoSlide'),prev=document.getElementById('howtoPrev'),next=document.getElementById('howtoNext'),dots=document.getElementById('howtoDots');
+      document.getElementById('howtoModal').classList.toggle('howto-guide',!!guide);
+      prev.style.display=guide?'none':'';next.style.display=guide?'none':'';dots.style.display=guide?'none':'';
+      if(guide){document.getElementById('howtoIcon').innerHTML=ic(meta.icon);document.getElementById('howtoTitle').textContent=meta.title;document.getElementById('howtoPlayers').textContent=guide.players;slide.innerHTML=guide.html;slide.scrollTop=0;slide.parentElement.scrollTop=0;document.getElementById('howtoCta').innerHTML=ic('play')+' '+(window.t?t('Host a room'):'Host a room');return;}
       const n = meta.slides.length;
       document.getElementById('howtoIcon').innerHTML = ic(meta.icon);
       document.getElementById('howtoTitle').textContent = meta.title;
@@ -326,15 +359,17 @@
       document.getElementById('howtoDots').innerHTML = meta.slides.map(function(_, i) {
         return '<span class="howto-dot' + (i === HT.idx ? ' on' : '') + '" onclick="howtoGo(' + i + ')"></span>';
       }).join('');
-      document.getElementById('howtoCta').innerHTML = ic('play') + ' Host a room';
+      document.getElementById('howtoCta').innerHTML = ic(meta.solo ? 'cards' : 'play') + ' ' + (meta.cta || 'Host a room');
     }
     function howtoPlayNow() {
       const g = HT.game;
       closeHowTo();
+      if (HOWTO[g] && HOWTO[g].solo) { showCards(); return; }   // 🎴 no room for the card game
       showHostRoom();
       const sel = document.getElementById('gameSelect');
-      if (sel) { sel.value = g; try { onGameSelectChange(); } catch (e) {} }
+      if (sel) { try { selectHostGame(g); } catch (e) { sel.value=g; onGameSelectChange(); } }
     }
+    window.addEventListener('saku-lang-change',function(){const m=document.getElementById('howtoModal');if(m&&m.style.display==='flex')renderHowTo();});
     document.addEventListener('keydown', function (e) {
       const m = document.getElementById('howtoModal');
       if (!m || m.style.display !== 'flex') return;
@@ -420,6 +455,9 @@
       if (!btn) return;
       const av = myAvatar();
       btn.innerHTML = (av ? '<span class="ava ava-btn"><img src="' + escapeHtml(String(av)) + '" alt="" onerror="this.parentNode.classList.add(\'ava-empty\'); this.remove();"></span> ' : '<span class="ava ava-btn ava-empty"></span> ') + escapeHtml(String(playerName));
+      if (window.sakuFriendsPublish && currentAccount) window.sakuFriendsPublish();
+      if (window.sakuShowcaseProgressChanged && currentAccount) window.sakuShowcaseProgressChanged();
+      if (document.getElementById('accountScreen') && document.getElementById('accountScreen').classList.contains('active')) sakuAccountRender();
     }
 
     // Show/hide a standalone circular <img> (game screens).
@@ -519,7 +557,7 @@
     // per Discord ID lives in the DB with a random session token, and the browser keeps
     // { dc, session } in localStorage — that pair is what signs you back in.
     const SAKU_ACCT_LS = 'saku-acct-session';
-    function sakuAcctRef(dcId) { return database.ref('accounts/' + dcId); }
+    function sakuAcctRef(dcId) { return window.sakuLocalAccountRef(dcId); } // V1 : profil local au navigateur
     function sakuMyDcId() { return currentAccount ? String(currentAccount.uid).replace(/^dc_/, '') : null; }
     function sakuNewSession() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12); }
     function sakuSessionLoad() {
@@ -539,9 +577,15 @@
         uid: 'dc_' + dc.id, username: sakuAcctName(a),
         wins: a.wins || 0, losses: a.losses || 0, uWins: a.uWins || 0, uLosses: a.uLosses || 0,
         anilist: a.anilist || null, avatar: a.avatar || (a.dc && a.dc.avatar) || null, watchStatuses: a.watchStatuses || null,
-        dcAvatar: (a.dc && a.dc.avatar) || null
+        cards: a.cards || null, dcUsername: dc.username || null, dcAvatar: (a.dc && a.dc.avatar) || null
       };
+      if (window.sakuProgressAttach) window.sakuProgressAttach();
+      if (window.sakuPlayerAttach) window.sakuPlayerAttach();
+      if (window.sakuFriendsAttach) window.sakuFriendsAttach();
+      // 🎴 fold the guest card collection into the freshly signed-in account
+      try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
       playerName = currentAccount.username;
+      if (window.sakuShowcaseAttach) window.sakuShowcaseAttach();
       updateUserButton();
       try { sakuRenderDiscordBox(dc); } catch (e) {}
       // Already inside a room → refresh the displayed name + picture there too
@@ -557,14 +601,10 @@
 
     // Replaces Firebase's onAuthStateChanged: validate the stored session against the DB
     async function sakuRestoreSession() {
-      const st = sakuSessionLoad();
-      if (!st) { currentAccount = null; updateUserButton(); return; }
-      try {
-        const snap = await sakuAcctRef(st.dc).once('value');
-        const a = snap.val();
-        if (a && a.session === st.session) await sakuAdoptAccount(a);
-        else { sakuSessionClear(); currentAccount = null; updateUserButton(); }
-      } catch (e) { currentAccount = null; updateUserButton(); }
+      // V1 : la session est gérée par Supabase (saku-session.js)
+      try { sakuSessionClear(); } catch (e) {}
+      if (window.sakuSessionBridge) { try { window.sakuSessionBridge.start(); } catch (e) { console.warn(e); } }
+      else { currentAccount = null; updateUserButton(); }
     }
     // deferred on purpose: the restore touches playerName/currentAccount, which are
     // declared further down this file — a macrotask guarantees the whole script ran first
@@ -572,7 +612,8 @@
     else setTimeout(sakuRestoreSession, 0);
 
     function onUserButton() {
-      if (currentAccount) openAuthModal(); else changeUsername();
+      if (currentAccount) { if (window.sakuPlayerToggle) window.sakuPlayerToggle(); else sakuNavGo('account'); }
+      else changeUsername();
     }
 
     // 🗂️ Account menu tabs (Game / Account / Support) + Discord copy
@@ -611,7 +652,7 @@
         switchAcctTab(lastTab);
         const snap = await sakuAcctRef(sakuMyDcId()).once('value');
         const p = snap.val() || {};
-        document.getElementById('profileName').textContent = p.username || 'Account';
+        document.getElementById('profileName').textContent = (currentAccount && currentAccount.username) || p.username || 'Account';
         if (currentAccount) currentAccount.avatar = p.avatar || null;
         renderProfileAvatar();
         document.getElementById('profileWins').textContent = p.wins || 0;
@@ -635,14 +676,20 @@
     function showAuthError(msg) { const el = document.getElementById('authError'); if (el) el.textContent = msg || ''; }
     // Discord is the ONLY way in — one button, no form to fill
     function loginWithDiscord() {
-      if (!sakuDiscordConfigured()) { showNotification(t('Discord login is not configured yet.')); return; }
-      try { localStorage.setItem('saku-dc-pending', 'signin'); } catch (e) {}
-      try { window.location.href = sakuDiscordAuthUrl(); } catch (e) {}
+      // V1 : connexion Discord via Supabase (redirection PKCE)
+      try { Promise.resolve(window.sakuSessionBridge.signIn()).catch(function () { showNotification(t('Discord login failed — try again.')); }); }
+      catch (e) { showNotification(t('Discord login failed — try again.')); }
     }
 
     async function logoutAccount() {
       sakuSessionClear();
+      if (window.sakuSessionBridge) { try { await window.sakuSessionBridge.signOut(); } catch (e) { console.warn(e); } }
       currentAccount = null;
+      if (window.sakuProgressDetach) window.sakuProgressDetach();
+      if (window.sakuPlayerDetach) window.sakuPlayerDetach();
+      if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
+      if (typeof cardsLoad === 'function') cardsLoad();
       anilistAutoSyncDone = false;
       updateUserButton();
       try { sakuRenderDiscordBox(null); } catch (e) {}
@@ -700,7 +747,7 @@
           // Empty field = remove the sync
           if (currentAccount && currentAccount.anilist) {
             await sakuAcctRef(sakuMyDcId()).child('anilist').remove();
-            currentAccount.anilist = null; anilistAutoSyncDone = false;
+            currentAccount.anilist = null; anilistAutoSyncDone = false; if(window.sakuShowcaseProgressChanged)window.sakuShowcaseProgressChanged();
             showNotification('AniList sync removed.');
           } else { showNotification('Enter your AniList username.'); }
           btn.disabled = false; return;
@@ -710,6 +757,7 @@
         if (info.total < 6) { showNotification(info.name + ' has only ' + info.total + ' favorites. Need at least 6.'); btn.disabled = false; return; }
         await sakuAcctRef(sakuMyDcId()).child('anilist').set(info.name);
         if (currentAccount) currentAccount.anilist = info.name;
+        if(window.sakuShowcaseProgressChanged)window.sakuShowcaseProgressChanged();
         anilistAutoSyncDone = false; // allow auto-load next time you host
         document.getElementById('anilistSyncInput').value = info.name;
         showNotification('AniList account synced: ' + info.name);
@@ -756,12 +804,14 @@
     function recordGameResult(won) {
       if (!currentAccount) return; // guests: no stats
       sakuAcctRef(sakuMyDcId()).child(won ? 'wins' : 'losses').transaction(v => (v || 0) + 1);
+      if (window.sakuProgressGame) window.sakuProgressGame('classic', currentRoom.progressGameId, won);
     }
 
     // Same, but for Undercover games — counted in separate counters (uWins/uLosses).
     function recordUndercoverResult(won) {
       if (!currentAccount) return; // guests: no stats
       sakuAcctRef(sakuMyDcId()).child(won ? 'uWins' : 'uLosses').transaction(v => (v || 0) + 1);
+      if (window.sakuProgressGame && currentRoom.uc && (currentRoom.players[playerId] || {}).outInGame !== currentRoom.uc.gameId) window.sakuProgressGame('undercover', currentRoom.uc.gameId, won);
     }
 
     const ANILIST_API = 'https://graphql.anilist.co';
@@ -974,6 +1024,7 @@
       if (roomCode && currentAccount && currentAccount.anilist) {
         try { await database.ref('rooms/' + roomCode + '/accounts/' + currentAccount.anilist + '/ws').set(sel); } catch (e) {}
       }
+      loadWatchStatusesIntoUI();
       showNotification('Watched statuses updated.');
     }
     function loadWatchStatusesIntoUI() {
@@ -1056,11 +1107,21 @@
     let publicRoomsRef = null;     // live 🌐 list listener (join screen only)
 
     function changeUsername() {
-      try { switchUnameTab('account'); } catch (e) {} // guests always land on the Account tab
-      document.getElementById('newUsernameInput').value = playerName;
+      const input = document.getElementById('newUsernameInput');
+      input.value = playerName;
       document.getElementById('usernameModal').classList.add('show');
+      input.focus();
+      input.select();
     }
-    function closeUsernameModal() { document.getElementById('usernameModal').classList.remove('show'); }
+    function closeUsernameModal() {
+      const modal = document.getElementById('usernameModal');
+      const wasOpen = modal.classList.contains('show');
+      modal.classList.remove('show');
+      if (wasOpen) { const trigger = document.getElementById('usernameBtn'); if (trigger) trigger.focus(); }
+    }
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && document.getElementById('usernameModal').classList.contains('show')) closeUsernameModal();
+    });
     // 📑 guest modal tabs (Account / Support — same support content as the account modal)
     function switchUnameTab(tab) {
       ['account', 'support', 'perso'].forEach(t => {
@@ -1095,8 +1156,11 @@
     }
 
     function showScreen(screenId) {
+      if(window.sakuMobileScreenChanged)window.sakuMobileScreenChanged(screenId);
+      document.body.classList.toggle('home-cards-atmosphere', screenId === 'cardHomeScreen');
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
+      document.body.classList.toggle('summon-view', screenId === 'summonScreen');
       document.getElementById('winningScreen').classList.remove('show');
       document.getElementById('ucEndScreen').classList.remove('show');
       document.getElementById('multiEndScreen').classList.remove('show');
@@ -1111,6 +1175,7 @@
       if (!chatVisible) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
       // The 🌐 public room list only streams while the join screen is open
       if (screenId === 'joinRoomScreen') startPublicRoomsWatch(); else stopPublicRoomsWatch();
+      if (screenId === 'homepageScreen' && window.sakuProgressClipboard) window.sakuProgressClipboard();
     }
     // ============== 📱 VIRTUAL KEYBOARD (phone) ==============
     // The viewport meta uses interactive-widget=overlays-content: the keyboard
@@ -1214,6 +1279,34 @@
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncBarPos); else sakuSyncBarPos();
 
+    // Graphics: medium preserves full-size images but removes animated petals.
+    function sakuGfxMode() {
+      try { const mode = localStorage.getItem('saku-graphics'); return ['high','medium','low'].includes(mode) ? mode : 'high'; } catch (e) { return 'high'; }
+    }
+    function sakuGfxHigh() { return sakuGfxMode() !== 'low'; }
+    function sakuGfxLow() { return sakuGfxMode() === 'low'; }
+    function sakuSyncGfx() {
+      const mode = sakuGfxMode();
+      if (document.documentElement) {
+        document.documentElement.classList.toggle('gfx-low', mode === 'low');
+        document.documentElement.classList.toggle('gfx-medium', mode === 'medium');
+      }
+      try { if (typeof cardsRenderAlbum === 'function') cardsRenderAlbum(); } catch (e) {}
+      try { if (typeof encRender === 'function' && typeof encData !== 'undefined' && encData) encRender(true); } catch (e) {}
+      ['High','Medium','Low'].forEach(name => ['gfx' + name, 'gfx' + name + '2'].forEach(id => {
+        const el = document.getElementById(id); if (el) { const selected = name.toLowerCase() === mode; el.classList.toggle('selected', selected); const radio = el.querySelector('input'); if (radio) radio.checked = selected; }
+      }));
+      const select = document.getElementById('navGraphics'); if (select) select.value = mode;
+    }
+    function sakuSetGfx(value) {
+      const mode = value === true ? 'high' : value === false ? 'low' : value;
+      if (!['high','medium','low'].includes(mode)) return;
+      try { localStorage.setItem('saku-graphics', mode); } catch (e) {}
+      sakuSyncGfx();
+      showNotification(t(mode === 'high' ? 'Graphics quality: high.' : mode === 'medium' ? 'Graphics quality: medium.' : 'Graphics quality: low — lighter on slow devices.'));
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuSyncGfx); else sakuSyncGfx();
+
     // ================= 🎮 DISCORD ACCOUNT LINK (OAuth2 · static-safe, b121) =================
     // SETUP (5 minutes, no server needed):
     //   1) https://discord.com/developers/applications → "New Application" (name it Sakugame)
@@ -1232,7 +1325,8 @@
     // 🚪 the single entry point: Discord OAuth popup → verified identity → account
     function sakuDiscordStartLink() { loginWithDiscord(); }
     // full-page OAuth return: Discord sends us back with #access_token=… in the URL
-    async function sakuDiscordHandleReturn() {
+    async function sakuDiscordHandleReturn() { return; /* V1 : le retour OAuth est géré par Supabase */ }
+    async function sakuLegacyDiscordHandleReturn() {
       let h = '';
       try { h = String(window.location.hash || ''); } catch (e) {}
       if (h.indexOf('access_token=') < 0) return;
@@ -1264,7 +1358,7 @@
       try {
         const ref = sakuAcctRef(dcId);
         const cur = (await ref.once('value')).val() || {};
-        await ref.set({
+        await ref.update({
           dc: clean, session,
           createdAt: cur.createdAt || Date.now(),
           name: cur.name || null,
@@ -1290,7 +1384,7 @@
       } else {
         box.innerHTML = '<span class="dc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85Z"/></svg></span>' +
           '<div class="dc-mid"><div class="dc-label">Discord</div><div class="dc-handle">' + tt('Not signed in') + '</div></div>' +
-          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink()"><svg class="ic"><use href="#i-door"/></svg> ' + tt('Sign in with Discord') + '</button>';
+          '<button type="button" class="dc-join dc-sync-btn" onclick="sakuDiscordStartLink()"><svg class="ic"><use href="#i-discord"/></svg> ' + tt('Sign in with Discord') + '</button>';
       }
     }
     // fresh read from the DB (when the Account tab opens) so other devices' links show up too
@@ -1310,34 +1404,15 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); });
     else { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); }
 
-    // ================= 🛠️ ADMIN MODE (solo launches for display checks) =================
-    // Unlock it from the Account tab (🔒 Admin) with this passcode — change it to
-    // your own, it only ever lives on the browser you unlock (localStorage).
-    const SAKU_ADMIN_CODE = 'sakuga981';
-    function sakuIsAdmin() { try { return localStorage.getItem('sakuAdmin') === '1'; } catch (e) { return false; } }
-    function paintAdminBtn() {
-      const btn = document.getElementById('adminToggleBtn');
-      if (btn) btn.textContent = sakuIsAdmin() ? '🔓 Admin mode ON — tap to disable' : '🔒 Admin mode is off';
-    }
-    function sakuAdminToggle() {
-      if (typeof prompt !== 'function') return;
-      const ask = sakuIsAdmin() ? 'Type the passcode again to DISABLE admin mode:' : 'Admin passcode:';
-      const p = String(prompt((window.t ? t(ask) : ask)) || '').trim();
-      if (!p) return;
-      if (p !== SAKU_ADMIN_CODE) { showNotification(window.t ? t('Wrong passcode.') : 'Wrong passcode.'); return; }
-      try { localStorage.setItem('sakuAdmin', sakuIsAdmin() ? '0' : '1'); } catch (e) {}
-      paintAdminBtn();
-      const on = sakuIsAdmin();
-      showNotification(on ? (window.t ? t('🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : '🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : (window.t ? t('Admin mode off.') : 'Admin mode off.'));
-      // the lobby's Start button gate depends on it — repaint if we're in one
-      if (on && currentRoom && currentRoom.state === 'lobby' && document.getElementById('lobbyScreen').classList.contains('active')) updateLobby();
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintAdminBtn); else paintAdminBtn();
+    // ================= (V1) aucun mode admin : les minimums de joueurs s'appliquent à tous =================
+    function sakuIsAdmin() { return false; }
+    function paintAdminBtn() {}
+    function sakuAdminToggle() {}
     // ================= 🧭 PAGE ROUTER (hash URLs + browser Back/Forward) =================
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
-    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'playMenuScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen' };
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', support: 'supportScreen' };
     const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
@@ -1354,11 +1429,50 @@
     }
     // wrapped AFTER its definition: every screen switch now also syncs the address bar
     const routerShowScreen = showScreen;
+    let sakuRoomMinimized = false;
+    function sakuRoomScreenIsActive(id) { return document.getElementById(id).classList.contains('active') || (sakuRoomMinimized && R_lastRoomScreen === id); }
+    function sakuRoomWindowUpdate() {
+      const b=document.getElementById('roomWindowButton'); if(!b)return;
+      const live=!!(roomCode && currentRoom); b.hidden=!live;
+      document.body.classList.toggle('room-minimized',live && sakuRoomMinimized);
+      document.body.classList.toggle('has-room-window',live);
+      if(!live){sakuRoomMinimized=false;return;}
+      const game=GAME_LABELS[currentRoom.game] || 'Game';
+      const lang=(window.SAKU_I18N && window.SAKU_I18N.lang)||'en';
+      const isLobby=currentRoom.state==='lobby'||currentRoom.state==='teams';
+      const label=isLobby ? ({fr:'Salon',en:'Room',es:'Sala'}[lang]||'Room') : game;
+      document.getElementById('roomWindowLabel').textContent=label+' · '+roomCode;
+      document.getElementById('roomWindowAction').textContent=sakuRoomMinimized?'↗':'−';
+      const hint=sakuRoomMinimized?({fr:'Reprendre la partie',en:'Return to game',es:'Volver a la partida'}[lang]):({fr:'Réduire la partie',en:'Minimize game',es:'Minimizar partida'}[lang]);
+      b.setAttribute('aria-label',hint+': '+label); b.title=hint;
+    }
+    function sakuRoomWindowToggle(){
+      if(!roomCode||!currentRoom)return;
+      if(!sakuRoomMinimized){goHome();return;}
+      sakuRoomMinimized=false; document.body.classList.remove('room-minimized');
+      showScreen(R_lastRoomScreen || 'lobbyScreen');
+      // Refresh the visible game, including timers and end-of-game overlays.
+      if(currentRoom.state==='playing' || currentRoom.state==='finished'){
+        const updates={guesswho:updateGame,undercover:updateUndercover,battle:updateBattle,race:updateRace,blur:updateBlur,snapshot:updateSnapshot,codenames:updateCodenames,hotcold:updateHotcold};
+        try{(updates[currentRoom.game]||updateGame)();}catch(e){console.error(e);}
+      }
+    }
+    function sakuRoomBlocked(){
+      if(!roomCode)return false;
+      const lang=(window.SAKU_I18N&&window.SAKU_I18N.lang)||'en';
+      showNotification(({fr:'Quitte ton salon actuel avant d’en créer ou rejoindre un autre.',en:'Leave your current room before creating or joining another.',es:'Sal de tu sala actual antes de crear o unirte a otra.'})[lang]||'Leave your current room first.',4500);
+      return true;
+    }
     showScreen = function (screenId) {
+      const isRoom=R_ROOM_SCREENS.includes(screenId);
+      if(isRoom && roomCode && sakuRoomMinimized){R_lastRoomScreen=screenId;sakuRoomWindowUpdate();return;}
+      if(!isRoom && roomCode && currentRoom && R_ROOM_SCREENS.some(id=>document.getElementById(id).classList.contains('active'))) sakuRoomMinimized=true;
       routerShowScreen(screenId);
-      if (R_ROOM_SCREENS.includes(screenId)) R_lastRoomScreen = screenId;
+      if (isRoom) R_lastRoomScreen = screenId;
+      sakuRoomWindowUpdate();
       if (!R_fromRouter) routerPush(routerRouteForScreen(screenId));
     };
+    window.addEventListener('saku-lang-change',sakuRoomWindowUpdate);
     function routerCurrentRoute() {
       const r = ((location.hash || '').replace(/^#\/?/, '').split('/')[0]) || 'home';
       return (R_PAGES[r] || r === 'room') ? r : 'home';
@@ -1369,13 +1483,24 @@
       R_fromRouter = true;
       try {
         if (route === 'room') {
-          if (roomCode) showScreen(R_lastRoomScreen || 'lobbyScreen'); // walk back INTO your running game
-          else { R_muteHash = true; try { location.replace('#/rooms'); } catch (e) { try { location.hash = '#/rooms'; } catch (e2) {} } showPlayMenu(); } // no room here → room selection
+          if (roomCode) { if(sakuRoomMinimized)sakuRoomWindowToggle(); else showScreen(R_lastRoomScreen || 'lobbyScreen'); } // walk back INTO your running game
+          else { R_muteHash = true; try { location.replace('#/home'); } catch (e) { try { location.hash = '#/home'; } catch (e2) {} } showPlayMenu(); } // no room here → room selection
         }
         else if (route === 'rules') showGamesMenu();
         else if (route === 'rooms') showPlayMenu();
         else if (route === 'join') showJoinRoom();
         else if (route === 'setup') showHostRoom();
+        else if (route === 'cards') showCardHome();
+        else if (route === 'showcase') { const id=((location.hash||'').replace(/^#\/?/,'').split('/')[1]||''); showShowcase(id); }
+        else if (route === 'cardhome') showCardHome();
+        else if (route === 'collection') showCollection();
+        else if (route === 'market') showMarket();
+        else if (route === 'quests') showQuests();
+        else if (route === 'summon') showScreen('summonScreen');
+        else if (route === 'support') showScreen('supportScreen');
+        else if (route === 'settings') showPreferencesPage();
+        else if (route === 'account') showAccountPage();
+        else if (route === 'encyclopedia') encOpen();
         else showScreen('homepageScreen');
       } catch (e) {}
       R_fromRouter = false;
@@ -1393,19 +1518,21 @@
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
     })();
     async function goHome() {
-      if (roomCode) { await leaveRoom(true); } // leaveRoom also resets roomCode and shows the home screen
       showScreen('homepageScreen');
+      if(typeof sakuCardHomeRefresh==='function')sakuCardHomeRefresh();
     }
-    function showPlayMenu() { showScreen('playMenuScreen'); }
+    function showPlayMenu() { goHome(); }
     function showGamesMenu() { showScreen('gamesMenuScreen'); }
-    function showHostRoom() { showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} }
-    function showJoinRoom() { showScreen('joinRoomScreen'); }
+    function showHostRoom() { if(sakuRoomBlocked())return; showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} }
+    function showJoinRoom() { if(sakuRoomBlocked())return; showScreen('joinRoomScreen'); }
 
     // 🌐 language radios (Personalization tab — the old bar buttons are gone).
     // One source of truth: SAKU_I18N.setLang(); the radios just mirror it.
     function sakuLangNow() { return (window.SAKU_I18N && SAKU_I18N.lang) || 'en'; }
     function sakuSyncLangRadios() {
       const l = sakuLangNow();
+      const navFlag = document.getElementById('navCurrentFlagUse'); if (navFlag) navFlag.setAttribute('href', '#nav-flag-' + l);
+      document.querySelectorAll('#navLanguagePicker [data-language]').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.language === l)));
       ['langPickEn', 'langPickFr', 'langPickEs', 'langPickEn2', 'langPickFr2', 'langPickEs2'].forEach(id => {
         const el = document.getElementById(id);
         if (!el || !el.classList) return;
@@ -1495,10 +1622,7 @@
 
     function selectVisibility(type) {
       roomVisibility = type;
-      document.querySelectorAll('.radio-option').forEach(opt => opt.classList.remove('selected'));
-      // Fix: use the clicked element properly
-      const target = arguments[1] ? arguments[1].currentTarget : event ? event.currentTarget : document.querySelector('.radio-option.selected');
-      if (target) target.classList.add('selected');
+      document.querySelectorAll('#createTabRoom input[name="visibility"]').forEach(function(input){input.checked=input.value===type;input.closest('.radio-option').classList.toggle('selected',input.checked);});
     }
 
     function updateHostCharCount() {
@@ -1831,13 +1955,12 @@
       GAME_PICK_ORDER.forEach(function (g) {
         const b = document.createElement('button');
         b.type = 'button';
-        b.className = 'gpm-row' + (g === cur ? ' on' : '');
-        b.innerHTML = '<svg class="ic"><use href="#i-' + (GAME_ICONS[g] || 'gamepad') + '"/></svg><span class="gpm-name">' + (GAME_LABELS[g] || g) + '</span><small>' + GAME_PLAYERS_TXT[g] + '</small><span class="gp-howto gpm-howto" role="button" aria-label="How to play" title="How to play">?</span>';
+        b.className = 'game-pick-card' + (g === cur ? ' selected' : ''); b.dataset.game=g;
+        b.innerHTML = '<div class="game-pick-img"><svg class="ic"><use href="#i-game-' + g + '"/></svg></div><div class="game-pick-content"><h4>' + (GAME_LABELS[g] || g) + '</h4><small>' + GAME_PLAYERS_TXT[g] + '</small></div>'; 
         const gph = b.querySelector('.gp-howto');
         if (gph) gph.onclick = function (e) { e.stopPropagation(); openHowTo(g); };
         b.onclick = function () {
-          if (gamePickCtx === 'modal') { try { modalCardGame(g); } catch (e) {} } else { selectHostGame(g); }
-          closeGamePickModal();
+          const ctx=gamePickCtx;closeGamePickModal();if(ctx==='modal')modalCardGame(g);else selectHostGame(g);
         };
         list.appendChild(b);
       });
@@ -1929,13 +2052,13 @@
     }
 
     async function createGameRoom() {
-      if (roomCode) { R_fromRouter = true; try { await leaveRoom(true); } catch (e) {} R_fromRouter = false; } // already in a room (navigated away with the browser arrows) — leave it silently first
+      if (sakuRoomBlocked()) return;
       const game = document.getElementById('gameSelect').value || 'guesswho';
         const isUc = game === 'undercover';
         const isMulti = game === 'battle' || game === 'race' || game === 'blur' || game === 'codenames';
         const isWatchGame = game === 'blur' || game === 'hotcold';
-      if (!isUc && !isWatchGame && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Favorites needs a synced AniList account (profile menu) — or switch the pool to Generic!'); return; }
-      if (!isUc && !isWatchGame && hostSource === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs a synced AniList account (profile menu) — or pick another pool!'); return; }
+      if (!isUc && !isWatchGame && game !== 'snapshot' && hostSource === 'favorites' && hostAccounts.length === 0) { showNotification('Favorites needs a synced AniList account (profile menu) — or switch the pool to Generic!'); return; }
+      if (!isUc && !isWatchGame && game !== 'snapshot' && hostSource === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs a synced AniList account (profile menu) — or pick another pool!'); return; }
       if (isWatchGame && hostPool === 'watched' && hostAccounts.length === 0) { showNotification('Watched needs synced AniList accounts — friends auto-sync when they join with a linked account (or switch the pool to Random).'); }
       roomCode = generateRoomCode(); isHost = true;
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
@@ -1989,7 +2112,7 @@
     // Free seat + lobby → you sit down directly. Game in progress (or full)
     // → you wait in the room's QUEUE and auto-join when a seat opens.
     async function joinRoomByCode(code) {
-      if (roomCode) { R_fromRouter = true; try { await leaveRoom(true); } catch (e) {} R_fromRouter = false; } // switching rooms after browsing away with the arrows — leave the old one silently first
+      if (sakuRoomBlocked()) return;
       try {
         const roomSnapshot = await database.ref('rooms/' + code).once('value');
         if (!roomSnapshot.exists()) { showNotification('Room not found. Check the code and try again.'); return; }
@@ -2080,8 +2203,9 @@
       if (roomRef) { roomRef.off(); }
       roomRef = database.ref('rooms/' + roomCode);
       roomRef.on('value', (snapshot) => {
+        const previousRoomState=currentRoom&&currentRoom.state;
         currentRoom = snapshot.val();
-        if (!currentRoom) { clearSession(); showNotification('Room was closed'); goHome(); return; }
+        if (!currentRoom) { if(roomRef){roomRef.off();roomRef=null;} roomCode=null; isHost=false; imQueued=false; clearSession(); showNotification('Room was closed'); sakuRoomWindowUpdate(); if(R_ROOM_SCREENS.some(id=>document.getElementById(id).classList.contains('active')))goHome(); return; }
         // Keep local host status in sync with the room data (supports host transfer)
         if (currentRoom.players && currentRoom.players[playerId]) {
           const wasHost = isHost;
@@ -2114,12 +2238,13 @@
         maybePromoteQueue(); // host moves queued people into free seats; lobbyless queue-head self-promotes
         maybeAbortEmptyGame(); // host resets the room when EVERYBODY abandoned the running game
         updateLobby();
+        sakuRoomWindowUpdate();
         ensureHostPresent();
         purgeDisconnectedPlayers();
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         const isUcRoom = currentRoom.game === 'undercover';
         // 🥷🎴 legacy 'teams' state = just the merged Ninja Scrolls lobby now
-        if (currentRoom.state === 'lobby' || (currentRoom.game === 'codenames' && currentRoom.state === 'teams')) { showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('hcEndScreen').classList.remove('show'); document.getElementById('interactionWindow').classList.remove('show'); }
+        if (currentRoom.state === 'lobby' || (currentRoom.game === 'codenames' && currentRoom.state === 'teams')) { if (previousRoomState && previousRoomState !== 'lobby' && previousRoomState !== 'teams' && R_ROOM_SCREENS.some(id=>document.getElementById(id).classList.contains('active'))) showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('hcEndScreen').classList.remove('show'); if(previousRoomState && previousRoomState!=='lobby' && previousRoomState!=='teams')document.getElementById('interactionWindow').classList.remove('show'); }
         // 👀 Queued visitors auto-SPECTATE the live game (public info only);
         // an `away` queue entry parks in the lobby instead (never promoted).
         if (!meSeated) {
@@ -2142,7 +2267,7 @@
             const meIn = (currentRoom.players || {})[playerId] || {};
             const spectating = !!(currentRoom.uc && meIn.outInGame && meIn.outInGame === currentRoom.uc.gameId);
             const hasRole = !!(currentRoom.uc && currentRoom.uc.roles && currentRoom.uc.roles[playerId]);
-            if (!spectating && hasRole && !document.getElementById('undercoverScreen').classList.contains('active')) showScreen('undercoverScreen');
+            if (!spectating && hasRole && !sakuRoomScreenIsActive('undercoverScreen')) showScreen('undercoverScreen');
             if (hasRole) updateUndercover();
             if (isHost && currentRoom.state === 'playing') hostUndercoverWatchdog();
           }
@@ -2151,7 +2276,7 @@
           const screenId = isBattle ? 'battleScreen' : 'raceScreen';
           const gdata = isBattle ? (currentRoom.br || {}) : (currentRoom.rc || {});
           if (currentRoom.state === 'selection') {
-            if (!document.getElementById('selectionScreen').classList.contains('active')) showMultiSelection();
+            if (!sakuRoomScreenIsActive('selectionScreen')) showMultiSelection();
             multiSelectionTick();
           }
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
@@ -2159,7 +2284,7 @@
             const participates = gdata.gameId && meP.outInGame !== gdata.gameId &&
               (isBattle ? !!(gdata.secrets && gdata.secrets[playerId])
                         : (gdata.targetPid === playerId || (gdata.hunters || []).indexOf(playerId) !== -1));
-            if (participates && !document.getElementById(screenId).classList.contains('active')) showScreen(screenId);
+            if (participates && !sakuRoomScreenIsActive(screenId)) showScreen(screenId);
             if (participates) { if (isBattle) updateBattle(); else updateRace(); }
             if (isHost && currentRoom.state === 'playing') { if (isBattle) battleWatchdog(); else raceWatchdog(); }
           }
@@ -2168,7 +2293,7 @@
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             const meP = (currentRoom.players || {})[playerId] || {};
             const participates = sn.gameId && meP.outInGame !== sn.gameId;
-            if (participates && !document.getElementById('snapshotScreen').classList.contains('active')) showScreen('snapshotScreen');
+            if (participates && !sakuRoomScreenIsActive('snapshotScreen')) showScreen('snapshotScreen');
             if (participates) updateSnapshot();
             if (isHost && currentRoom.state === 'playing') { snWatchdog(); ensureSnHostTimer(); }
           }
@@ -2176,13 +2301,13 @@
           const bg = currentRoom.bg || {};
           if (currentRoom.state === 'selection') {
             // brief "dealing" transit — Blur Guess has no pick phase
-            if (!document.getElementById('blurScreen').classList.contains('active')) showScreen('blurScreen');
+            if (!sakuRoomScreenIsActive('blurScreen')) showScreen('blurScreen');
             const st = document.getElementById('bgStatus'); if (st) st.textContent = 'Dealing the pictures…';
           }
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             const meP = (currentRoom.players || {})[playerId] || {};
             const participates = bg.gameId && meP.outInGame !== bg.gameId;
-            if (participates && !document.getElementById('blurScreen').classList.contains('active')) showScreen('blurScreen');
+            if (participates && !sakuRoomScreenIsActive('blurScreen')) showScreen('blurScreen');
             if (participates) updateBlur();
             if (isHost && currentRoom.state === 'playing') { blurWatchdog(); ensureBgHostTimer(); }
           }
@@ -2193,7 +2318,7 @@
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             const meP = (currentRoom.players || {})[playerId] || {};
             const participates = cn.gameId && meP.outInGame !== cn.gameId && !!cnTeamOf(playerId);
-            if (participates && !document.getElementById('codenamesScreen').classList.contains('active')) showScreen('codenamesScreen');
+            if (participates && !sakuRoomScreenIsActive('codenamesScreen')) showScreen('codenamesScreen');
             if (participates) updateCodenames();
             if (isHost && currentRoom.state === 'playing') cnWatchdog();
           }
@@ -2202,13 +2327,13 @@
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') {
             const meP = (currentRoom.players || {})[playerId] || {};
             const participates = hc.gameId && meP.outInGame !== hc.gameId;
-            if (participates && !document.getElementById('hotcoldScreen').classList.contains('active')) showScreen('hotcoldScreen');
+            if (participates && !sakuRoomScreenIsActive('hotcoldScreen')) showScreen('hotcoldScreen');
             if (participates) updateHotcold();
             else document.getElementById('hcEndScreen').classList.remove('show');
           }
         } else {
-          if (currentRoom.state === 'selection' && !document.getElementById('selectionScreen').classList.contains('active')) { showCharacterSelection(); }
-          if (currentRoom.state === 'playing' && !document.getElementById('gameScreen').classList.contains('active')) { startGame(); }
+          if (currentRoom.state === 'selection' && !sakuRoomScreenIsActive('selectionScreen')) { showCharacterSelection(); }
+          if (currentRoom.state === 'playing' && !sakuRoomScreenIsActive('gameScreen')) { startGame(); }
           if (currentRoom.state === 'playing' || currentRoom.state === 'finished') { updateGame(); }
         }
         try { sakuSyncEndGameBtn(); } catch (e) {} // ⏹ keep the host-only button in sync with the room
@@ -2558,7 +2683,7 @@
       const updates = {
         state: 'lobby', characters: null, selections: null, secrets: null, currentTurn: null,
         eliminations: null, winner: null, currentQuestion: null, questionHistory: null,
-        restarts: null, uc: null, br: null, rc: null, bg: null, hc: null, cn: null,
+        restarts: null, uc: null, br: null, rc: null, bg: null, sn: null, hc: null, cn: null,
         host: playerId
       };
           updates['players/' + playerId] = { id: playerId, ready: false, name: me.name || playerName, isHost: true, avatar: me.avatar || '' };
@@ -2644,13 +2769,14 @@
       return;
     }
       if (roomRef) {
+        const leavingRef=roomRef; roomRef=null; leavingRef.off();
         cancelDisconnectTracking();
         cancelQueueDisconnect();
         try { await database.ref('rooms/' + roomCode + '/players/' + playerId).remove(); } catch (e) {}
         try { await database.ref('rooms/' + roomCode + '/queue/' + playerId).remove(); } catch (e) {}
-        roomRef.off(); roomRef = null;
       }
       roomCode = null; isHost = false; currentRoom = null; imQueued = false;
+      if(kickRef){kickRef.off();kickRef=null;}
       clearSession();
       showScreen('homepageScreen'); // leaving a room always brings you back home
     }
@@ -2666,9 +2792,14 @@
       const btn = document.getElementById('deleteAccountBtn');
       btn.disabled = true;
       try {
-        await sakuAcctRef(sakuMyDcId()).remove();   // profile + stats + AniList link + avatar
+        if (!window.sakuSessionBridge) throw new Error('Service de compte indisponible');
+        await window.sakuSessionBridge.deleteAccount();   // V1 : supprime le compte Supabase (pièces, cartes, ventes) + données locales
         sakuSessionClear();
         currentAccount = null;
+        if (window.sakuProgressDetach) window.sakuProgressDetach();
+      if (window.sakuPlayerDetach) window.sakuPlayerDetach();
+      if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
         updateUserButton();
         try { sakuRenderDiscordBox(null); } catch (e) {}
         closeDeleteAccountModal();
@@ -2829,48 +2960,23 @@
       if (!publicRoomsRef) { startPublicRoomsWatch(); return; }
       publicRoomsRef.once('value').then(snap => { renderPublicRooms(snap.val() || {}); showNotification('Room list refreshed'); });
     }
+    let publicRoomsCache = {};
+    function filterPublicRooms(){renderPublicRooms(publicRoomsCache);}
     function renderPublicRooms(rooms) {
-      const list = document.getElementById('publicRoomsList');
-      if (!list) return;
-      const STATUS = { lobby: 'In the lobby', selection: 'Picking characters', playing: 'Game in progress', finished: 'Game ending' };
-      const SRC = { generic: 'Generic pool', favorites: 'AniList favorites', mix: 'Mixed pool' };
-      const entries = Object.entries(rooms)
-        .filter(([, r]) => r && r.players && Object.keys(r.players).length > 0)
-        .map(([code, r]) => {
-          const playerCount = Object.keys(r.players).length;
-          const maxP = r.maxPlayers || 2;
-          const queueCount = Object.keys(r.queue || {}).length;
-          return { code, r, playerCount, maxP, queueCount, joinable: (r.state === 'lobby' && playerCount < maxP) };
-        })
-        .filter(e => e.playerCount < e.maxP || e.queueCount < QUEUE_MAX) // hide rooms with a full queue
-        .sort((a, b) => (b.joinable - a.joinable) || ((b.r.lastActivity || 0) - (a.r.lastActivity || 0)));
-      if (entries.length === 0) {
-        list.innerHTML = '<p class="pub-empty">No public rooms open right now… create one and set it to Public!</p>';
-        return;
-      }
-      list.innerHTML = '';
-      entries.forEach(({ code, r, playerCount, maxP, queueCount, joinable }) => {
-        const players = Object.values(r.players || {});
-        const hostP = players.find(p => p.isHost) || players[0];
-        const names = players.slice(0, 4).map(p => (p.name || '?')).join(', ') + (players.length > 4 ? ' +' + (players.length - 4) : '');
-        let rules = '';
-        if (r.game === 'undercover') rules = 'max ' + maxP + ' · Mr. White ' + ((r.settings && r.settings.mrWhite) ? 'ON' : 'OFF') + ' · ' + (((r.settings || {}).ucCount || 1) > 1 ? (r.settings.ucCount + ' undercovers') : '1 undercover');
-        else if (r.game === 'battle') rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
-        else if (r.game === 'race') rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
-        else if (r.game === 'codenames') rules = '5×5 grid · 2 teams · max ' + maxP + ' · ' + SRC[(r.settings && r.settings.source) || 'generic'];
-        else rules = ((r.settings && r.settings.characterCount) || 24) + ' characters · ' + SRC[(r.settings && r.settings.source) || 'generic'];
-        const card = document.createElement('div');
-        card.className = 'public-room-card';
-        const btnLabel = joinable ? 'Join' : 'Join queue' + (queueCount ? ' (' + queueCount + ')' : '');
-        const btnCls = joinable ? 'success' : 'warning';
-        card.innerHTML =
-          `<div class="pub-top"><span class="pub-title">${ic(GAME_ICONS[r.game] || 'gamepad')} ${GAME_LABELS[r.game] || 'Game'}</span><span class="pub-status">${STATUS[r.state] || 'In the lobby'}</span></div>
-           <div class="pub-players">${ic('crown')} <b>${escapeHtml(String((hostP && hostP.name) || '?'))}</b> · ${ic('users')} <b>${playerCount}/${maxP}</b>${queueCount ? ' · queue ' + queueCount + ' waiting' : ''}</div>
-           <div class="pub-players pub-names">${escapeHtml(names)}</div>
-           <div class="pub-rules">${rules} · Code <b>${code}</b></div>
-           <button class="${btnCls} pub-join">${btnLabel}</button>`;
-        card.querySelector('.pub-join').addEventListener('click', () => joinRoomByCode(code));
-        list.appendChild(card);
+      publicRoomsCache=rooms||{};const list=document.getElementById('publicRoomsList');if(!list)return;
+      const tt=s=>window.t?t(s):s, input=document.getElementById('publicRoomsSearch'),select=document.getElementById('publicRoomsGameFilter');
+      const search=String(input&&input.value||'').trim().toLocaleLowerCase(),game=String(select&&select.value||'');
+      const names={guesswho:'Detective Showdown',undercover:'Undercover',battle:'Detective Royale',race:'Wanted!',blur:'Blur Guess',hotcold:'Cold Case',codenames:'Ninja Scrolls',snapshot:'Snapshot!'};
+      const states={lobby:'In the lobby',selection:'Picking characters',playing:'Game in progress',finished:'Game ending'};
+      const entries=Object.entries(publicRoomsCache).filter(([,r])=>r&&r.players&&Object.keys(r.players).length>0).map(([code,r])=>{const playerCount=Object.keys(r.players).length,maxP=r.maxPlayers||2,queueCount=Object.keys(r.queue||{}).length;return {code,r,playerCount,maxP,queueCount,joinable:r.state==='lobby'&&playerCount<maxP};}).filter(e=>e.joinable||e.queueCount<QUEUE_MAX).filter(e=>!game||e.r.game===game).filter(e=>!search||[e.code,names[e.r.game]||'',...Object.values(e.r.players).map(p=>p.name||'')].join(' ').toLocaleLowerCase().includes(search)).sort((a,b)=>(b.joinable-a.joinable)||((b.r.lastActivity||0)-(a.r.lastActivity||0)));
+      const count=document.getElementById('publicRoomsCount');if(count)count.textContent=String(entries.length);list.innerHTML='';
+      if(!entries.length){list.innerHTML='<p class="pub-empty">'+escapeHtml(tt(search||game?'No rooms match your search.':'No public rooms open right now.'))+'</p>';return;}
+      entries.forEach(({code,r,playerCount,maxP,queueCount,joinable})=>{
+        const players=Object.values(r.players||{}),host=players.find(p=>p.isHost)||players[0],namesText=players.slice(0,4).map(p=>p.name||'?').join(', ')+(players.length>4?' +'+(players.length-4):''),card=document.createElement('article');card.className='public-room-card';
+        const icon=['guesswho','undercover','battle','race','blur','hotcold','codenames','snapshot'].includes(r.game)?'game-'+r.game:'gamepad';
+        const button=joinable?tt('Join'):tt('Join queue')+(queueCount?' ('+queueCount+')':'');
+        card.innerHTML='<div class="pub-card-head"><span class="pub-game-icon">'+ic(icon)+'</span><span class="pub-title">'+escapeHtml(tt(names[r.game]||'Game'))+'</span><span class="pub-status '+(joinable?'is-open':'')+'">'+escapeHtml(tt(states[r.state]||'In the lobby'))+'</span></div><div class="pub-host">'+escapeHtml(tt('Host'))+' · <b>'+escapeHtml(String(host&&host.name||'?'))+'</b></div><div class="pub-names">'+escapeHtml(namesText)+'</div><div class="pub-card-bottom"><span class="pub-capacity">'+ic('user')+' '+playerCount+' / '+maxP+'</span><span class="pub-code">'+escapeHtml(tt('Code'))+' '+escapeHtml(String(code))+'</span></div>'+(queueCount?'<div class="pub-queue">'+queueCount+' '+escapeHtml(tt('in queue'))+'</div>':'')+'<button type="button" class="pub-join">'+escapeHtml(button)+' <span aria-hidden="true">→</span></button>';
+        card.querySelector('.pub-join').addEventListener('click',()=>joinRoomByCode(code));list.appendChild(card);
       });
     }
 
@@ -4192,6 +4298,7 @@
     function updateBlur() {
       const bg = (currentRoom && currentRoom.bg) || {};
       const players = currentRoom.players || {};
+      if(bg.phase==='reveal' && bg.gameId && bgParticipants().includes(playerId) && window.sakuProgressRound) window.sakuProgressRound('blur',bg.gameId,bg.roundIdx||0,!!(bg.found||{})[playerId]);
       const total = (bg.rounds || []).length;
       const idx = Math.min(bg.roundIdx || 0, Math.max(total - 1, 0));
       const ch = bgCurrentChar();
@@ -4632,6 +4739,7 @@
       const sn = (currentRoom && currentRoom.sn) || {};
       if (!sn.gameId) return;
       const players = currentRoom.players || {};
+      if(sn.phase==='reveal' && snParticipants().includes(playerId) && window.sakuProgressRound) window.sakuProgressRound('snapshot',sn.gameId,sn.roundIdx||0,!!(sn.found||{})[playerId]);
       const tt = (k) => (window.t ? t(k) : k);
       const rd = snCurrentRound() || {};
       const stage = sn.stage || 1;
@@ -4650,7 +4758,7 @@
       document.getElementById('snStageBadge').textContent = tt('Stills') + ' ' + stage + '/' + stageCount;
       updateSnapshotTimer();
       // the still board — one more frame pops in per stage, then ALL during the reveal (b111: slots grow to the ladder)
-      const shown = sn.phase === 'reveal' ? stageCount : Math.min(stage, stageCount);
+      const shown = (sn.phase === 'reveal'||sn.phase === 'over') ? stageCount : Math.min(stage, stageCount);
       const pics = (rd.pics || []);
       const shots = document.getElementById('snShots');
       while (shots.children.length < stageCount) { const d = document.createElement('div'); d.className = 'sn-slot'; d.innerHTML = '<img alt="">'; shots.appendChild(d); }
@@ -4665,8 +4773,8 @@
       shots.classList.toggle('n1', shown === 1);
       document.getElementById('snImgWrap').classList.toggle('revealed', sn.phase === 'reveal');
       const hintEl = document.getElementById('snHint');
-      hintEl.style.display = (sn.phase === 'reveal' || stage >= stageCount) ? 'block' : 'none'; // b111
-      hintEl.textContent = sn.phase === 'reveal' ? ('🎬 ' + (rd.n || '?')) : ('💡 ' + (rd.h || ''));
+      hintEl.style.display = (sn.phase === 'reveal' || sn.phase === 'over' || stage >= stageCount) ? 'block' : 'none'; // b111
+      hintEl.textContent = (sn.phase === 'reveal'||sn.phase === 'over') ? ('🎬 ' + (rd.n || '?')) : ('💡 ' + (rd.h || ''));
       // status line
       const st = document.getElementById('snStatus');
       const parts = snParticipants();
@@ -4689,8 +4797,8 @@
       const barOn = (sn.phase === 'playing' && iPart && !myFind);
       bar.style.display = barOn ? 'flex' : 'none';
       if (!barOn) hideSnSuggest();
-      if (updateSnapshot._lastRoundIdx !== (sn.roundIdx || 0)) { // new still → fresh typing box
-        updateSnapshot._lastRoundIdx = sn.roundIdx || 0;
+      if (updateSnapshot._lastGameId !== sn.gameId || updateSnapshot._lastRoundIdx !== (sn.roundIdx || 0)) { // new still → fresh typing box
+        updateSnapshot._lastGameId=sn.gameId; updateSnapshot._lastRoundIdx = sn.roundIdx || 0;
         const inp = document.getElementById('snGuessInput');
         if (inp && barOn) inp.value = '';
         if (updateSnapshot._lastRoundIdx > 0) hideSnSuggest();
@@ -5536,6 +5644,7 @@
       const sid = activeScreen ? activeScreen.id : '';
       if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen' && sid !== 'codenamesScreen' && sid !== 'snapshotScreen') { screen.classList.remove('show'); return; }
       const players = currentRoom.players || {};
+      if (window.sakuProgressMulti) window.sakuProgressMulti(kind, currentRoom);
       const title = document.getElementById('meTitle');
       const sub = document.getElementById('meSub');
       const list = document.getElementById('meList');
@@ -5770,7 +5879,7 @@
       const updates = {
         state: 'lobby', characters: null, selections: null, restarts: null, winner: null,
         secrets: null, currentTurn: null, eliminations: null, currentQuestion: null,
-        questionHistory: null, uc: null, br: null, rc: null, bg: null, hc: null, cn: null
+        questionHistory: null, uc: null, br: null, rc: null, bg: null, sn: null, hc: null, cn: null
       };
       Object.keys(currentRoom.players || {}).forEach(pid => {
         updates['players/' + pid + '/ready'] = false;
@@ -5780,7 +5889,7 @@
       touchActivity();
     }
     // game data node for the current multiplayer game (battle/race/blur)
-    const multiGd = (r) => { const rr = r || currentRoom; if (!rr) return {}; return rr.game === 'battle' ? (rr.br || {}) : rr.game === 'race' ? (rr.rc || {}) : rr.game === 'blur' ? (rr.bg || {}) : rr.game === 'codenames' ? (rr.cn || {}) : {}; };
+    const multiGd = (r) => { const rr = r || currentRoom; if (!rr) return {}; return rr.game === 'battle' ? (rr.br || {}) : rr.game === 'race' ? (rr.rc || {}) : rr.game === 'blur' ? (rr.bg || {}) : rr.game === 'snapshot' ? (rr.sn || {}) : rr.game === 'codenames' ? (rr.cn || {}) : {}; };
     async function returnToLobbyFromMulti() {
       const gd = multiGd();
       const inGame = currentRoom && (currentRoom.state === 'playing' || currentRoom.state === 'finished') && gd.gameId;
@@ -7347,6 +7456,7 @@
       const end = document.getElementById('hcEndScreen');
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
+      if (window.sakuProgressGame && hc.gameId && hcOrderOf().includes(playerId) && players[playerId] && players[playerId].outInGame !== hc.gameId) window.sakuProgressGame('hotcold', hc.gameId, winner === playerId);
       const totals = hc.totals || {};
       const ptsMode = hcGuessMode() !== 'individual'; // 🎯 shared guesses score POINTS
       const title = document.getElementById('hcWinTitle');
@@ -7567,6 +7677,7 @@
 
       await database.ref('rooms/' + roomCode).update({
         state: 'selection',
+        progressGameId: Date.now(),
         characters: selectedChars,
         selections: {},
         currentTurn: null,
@@ -9121,3 +9232,304 @@
         database.ref('rooms/' + roomCode + '/queue/' + playerId).remove();
       }
     });
+
+
+// Right-hand navigation: keep the current room connected just like browser navigation.
+function sakuNavOpen() {
+  sakuPreferencesSync(); sakuSyncGfx();
+  const panel = document.getElementById('sideNavigation');
+  document.getElementById('navBackdrop').hidden = false;
+  panel.hidden = false;
+  panel.setAttribute('aria-hidden', 'false');
+  document.getElementById('navMenuToggle').setAttribute('aria-expanded', 'true');
+  panel.querySelector('.side-nav-close').focus();
+}
+function sakuNavClose(restoreFocus = true) {
+  const panel = document.getElementById('sideNavigation');
+  panel.hidden = true;
+  panel.setAttribute('aria-hidden', 'true');
+  document.getElementById('navBackdrop').hidden = true;
+  const toggle = document.getElementById('navMenuToggle');
+  toggle.setAttribute('aria-expanded', 'false');
+  if (restoreFocus) toggle.focus();
+}
+function sakuNavGo(destination) {
+  sakuNavClose(false);
+  if (destination === 'host') showHostRoom();
+  else if (destination === 'join') showJoinRoom();
+  else if (destination === 'rules') showGamesMenu();
+  else if (destination === 'encyclopedia') encOpen();
+  else if (destination === 'support') showScreen('supportScreen');
+  else if (destination === 'account') showAccountPage();
+  else if (destination === 'settings') showPreferencesPage();
+  else if (destination === 'summon') { showScreen('summonScreen'); window.scrollTo(0, 0); if(window.portalDashboardRefresh) window.portalDashboardRefresh(); if(window.sakuPortalShowcaseRefresh) window.sakuPortalShowcaseRefresh(); if(window.sakuPortalSummonEnter) window.sakuPortalSummonEnter(); requestAnimationFrame(summonUpdateAtmosphere); }
+  else if (destination === 'cardhome') showCardHome();
+  else if (destination === 'showcase') showShowcase();
+  else if (destination === 'collection') showCollection();
+  else if (destination === 'market') showMarket();
+  else if (destination === 'quests') showQuests();
+}
+document.addEventListener('keydown', function (event) {
+  const panel = document.getElementById('sideNavigation');
+  if (!panel || panel.hidden) return;
+  if (event.key === 'Escape') { event.preventDefault(); sakuNavClose(); }
+  else if (event.key === 'Tab') {
+    const controls = Array.from(panel.querySelectorAll('button:not([disabled]), summary, select:not([disabled])')).filter(el => el.getClientRects().length);
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
+});
+
+function sakuChooseLanguage(lang) {
+  sakuSetLang(lang);
+  const picker = document.getElementById('navLanguagePicker');
+  picker.open = false;
+  document.getElementById('navLanguageButton').focus();
+}
+
+// A circular, visual-only carousel: input controls its position directly.
+let summonPosition = 0;
+let summonFrame = 0, summonSettleTimer = 0, summonWheelOrigin = null;
+let summonTouchX = null, summonTouchY = null, summonTouchPosition = 0;
+let summonTouchMoved = false, summonIgnoreClickUntil = 0;
+function summonNormalize(n) { return ((n % 4) + 4) % 4; }
+function summonUpdateAtmosphere() {
+  const screen = document.getElementById('summonScreen');
+  if (!screen || !screen.classList.contains('active')) return;
+  const slides = Array.from(screen.querySelectorAll('.summon-slide'));
+  const backgrounds = Array.from(screen.querySelectorAll('.summon-bg'));
+  const captions = Array.from(screen.querySelectorAll('.summon-caption'));
+  const dots = Array.from(screen.querySelectorAll('.summon-pagination button'));
+  const stage = screen.querySelector('.summon-stage');
+  if (slides.length !== 4 || !stage) return;
+  const width = stage.clientWidth;
+  const step = window.innerWidth <= 700 ? Math.min(width * .39, 220) : Math.min(Math.max(width * .31, 220), 365);
+  const nearest = summonNormalize(Math.round(summonPosition));
+  slides.forEach((slide, i) => {
+    const distance = ((i - summonPosition + 2) % 4 + 4) % 4 - 2;
+    const away = Math.abs(distance), near = Math.min(away, 1);
+    const scale = 1 - .30 * near - .10 * Math.max(0, away - 1);
+    const opacity = away <= 1 ? 1 - .48 * away : Math.max(0, .52 * (2 - away));
+    slide.style.transform = `translate(calc(-50% + ${distance * step}px), -50%) scale(${scale})`;
+    slide.style.opacity = String(opacity);
+    slide.style.filter = 'none';
+    slide.style.zIndex = String(10 - Math.round(away * 3));
+    slide.style.pointerEvents = away < 1.45 ? 'auto' : 'none';
+    slide.classList.toggle('is-active', i === nearest && away < .025 && !summonTouchMoved);
+    const info = slide.querySelector('.portal-machine-info'); if (info) { info.tabIndex = i === nearest && away < .025 ? 0 : -1; info.disabled = !(i === nearest && away < .025); }
+    slide.querySelectorAll('.portal-machine-buy, .portal-machine-resume').forEach(button=>{let active=i===nearest && away<.025 && !summonTouchMoved;button.disabled=!active;button.tabIndex=active?0:-1;});
+    slide.querySelector('button').setAttribute('aria-current', String(i === nearest));
+    slide.querySelector('button').tabIndex = away < 1.45 ? 0 : -1;
+    captions[i].hidden = i !== nearest;
+    dots[i].setAttribute('aria-current', String(i === nearest));
+  });
+  const left = Math.floor(summonPosition), t = summonPosition - left;
+  const a = summonNormalize(left), b = summonNormalize(left + 1);
+  backgrounds.forEach(bg => { bg.style.opacity = '0'; });
+  if (a < b) { backgrounds[a].style.opacity = '1'; backgrounds[b].style.opacity = String(t); }
+  else { backgrounds[b].style.opacity = '1'; backgrounds[a].style.opacity = String(1 - t); }
+}
+function summonCancelMotion() {
+  if (summonFrame) cancelAnimationFrame(summonFrame);
+  summonFrame = 0; clearTimeout(summonSettleTimer); summonWheelOrigin = null;
+}
+function summonAnimateTo(target) {
+  summonCancelMotion();
+  const from = summonPosition;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced || Math.abs(target - from) < .001) { summonPosition = target; summonUpdateAtmosphere(); return; }
+  const duration = 380 + Math.min(220, Math.abs(target - from) * 100), start = performance.now();
+  const frame = now => {
+    const p = Math.min(1, (now - start) / duration), ease = 1 - Math.pow(1 - p, 3);
+    summonPosition = from + (target - from) * ease;
+    summonUpdateAtmosphere();
+    if (p < 1) summonFrame = requestAnimationFrame(frame);
+    else { summonPosition = summonNormalize(target); summonFrame = 0; summonUpdateAtmosphere(); }
+  };
+  summonFrame = requestAnimationFrame(frame);
+}
+function summonSelect(index) {
+  if (Date.now() < summonIgnoreClickUntil) return;
+  // Shortest circular path: Cinema and Basic are adjacent, not opposite ends.
+  const distance = ((index - summonPosition + 2) % 4 + 4) % 4 - 2;
+  summonAnimateTo(summonPosition + distance);
+}
+function summonStep(step) { summonAnimateTo(Math.round(summonPosition) + step); }
+(function setupSummonCarousel() {
+  const init = () => {
+    const carousel = document.getElementById('summonCarousel');
+    if (!carousel) return;
+    carousel.addEventListener('wheel', event => {
+      if (event.ctrlKey) return;
+      const vertical = Math.abs(event.deltaY) > Math.abs(event.deltaX);
+      // On a very short screen, keep page scrolling available for accessibility.
+      if (vertical && window.innerHeight < 650) return;
+      let delta = vertical ? event.deltaY : event.deltaX;
+      if (event.deltaMode === 1) delta *= 16;
+      else if (event.deltaMode === 2) delta *= carousel.clientWidth;
+      if (Math.abs(delta) < .5) return;
+      event.preventDefault();
+      const origin = summonWheelOrigin === null ? Math.round(summonPosition) : summonWheelOrigin;
+      summonCancelMotion(); summonWheelOrigin = origin; summonTouchMoved = false;
+      summonPosition += Math.max(-.5, Math.min(.5, delta / 430));
+      summonUpdateAtmosphere();
+      summonSettleTimer = setTimeout(() => {
+        let target = Math.round(summonPosition);
+        if (target === origin && Math.abs(summonPosition - origin) > .12) target += Math.sign(summonPosition - origin);
+        summonWheelOrigin = null; summonAnimateTo(target);
+      }, 160);
+    }, {passive:false});
+    carousel.addEventListener('touchstart', event => {
+      const t = event.touches[0]; summonTouchX = t.clientX; summonTouchY = t.clientY;
+      summonTouchPosition = summonPosition; summonTouchMoved = false; summonCancelMotion();
+    }, {passive:true});
+    carousel.addEventListener('touchmove', event => {
+      if (summonTouchX === null) return;
+      const t = event.touches[0], dx = t.clientX - summonTouchX, dy = t.clientY - summonTouchY;
+      if (!summonTouchMoved && (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy) * 1.2)) return;
+      summonTouchMoved = true;
+      const stage = document.querySelector('.summon-stage');
+      const step = window.innerWidth <= 700 ? Math.min(stage.clientWidth * .39, 220) : Math.min(Math.max(stage.clientWidth * .31, 220), 365);
+      summonPosition = summonTouchPosition - dx / step; summonUpdateAtmosphere();
+    }, {passive:true});
+    carousel.addEventListener('touchend', event => {
+      if (summonTouchX === null) return;
+      const dx = event.changedTouches[0].clientX - summonTouchX;
+      summonTouchX = summonTouchY = null;
+      if (summonTouchMoved) {
+        summonTouchMoved = false; summonIgnoreClickUntil = Date.now() + 500;
+        let target = Math.round(summonPosition);
+        if (Math.abs(dx) > 35 && target === Math.round(summonTouchPosition)) target += dx < 0 ? 1 : -1;
+        summonAnimateTo(target);
+      }
+    }, {passive:true});
+    carousel.addEventListener('touchcancel', () => { summonTouchX = summonTouchY = null; summonTouchMoved = false; summonAnimateTo(Math.round(summonPosition)); });
+    carousel.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); summonStep(event.key === 'ArrowRight' ? 1 : -1); }
+    });
+    window.addEventListener('resize', summonUpdateAtmosphere);
+    summonUpdateAtmosphere();
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+// Dedicated account page reuses the existing account/session operations.
+function showAccountPage() {
+  showScreen('accountScreen');
+  sakuAccountRender();
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
+function sakuAccountRender() {
+  const screen = document.getElementById('accountScreen'); if (!screen) return;
+  const signed = !!currentAccount;
+  if (window.sakuProgressRender) window.sakuProgressRender();
+  const put = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
+  const tr = text => typeof t === 'function' ? t(text) : text;
+  put('accountPageName', playerName);
+  put('accountPageStatus', tr(signed ? 'Signed in' : 'Guest'));
+  put('accountPageIntro', tr(signed ? 'Your Sakugame profile is linked to Discord.' : 'Your progress stays in this browser while you play as a guest.'));
+  put('accountPageDiscordNote', tr(signed ? 'Your profile is linked to your Discord account.' : 'Sign in to keep your profile across devices.'));
+  put('accountPageAniNote', signed && currentAccount.anilist ? tr('Linked AniList account:') + ' ' + currentAccount.anilist : tr(signed ? 'Link AniList to use your anime lists in games.' : 'Sign in to link an AniList account.'));
+  put('accountPageNameHint', tr(signed ? '3–20 letters, numbers or underscores.' : 'At least 2 characters, up to 20.'));
+  document.getElementById('accountPageNameInput').value = playerName;
+  document.getElementById('accountPageLogin').hidden = signed;
+  document.getElementById('accountPageLogout').hidden = !signed;
+  document.getElementById('accountPageAvatarBtn').hidden = !signed;
+  document.getElementById('accountPageWatchSettings').hidden = !signed;
+  loadWatchStatusesIntoUI();
+  document.getElementById('accountPageAniForm').hidden = !signed;
+  document.getElementById('accountPageAniInput').value = signed ? (currentAccount.anilist || '') : '';
+  const holder = document.getElementById('accountPageAvatar');
+  const url = myAvatar();
+  holder.innerHTML = url ? '<img alt="" src="' + escapeHtml(String(url)) + '">' : '<svg class="ic"><use href="#i-user"/></svg>';
+  try { setNsfwSwitchStates(); } catch (e) {}
+}
+async function sakuAccountSaveName(event) {
+  event.preventDefault();
+  const input = document.getElementById('accountPageNameInput');
+  const name = input.value.trim();
+  if (currentAccount && !/^[A-Za-z0-9_]{3,20}$/.test(name)) { showNotification(t('Username: 3-20 characters, letters, numbers and _ only.')); return; }
+  if (!currentAccount && (name.length < 2 || name.length > 20)) { showNotification(t('Please enter a valid username (at least 2 characters)')); return; }
+  if (currentAccount) await changeAccountUsername(name);
+  else { document.getElementById('newUsernameInput').value = name; await confirmUsernameChange(); }
+  sakuAccountRender();
+}
+async function sakuAccountPageLogout() { await logoutAccount(); sakuAccountRender(); }
+function sakuAccountAdvanced() { openAuthModal(); switchAcctTab('account'); }
+
+async function sakuAccountSyncAniList(event) {
+  event.preventDefault();
+  if (!currentAccount) return;
+  document.getElementById('anilistSyncInput').value = document.getElementById('accountPageAniInput').value;
+  await saveAnilistSync();
+  sakuAccountRender();
+}
+
+/* Settings page shares the same preferences as the compact side menu. */
+function sakuPreferencesSync() {
+  const lang=(window.SAKU_I18N && window.SAKU_I18N.lang)||'en';
+  let gfx='high',bar='bottom';
+  try { gfx=localStorage.getItem('saku-graphics')||'high'; bar=localStorage.getItem('saku-barpos')||'bottom'; } catch(e) {}
+  document.querySelectorAll('[data-pref-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefLang===lang)));
+  document.querySelectorAll('[data-pref-gfx]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefGfx===gfx)));
+  document.querySelectorAll('[data-pref-bar]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefBar===bar)));
+}
+function showPreferencesPage() { showScreen('preferencesScreen'); sakuPreferencesSync(); }
+window.addEventListener('saku-lang-change',sakuPreferencesSync);
+
+/* Home game selector: selecting does not create a room until confirmed. */
+let sakuHomeSelectedGame='guesswho';
+const SAKU_HOME_GAMES={
+ guesswho:{title:'Detective Showdown',icon:'game-guesswho',players:'2 players',desc:'Ask questions to find your opponent’s character.'},
+ undercover:{title:'Undercover',icon:'game-undercover',players:'3–12 players',desc:'Give clues and find the undercover player.'},
+ battle:{title:'Detective Royale',icon:'game-battle',players:'3–12 players',desc:'Find the secret characters of the other players.'},
+ race:{title:'Wanted!',icon:'game-race',players:'3–12 players',desc:'Race to identify the target’s character.'},
+ blur:{title:'Blur Guess',icon:'game-blur',players:'Solo or up to 12',desc:'Recognize an image as the blur disappears.'},
+ hotcold:{title:'Cold Case',icon:'game-hotcold',players:'2–12 players',desc:'Follow the clues to find the hidden character.'},
+ codenames:{title:'Ninja Scrolls',icon:'game-codenames',players:'4–12 players',desc:'Give one-word clues to guide your team.'},
+ snapshot:{title:'Snapshot!',icon:'game-snapshot',players:'Solo or up to 12',desc:'Identify an anime from its images.'}
+};
+function sakuHomeGameSelect(key){
+ const g=SAKU_HOME_GAMES[key];if(!g)return;sakuHomeSelectedGame=key;
+ document.querySelectorAll('[data-home-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.homeGame===key)));
+ document.getElementById('homeGameIcon').setAttribute('href','#i-'+g.icon);
+ document.getElementById('homeGameName').textContent=g.title;
+ document.getElementById('homeGamePlayers').textContent=typeof t==='function'?t(g.players):g.players;
+ document.getElementById('homeGameDesc').textContent=typeof t==='function'?t(g.desc):g.desc;
+}
+function sakuHomeGameHost(){showHostRoom();const select=document.getElementById('gameSelect');if(select){select.value=sakuHomeSelectedGame;onGameSelectChange();}}
+function sakuHomeGameRules(){openHowTo(sakuHomeSelectedGame);}
+function sakuCardHomeRefresh(){
+ const el=document.getElementById('cardHomeOwned');if(!el)return;
+ try {
+  if(typeof GENERIC_CHARACTERS==='undefined' || !GENERIC_CHARACTERS.length){el.textContent='—';if(window.sakuDataReady)window.sakuDataReady.then(function(){if(document.getElementById('homepageScreen').classList.contains('active'))sakuCardHomeRefresh();}).catch(function(){});return;}
+  if(!cardState)cardsLoad();cardBuildPool();
+  sakuIncludeOwnedCards();
+  const owned=Object.keys(cardState.cards || {}).filter(function(id){return !!cardPoolById[id] && cardState.cards[id]>0;});
+  el.textContent=String(owned.length);
+  const preview=document.getElementById('cardHomePreview');
+  if(preview){
+   // Shuffle within each rarity; fill the second slot from the next tier if necessary.
+   const buckets={}; owned.map(id=>cardPoolById[id]).forEach(c=>{const r=CARD_RARITY_ORDER.indexOf(c.rarity);(buckets[r]||(buckets[r]=[])).push(c);});
+   const cards=[];Object.keys(buckets).map(Number).sort((a,b)=>b-a).forEach(r=>{const a=buckets[r];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}for(const c of a){if(cards.length<2)cards.push(c);}});
+   preview.innerHTML=cards.map(c=>'<span class="card-home-preview-card">'+((c.edition==='strongest'||c.edition==='hoshi')&&window.sakuStrongestCard?window.sakuStrongestCard(c,true):window.sakuBasicCard(c,true,{image:cardThumb(c.image)}))+'</span>').join('');
+   if(window.sakuBasicObserve)window.sakuBasicObserve(preview);
+   preview.classList.toggle('empty',!cards.length);
+  }
+ } catch(e) { el.textContent='—'; }
+}
+function showCardHome(){if(matchMedia('(max-width:900px)').matches){sakuMobileGo('cards');return;}if(!document.getElementById('homepageScreen').classList.contains('active'))showScreen('homepageScreen');sakuCardHomeRefresh();requestAnimationFrame(()=>document.querySelector('#homepageScreen .card-home')?.scrollIntoView({behavior:'smooth',block:'start'}));}
+window.addEventListener('saku-lang-change',function(){sakuHomeGameSelect(sakuHomeSelectedGame);});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){sakuHomeGameSelect(sakuHomeSelectedGame);});else sakuHomeGameSelect(sakuHomeSelectedGame);
+
+window.sakuHomeSwitch=function(direction){if(direction>0)showCardHome();else goHome();};
+
+if(window.sakuDataReady)window.sakuDataReady.then(()=>{if(document.getElementById('homepageScreen').classList.contains('active'))sakuCardHomeRefresh();}).catch(()=>{});
+
+/* Mobile primary navigation: the two home sections are separate on phones only. */
+(function(){let active='games';const cardScreens=new Set(['collectionScreen','encyclopediaScreen','summonScreen','showcaseScreen','marketScreen']);const gameScreens=new Set(['hostRoomScreen','joinRoomScreen','gamesMenuScreen','lobbyScreen','selectionScreen','spectateScreen','gameScreen','undercoverScreen','battleScreen','raceScreen','blurScreen','snapshotScreen','codenamesScreen','hotcoldScreen']);function mark(section){active=section;document.body.classList.toggle('mobile-cards-home',section==='cards');document.querySelectorAll('#mobilePrimaryNav [data-mobile-destination]').forEach(b=>{if(b.dataset.mobileDestination===section)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});}
+window.sakuMobileScreenChanged=function(id){if(cardScreens.has(id))mark('cards');else if(gameScreens.has(id))mark('games');else if(id==='homepageScreen')mark(active);};
+window.sakuMobileGo=function(section){if(!['games','cards'].includes(section))return;if(typeof sakuNavClose==='function')sakuNavClose(false);mark(section);showScreen('homepageScreen');if(section==='cards'&&typeof sakuCardHomeRefresh==='function')sakuCardHomeRefresh();window.scrollTo({top:0,behavior:'auto'});};
+window.sakuMobileBrandHome=function(){if(matchMedia('(max-width:900px)').matches)sakuMobileGo('games');else goHome();};
+})();
