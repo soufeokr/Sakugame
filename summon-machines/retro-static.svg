@@ -1,0 +1,736 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="portal-svg basic-machine" viewBox="0 0 300 510" width="300" height="510" role="img" aria-label="Distributeur RETRO — ANIMÉS · AVANT 2000"><style><![CDATA[
+.featured-card { display:none !important; }
+
+.slot[hidden] { display:none !important; }
+.strong-machine .mpname { font-size:19px; letter-spacing:.08em; fill:#fff1d4; }
+.strong-machine .mpuni { font-size:10px; letter-spacing:.14em; fill:#d3b985; }
+.edition-card { background:#0d0c0b; border:1px solid #56472c; border-radius:16px;
+  padding:24px; display:flex; flex-direction:column; align-items:center; }
+.edition-card .portal-svg { width:min(300px,100%); height:auto; }
+.edition-card figcaption { text-align:center; color:#cbbb9c; font-size:.8rem; line-height:1.6; margin-top:12px; }
+:root { --bg:#05080f; --panel:#0a0e17; --line:rgba(255,255,255,.08); --text:#eaf2ff;
+        --muted:#7f8ea8; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text);
+       font-family:Outfit,"Segoe UI",system-ui,-apple-system,sans-serif; padding:26px 22px 40px; }
+.wrap { max-width:1180px; margin:0 auto; }
+header { text-align:center; margin:0 0 26px; }
+h1 { font-size:1.5rem; margin:0 0 6px; letter-spacing:.4px; }
+.sub { color:var(--muted); font-size:.88rem; margin:0; line-height:1.6; }
+h2 { font-size:1.05rem; margin:0 0 4px; letter-spacing:.3px; }
+h2 small { display:block; color:var(--muted); font-size:.74rem; font-weight:600;
+  letter-spacing:.02em; margin-top:4px; }
+section { margin:0 0 30px; }
+.shead { text-align:center; margin:0 0 18px; }
+.lead { max-width:900px; margin:0 auto 20px; color:var(--muted); font-size:.82rem;
+  line-height:1.75; text-align:center; }
+.lead b { color:var(--text); }
+
+/* ---- la comparaison, gardee pour memoire ---- */
+.cmp { display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+@media (max-width:900px) { .cmp { grid-template-columns:1fr; } }
+.cell { background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:22px 20px; display:flex; flex-direction:column; align-items:center; }
+.cell > figcaption { margin:16px 0 0; text-align:center; }
+.cell h3 { font-size:1rem; margin:0 0 8px; }
+.cell ul { margin:0; padding:0; list-style:none; text-align:left; font-size:.78rem;
+  color:var(--muted); line-height:1.75; }
+.cell li { padding-left:16px; position:relative; }
+.cell li::before { content:"\2014"; position:absolute; left:0; color:#3d4a63; }
+.cell li b { color:var(--text); }
+.tag { display:inline-block; font:800 .62rem/1 Outfit,sans-serif; letter-spacing:.16em;
+  text-transform:uppercase; padding:5px 9px; border-radius:5px; margin:0 0 12px; }
+.tag.a { background:rgba(126,230,255,.14); color:#7ee6ff; }
+.tag.b { background:rgba(255,138,76,.14); color:#ff8a4c; }
+.tag.off { background:rgba(127,142,168,.14); color:#8fa3b8; }
+
+/* ---- la gamme ---- */
+.range { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+.rcell { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.rcell figcaption { text-align:center; }
+.rcell .rn { font:800 .92rem/1 "Arial Narrow","Helvetica Neue Condensed",
+  "Liberation Sans Narrow",system-ui,sans-serif; letter-spacing:.5px; }
+.rcell .ru { color:var(--muted); font-size:.68rem; font-weight:700; letter-spacing:.12em;
+  text-transform:uppercase; margin-top:5px; }
+
+.portal-svg { border-radius:6px; display:block; max-width:100%; height:auto; }
+.cell .portal-svg { width:min(300px, 100%); height:auto; }
+.anat .portal-svg { width:min(560px, 100%); height:auto; }
+@media (max-width:640px) { .rcell .portal-svg { width:min(300px, 82vw); } }
+
+/* ---- les cartes, telles quelles, dans la vitrine ---- */
+.chud { fill:#eaf2ff; font-size:8.5px; font-weight:700; letter-spacing:1.6px; opacity:.85;
+        font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+.cname { fill:#fff; font-size:16px; font-weight:800; letter-spacing:.6px;
+         font-family:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",
+                    "Franklin Gothic Medium",system-ui,sans-serif; }
+.cseries { fill:#8fa3b8; font-size:9px; font-weight:700; letter-spacing:1.2px; }
+.cnum { fill:#fff; font-size:21px; font-weight:800; letter-spacing:1.6px;
+        font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+.cletter { fill:#fff; font-size:27px; font-weight:900; letter-spacing:0;
+           font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+.corbit { fill:none; stroke-width:3.4; stroke-linecap:round;
+  stroke-dasharray:42 1168; opacity:0; animation:sakOrbit 7s linear infinite; }
+@keyframes sakOrbit {
+  0%   { stroke-dashoffset: 0;     opacity: 0; }
+  5%   { opacity: 1; }
+  24%  { stroke-dashoffset: -1210; opacity: 1; }
+  28%  { opacity: 0; }
+  100% { stroke-dashoffset: -1210; opacity: 0; }
+}
+
+/* ---- la machine ---- */
+.mpname { fill:#fff; font-size:25px; font-weight:900; letter-spacing:.04em;
+  font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+.mpuni { fill:#c9d6ea; font-size:8.6px; font-weight:700; letter-spacing:.16em;
+  font-family:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",
+             system-ui,sans-serif; }
+.mplab { fill:#8fa3b8; font-size:7.6px; font-weight:700; letter-spacing:.2em;
+  text-transform:uppercase; font-family:"Arial Narrow","Helvetica Neue Condensed",
+  "Liberation Sans Narrow",system-ui,sans-serif; }
+.mprate { font-size:10px; font-weight:900; font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+.mppct { fill:#c9d6ea; font-size:8px; font-weight:700;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+.mpsm { fill:#8fa3b8; font-size:7.4px; font-weight:700; letter-spacing:.18em;
+  font-family:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",
+             system-ui,sans-serif; }
+.mpclock { fill:#e8c469; font-size:15px; font-weight:800;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+.mpcost { fill:#fff; font-size:14px; font-weight:900;
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+.mpgo { fill:#fff; font-size:14px; font-weight:800; letter-spacing:.12em;
+  font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+.anlab { fill:#a9bad2; font-size:8.6px; font-weight:700; letter-spacing:.06em;
+  font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+
+/* ---- la boite, direction ecartee ---- */
+.bxname { fill:#fff; font-size:22px; font-weight:900; letter-spacing:.06em;
+  font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+.bxuni { fill:#c9d6ea; font-size:9px; font-weight:700; letter-spacing:.18em;
+  font-family:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",
+             system-ui,sans-serif; }
+.bxfeat { fill:#fff; font-size:8.6px; font-weight:800; letter-spacing:.08em;
+  font-family:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",
+             system-ui,sans-serif; }
+.bxlet { font-size:8px; font-weight:800; letter-spacing:.16em;
+  font-family:"Arial Narrow","Helvetica Neue Condensed","Liberation Sans Narrow",
+             system-ui,sans-serif; }
+.bxgo { fill:#fff; font-size:11px; font-weight:800; letter-spacing:.2em;
+  font-family:Outfit,"Segoe UI",system-ui,sans-serif; }
+
+@media (prefers-reduced-motion: reduce) {
+  .corbit { animation:none; stroke-dashoffset:-605; opacity:.9; }
+}
+
+.slot[hidden] { display:none !important; }
+.strong-machine .mpname { font-size:19px; letter-spacing:.08em; fill:#fff1d4; }
+.strong-machine .mpuni { font-size:10px; letter-spacing:.14em; fill:#d3b985; }
+.edition-card { background:#0d0c0b; border:1px solid #56472c; border-radius:16px;
+  padding:24px; display:flex; flex-direction:column; align-items:center; }
+.edition-card .portal-svg { width:min(300px,100%); height:auto; }
+.edition-card figcaption { text-align:center; color:#cbbb9c; font-size:.8rem; line-height:1.6; margin-top:12px; }
+/* Rotation automatique des cartes de la vitrine. Chaque cycle est décalé
+   d'un tiers : milieu -> gauche -> droite -> milieu. */
+ .featured-card { animation:showcaseCarousel 16s ease-in-out infinite; transform-origin:0 0; }
+.featured-0 { animation-delay:-4s; }
+.featured-1 { animation-delay:0s; }
+.featured-2 { animation-delay:-12s; }
+.featured-3 { animation-delay:-8s; }
+@keyframes showcaseCarousel {
+  0%, 12%, 100% { opacity:1; transform:translate(150px,214px) scale(.355) translate(-130px,-372px); }
+  6% { opacity:1; transform:translate(150px,212px) scale(.355) translate(-130px,-372px); }
+  18% { opacity:1; transform:translate(150px,213px) scale(.355) translate(-130px,-372px); }
+  25%, 43% { opacity:1; transform:translate(72px,214px) scale(.235) translate(-130px,-372px); }
+  49% { opacity:1; transform:translate(-35px,214px) scale(.235) translate(-130px,-372px); }
+  50% { opacity:0; transform:translate(-35px,214px) scale(.235) translate(-130px,-372px); }
+  51%, 68% { opacity:0; transform:translate(335px,214px) scale(.235) translate(-130px,-372px); }
+  69% { opacity:1; transform:translate(335px,214px) scale(.235) translate(-130px,-372px); }
+  75%, 93% { opacity:1; transform:translate(228px,214px) scale(.235) translate(-130px,-372px); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .featured-card { animation:none; }
+  .featured-3 { display:none; }
+}
+/* ---- la scene de convocation : une seule place, 300 x 440 ---- */
+[hidden] { display:none !important; }
+.stagewrap { position:relative; width:300px; height:510px; margin:0 auto; }
+.machine { position:absolute; inset:0; transition:opacity .42s ease, transform .42s ease; }
+.machine .portal-svg { width:100%; height:100%; display:block; }
+/* le distributeur tremble quand on appuie */
+.machine.shake { animation:mShake .68s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes mShake {
+  0%,100% { transform:translate(0,0) rotate(0); }
+  10% { transform:translate(-3px,1px) rotate(-.5deg); }
+  20% { transform:translate(4px,-2px) rotate(.6deg); }
+  30% { transform:translate(-5px,2px) rotate(-.8deg); }
+  40% { transform:translate(5px,-1px) rotate(.6deg); }
+  50% { transform:translate(-4px,2px) rotate(-.7deg); }
+  60% { transform:translate(4px,-2px) rotate(.8deg); }
+  70% { transform:translate(-3px,1px) rotate(-.5deg); }
+  80% { transform:translate(2px,-1px) rotate(.3deg); }
+  90% { transform:translate(-1px,1px) rotate(-.2deg); }
+}
+.machine.away { opacity:0; transform:scale(.92); pointer-events:none; }
+/* le sachet lui-meme se recroqueville en meme temps que sa colonne disparait */
+.openwrap.bye { opacity:0; transform:scale(.7) translateY(-14px); }
+
+/* le bouton : la zone cliquable posee sur le bouton dessine par la machine */
+.invoke-btn { position:absolute; left:28px; top:368px; width:119px; height:30px;
+  border:0; padding:0; margin:0; background:transparent; cursor:pointer;
+  border-radius:10px; color:transparent; font:inherit; }
+.invoke-btn.five { left:153px; }
+.invoke-btn:hover:not(:disabled) { background:rgba(255,255,255,.11); }
+.invoke-btn:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+.invoke-btn:disabled { cursor:default; }
+
+/* Le booster descend DANS la fenêtre du bac, puis attend le joueur. */
+.tray-window { position:absolute; left:65px; top:411px; width:170px; height:72px; overflow:hidden; pointer-events:none; }
+.packdrop { position:absolute; left:60px; top:0; width:238px; height:365px;
+  transform-origin:top left; opacity:0; pointer-events:none; }
+.packdrop.fall { animation:packFall .85s cubic-bezier(.22,.7,.3,1) both; }
+.tray-window.multi .packdrop { left:10px; }
+.tray-window.multi .packdrop:nth-child(2) { left:35px; }
+.tray-window.multi .packdrop:nth-child(3) { left:60px; }
+.tray-window.multi .packdrop:nth-child(4) { left:85px; }
+.tray-window.multi .packdrop:nth-child(5) { left:110px; }
+.tray-window.multi .packdrop:nth-child(2).fall { animation-delay:.24s; }
+.tray-window.multi .packdrop:nth-child(3).fall { animation-delay:.48s; }
+.tray-window.multi .packdrop:nth-child(4).fall { animation-delay:.72s; }
+.tray-window.multi .packdrop:nth-child(5).fall { animation-delay:.96s; }
+.tray-window.collecting .packdrop:not(:first-child) { opacity:0; transition:opacity .3s; animation:none; }
+.tray-window.multi .packdrop.collecting { animation-name:packCollectMulti; }
+@keyframes packCollectMulti { from { opacity:1; transform:translateY(0) scale(.20); }
+ to { opacity:1; transform:translate(-44px,-339px) scale(1); } }
+.tray-window.collecting { overflow:visible; }
+.packdrop.collecting { animation:packCollect .7s cubic-bezier(.2,.7,.25,1) forwards; }
+@keyframes packCollect { from { opacity:1; transform:translateY(0) scale(.20); }
+  to { opacity:1; transform:translate(-94px,-339px) scale(1); } }
+.quick-toggle { display:block; margin:16px auto 4px; padding:10px 16px; border-radius:9px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text); cursor:pointer;
+  font:700 .75rem/1 Outfit,sans-serif; letter-spacing:.04em; }
+.quick-toggle[aria-pressed="true"] { border-color:#e8c469; color:#f0d79a; background:#27210f; }
+.quick-toggle:focus-visible { outline:2px solid #e8c469; outline-offset:3px; }
+.room.quick .card3d-in { transition-duration:.18s; }
+@keyframes packFall {
+  0% { opacity:1; transform:translateY(-85px) rotate(-6deg) scale(.20); }
+  68% { opacity:1; transform:translateY(4px) rotate(3deg) scale(.20); }
+  83% { opacity:1; transform:translateY(-5px) rotate(-2deg) scale(.20); }
+  100% { opacity:1; transform:translateY(0) rotate(0) scale(.20); }
+}
+.collect-btn { position:absolute; left:65px; top:411px; width:170px; height:72px;
+  border:0; border-radius:8px; background:transparent; cursor:pointer; }
+.collect-btn:hover, .collect-btn:focus-visible { outline:2px solid #e8c469; background:rgba(232,196,105,.10); }
+
+/* la salle d'ouverture prend exactement la place de la machine */
+.room { position:absolute; top:35px; left:0; width:300px; height:440px; background:none; border:0; border-radius:0;
+  padding:0; margin:0; opacity:0; }
+.room.in { animation:roomIn .4s ease both; }
+@keyframes roomIn { from { opacity:0; transform:scale(.95); }
+  to { opacity:1; transform:none; } }
+.room .board { width:300px; height:440px; margin:0; }
+.prog-out { text-align:center; margin:18px 0 0; min-height:1em;
+  font:700 .72rem/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  letter-spacing:.17em; text-transform:uppercase; color:var(--muted); }
+.backbtn { display:block; margin:20px auto 0; background:var(--panel);
+  border:1px solid var(--line); color:var(--muted); border-radius:9px;
+  padding:9px 16px; font:700 .72rem/1 Outfit,sans-serif; letter-spacing:.12em;
+  text-transform:uppercase; cursor:pointer; }
+.backbtn:hover { color:var(--text); border-color:rgba(255,255,255,.2); }
+@media (max-width:400px) { body { padding:26px 8px 40px; } }
+@media (prefers-reduced-motion: reduce) {
+  .machine.shake { animation:none; }
+  .packdrop.fall { animation:none; opacity:1; transform:scale(.20); }
+  .room.in { animation:none; opacity:1; }
+  .packdrop.collecting { animation:none; opacity:1; transform:translate(-94px,-339px) scale(1); }
+  .card3d-in { transition:none; }
+  .slot.filled { animation:none; }
+  .await { animation:none; }
+}
+:root{ --bg:#05080f; --panel:#0a0e17; --line:rgba(255,255,255,.08);
+        --text:#eaf2ff; --muted:#7f8ea8; --gold:#e8c469; --goldl:#f0d79a; }
+*{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+.room{ background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:24px 20px 26px; margin:0 0 22px; }
+.prog{ text-align:center; margin:0 0 20px; min-height:1em;
+  font:700 .72rem/1 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  letter-spacing:.17em; text-transform:uppercase; color:var(--muted); }
+.board{ position:relative; width:min(320px, 90vw); aspect-ratio:320/470; margin:0 auto; }
+.hold{ position:absolute; inset:0; display:grid; place-items:center; }
+.hold-pack{ transition:opacity .46s ease, transform .46s ease; cursor:pointer; }
+.hold-pack.gone{ opacity:0; transform:scale(.72); pointer-events:none; }
+.hold-card{ opacity:0; pointer-events:none; transition:opacity .3s ease; }
+.hold-card.live{ opacity:1; pointer-events:auto; }
+.openwrap{ position:relative; width:238px; height:365px; }
+.stage{ position:relative; width:min(280px, 80vw); aspect-ratio:260/372; cursor:pointer; }
+.card3d{ position:absolute; inset:0; perspective:1500px; }
+.card3d-in{ position:absolute; inset:0; transform-style:preserve-3d;
+  transform:rotateY(180deg); transition:transform .48s cubic-bezier(.45,.05,.25,1); }
+.card3d-in.shown{ transform:rotateY(0deg); }
+.card3d-in.nofx{ transition:none; }
+.face{ position:absolute; inset:0; backface-visibility:hidden; }
+.face .card-svg{ display:block; width:100%; height:100%; }
+.ffront{ transform:rotateY(0deg); }
+.fback{ transform:rotateY(180deg); }
+.await{ animation:cuePulse 1.7s ease-in-out infinite; }
+@keyframes cuePulse{
+  0%, 100% { filter:drop-shadow(0 0 0 rgba(232,196,105,0)); }
+  50%      { filter:drop-shadow(0 0 13px rgba(232,196,105,.55)); }
+}
+.tray{ background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:20px; margin:0 0 22px; }
+.slots{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+.slot{ width:100px; aspect-ratio:260/372; border-radius:5px; position:relative;
+  background:rgba(255,255,255,.028); border:1px dashed rgba(255,255,255,.12);
+  display:flex; align-items:center; justify-content:center; }
+.slot b{ font-size:1.05rem; font-weight:800; color:rgba(255,255,255,.16); }
+.slot .card-svg{ width:100%; height:100%; display:block; }
+.slot.filled{ border-color:transparent; background:none; animation:slotPop .34s
+  cubic-bezier(.2,.9,.3,1); }
+.slot.filled b{ display:none; }
+@keyframes slotPop{ from { transform:scale(.84); opacity:0; }
+  to { transform:none; opacity:1; } }
+.tally{ background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:20px 22px; }
+.trow{ display:flex; align-items:center; gap:12px; padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.05); font-size:.84rem; }
+.trow:last-of-type{ border-bottom:0; }
+.tsw{ width:34px; height:11px; border-radius:2px; flex:none; }
+.tname{ font-weight:700; flex:1; }
+.todds{ color:var(--muted); font:700 .72rem/1 ui-monospace,Menlo,Consolas,monospace; }
+.tcnt{ color:#cdd8ee; font-weight:700; min-width:78px; text-align:right; }
+.tally .note{ color:var(--muted); font-size:.78rem; line-height:1.65; margin:14px 0 0; }
+.tally .note b{ color:var(--text); }
+.cname-md{ font-size:14px; letter-spacing:.5px; }
+.cname-sm{ font-size:12px; letter-spacing:.3px; }
+.card-svg{ display:block; }.pack{
+    --pw: 234px;
+    position: relative; width: var(--pw); aspect-ratio: 62 / 95;
+    font-size: calc(var(--pw) / 20);   
+    border-radius: calc(var(--pw) * .022);
+    overflow: hidden; isolation: isolate;
+    filter: drop-shadow(0 10px 22px rgba(0,0,0,.6));
+  }
+.pack-body{
+    position: absolute; inset: 0;
+    background:
+      repeating-conic-gradient(from 0deg at 50% 47%,
+        rgba(232,196,105,.055) 0 1.5deg, rgba(232,196,105,0) 1.5deg 7.5deg),
+      radial-gradient(58% 42% at 50% 47%, rgba(232,196,105,.22), rgba(232,196,105,0) 72%),
+      radial-gradient(120% 62% at 50% 110%, rgba(232,196,105,.13), rgba(232,196,105,0) 60%),
+      linear-gradient(168deg, #16224a 0%, #070c1e 50%, #0b1128 100%);
+  }
+.pack-crimp{
+    position: absolute; left: 0; right: 0; height: 7.5%; z-index: 1;
+    background:
+      repeating-linear-gradient(90deg,
+        rgba(232,196,105,.30) 0 .1em, rgba(232,196,105,0) .1em .55em),
+      linear-gradient(180deg, #1e2a52, #0d1430);
+  }
+.pack-crimp-top{ top: 0;    box-shadow: inset 0 -.12em 0 rgba(232,196,105,.55); }
+.pack-crimp-bottom{ bottom: 0; box-shadow: inset 0 .12em 0 rgba(232,196,105,.55); }
+.pack-hud{ position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
+.pack-brand{
+    position: absolute; top: 13.5%; left: 0; right: 0; height: 12%;
+    display: grid; place-items: center;
+    font-size: 2.15em; font-weight: 900; letter-spacing: .015em; color: #f0d79a;
+    text-shadow: 0 0 .12em rgba(240,215,154,.92), 0 0 .38em rgba(232,196,105,.72),
+      0 0 .9em rgba(232,196,105,.42), 0 0 1.7em rgba(232,196,105,.22);
+  }
+.pack-art{
+    position: absolute; top: 33.5%; left: 0; right: 0; height: 34%;
+    display: grid; place-items: center; z-index: 3;
+  }
+.pack-art svg{ height: 100%; width: auto; display: block; }
+.pack-set{
+    position: absolute; top: 75.5%; left: 0; right: 0; height: 12%;
+    display: grid; place-items: center;
+    font-size: 2.5em; font-weight: 900; letter-spacing: .26em; text-indent: .26em;
+    color: #f0d79a;
+    text-shadow: 0 0 .14em rgba(240,215,154,.88), 0 0 .42em rgba(232,196,105,.8),
+      0 0 1em rgba(232,196,105,.42);
+  }
+.pack-sheen{ position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; }
+.pack-sheen::before{
+    content: ""; position: absolute; top: -60%; bottom: -60%; left: -70%; width: 42%;
+    background: linear-gradient(100deg, rgba(255,255,255,0) 0%,
+      rgba(255,232,178,.26) 46%, rgba(255,248,232,.40) 54%, rgba(255,255,255,0) 100%);
+    transform: rotate(15deg); filter: blur(2px);
+    animation: packSheen 3.6s ease-in-out infinite;
+  }
+@keyframes packSheen{ 0%, 64% { left: -70%; } 100% { left: 130%; } }
+.pack-edge{
+    position: absolute; inset: 0; z-index: 6; pointer-events: none; border-radius: inherit;
+    box-shadow:
+      inset 0 0 0 1px rgba(232,196,105,.55),
+      inset 0 0 1.2em rgba(232,196,105,.20),
+      inset 0 0 0 calc(var(--pw) * .006) rgba(255,255,255,.05);
+  }
+.pack.big{ --pw: 330px; }
+.openwrap{ position: relative; width: 330px; height: 700px; }
+.openwrap .demo-pack{ position: absolute; left: 0; top: 130px; }
+.openwrap.opening .demo-pack{ animation: packJolt .34s .0s cubic-bezier(.35,.9,.25,1) both; }
+@keyframes packJolt{
+    0%, 100% { transform: none; }
+    18% { transform: translate(-1.1%, .4%) rotate(-.5deg); }
+    42% { transform: translate(1.1%, -.4%) rotate(.5deg); }
+    68% { transform: translate(-.7%, .2%) rotate(-.25deg); }
+  }
+.openwrap.opening .pack-crimp-top{ animation: lidOff .78s .30s cubic-bezier(.22,.72,.32,1) both; }
+.openwrap.opening .demo-pack{ overflow: visible; }
+.pack-rip{
+    position: absolute; left: 0; right: 0; top: 7.5%; height: 2.4%; z-index: 2;
+    background: linear-gradient(180deg, rgba(255,226,160,.75), rgba(232,196,105,.08) 70%, rgba(232,196,105,0));
+    clip-path: polygon(0% 0%, 100% 0%, 97.7% 22%, 93.2% 86%, 88.6% 22%, 84.1% 86%, 79.5% 22%, 75.0% 86%, 70.5% 22%, 65.9% 86%, 61.4% 22%, 56.8% 86%, 52.3% 22%, 47.7% 86%, 43.2% 22%, 38.6% 86%, 34.1% 22%, 29.5% 86%, 25.0% 22%, 20.5% 86%, 15.9% 22%, 11.4% 86%, 6.8% 22%, 2.3% 86%);
+    opacity: 0;
+  }
+.openwrap.opening .pack-rip{ animation: ripIn .26s .29s ease-out both; }
+.pack-flash{
+    position: absolute; left: 50%; top: 40%; width: 150%; aspect-ratio: 1; z-index: 7;
+    transform: translate(-50%, -50%) scale(.25); opacity: 0; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,252,240,.96) 0%, rgba(255,226,150,.78) 24%,
+      rgba(232,196,105,.32) 46%, rgba(232,196,105,0) 68%);
+  }
+.openwrap.opening .pack-flash{ animation: packFlash .58s .30s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes packFlash{
+    0%  { opacity: 0; transform: translate(-50%,-50%) scale(.22); }
+    14% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    100%{ opacity: 0; transform: translate(-50%,-50%) scale(2.15); }
+  }
+.pack-veil{
+    position: absolute; inset: 0; z-index: 8; pointer-events: none; opacity: 0;
+    background: radial-gradient(125% 95% at 50% 38%, rgba(7,12,30,.26), rgba(7,12,30,.78));
+  }
+.openwrap.opening .pack-veil{ animation: veilIn .75s .34s ease-out both; }
+@keyframes packSheen{ 0%, 64% { left: -70%; } 100% { left: 130%; } }
+@keyframes packJolt{
+    0%, 100% { transform: none; }
+    18% { transform: translate(-1.1%, .4%) rotate(-.5deg); }
+    42% { transform: translate(1.1%, -.4%) rotate(.5deg); }
+    68% { transform: translate(-.7%, .2%) rotate(-.25deg); }
+  }
+@keyframes lidOff{
+    0%   { transform: none; opacity: 1; }
+    18%  { transform: translate(1.5%, -5%) rotate(-1.5deg); }
+    100% { transform: translate(13em, -25em) rotate(-34deg); opacity: 0; }
+  }
+@keyframes ripIn{ from { opacity: 0; transform: translateY(-8%); } to { opacity: 1; transform: none; } }
+@keyframes packFlash{
+    0%  { opacity: 0; transform: translate(-50%,-50%) scale(.22); }
+    14% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    100%{ opacity: 0; transform: translate(-50%,-50%) scale(2.15); }
+  }
+@keyframes veilIn{ from { opacity: 0; } to { opacity: 1; } }
+.openwrap { position:relative; width:238px; height:365px; }
+.openwrap .demo-pack { position:absolute; left:0; top:0; }
+
+.featured-card { animation:none !important; } .featured-3 { display:none !important; } .corbit { animation:none !important; opacity:0 !important; }
+]]></style><defs><g id="sakuraMedallion">
+      <circle cx="100" cy="100" r="99" fill="url(#medalGlow)"/>
+      <circle cx="100" cy="100" r="94" fill="none" stroke="#e8c469" stroke-width="2.4" opacity=".95"/>
+      <circle cx="100" cy="100" r="89" fill="none" stroke="#e8c469" stroke-width=".8" opacity=".38"/>
+      <circle cx="100" cy="100" r="73" fill="url(#medalCore)"/>
+      <circle cx="100" cy="100" r="73" fill="none" stroke="#e8c469" stroke-width="1" opacity=".55"/>
+      <g transform="translate(100,100) scale(3.068)"><use href="#sakuraPackBloom"/></g>
+    </g>
+<radialGradient id="medalGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#e8c469" stop-opacity=".38"/>
+        <stop offset="58%" stop-color="#e8c469" stop-opacity=".14"/>
+        <stop offset="100%" stop-color="#e8c469" stop-opacity="0"/>
+      </radialGradient>
+<radialGradient id="medalCore" cx="50%" cy="42%" r="62%">
+        <stop offset="0%" stop-color="#1b2a55"/>
+        <stop offset="62%" stop-color="#0c1226"/>
+        <stop offset="100%" stop-color="#070c1e"/>
+      </radialGradient>
+<g id="sakuraPackBloom">
+    <g id="emojiBack" opacity=".95">
+      <g transform="rotate(36) scale(0.62)">
+      <clipPath id="ekb0"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ekb0)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="#1d5c9e"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1d5c9e" stroke-width=".30" stroke-linecap="round" opacity="0.00"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1d5c9e" stroke-width=".58" stroke-linejoin="bevel" opacity="0.00"/>
+      </g>
+      </g>
+      <g transform="rotate(108) scale(0.62)">
+      <clipPath id="ekb1"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ekb1)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="#1d5c9e"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1d5c9e" stroke-width=".30" stroke-linecap="round" opacity="0.00"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1d5c9e" stroke-width=".58" stroke-linejoin="bevel" opacity="0.00"/>
+      </g>
+      </g>
+      <g transform="rotate(180) scale(0.62)">
+      <clipPath id="ekb2"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ekb2)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="#1d5c9e"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1d5c9e" stroke-width=".30" stroke-linecap="round" opacity="0.00"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1d5c9e" stroke-width=".58" stroke-linejoin="bevel" opacity="0.00"/>
+      </g>
+      </g>
+      <g transform="rotate(252) scale(0.62)">
+      <clipPath id="ekb3"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ekb3)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="#1d5c9e"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1d5c9e" stroke-width=".30" stroke-linecap="round" opacity="0.00"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1d5c9e" stroke-width=".58" stroke-linejoin="bevel" opacity="0.00"/>
+      </g>
+      </g>
+      <g transform="rotate(324) scale(0.62)">
+      <clipPath id="ekb4"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ekb4)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="#1d5c9e"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1d5c9e" stroke-width=".30" stroke-linecap="round" opacity="0.00"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1d5c9e" stroke-width=".58" stroke-linejoin="bevel" opacity="0.00"/>
+      </g>
+      </g>
+    </g>
+    <g transform="rotate(0)">
+      <clipPath id="ek0"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ek0)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="url(#vGradCurve)"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1b4f8f" stroke-width=".30" stroke-linecap="round" opacity="0.30"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1b4f8f" stroke-width=".58" stroke-linejoin="bevel" opacity="0.92"/>
+      </g>
+    </g>
+    <g transform="rotate(72)">
+      <clipPath id="ek1"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ek1)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="url(#vGradCurve)"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1b4f8f" stroke-width=".30" stroke-linecap="round" opacity="0.30"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1b4f8f" stroke-width=".58" stroke-linejoin="bevel" opacity="0.92"/>
+      </g>
+    </g>
+    <g transform="rotate(144)">
+      <clipPath id="ek2"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ek2)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="url(#vGradCurve)"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1b4f8f" stroke-width=".30" stroke-linecap="round" opacity="0.30"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1b4f8f" stroke-width=".58" stroke-linejoin="bevel" opacity="0.92"/>
+      </g>
+    </g>
+    <g transform="rotate(216)">
+      <clipPath id="ek3"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ek3)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="url(#vGradCurve)"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1b4f8f" stroke-width=".30" stroke-linecap="round" opacity="0.30"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1b4f8f" stroke-width=".58" stroke-linejoin="bevel" opacity="0.92"/>
+      </g>
+    </g>
+    <g transform="rotate(288)">
+      <clipPath id="ek4"><path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z"/></clipPath>
+      <g clip-path="url(#ek4)">
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="url(#vGradCurve)"/>
+        <path d="M0.00,-0.00 -0.05,-0.32 -0.10,-0.64 -0.15,-0.96 -0.20,-1.29 -0.24,-1.61 -0.29,-1.93 -0.33,-2.25 -0.37,-2.57 -0.40,-2.89 -0.44,-3.21 -0.47,-3.54 -0.51,-3.86 -0.53,-4.18 -0.56,-4.50 -0.59,-4.82 -0.61,-5.14 -0.63,-5.46 -0.65,-5.79 -0.67,-6.11 -0.69,-6.43 -0.70,-6.75 -0.72,-7.07 -0.73,-7.39 -0.73,-7.71 -0.74,-8.04 -0.75,-8.36 -0.75,-8.68 -0.75,-9.00 -0.75,-9.32 -0.75,-9.64 -0.74,-9.96 -0.73,-10.29 -0.73,-10.61 -0.72,-10.93 -0.70,-11.25 -0.69,-11.57 -0.67,-11.89 -0.65,-12.21 -0.63,-12.54 -0.61,-12.86 -0.59,-13.18 -0.56,-13.50 -0.53,-13.82 -0.51,-14.14 -0.47,-14.46 -0.44,-14.79 -0.40,-15.11 -0.37,-15.43 -0.33,-15.75 -0.29,-16.07 -0.24,-16.39 -0.20,-16.71 -0.15,-17.04 -0.10,-17.36 -0.05,-17.68 0.00,-18.00" fill="none" stroke="#1b4f8f" stroke-width=".30" stroke-linecap="round" opacity="0.30"/>
+        <path d="M-0.27,0.04 -0.38,-0.27 -0.58,-0.56 -0.83,-0.85 -1.07,-1.14 -1.23,-1.44 -1.30,-1.76 -1.46,-2.06 -1.71,-2.35 -2.05,-2.62 -2.42,-2.88 -2.78,-3.15 -3.08,-3.43 -3.29,-3.72 -3.38,-4.03 -3.45,-4.34 -3.60,-4.64 -3.83,-4.93 -4.12,-5.21 -4.44,-5.48 -4.77,-5.75 -5.10,-6.02 -5.38,-6.29 -5.61,-6.58 -5.77,-6.88 -5.84,-7.19 -5.86,-7.50 -5.95,-7.81 -6.08,-8.11 -6.26,-8.40 -6.47,-8.69 -6.69,-8.97 -6.90,-9.26 -7.09,-9.55 -7.25,-9.84 -7.35,-10.14 -7.39,-10.45 -7.38,-10.78 -7.35,-11.10 -7.31,-11.42 -7.26,-11.75 -7.20,-12.08 -7.14,-12.40 -7.08,-12.73 -7.03,-13.06 -6.98,-13.38 -6.95,-13.70 -6.85,-14.03 -6.66,-14.38 -6.39,-14.74 -6.06,-15.11 -5.70,-15.48 -5.33,-15.86 -5.00,-16.23 -4.73,-16.59 -4.53,-16.93 -4.43,-17.26C0.70,-13.79 0.70,-13.79 4.43,-18.74L4.42,-18.42 4.52,-18.13 4.70,-17.84 4.94,-17.57 5.21,-17.30 5.49,-17.03 5.73,-16.76 5.93,-16.48 6.04,-16.18 6.07,-15.87 6.04,-15.55 6.02,-15.23 6.01,-14.91 6.02,-14.60 6.02,-14.28 6.03,-13.96 6.04,-13.65 6.04,-13.33 6.03,-13.01 6.01,-12.69 5.94,-12.36 5.82,-12.02 5.64,-11.67 5.43,-11.31 5.21,-10.96 4.98,-10.60 4.76,-10.24 4.58,-9.89 4.45,-9.54 4.37,-9.21 4.35,-8.89 4.30,-8.55 4.16,-8.21 3.95,-7.85 3.69,-7.48 3.40,-7.11 3.09,-6.73 2.81,-6.36 2.56,-6.00 2.38,-5.64 2.27,-5.30 2.25,-4.97 2.22,-4.64 2.07,-4.29 1.83,-3.92 1.54,-3.54 1.24,-3.17 0.98,-2.80 0.80,-2.44 0.73,-2.10 0.74,-1.77 0.67,-1.43 0.53,-1.08 0.37,-0.72 0.27,-0.38 0.27,-0.04Z" fill="none" stroke="#1b4f8f" stroke-width=".58" stroke-linejoin="bevel" opacity="0.92"/>
+      </g>
+    </g>
+    <g fill="none" stroke="#eafaff" stroke-width=".5" stroke-linecap="round">
+      <path d="M0.00,-2.20 L0.00,-5.00"/>
+      <path d="M2.09,-0.68 L4.76,-1.55"/>
+      <path d="M1.29,1.78 L2.94,4.05"/>
+      <path d="M-1.29,1.78 L-2.94,4.05"/>
+      <path d="M-2.09,-0.68 L-4.76,-1.55"/>
+    </g>
+    <g fill="#eafaff">
+      <circle cx="0" cy="0" r="2.2"/>
+      <circle cx="0.00" cy="-5.00" r="1.0"/>
+      <circle cx="4.76" cy="-1.55" r="1.0"/>
+      <circle cx="2.94" cy="4.05" r="1.0"/>
+      <circle cx="-2.94" cy="4.05" r="1.0"/>
+      <circle cx="-4.76" cy="-1.55" r="1.0"/>
+    </g>
+      </g>
+<linearGradient id="vGradCurve" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#2f7cc0"/><stop offset="30%" stop-color="#54a4dc"/>
+        <stop offset="66%" stop-color="#93d3f6"/><stop offset="100%" stop-color="#e2f6ff"/>
+      </linearGradient></defs><linearGradient id="mbretroEdition" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4d76e8"/><stop offset="1" stop-color="#1d388e"/></linearGradient><linearGradient id="mgretroEdition" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".17"/><stop offset=".45" stop-color="#ffffff" stop-opacity=".04"/><stop offset="1" stop-color="#000000" stop-opacity=".24"/></linearGradient><linearGradient id="sideretroEdition" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d388e"/><stop offset=".48" stop-color="#92989b"/><stop offset="1" stop-color="#030711"/></linearGradient><linearGradient id="rimretroEdition" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".36"/><stop offset=".5" stop-color="#1d388e" stop-opacity=".45"/><stop offset="1" stop-color="#000000" stop-opacity=".65"/></linearGradient><linearGradient id="wellretroEdition" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000207"/><stop offset=".75" stop-color="#343c41"/><stop offset="1" stop-color="#1b2431"/></linearGradient><radialGradient id="spotretroEdition" cx="50%" cy="25%" r="75%"><stop offset="0" stop-color="#5e83ec" stop-opacity=".23"/><stop offset="1" stop-color="#343c41" stop-opacity="0"/></radialGradient><filter id="mfretroEdition" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5" result="b"/><feFlood flood-color="#5e83ec" flood-opacity=".55"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><path d="M14 22 L4 31 V387 L14 400 Z" fill="url(#sideretroEdition)" stroke="#1d388e" stroke-width=".7"/><path d="M286 22 L297 31 V387 L286 400 Z" fill="url(#sideretroEdition)" stroke="#1d388e" stroke-width=".7"/><path d="M14 22 L25 9 H275 L286 22 L276 27 H24 Z" fill="url(#rimretroEdition)" stroke="#4d76e8" stroke-width=".8"/><path d="M5 44 V375 M296 44 V375" stroke="#fff" stroke-width=".6" opacity=".18"/><rect x="14" y="10" width="272" height="491" rx="13" fill="#92989b"/><rect x="14" y="10" width="272" height="491" rx="13" fill="url(#mgretroEdition)"/><rect x="14" y="10" width="272" height="491" rx="13" fill="none" stroke="url(#mbretroEdition)" stroke-width="2.4" opacity=".9"/><path d="M16 33 Q16 16 30 13 H270" fill="none" stroke="#fff" stroke-width="2" opacity=".23"/><path d="M284 31 V385 Q284 397 273 397 H30" fill="none" stroke="#000" stroke-width="5" opacity=".36"/><path d="M17 79 L25 82 V389 L17 397 Z M283 79 L275 82 V389 L283 397 Z" fill="#02050b" opacity=".55"/><path d="M21 90 V378 M279 90 V378" stroke="#4d76e8" stroke-width="1.5" opacity=".38"/><circle cx="21" cy="100" r="2.1" fill="#4d76e8" opacity=".8"/><path d="M20 100 h2" stroke="#07101d" stroke-width=".6"/><circle cx="279" cy="100" r="2.1" fill="#4d76e8" opacity=".8"/><path d="M278 100 h2" stroke="#07101d" stroke-width=".6"/><circle cx="21" cy="286" r="2.1" fill="#4d76e8" opacity=".8"/><path d="M20 286 h2" stroke="#07101d" stroke-width=".6"/><circle cx="279" cy="286" r="2.1" fill="#4d76e8" opacity=".8"/><path d="M278 286 h2" stroke="#07101d" stroke-width=".6"/><circle cx="21" cy="385" r="2.1" fill="#4d76e8" opacity=".8"/><path d="M20 385 h2" stroke="#07101d" stroke-width=".6"/><circle cx="279" cy="385" r="2.1" fill="#4d76e8" opacity=".8"/><path d="M278 385 h2" stroke="#07101d" stroke-width=".6"/><path d="M24 498 H66 L62 506 H27 Z M234 498 H276 L273 506 H238 Z" fill="#02050b" stroke="#1d388e" stroke-width="1"/><path d="M17 400 H283" stroke="#4d76e8" stroke-width="1" opacity=".22"/><path d="M19 405 V489 M281 405 V489" stroke="#4d76e8" stroke-width="1.4" opacity=".35"/><path d="M48 405 H252 L244 482 Q242 490 233 490 H67 Q58 490 56 482 Z" fill="url(#rimretroEdition)" stroke="#4d76e8" stroke-width="1"/><path d="M55 410 H245 L237 479 Q235 487 226 487 H74 Q65 487 63 479 Z" fill="#030711" stroke="#1d388e" stroke-width="1"/><path d="M55 410 L75 425 L80 470 L63 479 Z" fill="#92989b" opacity=".65"/><path d="M245 410 L225 425 L220 470 L237 479 Z" fill="#000" opacity=".72"/><path d="M55 410 H245 L225 425 H75 Z" fill="#000" opacity=".85"/><path d="M75 425 H225 L220 470 H80 Z" fill="url(#wellretroEdition)"/><path d="M63 479 L80 470 H220 L237 479 Q150 489 63 479 Z" fill="#1d388e" opacity=".55"/><path d="M68 417 H232" stroke="#5e83ec" stroke-width="2" opacity=".45"/><path d="M34 418 V480 M266 418 V480" stroke="#4d76e8" stroke-width="1" opacity=".35"/><path d="M77 474 H223" stroke="#4d76e8" stroke-width="1" opacity=".38"/><path d="M67 478 Q150 488 233 478 L227 489 H73 Z" fill="#1d388e" opacity=".8"/><text x="150" y="497" text-anchor="middle" class="mpsm">BAC DE RÉCUPÉRATION</text><rect x="24" y="20" width="252" height="56" rx="11" fill="#343c41" stroke="#6f96ff" stroke-width="2"/><rect x="29" y="25" width="242" height="46" rx="8" fill="none" stroke="#4d76e8" stroke-width=".8"/><path d="M42 46 h29 M229 46 h29" stroke="#6f96ff" stroke-width="1.2"/><circle cx="39" cy="46" r="1.7" fill="#6f96ff"/><circle cx="261" cy="46" r="1.7" fill="#6f96ff"/><text x="150" y="47" text-anchor="middle" style="font: bold 22px Georgia,serif; letter-spacing:3px; fill:#6f96ff">RETRO</text><text x="150" y="63" text-anchor="middle" style="font: bold 7px Georgia,serif; letter-spacing:1.3px; fill:#9cb7ff">ANIMÉS · AVANT 2000</text><rect x="25" y="78" width="250" height="163" rx="11" fill="#01030a" opacity=".65"/><path d="M29 82 H271 L264 89 H36 Z" fill="#4d76e8" opacity=".5"/><path d="M29 82 L36 89 V229 L29 237 Z M271 82 L264 89 V229 L271 237 Z" fill="#1d388e" opacity=".5"/><rect x="32" y="85" width="236" height="150" rx="7" fill="#05080f" opacity=".90"/><rect x="29" y="81" width="242" height="155" rx="8" fill="url(#spotretroEdition)"/><path d="M40 88 H260" stroke="#5e83ec" stroke-width="1.4" opacity=".55"/><path d="M53 88 l-11 32 h22 Z" fill="#5e83ec" opacity=".055"/><circle cx="53" cy="88" r="1.8" fill="#4d76e8"/><path d="M150 88 l-11 32 h22 Z" fill="#5e83ec" opacity=".055"/><circle cx="150" cy="88" r="1.8" fill="#4d76e8"/><path d="M247 88 l-11 32 h22 Z" fill="#5e83ec" opacity=".055"/><circle cx="247" cy="88" r="1.8" fill="#4d76e8"/><clipPath id="showclipretroEdition"><rect x="29" y="80" width="242" height="140" rx="6"/></clipPath><g clip-path="url(#showclipretroEdition)"><g class="featured-card featured-0" transform="translate(72,214) rotate(0.0) scale(0.23500) translate(-130,-372)">
+ <defs>
+  <linearGradient id="frvretroEdition0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd06e"/><stop offset="1" stop-color="#f09c17"/></linearGradient><filter id="glvretroEdition0" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="10" result="b"/><feFlood flood-color="#ffffff" flood-opacity="0.37"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="bgvretroEdition0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#372406" stop-opacity=".98"/><stop offset=".30" stop-color="#f0a72c" stop-opacity=".77"/><stop offset=".62" stop-color="#ffe4a8" stop-opacity=".66"/><stop offset="1" stop-color="#372406" stop-opacity=".98"/></linearGradient><linearGradient id="rbvretroEdition0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4d6d"/><stop offset=".15" stop-color="#ff9f45"/><stop offset=".30" stop-color="#ffe45e"/><stop offset=".45" stop-color="#5ee08a"/><stop offset=".60" stop-color="#4dd8ff"/><stop offset=".75" stop-color="#5b8cff"/><stop offset=".90" stop-color="#b48cff"/><stop offset="1" stop-color="#ff6fd8"/></linearGradient><filter id="orbvretroEdition0" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="2.6" result="b"/><feFlood flood-color="#f5c676" flood-opacity=".85"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="pcvretroEdition0"><path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z"/></clipPath>
+ </defs>
+ <!-- neon frame -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition0)" stroke-width="3.4"
+       filter="url(#glvretroEdition0)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="url(#bgvretroEdition0)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition0)" stroke-width="3.4"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="none" stroke="#ffd06e" stroke-opacity=".22" stroke-width="1"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="#65420a" opacity=".24"/>
+ 
+ <!-- HUD header -->
+ <path d="M21 12 H103 L108 17 V22 L103 27 H21 L16 22 V17 Z" fill="#ffd06e" fill-opacity=".14"/>
+ <text x="22" y="23" class="chud">SG·1</text>
+ <rect x="220" y="16" width="1.6" height="9" fill="#ffd06e" opacity="0.9"/><rect x="225" y="16" width="1.6" height="5" fill="#ffd06e" opacity="0.55"/><rect x="230" y="16" width="1.6" height="9" fill="#ffd06e" opacity="0.9"/><rect x="235" y="16" width="1.6" height="5" fill="#ffd06e" opacity="0.55"/><rect x="240" y="16" width="1.6" height="9" fill="#ffd06e" opacity="0.9"/>
+ 
+ <!-- portrait -->
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="#05080f"/>
+ <g clip-path="url(#pcvretroEdition0)">
+  <image href="data:image/jpeg;base64,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" x="16" y="32" width="228" height="220"
+         preserveAspectRatio="xMidYMid slice"/>
+ </g>
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="none" stroke="#ffd06e" stroke-opacity=".5" stroke-width="1"/>
+ <path d="M21 37 h16 M21 37 v16" stroke="#ffd06e" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M25 41 h21 M25 41 v21" stroke="#ffd06e" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="21" cy="37" r="2" fill="#ffd06e"/><path d="M239 37 h-16 M239 37 v16" stroke="#ffd06e" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M235 41 h-21 M235 41 v21" stroke="#ffd06e" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="239" cy="37" r="2" fill="#ffd06e"/><path d="M21 247 h16 M21 247 v-16" stroke="#ffd06e" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M25 243 h21 M25 243 v-21" stroke="#ffd06e" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="21" cy="247" r="2" fill="#ffd06e"/><path d="M239 247 h-16 M239 247 v-16" stroke="#ffd06e" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M235 243 h-21 M235 243 v-21" stroke="#ffd06e" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="239" cy="247" r="2" fill="#ffd06e"/>
+ <!-- name plate -->
+ <path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z" fill="#65420a" fill-opacity=".66" stroke="#ffd06e" stroke-opacity=".50"/>
+ <clipPath id="plvretroEdition0"><path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z"/></clipPath>
+ <g clip-path="url(#plvretroEdition0)">
+   <rect x="16" y="258" width="3" height="44" fill="url(#frvretroEdition0)"/>
+ </g>
+ <text x="28" y="279" class="cname" style="font-size:16.5px">SPIKE SPIEGEL</text>
+ <text x="28" y="294" class="cseries">COWBOY BEBOP</text>
+ <!-- bottom row: card number box + rarity letter box -->
+ <path d="M24 308 H166 L174 316 V338 L166 346 H24 L16 338 V316 Z" fill="#65420a" fill-opacity=".71" stroke="#ffd06e" stroke-opacity=".35"/>
+ <text x="95" y="334" class="cnum" text-anchor="middle">#0001</text>
+ <path d="M188 308 H236 L244 316 V338 L236 346 H188 L180 338 V316 Z" fill="#65420a" fill-opacity=".83" stroke="#ffd06e" stroke-opacity=".55"/>
+ <text x="212" y="334" class="cletter" text-anchor="middle">L</text>
+ 
+ 
+ 
+ 
+ <!-- la brillure qui fait le tour du contour, sens horaire -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" class="corbit" fill="none" stroke="#f5c676"
+       stroke-dasharray="42 1168"
+       style="animation-delay:0.00s" filter="url(#orbvretroEdition0)"/>
+</g><g class="featured-card featured-2" transform="translate(228,214) rotate(0.0) scale(0.23500) translate(-130,-372)">
+ <defs>
+  <linearGradient id="frvretroEdition2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c49fff"/><stop offset="1" stop-color="#7e52e4"/></linearGradient><filter id="glvretroEdition2" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="8" result="b"/><feFlood flood-color="#ffffff" flood-opacity="0.33"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="bgvretroEdition2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c103f" stop-opacity=".98"/><stop offset=".30" stop-color="#8e64e7" stop-opacity=".77"/><stop offset=".62" stop-color="#d9c2ff" stop-opacity=".66"/><stop offset="1" stop-color="#1c103f" stop-opacity=".98"/></linearGradient><linearGradient id="rbvretroEdition2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4d6d"/><stop offset=".15" stop-color="#ff9f45"/><stop offset=".30" stop-color="#ffe45e"/><stop offset=".45" stop-color="#5ee08a"/><stop offset=".60" stop-color="#4dd8ff"/><stop offset=".75" stop-color="#5b8cff"/><stop offset=".90" stop-color="#b48cff"/><stop offset="1" stop-color="#ff6fd8"/></linearGradient><filter id="orbvretroEdition2" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="2.6" result="b"/><feFlood flood-color="#b69aef" flood-opacity=".85"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="pcvretroEdition2"><path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z"/></clipPath>
+ </defs>
+ <!-- neon frame -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition2)" stroke-width="3"
+       filter="url(#glvretroEdition2)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="url(#bgvretroEdition2)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition2)" stroke-width="3"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="none" stroke="#c49fff" stroke-opacity=".22" stroke-width="1"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="#352260" opacity=".24"/>
+ 
+ <!-- HUD header -->
+ <path d="M21 12 H103 L108 17 V22 L103 27 H21 L16 22 V17 Z" fill="#c49fff" fill-opacity=".14"/>
+ <text x="22" y="23" class="chud">SG·2030</text>
+ <rect x="220" y="16" width="1.6" height="9" fill="#c49fff" opacity="0.9"/><rect x="225" y="16" width="1.6" height="5" fill="#c49fff" opacity="0.55"/><rect x="230" y="16" width="1.6" height="9" fill="#c49fff" opacity="0.9"/><rect x="235" y="16" width="1.6" height="5" fill="#c49fff" opacity="0.55"/><rect x="240" y="16" width="1.6" height="9" fill="#c49fff" opacity="0.9"/>
+ 
+ <!-- portrait -->
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="#05080f"/>
+ <g clip-path="url(#pcvretroEdition2)">
+  <image href="data:image/jpeg;base64,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" x="16" y="32" width="228" height="220"
+         preserveAspectRatio="xMidYMid slice"/>
+ </g>
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="none" stroke="#c49fff" stroke-opacity=".5" stroke-width="1"/>
+ <path d="M21 37 h16 M21 37 v16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="21" cy="37" r="2" fill="#c49fff"/><path d="M239 37 h-16 M239 37 v16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="239" cy="37" r="2" fill="#c49fff"/><path d="M21 247 h16 M21 247 v-16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="21" cy="247" r="2" fill="#c49fff"/><path d="M239 247 h-16 M239 247 v-16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="239" cy="247" r="2" fill="#c49fff"/>
+ <!-- name plate -->
+ <path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z" fill="#352260" fill-opacity=".66" stroke="#c49fff" stroke-opacity=".50"/>
+ <clipPath id="plvretroEdition2"><path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z"/></clipPath>
+ <g clip-path="url(#plvretroEdition2)">
+   <rect x="16" y="258" width="3" height="44" fill="url(#frvretroEdition2)"/>
+ </g>
+ <text x="28" y="279" class="cname" style="font-size:16.5px">USAGI TSUKINO</text>
+ <text x="28" y="294" class="cseries">SAILOR MOON</text>
+ <!-- bottom row: card number box + rarity letter box -->
+ <path d="M24 308 H166 L174 316 V338 L166 346 H24 L16 338 V316 Z" fill="#352260" fill-opacity=".71" stroke="#c49fff" stroke-opacity=".35"/>
+ <text x="95" y="334" class="cnum" text-anchor="middle">#2030</text>
+ <path d="M188 308 H236 L244 316 V338 L236 346 H188 L180 338 V316 Z" fill="#352260" fill-opacity=".83" stroke="#c49fff" stroke-opacity=".55"/>
+ <text x="212" y="334" class="cletter" text-anchor="middle">E</text>
+ 
+ 
+ 
+ 
+ <!-- la brillure qui fait le tour du contour, sens horaire -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" class="corbit" fill="none" stroke="#b69aef"
+       stroke-dasharray="42 1168"
+       style="animation-delay:-2.30s" filter="url(#orbvretroEdition2)"/>
+</g><g class="featured-card featured-3" transform="translate(340,214) rotate(0.0) scale(0.23500) translate(-130,-372)">
+ <defs>
+  <linearGradient id="frvretroEdition3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c49fff"/><stop offset="1" stop-color="#7e52e4"/></linearGradient><filter id="glvretroEdition3" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="8" result="b"/><feFlood flood-color="#ffffff" flood-opacity="0.33"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="bgvretroEdition3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c103f" stop-opacity=".98"/><stop offset=".30" stop-color="#8e64e7" stop-opacity=".77"/><stop offset=".62" stop-color="#d9c2ff" stop-opacity=".66"/><stop offset="1" stop-color="#1c103f" stop-opacity=".98"/></linearGradient><linearGradient id="rbvretroEdition3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4d6d"/><stop offset=".15" stop-color="#ff9f45"/><stop offset=".30" stop-color="#ffe45e"/><stop offset=".45" stop-color="#5ee08a"/><stop offset=".60" stop-color="#4dd8ff"/><stop offset=".75" stop-color="#5b8cff"/><stop offset=".90" stop-color="#b48cff"/><stop offset="1" stop-color="#ff6fd8"/></linearGradient><filter id="orbvretroEdition3" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="2.6" result="b"/><feFlood flood-color="#b69aef" flood-opacity=".85"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="pcvretroEdition3"><path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z"/></clipPath>
+ </defs>
+ <!-- neon frame -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition3)" stroke-width="3"
+       filter="url(#glvretroEdition3)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="url(#bgvretroEdition3)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition3)" stroke-width="3"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="none" stroke="#c49fff" stroke-opacity=".22" stroke-width="1"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="#352260" opacity=".24"/>
+ 
+ <!-- HUD header -->
+ <path d="M21 12 H103 L108 17 V22 L103 27 H21 L16 22 V17 Z" fill="#c49fff" fill-opacity=".14"/>
+ <text x="22" y="23" class="chud">SG·2</text>
+ <rect x="220" y="16" width="1.6" height="9" fill="#c49fff" opacity="0.9"/><rect x="225" y="16" width="1.6" height="5" fill="#c49fff" opacity="0.55"/><rect x="230" y="16" width="1.6" height="9" fill="#c49fff" opacity="0.9"/><rect x="235" y="16" width="1.6" height="5" fill="#c49fff" opacity="0.55"/><rect x="240" y="16" width="1.6" height="9" fill="#c49fff" opacity="0.9"/>
+ 
+ <!-- portrait -->
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="#05080f"/>
+ <g clip-path="url(#pcvretroEdition3)">
+  <image href="data:image/jpeg;base64,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" x="16" y="32" width="228" height="220"
+         preserveAspectRatio="xMidYMid slice"/>
+ </g>
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="none" stroke="#c49fff" stroke-opacity=".5" stroke-width="1"/>
+ <path d="M21 37 h16 M21 37 v16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="21" cy="37" r="2" fill="#c49fff"/><path d="M239 37 h-16 M239 37 v16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="239" cy="37" r="2" fill="#c49fff"/><path d="M21 247 h16 M21 247 v-16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="21" cy="247" r="2" fill="#c49fff"/><path d="M239 247 h-16 M239 247 v-16" stroke="#c49fff" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><circle cx="239" cy="247" r="2" fill="#c49fff"/>
+ <!-- name plate -->
+ <path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z" fill="#352260" fill-opacity=".66" stroke="#c49fff" stroke-opacity=".50"/>
+ <clipPath id="plvretroEdition3"><path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z"/></clipPath>
+ <g clip-path="url(#plvretroEdition3)">
+   <rect x="16" y="258" width="3" height="44" fill="url(#frvretroEdition3)"/>
+ </g>
+ <text x="28" y="279" class="cname" style="font-size:16.5px">FAYE VALENTINE</text>
+ <text x="28" y="294" class="cseries">COWBOY BEBOP</text>
+ <!-- bottom row: card number box + rarity letter box -->
+ <path d="M24 308 H166 L174 316 V338 L166 346 H24 L16 338 V316 Z" fill="#352260" fill-opacity=".71" stroke="#c49fff" stroke-opacity=".35"/>
+ <text x="95" y="334" class="cnum" text-anchor="middle">#0002</text>
+ <path d="M188 308 H236 L244 316 V338 L236 346 H188 L180 338 V316 Z" fill="#352260" fill-opacity=".83" stroke="#c49fff" stroke-opacity=".55"/>
+ <text x="212" y="334" class="cletter" text-anchor="middle">E</text>
+ 
+ 
+ 
+ 
+ <!-- la brillure qui fait le tour du contour, sens horaire -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" class="corbit" fill="none" stroke="#b69aef"
+       stroke-dasharray="42 1168"
+       style="animation-delay:-3.45s" filter="url(#orbvretroEdition3)"/>
+</g><g class="featured-card featured-1" transform="translate(150,214) rotate(0.0) scale(0.35500) translate(-130,-372)">
+ <defs>
+  <linearGradient id="frvretroEdition1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8354d"/><stop offset="1" stop-color="#b02434"/></linearGradient><filter id="glvretroEdition1" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="12" result="b"/><feFlood flood-color="#ffffff" flood-opacity="0.34"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="bgvretroEdition1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a070b" stop-opacity=".98"/><stop offset=".30" stop-color="#1d0a12" stop-opacity=".77"/><stop offset=".62" stop-color="#2b0e17" stop-opacity=".66"/><stop offset="1" stop-color="#0a070b" stop-opacity=".98"/></linearGradient><linearGradient id="rbvretroEdition1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4d6d"/><stop offset=".15" stop-color="#ff9f45"/><stop offset=".30" stop-color="#ffe45e"/><stop offset=".45" stop-color="#5ee08a"/><stop offset=".60" stop-color="#4dd8ff"/><stop offset=".75" stop-color="#5b8cff"/><stop offset=".90" stop-color="#b48cff"/><stop offset="1" stop-color="#ff6fd8"/></linearGradient><filter id="orbvretroEdition1" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="2.6" result="b"/><feFlood flood-color="#ffffff" flood-opacity=".85"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="pcvretroEdition1"><path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z"/></clipPath>
+ </defs>
+ <!-- neon frame -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#frvretroEdition1)" stroke-width="3.8"
+       filter="url(#glvretroEdition1)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="url(#bgvretroEdition1)"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="none" stroke="url(#rbvretroEdition1)" stroke-width="3.8"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="none" stroke="#e8354d" stroke-opacity=".22" stroke-width="1"/>
+ <path d="M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z" fill="#4a0f16" opacity=".24"/>
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" fill="url(#rbvretroEdition1)" opacity=".16"/>
+ <!-- HUD header -->
+ <path d="M21 12 H103 L108 17 V22 L103 27 H21 L16 22 V17 Z" fill="#e8354d" fill-opacity=".14"/>
+ <text x="22" y="23" class="chud">SG·246</text>
+ <rect x="220" y="16" width="1.6" height="9" fill="#e8354d" opacity="0.9"/><rect x="225" y="16" width="1.6" height="5" fill="#e8354d" opacity="0.55"/><rect x="230" y="16" width="1.6" height="9" fill="#e8354d" opacity="0.9"/><rect x="235" y="16" width="1.6" height="5" fill="#e8354d" opacity="0.55"/><rect x="240" y="16" width="1.6" height="9" fill="#e8354d" opacity="0.9"/>
+ 
+ <!-- portrait -->
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="#05080f"/>
+ <g clip-path="url(#pcvretroEdition1)">
+  <image href="data:image/jpeg;base64,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" x="16" y="32" width="228" height="220"
+         preserveAspectRatio="xMidYMid slice"/>
+ </g>
+ <path d="M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z" fill="none" stroke="#e8354d" stroke-opacity=".5" stroke-width="1"/>
+ <path d="M21 37 h16 M21 37 v16" stroke="#e8354d" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M25 41 h21 M25 41 v21" stroke="#e8354d" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="21" cy="37" r="2" fill="#e8354d"/><path d="M239 37 h-16 M239 37 v16" stroke="#e8354d" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M235 41 h-21 M235 41 v21" stroke="#e8354d" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="239" cy="37" r="2" fill="#e8354d"/><path d="M21 247 h16 M21 247 v-16" stroke="#e8354d" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M25 243 h21 M25 243 v-21" stroke="#e8354d" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="21" cy="247" r="2" fill="#e8354d"/><path d="M239 247 h-16 M239 247 v-16" stroke="#e8354d" stroke-width="2.2" stroke-linecap="square" opacity="0.95"/><path d="M235 243 h-21 M235 243 v-21" stroke="#e8354d" stroke-width="1.7000000000000002" stroke-linecap="square" opacity="0.6499999999999999"/><circle cx="239" cy="247" r="2" fill="#e8354d"/>
+ <!-- name plate -->
+ <path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z" fill="#4a0f16" fill-opacity=".66" stroke="#e8354d" stroke-opacity=".50"/>
+ <clipPath id="plvretroEdition1"><path d="M24 258 H236 L244 266 V294 L236 302 H24 L16 294 V266 Z"/></clipPath>
+ <g clip-path="url(#plvretroEdition1)">
+   <rect x="16" y="258" width="3" height="44" fill="url(#rbvretroEdition1)"/>
+ </g>
+ <text x="28" y="279" class="cname" style="font-size:16.5px">GOKUU SON</text>
+ <text x="28" y="294" class="cseries">DRAGON BALL</text>
+ <!-- bottom row: card number box + rarity letter box -->
+ <path d="M24 308 H166 L174 316 V338 L166 346 H24 L16 338 V316 Z" fill="#4a0f16" fill-opacity=".71" stroke="url(#rbvretroEdition1)" stroke-opacity=".35"/>
+ <text x="95" y="334" class="cnum" text-anchor="middle">#0246</text>
+ <path d="M188 308 H236 L244 316 V338 L236 346 H188 L180 338 V316 Z" fill="#4a0f16" fill-opacity=".83" stroke="url(#rbvretroEdition1)" stroke-opacity=".55"/>
+ <text x="212" y="334" class="cletter" text-anchor="middle">M</text>
+ 
+ 
+ 
+ 
+ <!-- la brillure qui fait le tour du contour, sens horaire -->
+ <path d="M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z" class="corbit" fill="none" stroke="url(#rbvretroEdition1)"
+       stroke-dasharray="42 1168"
+       style="animation-delay:-1.15s" filter="url(#orbvretroEdition1)"/>
+</g></g><path d="M34 216 H266 L260 224 H40 Z" fill="#02050b" opacity=".9"/><rect x="34" y="222" width="232" height="2" rx="1" fill="#4d76e8" opacity=".8"/><path d="M36 88 L96 88 L56 232 H36 Z" fill="#ffffff" opacity=".05"/><rect x="28" y="80" width="244" height="158" rx="9" fill="none" stroke="#4d76e8" stroke-width="2"/><text x="150" y="234" text-anchor="middle" class="mplab">en vedette</text><rect x="28" y="244" width="244" height="117" rx="8" fill="#101a30" stroke="#83aaff" stroke-width="1" opacity=".97"/><path d="M109 250 V292 M191 250 V292 M34 296 H266" stroke="#83aaff" opacity=".3"/><rect x="40" y="335" width="220" height="8" rx="4" fill="#080d1b" stroke="#83aaff" stroke-opacity=".45"/><rect x="28" y="371" width="119" height="29" rx="9" fill="#000" opacity=".6"/><rect x="28" y="368" width="119" height="30" rx="9" fill="url(#mbretroEdition)" stroke="#4d76e8" stroke-width="1.2"/><path d="M38 371 h98" stroke="#fff" stroke-width="1" opacity=".4"/><text x="37" y="387" class="mpgo">×1</text><use href="#sakuraMedallion" transform="translate(68 375) scale(.08)"/><text x="88" y="388" class="mpcost">300</text><rect x="153" y="371" width="119" height="29" rx="9" fill="#000" opacity=".6"/><rect x="153" y="368" width="119" height="30" rx="9" fill="url(#mbretroEdition)" stroke="#4d76e8" stroke-width="1.2"/><path d="M163 371 h98" stroke="#fff" stroke-width="1" opacity=".4"/><text x="162" y="387" class="mpgo">×5</text><use href="#sakuraMedallion" transform="translate(193 375) scale(.08)"/><text x="213" y="388" class="mpcost">1500</text><clipPath id="crtclipretroEdition"><rect x="32" y="84" width="236" height="137" rx="13"/></clipPath><g clip-path="url(#crtclipretroEdition)"><path d="M32 86 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 89 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 92 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 95 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 98 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 101 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 104 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 107 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 110 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 113 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 116 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 119 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 122 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 125 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 128 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 131 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 134 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 137 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 140 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 143 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 146 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 149 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 152 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 155 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 158 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 161 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 164 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 167 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 170 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 173 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 176 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 179 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 182 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 185 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 188 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 191 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 194 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 197 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 200 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 203 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 206 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 209 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 212 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 215 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M32 218 H268" stroke="#151b1e" stroke-width=".8" opacity=".18"/><path d="M35 87 Q150 79 265 87 L264 96 Q151 89 36 96 Z" fill="#edf3ef" opacity=".08"/><path d="M34 90 Q29 152 34 218 M266 90 Q271 152 266 218" fill="none" stroke="#9cb7ff" stroke-width="4" opacity=".11"/></g><path d="M18 100 C18 170 18 300 18 383" fill="none" stroke="#6f96ff" stroke-width="2" opacity=".46"/><circle cx="18" cy="110" r="2.1" fill="#4d76e8" stroke="#1d388e" stroke-width=".7"/><circle cx="18" cy="280" r="2.1" fill="#4d76e8" stroke="#1d388e" stroke-width=".7"/><circle cx="18" cy="380" r="2.1" fill="#4d76e8" stroke="#1d388e" stroke-width=".7"/><path d="M282 100 C282 170 282 300 282 383" fill="none" stroke="#6f96ff" stroke-width="2" opacity=".46"/><circle cx="282" cy="110" r="2.1" fill="#4d76e8" stroke="#1d388e" stroke-width=".7"/><circle cx="282" cy="280" r="2.1" fill="#4d76e8" stroke="#1d388e" stroke-width=".7"/><circle cx="282" cy="380" r="2.1" fill="#4d76e8" stroke="#1d388e" stroke-width=".7"/><path d="M33 241 H267" stroke="#3358c1" stroke-width="2"/><path d="M40 243 H260" stroke="#6f96ff" stroke-width=".8"/><text x="150" y="301" text-anchor="middle" style="font: bold 5px Georgia,serif; letter-spacing:1.3px; fill:#a9c0ff">COLLECTION · SOUVENIRS D’ANIMÉS</text></svg>
