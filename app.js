@@ -557,7 +557,7 @@
     // per Discord ID lives in the DB with a random session token, and the browser keeps
     // { dc, session } in localStorage — that pair is what signs you back in.
     const SAKU_ACCT_LS = 'saku-acct-session';
-    function sakuAcctRef(dcId) { return window.sakuLocalAccountRef(dcId); } // V1 : profil local au navigateur
+    function sakuAcctRef(dcId) { return database.ref('accounts/' + dcId); }
     function sakuMyDcId() { return currentAccount ? String(currentAccount.uid).replace(/^dc_/, '') : null; }
     function sakuNewSession() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12); }
     function sakuSessionLoad() {
@@ -584,6 +584,7 @@
       if (window.sakuFriendsAttach) window.sakuFriendsAttach();
       // 🎴 fold the guest card collection into the freshly signed-in account
       try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
+      if (window.sakuTestNinjaAttach) window.sakuTestNinjaAttach();
       playerName = currentAccount.username;
       if (window.sakuShowcaseAttach) window.sakuShowcaseAttach();
       updateUserButton();
@@ -601,10 +602,14 @@
 
     // Replaces Firebase's onAuthStateChanged: validate the stored session against the DB
     async function sakuRestoreSession() {
-      // V1 : la session est gérée par Supabase (saku-session.js)
-      try { sakuSessionClear(); } catch (e) {}
-      if (window.sakuSessionBridge) { try { window.sakuSessionBridge.start(); } catch (e) { console.warn(e); } }
-      else { currentAccount = null; updateUserButton(); }
+      const st = sakuSessionLoad();
+      if (!st) { currentAccount = null; updateUserButton(); return; }
+      try {
+        const snap = await sakuAcctRef(st.dc).once('value');
+        const a = snap.val();
+        if (a && a.session === st.session) await sakuAdoptAccount(a);
+        else { sakuSessionClear(); currentAccount = null; updateUserButton(); }
+      } catch (e) { currentAccount = null; updateUserButton(); }
     }
     // deferred on purpose: the restore touches playerName/currentAccount, which are
     // declared further down this file — a macrotask guarantees the whole script ran first
@@ -612,7 +617,7 @@
     else setTimeout(sakuRestoreSession, 0);
 
     function onUserButton() {
-      if (currentAccount) { if (window.sakuPlayerToggle) window.sakuPlayerToggle(); else sakuNavGo('account'); }
+      if (currentAccount) { if (window.sakuPlayerToggle) window.sakuPlayerToggle(); }
       else changeUsername();
     }
 
@@ -652,7 +657,7 @@
         switchAcctTab(lastTab);
         const snap = await sakuAcctRef(sakuMyDcId()).once('value');
         const p = snap.val() || {};
-        document.getElementById('profileName').textContent = (currentAccount && currentAccount.username) || p.username || 'Account';
+        document.getElementById('profileName').textContent = p.username || 'Account';
         if (currentAccount) currentAccount.avatar = p.avatar || null;
         renderProfileAvatar();
         document.getElementById('profileWins').textContent = p.wins || 0;
@@ -676,19 +681,20 @@
     function showAuthError(msg) { const el = document.getElementById('authError'); if (el) el.textContent = msg || ''; }
     // Discord is the ONLY way in — one button, no form to fill
     function loginWithDiscord() {
-      // V1 : connexion Discord via Supabase (redirection PKCE)
-      try { Promise.resolve(window.sakuSessionBridge.signIn()).catch(function () { showNotification(t('Discord login failed — try again.')); }); }
-      catch (e) { showNotification(t('Discord login failed — try again.')); }
+      // Démo locale : aucun vrai flux OAuth ni jeton Discord.
+      try { localStorage.setItem('saku-dc-pending','signin'); } catch (e) {}
+      location.hash='#access_token=TEST-SAKURA&token_type=Bearer&expires_in=604800';
+      location.reload();
     }
 
     async function logoutAccount() {
       sakuSessionClear();
-      if (window.sakuSessionBridge) { try { await window.sakuSessionBridge.signOut(); } catch (e) { console.warn(e); } }
       currentAccount = null;
       if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
+      if (window.sakuTestNinjaDetach) window.sakuTestNinjaDetach();
       if (typeof cardsLoad === 'function') cardsLoad();
       anilistAutoSyncDone = false;
       updateUserButton();
@@ -1325,8 +1331,7 @@
     // 🚪 the single entry point: Discord OAuth popup → verified identity → account
     function sakuDiscordStartLink() { loginWithDiscord(); }
     // full-page OAuth return: Discord sends us back with #access_token=… in the URL
-    async function sakuDiscordHandleReturn() { return; /* V1 : le retour OAuth est géré par Supabase */ }
-    async function sakuLegacyDiscordHandleReturn() {
+    async function sakuDiscordHandleReturn() {
       let h = '';
       try { h = String(window.location.hash || ''); } catch (e) {}
       if (h.indexOf('access_token=') < 0) return;
@@ -1358,6 +1363,7 @@
       try {
         const ref = sakuAcctRef(dcId);
         const cur = (await ref.once('value')).val() || {};
+        if (!cur.createdAt) await ref.child('progress').set({coins:1500}); // monnaie fictive du navigateur
         await ref.update({
           dc: clean, session,
           createdAt: cur.createdAt || Date.now(),
@@ -1404,10 +1410,29 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); });
     else { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); }
 
-    // ================= (V1) aucun mode admin : les minimums de joueurs s'appliquent à tous =================
-    function sakuIsAdmin() { return false; }
-    function paintAdminBtn() {}
-    function sakuAdminToggle() {}
+    // ================= 🛠️ ADMIN MODE (solo launches for display checks) =================
+    // Unlock it from the Account tab (🔒 Admin) with this passcode — change it to
+    // your own, it only ever lives on the browser you unlock (localStorage).
+    const SAKU_ADMIN_CODE = 'sakuga981';
+    function sakuIsAdmin() { try { return localStorage.getItem('sakuAdmin') === '1'; } catch (e) { return false; } }
+    function paintAdminBtn() {
+      const btn = document.getElementById('adminToggleBtn');
+      if (btn) btn.textContent = sakuIsAdmin() ? '🔓 Admin mode ON — tap to disable' : '🔒 Admin mode is off';
+    }
+    function sakuAdminToggle() {
+      if (typeof prompt !== 'function') return;
+      const ask = sakuIsAdmin() ? 'Type the passcode again to DISABLE admin mode:' : 'Admin passcode:';
+      const p = String(prompt((window.t ? t(ask) : ask)) || '').trim();
+      if (!p) return;
+      if (p !== SAKU_ADMIN_CODE) { showNotification(window.t ? t('Wrong passcode.') : 'Wrong passcode.'); return; }
+      try { localStorage.setItem('sakuAdmin', sakuIsAdmin() ? '0' : '1'); } catch (e) {}
+      paintAdminBtn();
+      const on = sakuIsAdmin();
+      showNotification(on ? (window.t ? t('🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : '🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : (window.t ? t('Admin mode off.') : 'Admin mode off.'));
+      // the lobby's Start button gate depends on it — repaint if we're in one
+      if (on && currentRoom && currentRoom.state === 'lobby' && document.getElementById('lobbyScreen').classList.contains('active')) updateLobby();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintAdminBtn); else paintAdminBtn();
     // ================= 🧭 PAGE ROUTER (hash URLs + browser Back/Forward) =================
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
@@ -2792,14 +2817,16 @@
       const btn = document.getElementById('deleteAccountBtn');
       btn.disabled = true;
       try {
-        if (!window.sakuSessionBridge) throw new Error('Service de compte indisponible');
-        await window.sakuSessionBridge.deleteAccount();   // V1 : supprime le compte Supabase (pièces, cartes, ventes) + données locales
+        await database.ref('publicPlayers/' + sakuMyDcId()).remove();
+        await database.ref('publicShowcases/' + sakuMyDcId()).remove();
+        await sakuAcctRef(sakuMyDcId()).remove();   // profile + stats + AniList link + avatar
         sakuSessionClear();
         currentAccount = null;
         if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
+      if (window.sakuTestNinjaDetach) window.sakuTestNinjaDetach();
         updateUserButton();
         try { sakuRenderDiscordBox(null); } catch (e) {}
         closeDeleteAccountModal();
@@ -5660,7 +5687,6 @@
         });
         const winner = ranking[0];
         const meWin = winner === playerId;
-        if(meWin && window.SakuSfx){const game=kind==='battle'?(currentRoom.br||{}):kind==='snapshot'?(currentRoom.sn||{}):(currentRoom.bg||{}); if(game.gameId)window.SakuSfx.winOnce('win:'+roomCode+':'+kind+':'+game.gameId);}
         title.textContent = meWin ? 'You win the Battle Royale!' : 'Battle Royale over!';
         sub.textContent = meWin ? 'Champion hunter!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5680,7 +5706,6 @@
         const ranking = snParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
         const winner = ranking[0];
         const meWin = winner === playerId;
-        if(meWin && window.SakuSfx){const game=kind==='battle'?(currentRoom.br||{}):kind==='snapshot'?(currentRoom.sn||{}):(currentRoom.bg||{}); if(game.gameId)window.SakuSfx.winOnce('win:'+roomCode+':'+kind+':'+game.gameId);}
         title.textContent = meWin ? 'You win Snapshot!' : 'Snapshot! over!';
         sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5696,7 +5721,6 @@
         const ranking = bgParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
         const winner = ranking[0];
         const meWin = winner === playerId;
-        if(meWin && window.SakuSfx){const game=kind==='battle'?(currentRoom.br||{}):kind==='snapshot'?(currentRoom.sn||{}):(currentRoom.bg||{}); if(game.gameId)window.SakuSfx.winOnce('win:'+roomCode+':'+kind+':'+game.gameId);}
         title.textContent = meWin ? 'You win Blur Guess!' : 'Blur Guess over!';
         sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5717,7 +5741,6 @@
         const cn = currentRoom.cn || {};
         const winTeam = cn.winner ? cn.winner.team : null;
         const myTeam = cnTeamOf(playerId, cn);
-        if(winTeam && myTeam===winTeam && cn.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':cn:'+cn.gameId);
         title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Ninja Scrolls over') : 'Ninja Scrolls over');
         sub.innerHTML = (!cn.winner || !cn.winner.reason) ? ''
           : cn.winner.reason === 'assassin' ? (myTeam === winTeam ? (window.t ? t('The other team hit the 💀 assassin — lucky break!') : 'The other team hit the 💀 assassin — lucky break!') : (window.t ? t('Your team hit the 💀 assassin card…') : 'Your team hit the 💀 assassin card…'))
@@ -5750,7 +5773,6 @@
         const winner = rc.winner;
         const secretChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
         const targetWon = rc.endReason === 'hunters-out' || (winner && winner === rc.targetPid);
-        if((winner===playerId || (targetWon && rc.targetPid===playerId)) && rc.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':rc:'+rc.gameId);
         if (targetWon) {
           title.textContent = winner === playerId ? 'You WIN, target!' : 'Race over — TARGET wins!';
           sub.textContent = 'All the hunters ran out of lives — the secret stays safe with ' + ((players[rc.targetPid] || {}).name || '?') + '!';
@@ -7461,7 +7483,6 @@
       const end = document.getElementById('hcEndScreen');
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
-      if(winner===playerId && hc.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':hc:'+hc.gameId);
       if (window.sakuProgressGame && hc.gameId && hcOrderOf().includes(playerId) && players[playerId] && players[playerId].outInGame !== hc.gameId) window.sakuProgressGame('hotcold', hc.gameId, winner === playerId);
       const totals = hc.totals || {};
       const ptsMode = hcGuessMode() !== 'individual'; // 🎯 shared guesses score POINTS
@@ -8053,7 +8074,6 @@
       const playerNameEl = document.getElementById('winPlayerName');
 
       const isWinner = winnerId === playerId;
-      if(isWinner && currentRoom.progressGameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':classic:'+currentRoom.progressGameId);
       if (isWinner) {
         title.textContent = 'You Win!';
         title.style.color = 'var(--success)';
@@ -8987,7 +9007,6 @@
       const roles = uc.roles || {};
       const wpids = Array.isArray(uc.winnerPids) ? uc.winnerPids : Object.values(uc.winnerPids || {});
       const iWon = wpids.indexOf(playerId) !== -1;
-      if(iWon && uc.gameId && window.SakuSfx)window.SakuSfx.winOnce('win:'+roomCode+':uc:'+uc.gameId);
 
       const title = document.getElementById('ucWinTitle');
       if (uc.winner === 'undercover') title.textContent = 'The Undercover Wins!';

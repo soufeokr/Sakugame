@@ -1,4 +1,4 @@
-/* Sakugame — module branché sur Supabase (V1). Aucune écriture économique depuis le navigateur : tout passe par des fonctions serveur. */
+/* Wishlist and separate collection favourites / sale lock. */
 (function(){'use strict';let busy=false;
 const icons={wishlist:'<path d="M20.8 4.9c-1.8-1.9-4.8-1.8-6.6 0L12 7.1 9.8 4.9a4.7 4.7 0 0 0-6.6 6.7L12 20l8.8-8.4a4.7 4.7 0 0 0 0-6.7Z"/>',favorite:'<path d="m12 2.8 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.4l6.2-.9Z"/>',locked:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>'};
 const labels={fr:{wishlist:'Wishlist',favorite:'Favori de collection',locked:'Verrouiller la carte',unlock:'Déverrouiller la carte',blocked:'Annule d’abord les offres ou échanges en cours pour cette carte.',error:'Impossible de modifier cette option.',own:'Il faut posséder cette carte.'},en:{wishlist:'Wishlist',favorite:'Collection favorite',locked:'Lock card',unlock:'Unlock card',blocked:'Cancel active listings or outgoing trades for this card first.',error:'Could not update this setting.',own:'You must own this card.'},es:{wishlist:'Lista de deseos',favorite:'Favorito de colección',locked:'Bloquear carta',unlock:'Desbloquear carta',blocked:'Cancela primero las ventas o intercambios activos de esta carta.',error:'No se pudo actualizar.',own:'Debes tener esta carta.'}};
@@ -13,18 +13,11 @@ function draw(box,id,context){stars(box,id);let previous=box.querySelector('.car
 window.sakuDetailControls=draw;
 window.sakuAppendWishlist=function(tile,id){if(!tile)return;id=String(id);const b=document.createElement('button');b.type='button';b.className='quick-wish';b.dataset.id=id;b.setAttribute('aria-label',L().wishlist);b.setAttribute('aria-pressed',flags(cardState,id).wishlist?'true':'false');b.title=L().wishlist;b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+icons.wishlist+'</svg>';b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggle(id,'wishlist',null,'quick')});b.addEventListener('keydown',e=>e.stopPropagation());tile.appendChild(b);};
 
-async function toggle(id,key,box,context){
- if(busy)return;const actor=window.sakuSecureUserId;if(!actor||!window.sakuBackend){if(typeof showNotification==='function')showNotification('Connecte-toi pour modifier cette option.');return;}
- busy=true;if(box)draw(box,id,context);let why='error';
- try{
-  await window.sakuBackend.setCardOption(String(id),key,!flags(cardState,id)[key]);
-  const state=await window.sakuBackend.gameCollection();if(window.sakuSecureUserId!==actor)return;
-  cardState=cardNormalize(state);if(currentAccount)currentAccount.cards=cardNormalize(state);
-  if(window.portalDashboardRefresh)window.portalDashboardRefresh();
-  if(key==='wishlist'&&document.getElementById('encWishlistOnly')?.checked&&typeof encRender==='function')encRender(true);
-  if(key==='favorite'&&document.getElementById('cardsFavoriteOnly')?.checked&&typeof cardsRenderAlbum==='function')cardsRenderAlbum();
- }catch(e){if(e&&e.message==='active_listing')why='blocked';else if(e&&e.message==='card_unavailable')why='own';if(typeof showNotification==='function')showNotification(L()[why]);}
- finally{busy=false;if(box&&box.isConnected&&box.classList.contains('show'))draw(box,id,context);document.querySelectorAll('.quick-wish').forEach(b=>{if(b.dataset.id===String(id))b.setAttribute('aria-pressed',flags(cardState,id).wishlist?'true':'false')});}
-}
-
+async function toggle(id,key,box,context){if(busy)return;busy=true;if(box)draw(box,id,context);let actor=currentAccount?sakuMyDcId():null,why='error';try{
+ function mutate(st){st=cardNormalize(st);if(key!=='wishlist'&&!st.cards[id]){why='own';return;}st.flags[id]=st.flags[id]||{};if(st.flags[id][key])delete st.flags[id][key];else st.flags[id][key]=true;if(!Object.keys(st.flags[id]).length)delete st.flags[id];return st;}
+ if(actor){if(cardSaveTimer){clearTimeout(cardSaveTimer);cardSaveTimer=null;await sakuAcctRef(actor).child('cards').set(cardNormalize(cardState));}
+ let r=await database.ref().transaction(root=>{if(!root||!root.accounts||!root.accounts[actor])return;let account=root.accounts[actor],old=flags(account.cards,id);if(key==='locked'&&!old.locked){let market=root.testMarket||{},list=Object.values(market.listings||{}),trades=Object.values(market.trades||{});if(list.some(x=>x&&x.status==='active'&&x.seller===actor&&String(x.cardId)===id)||trades.some(x=>x&&x.status==='pending'&&x.from===actor&&String(x.give)===id)){why='blocked';return;}}let st=mutate(account.cards);if(!st)return;account.cards=st;return root;},undefined,false);if(!r.committed)throw Error(why);if(!currentAccount||sakuMyDcId()!==actor)return;cardState=cardNormalize(r.snapshot.val().accounts[actor].cards);currentAccount.cards=cardNormalize(cardState);
+ }else{let st=mutate(cardState);if(!st)throw Error(why);cardState=st;cardWriteLocal();try{localStorage.setItem('saku-cards-guest-only','1')}catch(e){}}
+ if(window.portalDashboardRefresh)window.portalDashboardRefresh();if(key==='wishlist'&&document.getElementById('encWishlistOnly')?.checked&&typeof encRender==='function')encRender(true);if(key==='favorite'&&document.getElementById('cardsFavoriteOnly')?.checked&&typeof cardsRenderAlbum==='function')cardsRenderAlbum();
+ }catch(e){if(typeof showNotification==='function')showNotification(L()[why]);}finally{busy=false;if(box&&box.isConnected&&box.classList.contains('show'))draw(box,id,context);document.querySelectorAll('.quick-wish').forEach(b=>{if(b.dataset.id===id)b.setAttribute('aria-pressed',flags(cardState,id).wishlist?'true':'false')});}}
 })();

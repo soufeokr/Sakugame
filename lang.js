@@ -126,8 +126,6 @@ var I18N = {
   "Test market · Transactions are local to this browser, not the live site.": {fr:"Marché de test · Les transactions restent dans ce navigateur, pas sur le site en ligne.",es:"Mercado de prueba · Las transacciones son locales a este navegador."},
   "Sign in to use the market": {fr:"Connecte-toi pour utiliser le marché",es:"Inicia sesión para usar el mercado"},
   "Use a test account to buy, bid or exchange cards.": {fr:"Utilise un compte de test pour acheter, enchérir ou échanger des cartes.",es:"Usa una cuenta de prueba para comprar, pujar o intercambiar cartas."},
-  "Buy": {fr:"Acheter",es:"Comprar"},
-  "Fixed-price offers.": {fr:"Ventes à prix fixe.",es:"Ventas a precio fijo."},
   "Buy & auctions": {fr:"Achats & enchères",es:"Compras y subastas"},
   "Sell a card": {fr:"Vendre une carte",es:"Vender una carta"},
   "Exchanges": {fr:"Échanges",es:"Intercambios"},
