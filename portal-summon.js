@@ -2,7 +2,11 @@
 (function(){'use strict';
 const keys=['basic','strongest','retro','cinema'], names=['Basic','The Strongest','Retro','Cinéma'], $=id=>document.getElementById(id);
 window.sakuInfiniteCoins=()=>false;
-let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTimer=0,autoTimer=0;
+// Prix par défaut côté client (Basic et Retro : 200 x1 / 1000 x5)
+const PORTAL_PRICE={[0]:{1:200,5:1000},[2]:{1:200,5:1000}};
+let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTimer=0,autoTimer=0,freeDraws=0;
+window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0))};
+window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws);if(n>0){freeDraws-=n;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
 const lang=()=>((window.SAKU_I18N||{}).lang||'en');
 const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas'}};
 const tr=k=>(dict[lang()]||dict.en)[k]||k,uid=()=>window.sakuSecureUserId||null;
@@ -66,11 +70,18 @@ async function buy(i,n){
  if(busy)return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
-  const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
-  setServerResult(result);await refreshCollection();
-  animateDrop(i,n,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
- }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}
-}
+  const freeToUse=Math.min(n,freeDraws);
+  let paid=n-freeToUse;
+  if(freeToUse>0){freeDraws-=freeToUse;window.sakuPortalFreeDraws(freeDraws);}
+  if(paid>0){
+   const result=await window.sakuBackend.summon(keys[i],paid);if(who!==uid())return;
+   setServerResult(result);await refreshCollection();
+   animateDrop(i,n,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
+  } else if(freeToUse>0){
+   setServerResult({portal:keys[i],pity:0,request_id:'free-'+Date.now(),packs:[],count:freeToUse});await refreshCollection();
+   animateDrop(i,n,()=>{if(uid()===who&&pending&&pending.id==='free-'+Date.now())openModal()});
+  }
+ }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}}
 window.sakuPortalBuy=buy;
 function animateDrop(i,n,done){let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide){done();return}let tray=document.createElement('div');tray.className='portal-falling';tray.setAttribute('aria-hidden','true');for(let x=0;x<n;x++){let img=document.createElement('img');img.src='summon-machines/pack-'+keys[i]+'.png';img.style.setProperty('--pack-n',x);img.style.setProperty('--pack-total',n);tray.appendChild(img)}slide.appendChild(tray);clearTimeout(fallTimer);let ms=matchMedia('(prefers-reduced-motion: reduce)').matches?120:1250;fallTimer=setTimeout(()=>{tray.remove();done()},ms)}
 function modalEl(){if(modal)return modal;modal=document.createElement('div');modal.id='portalOpenModal';modal.className='portal-open-modal';modal.hidden=true;modal.innerHTML='<div class="portal-open-panel" role="dialog" aria-modal="true" aria-labelledby="portalOpenTitle"><header><div><span>SAKUGAME / PORTALS</span><h2 id="portalOpenTitle"></h2></div><button type="button" class="portal-open-dismiss" aria-label="Close">×</button></header><div id="portalOpenBody"></div></div>';document.body.appendChild(modal);modal.querySelector('.portal-open-dismiss').onclick=closeModal;return modal;}
