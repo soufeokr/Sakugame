@@ -58,6 +58,9 @@ async function refreshCollection(){
 async function enter(){
  if(!window.sakuBackend||!uid()){pity={};pending=null;refreshDashboard();return;}
  const who=uid();try{
+  const {data: fd} = await window.sakuBackend.rpc('get_free_draws',{p_user_id:who});
+  if(fd) window.sakuPortalFreeDraws(fd);
+  
   const request=await window.sakuBackend.pendingSummon();if(!request||who!==uid()){pending=null;refreshDashboard();return;}
   const result=await window.sakuBackend.summon(request.portal,request.count);if(who!==uid())return;
   setServerResult(result);await refreshCollection();openModal();
