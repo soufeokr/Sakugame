@@ -5,20 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
 <meta name="saku-build" content="261">
 <meta name="theme-color" content="#0f0f1a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://graphql.anilist.co; object-src 'none'; base-uri 'self'">
-<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
 <link rel="manifest" href="manifest.json?v=261">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-
+<link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
 <link rel="preconnect" href="https://graphql.anilist.co" crossorigin>
 <link rel="preconnect" href="https://s4.anilist.co" crossorigin>
-<meta name="description" content="Démo locale : données et parties simulées dans ce navigateur.">
+<meta name="description" content="Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <!-- 🔎 SEO / discoverability -->
-
+<link rel="canonical" href="https://soufeokr.github.io/Sakugame/">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="application-name" content="Sakugame">
 <!-- 🔑 Search Console ownership is verified via the googlefbaafd3772baa43a.html
@@ -26,7 +25,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Sakugame">
 <meta property="og:title" content="Sakugame — Anime guessing games with friends">
-<meta property="og:description" content="Démo locale : données et parties simulées dans ce navigateur.">
+<meta property="og:description" content="Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <meta property="og:url" content="https://soufeokr.github.io/Sakugame/">
 <meta property="og:image" content="https://soufeokr.github.io/Sakugame/icons/open-graph.png">
 <meta property="og:image:width" content="1200">
@@ -37,13 +36,40 @@
 <meta property="og:locale:alternate" content="es_ES">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sakugame — Anime guessing games with friends">
-<meta name="twitter:description" content="Démo locale : données et parties simulées dans ce navigateur.">
+<meta name="twitter:description" content="Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot &amp; Cold, Undercover and more. Free, right in your browser.">
 <meta name="twitter:image" content="https://soufeokr.github.io/Sakugame/icons/open-graph.png">
 <meta name="twitter:image:alt" content="Sakugame — anime guessing games with friends">
-
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Sakugame",
+  "url": "https://soufeokr.github.io/Sakugame/",
+  "description": "Guess anime characters with friends online — Detective Showdown, Blur Guess, Hot & Cold, Undercover and more. Free, right in your browser.",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "inLanguage": ["en", "fr", "es"],
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "name": "Soufeok" },
+  "image": "https://soufeokr.github.io/Sakugame/icons/open-graph.png"
+}
+</script>
 <!-- 🏷️ WebSite identity (b108): THE source Google uses for the gray "site
      name" label in search results — says loud & clear the host IS Sakugame -->
-
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://soufeokr.github.io/Sakugame/#website",
+  "url": "https://soufeokr.github.io/Sakugame/",
+  "name": "Sakugame",
+  "alternateName": "Sakugame — Anime guessing games with friends",
+  "inLanguage": ["en", "fr", "es"],
+  "publisher": { "@type": "Person", "name": "Soufeok" }
+}
+</script>
 <meta name="theme-color" content="#0f0f1a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -54,13 +80,11 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=261">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=261">
 <link rel="stylesheet" href="style.css?v=261">
-<!-- 🔒 TEST BUILD entrance gate (test build only — never shipped) -->
-
 </head>
 <body>
-  <div id="demoNotice" role="dialog" aria-modal="true" aria-labelledby="demoTitle"><div><h1 id="demoTitle">Sakugame V2 · démo locale</h1><p>Cette démo reprend Sakugame Test. Les comptes, cartes, pièces, amis et salons sont <strong>simulés dans ce navigateur</strong> : aucun partage entre joueurs ni sauvegarde en ligne. Effacer les données du navigateur peut tout supprimer.</p><p>La connexion Discord est simulée. Ne saisis aucun mot de passe ou donnée personnelle.</p><button type="button" onclick="document.getElementById('demoNotice').remove()">Compris, ouvrir la démo</button></div></div>
-  <div id="demoBadge">DÉMO LOCALE · données et multijoueur simulés</div>
-  <style>#demoNotice{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;background:#050711ed;padding:20px;color:#fff;font:16px/1.5 system-ui}#demoNotice>div{max-width:560px;background:#15182c;border:1px solid #696fd1;border-radius:18px;padding:28px;box-shadow:0 20px 80px #000}#demoNotice h1{font-size:24px}#demoNotice button{background:#6d67ed;color:#fff;border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer}#demoBadge{position:fixed;bottom:0;left:0;z-index:2147482998;background:#462c09;color:#fff4c5;font:700 11px/1.2 system-ui;padding:5px 8px;border-radius:0 6px 0 0;pointer-events:none}@media(max-width:700px){#demoBadge{bottom:60px;font-size:9px}}</style>
+
+
+
 <!-- ══════ SVG ICON SPRITE — all UI icons (stroke = currentColor, inherits text color) ══════ -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
   <symbol id="i-play" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" fill="#f4f9ff"/><path d="M8.6 7.6v8.8l7.6-4.4z" fill="#02a9ff" stroke="#02a9ff" stroke-width="0.9" stroke-linejoin="round"/></symbol>
@@ -1741,8 +1765,7 @@
           <h4 class="profile-section-title" style="margin-top: 16px;"><svg class="ic"><use href="#i-eye"/></svg> Content filter</h4>
           <label class="nsfw-row"><input type="checkbox" class="nsfw-switch" onchange="toggleNsfwFilter(this)"><span>Hide NSFW (18+) characters &amp; covers</span></label>
 
-          <h4 class="profile-section-title" style="margin-top: 16px;" data-noi18n><svg class="ic"><use href="#i-key"/></svg> Admin <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unlocks solo launches of every game (handy to preview rooms &amp; displays alone).</span></button></h4>
-          <button type="button" class="secondary full" id="adminToggleBtn" data-noi18n onclick="sakuAdminToggle()">🔒 Admin mode is off</button>
+          
 
           <h4 class="profile-section-title" style="margin-top: 18px; color: var(--danger);"><svg class="ic"><use href="#i-skull"/></svg> Danger zone</h4>
           <button class="full ghost-danger" onclick="openDeleteAccountModal()"><svg class="ic"><use href="#i-skull"/></svg> Delete my account</button>
@@ -1861,11 +1884,10 @@
     </div>
   </div>
 
-  <!-- 🔒 entrance gate first — nothing else may run until it is open -->
-
-  <!-- 🧪 TEST BUILD — the real Firebase scripts are replaced by this local stub,
-       so nothing you do here can touch the public database. -->
-  <script src="test-stub.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="saku-local-account.js?v=261"></script>
+  <script src="saku-features.js?v=261"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -1911,6 +1933,8 @@
   <script src="lang.js?v=261"></script>
   <script src="game-guides.js?v=261"></script>
   <script src="app.js?v=261"></script>
+  <script src="supabase-client.js?v=261"></script>
+  <script src="saku-session.js?v=261"></script>
   <script src="retro-index.js?v=261"></script>
   <script src="cinema-index.js?v=261"></script>
   <script src="portal-rates.js?v=261"></script>
@@ -1922,9 +1946,7 @@
   <script src="player-popover.js?v=261"></script>
   <script src="friends.js?v=261"></script>
   <script src="showcase.js?v=261"></script>
-  <script src="test-ninja-cards.js?v=261"></script>
   <script src="market.js?v=261"></script>
-  <script src="test-panel.js"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->

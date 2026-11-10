@@ -1,4 +1,4 @@
-/* Per-copy stars. Existing card counts remain intact; only upgraded copies are stored separately. */
+/* Sakugame — module branché sur Supabase (V1). Aucune écriture économique depuis le navigateur : tout passe par des fonctions serveur. */
 (function(){'use strict';
 const labels={fr:{title:'Niveau de carte',level:'Niveau',copies:'ex.',dup:'doublons disponibles',cost:'doublon',costs:'doublons',upgrade:'Améliorer',max:'Niveau maximum',missing:'Carte non possédée',error:'Impossible de réaliser cette amélioration.',progress:'Amélioration en cours…'},en:{title:'Card level',level:'Level',copies:'copies',dup:'duplicates available',cost:'duplicate',costs:'duplicates',upgrade:'Upgrade',max:'Maximum level',missing:'Card not owned',error:'Could not upgrade this card.',progress:'Upgrading…'},es:{title:'Nivel de carta',level:'Nivel',copies:'copias',dup:'duplicados disponibles',cost:'duplicado',costs:'duplicados',upgrade:'Mejorar',max:'Nivel máximo',missing:'Carta no obtenida',error:'No se pudo mejorar la carta.',progress:'Mejorando…'}};
 const lang=()=>labels[(window.SAKU_I18N||{}).lang]||labels.en, cost=[1,2,4];let working=false;
@@ -11,12 +11,17 @@ function render(container,id){if(!container)return;const old=container.querySele
  container.appendChild(el);let box=container.closest('#cardsDetail,#encDetail');if(box&&window.sakuDetailStars)window.sakuDetailStars(box,id);
 }
 window.sakuCardLevelsRender=render;
-async function upgrade(id,level,container){if(working||level<0||level>2)return;let need=cost[level],actor=currentAccount?sakuMyDcId():null;working=true;render(container,id);try{
- let apply=raw=>{let st=cardNormalize(raw),n=buckets(st,id);if(n[level]<1||n[0]-(level===0?1:0)<need)return;st.cards[id]-=need;st.levels[id]=st.levels[id]||{};if(level>0){st.levels[id][level]--;if(!st.levels[id][level])delete st.levels[id][level];}st.levels[id][level+1]=(st.levels[id][level+1]||0)+1;return st;};
- if(actor){if(cardSaveTimer){clearTimeout(cardSaveTimer);cardSaveTimer=null;await sakuAcctRef(actor).child('cards').set(cardNormalize(cardState));}const r=await sakuAcctRef(actor).child('cards').transaction(apply,undefined,false);if(!r.committed)throw Error('not enough copies');if(!currentAccount||sakuMyDcId()!==actor)return;cardState=cardNormalize(r.snapshot.val());currentAccount.cards=cardNormalize(cardState);}
- else{let result=apply(cardState);if(!result)throw Error('not enough copies');cardState=result;cardWriteLocal();try{localStorage.setItem('saku-cards-guest-only','1');}catch(e){}}
- if(typeof cardsRenderStats==='function')cardsRenderStats();if(typeof cardsRenderAlbum==='function'&&document.getElementById('collectionScreen')?.classList.contains('active'))cardsRenderAlbum();
- // Refresh the count in the collection detail without replacing the interaction.
- const dl=container.querySelector('dl');if(dl){let rows=dl.querySelectorAll('.card-detail-row');let row=Array.from(rows).find(x=>/collection|colección/i.test(x.textContent));if(row&&row.querySelector('dd'))row.querySelector('dd').textContent='× '+(cardState.cards[id]||0);}
- }catch(e){if(typeof showNotification==='function')showNotification(lang().error);}finally{working=false;if(container.isConnected)render(container,id);}}
+async function upgrade(id,level,container){
+ if(working||level<0||level>2)return;const actor=window.sakuSecureUserId;
+ if(!actor||!window.sakuBackend){if(typeof showNotification==='function')showNotification('Connecte-toi pour améliorer cette carte.');return;}
+ working=true;render(container,id);
+ try{
+  await window.sakuBackend.upgradeCard(String(id),level);
+  const state=await window.sakuBackend.gameCollection();if(window.sakuSecureUserId!==actor)return;
+  cardState=cardNormalize(state);if(currentAccount)currentAccount.cards=cardNormalize(state);
+  if(typeof cardsRenderStats==='function')cardsRenderStats();if(typeof cardsRenderAlbum==='function'&&document.getElementById('collectionScreen')?.classList.contains('active'))cardsRenderAlbum();
+  const dl=container.querySelector('dl');if(dl){const row=Array.from(dl.querySelectorAll('.card-detail-row')).find(x=>/collection|colección/i.test(x.textContent));if(row&&row.querySelector('dd'))row.querySelector('dd').textContent='× '+(cardState.cards[id]||0);}
+ }catch(e){if(typeof showNotification==='function')showNotification(lang().error);}finally{working=false;if(container.isConnected)render(container,id);}
+}
+
 })();

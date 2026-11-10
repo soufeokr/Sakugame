@@ -198,35 +198,16 @@ function cardsSave(now) {
   const push = () => {
     cardSaveTimer = null;
     if (!currentAccount || sakuMyDcId() !== saveUid) return;
-    try { sakuAcctRef(saveUid).child('cards').set(savedState); } catch (e) {}
+    /* V1 : la collection d'un compte vient du serveur ; rien n'est écrit depuis le navigateur. */
   };
   if (now) push();
   else cardSaveTimer = setTimeout(push, 1200);        // debounce rapid clicks
 }
 /* Called when a Discord account is adopted: fold the guest collection in. */
 function cardsMergeOnSignIn(node) {
-  // A signed-in account is authoritative. Never merge an old account mirror into another player.
-  let guestOnly=false;try { guestOnly=localStorage.getItem('saku-cards-guest-only')==='1'; } catch(e){}
-  const local = guestOnly ? cardReadLocal() : cardDefaultState();
-  const remote = cardNormalize((node && node.cards) || null);
-  const merged = cardNormalize(null);
-  const all = {};
-  Object.keys(local.cards).forEach(k => { all[k] = Math.max(all[k] || 0, local.cards[k]); });
-  Object.keys(remote.cards).forEach(k => { all[k] = Math.max(all[k] || 0, remote.cards[k]); });
-  merged.cards = all;
-  [...new Set(Object.keys(local.flags).concat(Object.keys(remote.flags)))].forEach(id=>{const a=local.flags[id]||{},b=remote.flags[id]||{},v={};['wishlist','favorite','locked'].forEach(k=>{if(a[k]||b[k])v[k]=true});if(Object.keys(v).length)merged.flags[id]=v;});
-  Object.keys(all).forEach(id=>{let m={},sum=0;[1,2,3].forEach(l=>{let n=Math.max(Number((local.levels[id]||{})[l]||0),Number((remote.levels[id]||{})[l]||0));if(n){m[l]=n;sum+=n;}});if(sum){merged.levels[id]=m;merged.cards[id]=Math.max(merged.cards[id],sum);}});
-  merged.boosters = Math.max(local.boosters, remote.boosters);
-  merged.opened = local.opened + remote.opened;
-  merged.dupes = local.dupes + remote.dupes;
-  merged.nextFree = Math.min(local.nextFree || Infinity, remote.nextFree || Infinity);
-  if (!isFinite(merged.nextFree)) merged.nextFree = 0;
-  cardState = merged;
-  if (guestOnly) { try { localStorage.removeItem(CARD_LS); localStorage.removeItem('saku-cards-guest-only'); } catch(e){} }
-  if (currentAccount) {
-    currentAccount.cards = merged;
-    try { sakuAcctRef(sakuMyDcId()).child('cards').set(merged); } catch (e) {}
-  }
+  // V1 : le serveur fait foi. Aucune fusion avec une collection locale, aucune écriture.
+  cardState = cardNormalize((node && node.cards) || null);
+  if (currentAccount) currentAccount.cards = cardState;
 }
 
 /* ---------------- free booster clock ---------------- */
@@ -318,6 +299,7 @@ function cardsTearPack(btn) {
   setTimeout(() => { btn.classList.remove('tearing'); cardsOpenBooster(); }, 420);
 }
 function cardsOpenBooster() {
+  return; // V1 : l'ouverture de boosters se fait uniquement via les portails (serveur)
   if (!cardPoolReady()) { showNotification('The character data is still loading — try again in a second.'); return; }
   cardsLoad();
   cardsTickFree(true);

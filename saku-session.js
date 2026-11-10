@@ -17,7 +17,13 @@
   if (typeof window.showShowcase !== 'function') window.showShowcase = home;
   if (typeof window.showQuests !== 'function') window.showQuests = home;
 
-  function warn(e) { try { console.warn('Session Sakugame', e); } catch (_) {} }
+  // Un visiteur non connecté fait lever « Auth session missing » au client Supabase : c'est normal, pas une erreur.
+  function isNoSession(e) { return !!e && (e.name === 'AuthSessionMissingError' || /auth session missing/i.test(String(e.message || ''))); }
+  function warn(e) { if (isNoSession(e)) return; try { console.warn('Session Sakugame', e); } catch (_) {} }
+  async function currentUserOrNull() {
+    try { return await window.sakuBackend.currentUser(); }
+    catch (e) { if (isNoSession(e)) return null; throw e; }
+  }
 
   function metaName(u) {
     var m = (u && u.user_metadata) || {};
@@ -41,10 +47,40 @@
     if (typeof cardsRenderStats === 'function') try { cardsRenderStats(); } catch (e) {}
   }
 
+  // Appel d'une fonction serveur Supabase avec la session du joueur (progression, amis, vitrine…).
+  // Les erreurs métier du serveur (raise exception 'not_ready'…) arrivent dans error.message.
+  function readSession() {
+    try { var s = JSON.parse(localStorage.getItem(STORAGE) || 'null'); return s && typeof s === 'object' ? s : null; } catch (e) { return null; }
+  }
+  async function rpc(name, args) {
+    if (!/^[a-z_]{3,60}$/.test(String(name))) throw new Error('invalid_rpc');
+    var s = readSession();
+    if (!s || !s.access_token || (s.expires_at && s.expires_at * 1000 - Date.now() < 45000)) {
+      // currentUser() fait renouveler le jeton par le client Supabase si besoin
+      if (window.sakuBackend) { try { await window.sakuBackend.currentUser(); } catch (e) {} }
+      s = readSession();
+    }
+    if (!s || !s.access_token) { var na = new Error('not_authenticated'); na.code = 'not_authenticated'; throw na; }
+    var res = await fetch(PROJECT + '/rest/v1/rpc/' + name, {
+      method: 'POST',
+      headers: { apikey: PUBLIC_KEY, Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args || {})
+    });
+    var text = await res.text(), data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (e) {}
+    if (!res.ok) {
+      var err = new Error((data && data.message) || ('http_' + res.status));
+      err.status = res.status; err.code = data && data.code;
+      throw err;
+    }
+    return data;
+  }
+  window.sakuRpc = rpc;
+
   async function hydrate() {
     var run = ++sequence;
     if (!window.sakuBackend) throw new Error('Service de compte indisponible');
-    var user = await window.sakuBackend.currentUser();
+    var user = await currentUserOrNull();
     if (run !== sequence) return;
     if (!user) { if (currentAccount || window.sakuSecureUserId) clear(); return; }
     if (window.sakuSecureUserId && window.sakuSecureUserId !== user.id) clear();

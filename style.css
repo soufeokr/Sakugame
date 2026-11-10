@@ -3467,3 +3467,11 @@ body:has(.howto-guide[style*="flex"]) #testBuildBadge{visibility:hidden}
 @media(hover:none){#hostRoomScreen .game-pick-card:hover{transform:none}}
 #encDetail.enc-detail{padding:18px;overflow:hidden}#encDetail .enc-info-panel .enc-detail-meta{max-width:none;max-height:none;overflow:visible;color:#eef7ff}#encDetail .card-detail-visual .enc-detail-card{width:min(240px,100%);box-shadow:0 20px 35px #03091688}#encDetail .card-detail-actions.encyclopedia-actions{position:absolute;top:14px;right:58px}#encDetail .card-detail-series{margin:0;color:#a8c2d8;font-size:.85rem}#encDetail .enc-detail-alt{margin:14px 0 0;color:#a7bed0;font-size:.7rem}.enc-test-rarity{margin-top:14px;font-size:.72rem;color:#a7bed0}.enc-test-rarity summary{cursor:pointer;padding:8px}
 @media(max-width:650px){#encDetail.enc-detail{padding:12px;align-items:center;flex-direction:row}#encDetail .enc-info-panel{grid-template-columns:minmax(105px,.75fr) minmax(0,1.25fr)}#encDetail .card-detail-actions.encyclopedia-actions{top:10px;right:54px}#encDetail .card-detail-series{font-size:.72rem}}
+
+
+/* ===== V2 : interrupteurs (voir saku-features.js) ===== */
+html.no-quests button[onclick="sakuNavGo('quests')"], html.no-quests .home-quest-board, html.no-quests #accountProgress,
+html.no-showcase button[onclick="sakuNavGo('showcase')"],
+html.no-friends #sideFriendsTab, html.no-friends #sideFriendsView, html.no-friends #friendRequestBadge { display: none !important; }
+/* Statistiques de parties locales du panneau Compte : remplacées par celles du serveur (vitrine) */
+#acctPaneGame > h4:first-of-type, #acctPaneGame > p, #acctPaneGame > div { display: none !important; }

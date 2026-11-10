@@ -557,7 +557,7 @@
     // per Discord ID lives in the DB with a random session token, and the browser keeps
     // { dc, session } in localStorage — that pair is what signs you back in.
     const SAKU_ACCT_LS = 'saku-acct-session';
-    function sakuAcctRef(dcId) { return database.ref('accounts/' + dcId); }
+    function sakuAcctRef(dcId) { return window.sakuLocalAccountRef(dcId); } // V1 : profil local au navigateur
     function sakuMyDcId() { return currentAccount ? String(currentAccount.uid).replace(/^dc_/, '') : null; }
     function sakuNewSession() { return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12); }
     function sakuSessionLoad() {
@@ -584,7 +584,6 @@
       if (window.sakuFriendsAttach) window.sakuFriendsAttach();
       // 🎴 fold the guest card collection into the freshly signed-in account
       try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
-      if (window.sakuTestNinjaAttach) window.sakuTestNinjaAttach();
       playerName = currentAccount.username;
       if (window.sakuShowcaseAttach) window.sakuShowcaseAttach();
       updateUserButton();
@@ -602,14 +601,10 @@
 
     // Replaces Firebase's onAuthStateChanged: validate the stored session against the DB
     async function sakuRestoreSession() {
-      const st = sakuSessionLoad();
-      if (!st) { currentAccount = null; updateUserButton(); return; }
-      try {
-        const snap = await sakuAcctRef(st.dc).once('value');
-        const a = snap.val();
-        if (a && a.session === st.session) await sakuAdoptAccount(a);
-        else { sakuSessionClear(); currentAccount = null; updateUserButton(); }
-      } catch (e) { currentAccount = null; updateUserButton(); }
+      // V1 : la session est gérée par Supabase (saku-session.js)
+      try { sakuSessionClear(); } catch (e) {}
+      if (window.sakuSessionBridge) { try { window.sakuSessionBridge.start(); } catch (e) { console.warn(e); } }
+      else { currentAccount = null; updateUserButton(); }
     }
     // deferred on purpose: the restore touches playerName/currentAccount, which are
     // declared further down this file — a macrotask guarantees the whole script ran first
@@ -617,7 +612,7 @@
     else setTimeout(sakuRestoreSession, 0);
 
     function onUserButton() {
-      if (currentAccount) { if (window.sakuPlayerToggle) window.sakuPlayerToggle(); }
+      if (currentAccount) { if (window.sakuPlayerToggle) window.sakuPlayerToggle(); else sakuNavGo('account'); }
       else changeUsername();
     }
 
@@ -657,7 +652,7 @@
         switchAcctTab(lastTab);
         const snap = await sakuAcctRef(sakuMyDcId()).once('value');
         const p = snap.val() || {};
-        document.getElementById('profileName').textContent = p.username || 'Account';
+        document.getElementById('profileName').textContent = (currentAccount && currentAccount.username) || p.username || 'Account';
         if (currentAccount) currentAccount.avatar = p.avatar || null;
         renderProfileAvatar();
         document.getElementById('profileWins').textContent = p.wins || 0;
@@ -681,20 +676,19 @@
     function showAuthError(msg) { const el = document.getElementById('authError'); if (el) el.textContent = msg || ''; }
     // Discord is the ONLY way in — one button, no form to fill
     function loginWithDiscord() {
-      // Démo locale : aucun vrai flux OAuth ni jeton Discord.
-      try { localStorage.setItem('saku-dc-pending','signin'); } catch (e) {}
-      location.hash='#access_token=TEST-SAKURA&token_type=Bearer&expires_in=604800';
-      location.reload();
+      // V1 : connexion Discord via Supabase (redirection PKCE)
+      try { Promise.resolve(window.sakuSessionBridge.signIn()).catch(function () { showNotification(t('Discord login failed — try again.')); }); }
+      catch (e) { showNotification(t('Discord login failed — try again.')); }
     }
 
     async function logoutAccount() {
       sakuSessionClear();
+      if (window.sakuSessionBridge) { try { await window.sakuSessionBridge.signOut(); } catch (e) { console.warn(e); } }
       currentAccount = null;
       if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
-      if (window.sakuTestNinjaDetach) window.sakuTestNinjaDetach();
       if (typeof cardsLoad === 'function') cardsLoad();
       anilistAutoSyncDone = false;
       updateUserButton();
@@ -1331,7 +1325,8 @@
     // 🚪 the single entry point: Discord OAuth popup → verified identity → account
     function sakuDiscordStartLink() { loginWithDiscord(); }
     // full-page OAuth return: Discord sends us back with #access_token=… in the URL
-    async function sakuDiscordHandleReturn() {
+    async function sakuDiscordHandleReturn() { return; /* V1 : le retour OAuth est géré par Supabase */ }
+    async function sakuLegacyDiscordHandleReturn() {
       let h = '';
       try { h = String(window.location.hash || ''); } catch (e) {}
       if (h.indexOf('access_token=') < 0) return;
@@ -1363,7 +1358,6 @@
       try {
         const ref = sakuAcctRef(dcId);
         const cur = (await ref.once('value')).val() || {};
-        if (!cur.createdAt) await ref.child('progress').set({coins:1500}); // monnaie fictive du navigateur
         await ref.update({
           dc: clean, session,
           createdAt: cur.createdAt || Date.now(),
@@ -1410,29 +1404,10 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); });
     else { sakuDiscordHandleReturn(); sakuRenderDiscordBox(); }
 
-    // ================= 🛠️ ADMIN MODE (solo launches for display checks) =================
-    // Unlock it from the Account tab (🔒 Admin) with this passcode — change it to
-    // your own, it only ever lives on the browser you unlock (localStorage).
-    const SAKU_ADMIN_CODE = 'sakuga981';
-    function sakuIsAdmin() { try { return localStorage.getItem('sakuAdmin') === '1'; } catch (e) { return false; } }
-    function paintAdminBtn() {
-      const btn = document.getElementById('adminToggleBtn');
-      if (btn) btn.textContent = sakuIsAdmin() ? '🔓 Admin mode ON — tap to disable' : '🔒 Admin mode is off';
-    }
-    function sakuAdminToggle() {
-      if (typeof prompt !== 'function') return;
-      const ask = sakuIsAdmin() ? 'Type the passcode again to DISABLE admin mode:' : 'Admin passcode:';
-      const p = String(prompt((window.t ? t(ask) : ask)) || '').trim();
-      if (!p) return;
-      if (p !== SAKU_ADMIN_CODE) { showNotification(window.t ? t('Wrong passcode.') : 'Wrong passcode.'); return; }
-      try { localStorage.setItem('sakuAdmin', sakuIsAdmin() ? '0' : '1'); } catch (e) {}
-      paintAdminBtn();
-      const on = sakuIsAdmin();
-      showNotification(on ? (window.t ? t('🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : '🛠️ Admin mode ON — you can now launch any of your hosted games solo.') : (window.t ? t('Admin mode off.') : 'Admin mode off.'));
-      // the lobby's Start button gate depends on it — repaint if we're in one
-      if (on && currentRoom && currentRoom.state === 'lobby' && document.getElementById('lobbyScreen').classList.contains('active')) updateLobby();
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paintAdminBtn); else paintAdminBtn();
+    // ================= (V1) aucun mode admin : les minimums de joueurs s'appliquent à tous =================
+    function sakuIsAdmin() { return false; }
+    function paintAdminBtn() {}
+    function sakuAdminToggle() {}
     // ================= 🧭 PAGE ROUTER (hash URLs + browser Back/Forward) =================
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
@@ -2817,16 +2792,14 @@
       const btn = document.getElementById('deleteAccountBtn');
       btn.disabled = true;
       try {
-        await database.ref('publicPlayers/' + sakuMyDcId()).remove();
-        await database.ref('publicShowcases/' + sakuMyDcId()).remove();
-        await sakuAcctRef(sakuMyDcId()).remove();   // profile + stats + AniList link + avatar
+        if (!window.sakuSessionBridge) throw new Error('Service de compte indisponible');
+        await window.sakuSessionBridge.deleteAccount();   // V1 : supprime le compte Supabase (pièces, cartes, ventes) + données locales
         sakuSessionClear();
         currentAccount = null;
         if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
-      if (window.sakuTestNinjaDetach) window.sakuTestNinjaDetach();
         updateUserButton();
         try { sakuRenderDiscordBox(null); } catch (e) {}
         closeDeleteAccountModal();
