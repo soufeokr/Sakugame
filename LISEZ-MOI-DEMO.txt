@@ -1,9 +1,0 @@
-SAKUGAME V2 — DÉMO LOCALE, PAS UNE V2 MULTIJOUEUR
-
-Copie accélérée de Sakugame Test, séparée de la production. Elle conserve les écrans et simulateurs de test. Les comptes, Discord, amis, salons, cartes, pièces, marché et progression sont simulés dans le navigateur : ils ne sont pas communs à d'autres personnes. Les pièces et cartes ne sont pas de vrais actifs, les échanges et les récompenses ne sont pas fiables, et les données peuvent disparaître si le stockage est effacé. Ne saisir aucune donnée sensible. Les images et AniList peuvent demander une connexion réseau.
-
-À l'ouverture, accepter l'avertissement, puis utiliser la connexion simulée ou les « outils de démo » en bas à droite. La connexion simulée crée Sakura avec 1 500 pièces fictives sur un profil neuf ; les outils proposent aussi des bots et raccourcis. Les jeux solo Blur/Snapshot sont disponibles dans les salons locaux ; plusieurs modes exigent plusieurs participants simulés ou des manipulations du panneau de test. Il s'agit du code Sakugame Test, pas du nouveau moteur autoritaire Blur.
-
-Contrôles automatisés (390/1440, images externes bloquées) : chargement, compte simulé, achat fictif d'un booster de 10 cartes, création d'un salon et démarrage de Blur ; aucune requête vers les bases de production observée. L'ensemble des autres fonctions n'a pas été testé. Ce n'est pas une validation complète, ni une preuve de disponibilité des ressources distantes.
-
-Pour une V2 réellement publique avec comptes, multijoueur, économie et progression partagés, il faut encore des services en ligne et raccordements fonctionnels. Ne pas remplacer la V1 par cette démo ni présenter la simulation comme un service en ligne. Le projet Supabase de préproduction et la production n'ont pas été modifiés.
