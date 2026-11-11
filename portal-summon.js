@@ -4,9 +4,15 @@ const keys=['basic','strongest','retro','cinema'], names=['Basic','The Strongest
 window.sakuInfiniteCoins=()=>false;
 // Prix par défaut côté client (Basic et Retro : 200 x1 / 1000 x5)
 const PORTAL_PRICE={[0]:{1:200,5:1000},[2]:{1:200,5:1000}};
-let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTimer=0,autoTimer=0,freeDraws=0;
+let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTimer=0,autoTimer=0,freeDraws=0,freeNextAt=0,freeStatusBusy=false,freeTimerInterval=0;
 function updateFreeArtwork(){const stems=['basic','strongest','retro','cinema'];document.querySelectorAll('.summon-slide[data-index]').forEach(slide=>{const i=Number(slide.dataset.index),stem=stems[i];if(!stem)return;const freeSuffix=freeDraws>=5?'-free5':freeDraws>0?'-free':'';slide.querySelectorAll('.summon-machine-button img').forEach(img=>{const isStill=img.classList.contains('summon-still');const suffix=isStill&&i!==1?'-static':'';const src='summon-machines/'+stem+suffix+freeSuffix+'.svg';if(!img.src.endsWith('/'+src))img.src=src;});});}
-window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0));updateFreeArtwork()};
+function formatFreeTimer(seconds){const s=Math.max(0,Math.ceil(seconds));return s>=3600?String(Math.floor(s/3600)).padStart(2,'0')+':'+String(Math.floor(s%3600/60)).padStart(2,'0'):String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+function renderFreeStatus(){const left=freeDraws>=5?0:Math.max(0,Math.ceil((freeNextAt-Date.now())/1000)),l=lang();document.querySelectorAll('.portal-free-status').forEach(el=>{el.hidden=!uid();if(!uid())return;el.textContent=freeDraws>=5?(l==='fr'?'Gratuites 5/5 · PLEIN':l==='es'?'Gratis 5/5 · LLENO':'Free 5/5 · FULL'):(l==='fr'?'Gratuites '+freeDraws+'/5 · prochain '+formatFreeTimer(left):l==='es'?'Gratis '+freeDraws+'/5 · siguiente '+formatFreeTimer(left):'Free '+freeDraws+'/5 · next '+formatFreeTimer(left));});}
+function applyFreeStatus(s){if(!s)return;const n=Number(s.available),sec=Number(s.next_seconds);if(Number.isInteger(n))freeDraws=Math.max(0,Math.min(5,n));freeNextAt=Date.now()+(Number.isFinite(sec)?Math.max(0,sec):0)*1000;updateFreeArtwork();renderFreeStatus();}
+async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s=await window.sakuBackend.freeDrawStatus();applyFreeStatus(s);return s}
+window.sakuPortalRefreshFreeStatus=renderFreeStatus;
+window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0));updateFreeArtwork();renderFreeStatus()};
+if(!freeTimerInterval)freeTimerInterval=setInterval(()=>{renderFreeStatus();if(freeDraws<5&&freeNextAt&&Date.now()>=freeNextAt&&!freeStatusBusy&&uid()){freeStatusBusy=true;refreshFreeStatus().catch(e=>console.warn('Actualisation gratuite',e)).finally(()=>{freeStatusBusy=false})}},1000);
 window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws);if(n>0){freeDraws-=n;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
 const lang=()=>((window.SAKU_I18N||{}).lang||'en');
 const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas'}};
@@ -59,8 +65,7 @@ async function refreshCollection(){
 async function enter(){
  if(!window.sakuBackend||!uid()){pity={};pending=null;refreshDashboard();return;}
  const who=uid();try{
-  const fd=await window.sakuBackend.freeDraws();
-  window.sakuPortalFreeDraws(fd);
+  await refreshFreeStatus();
   
   const request=await window.sakuBackend.pendingSummon();if(!request||who!==uid()){pending=null;refreshDashboard();return;}
   const result=await window.sakuBackend.summon(request.portal,request.count);if(who!==uid())return;
@@ -74,9 +79,10 @@ async function buy(i,n){
  if(busy)return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
-  window.sakuPortalFreeDraws(await window.sakuBackend.freeDraws());
+  await refreshFreeStatus();
   const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
   if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
+  await refreshFreeStatus();
   setServerResult(result);await refreshCollection();
   animateDrop(i,result.packs.length,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
  }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}}
