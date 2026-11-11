@@ -59,8 +59,8 @@ async function refreshCollection(){
 async function enter(){
  if(!window.sakuBackend||!uid()){pity={};pending=null;refreshDashboard();return;}
  const who=uid();try{
-  const {data: fd} = await window.sakuBackend.rpc('get_free_draws',{p_user_id:who});
-  if(fd) window.sakuPortalFreeDraws(fd);
+  const fd=await window.sakuBackend.freeDraws();
+  window.sakuPortalFreeDraws(fd);
   
   const request=await window.sakuBackend.pendingSummon();if(!request||who!==uid()){pending=null;refreshDashboard();return;}
   const result=await window.sakuBackend.summon(request.portal,request.count);if(who!==uid())return;
@@ -74,17 +74,10 @@ async function buy(i,n){
  if(busy)return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
-  const freeToUse=Math.min(n,freeDraws);
-  let paid=n-freeToUse;
-  if(freeToUse>0){freeDraws-=freeToUse;window.sakuPortalFreeDraws(freeDraws);}
-  if(paid>0){
-   const result=await window.sakuBackend.summon(keys[i],paid);if(who!==uid())return;
-   setServerResult(result);await refreshCollection();
-   animateDrop(i,n,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
-  } else if(freeToUse>0){
-   setServerResult({portal:keys[i],pity:0,request_id:'free-'+Date.now(),packs:[],count:freeToUse});await refreshCollection();
-   animateDrop(i,n,()=>{if(uid()===who&&pending&&pending.id==='free-'+Date.now())openModal()});
-  }
+  const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
+  if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
+  setServerResult(result);await refreshCollection();
+  animateDrop(i,result.packs.length,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
  }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}}
 window.sakuPortalBuy=buy;
 function animateDrop(i,n,done){let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide){done();return}let tray=document.createElement('div');tray.className='portal-falling';tray.setAttribute('aria-hidden','true');for(let x=0;x<n;x++){let img=document.createElement('img');img.src='summon-machines/pack-'+keys[i]+'.png';img.style.setProperty('--pack-n',x);img.style.setProperty('--pack-total',n);tray.appendChild(img)}slide.appendChild(tray);clearTimeout(fallTimer);let ms=matchMedia('(prefers-reduced-motion: reduce)').matches?120:1250;fallTimer=setTimeout(()=>{tray.remove();done()},ms)}
