@@ -74,6 +74,7 @@ async function buy(i,n){
  if(busy)return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
+  window.sakuPortalFreeDraws(await window.sakuBackend.freeDraws());
   const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
   if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
   setServerResult(result);await refreshCollection();
