@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '265';
+    const SAKU_BUILD = '266';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -5934,10 +5934,13 @@
     // the backstop for rooms where nobody is connected (crashed/closed tabs).
     async function cleanupStaleRooms() {
       try {
-        const snap = await database.ref('rooms').once('value');
-        const rooms = snap.val() || {};
+        // ⚡ Au plus une fois toutes les 10 min par navigateur, et seulement les salons inactifs
+        // depuis 2 h (requête indexée sur lastActivity) : plus de téléchargement de toute la base.
+        try { const lastRun = Number(localStorage.getItem('saku_cleanup_at') || 0); if (Date.now() - lastRun < 10 * 60 * 1000) return; localStorage.setItem('saku_cleanup_at', String(Date.now())); } catch (e) {}
         const now = Date.now();
         const STALE_MS = 2 * 60 * 60 * 1000; // 2 hours (conservative backstop)
+        const snap = await database.ref('rooms').orderByChild('lastActivity').endAt(now - STALE_MS).limitToFirst(50).once('value');
+        const rooms = snap.val() || {};
         Object.entries(rooms).forEach(([code, room]) => {
           const players = (room && room.players) || {};
           const last = (room && (room.lastActivity || room.createdAt)) || 0;
@@ -5949,7 +5952,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      cleanupStaleRooms();
+      setTimeout(cleanupStaleRooms, 20000); // après le démarrage : ne concurrence pas le chargement de la page
       updateUserButton();
       watchConnectionSelfHeal(); // heal dcAt markers / queue spot on every silent reconnect
       tryShareLinkJoin(); // opened via a 🔗 shared room link? jump straight in
