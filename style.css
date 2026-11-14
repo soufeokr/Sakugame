@@ -3581,3 +3581,41 @@ svg.hoshi-card{aspect-ratio:260/372}
 @media(max-width:700px){#showcaseScreen .showcase-page{margin-top:8px}.showcase-hero{gap:12px 14px;padding:16px}#showcaseScreen .showcase-hero .showcase-avatar{width:60px;height:60px;border-radius:17px;font-size:1.6rem}.showcase-hero-id{flex:1 1 0}.showcase-hero .page-back{width:40px;height:40px}.showcase-hero-id h1{font-size:1.6rem}.showcase-hero .showcase-connections>span{padding:6px 8px;font-size:.68rem}.showcase-hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.showcase-hero-collection{grid-column:1/-1}.showcase-hero .showcase-rank{min-width:0;padding:10px 12px}.showcase-hero #showcaseEdit{order:6;width:100%;margin:0}}
 @media(max-width:900px){#showcaseScreen .showcase-cards{grid-template-columns:repeat(10,minmax(0,1fr));gap:2px;max-width:none}}
 .showcase-modal-main .showcase-editor-note{font-size:.74rem;color:#b9c8da;margin:10px 0 4px}
+/* Filtre de rareté en pastilles (collection + encyclopédie) */
+.rarity-chips.rarity-dots{display:inline-flex;flex-wrap:wrap;align-items:center;gap:7px;width:max-content;max-width:100%;padding:5px;border-radius:999px;background:#0b1322;border:1px solid #ffffff14;box-shadow:inset 0 1px 0 #ffffff0a}
+.rarity-dots .rarity-chip{min-height:0;cursor:pointer;transition:transform .15s,opacity .15s,background .15s,box-shadow .15s}
+.rarity-dots .rarity-all{display:inline-flex;align-items:center;gap:9px;height:38px;padding:4px 15px 4px 4px;border-radius:999px;border:0;background:transparent;color:#c9d4e5;font:800 .86rem Outfit,system-ui,sans-serif}
+.rarity-dots .rarity-all[aria-pressed=true]{background:#ffffff1c;color:#fff;box-shadow:none}
+.rarity-orb{width:30px;height:30px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#ffffffcc,transparent 38%),conic-gradient(from 200deg,#ff5d5d,#ffb253,#f4d389,#4caf50,#02a9ff,#b28cff,#ff7bd5,#ff5d5d);box-shadow:0 0 12px #b28cff55}
+.rarity-dots .rarity-dot{width:34px;height:34px;padding:0;display:grid;place-items:center;border-radius:50%;border:0;background:radial-gradient(circle at 35% 28%,color-mix(in srgb,var(--rarity) 72%,white),color-mix(in srgb,var(--rarity) 78%,#0b1322) 62%);color:#0b1322;font:900 .82rem Outfit,system-ui,sans-serif;opacity:.42;box-shadow:inset 0 -2px 4px #0006}
+.rarity-dots .rarity-dot:hover{opacity:.8;transform:translateY(-1px)}
+.rarity-dots .rarity-dot[aria-pressed=true]{opacity:1;box-shadow:inset 0 -2px 4px #0005,0 0 0 2px #0b1322,0 0 0 4px var(--rarity),0 0 16px color-mix(in srgb,var(--rarity) 60%,transparent);transform:scale(1.06)}
+.rarity-dots:has(.rarity-all[aria-pressed=true]) .rarity-dot{opacity:.9}
+.rarity-dots .rarity-chip:focus-visible{outline:2px solid #fff;outline-offset:2px}
+/* Album par animé */
+.cards-album.anime-mode{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.anime-entry{position:relative;display:flex;align-items:center;gap:16px;min-width:0;padding:14px 16px;border-radius:16px;border:1px solid #ffffff14;background:linear-gradient(145deg,#161b26,#10141d);color:#eef3fb;text-align:left;cursor:pointer;overflow:hidden;font:inherit;transition:border-color .15s,transform .15s,background .15s}
+.anime-entry:hover{border-color:#ffffff33;transform:translateY(-1px)}
+.anime-entry:focus-visible{outline:2px solid #9fd8ff;outline-offset:2px}
+.anime-entry.empty .anime-cover img{filter:grayscale(1) brightness(.55)}
+.anime-entry.complete{border-color:#f4d38966;background:linear-gradient(145deg,#211d14,#12141b)}
+.anime-cover{width:68px;height:68px;flex:none;border-radius:14px;overflow:hidden;background:#0b0f17;box-shadow:0 4px 12px #0007}
+.anime-cover img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
+.anime-info{display:flex;flex-direction:column;gap:5px;min-width:0}
+.anime-info strong{font:800 1.02rem Outfit,system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.anime-progress{font-size:.78rem;color:#a9b3c4;font-variant-numeric:tabular-nums}
+.anime-tallies{display:flex;flex-wrap:wrap;gap:4px 11px;font:600 .72rem ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#c5cedd;font-variant-numeric:tabular-nums}
+.anime-tally b{color:var(--rarity);font-weight:800}.anime-tally{opacity:.95}.anime-tally.on{color:#fff;text-decoration:underline;text-decoration-color:var(--rarity);text-underline-offset:3px}
+.anime-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:#ffffff0c}.anime-bar i{display:block;height:100%;background:linear-gradient(90deg,#4caf50,#02a9ff,#b28cff,#f4d389)}
+.cards-anime-head{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid #ffffff14;background:#0d1626b3}
+.cards-anime-head[hidden]{display:none}
+.cards-anime-head strong{display:block;font:800 1.05rem Outfit,system-ui,sans-serif}.cards-anime-head span{font-size:.78rem;color:#a9b3c4}
+.anime-back{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:10px;border:1px solid #ffffff24;background:#ffffff0d;color:#e7f2ff;font:700 .78rem Outfit,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.anime-back .saku-arrow-icon{width:16px;height:16px}.anime-back:hover{background:#ffffff1c}
+.anime-sep{grid-column:1/-1;display:flex;align-items:baseline;gap:10px;margin:14px 2px 2px;padding-bottom:6px;border-bottom:1px solid #ffffff17}
+.anime-sep:first-child{margin-top:0}.anime-sep strong{font:800 1rem Outfit,system-ui,sans-serif;color:#eef3fb}.anime-sep span{font-size:.75rem;color:#a9b3c4}
+.ac-tile .detail-star-mark{z-index:3}
+@media(max-width:700px){.rarity-chips.rarity-dots{gap:4px;padding:4px}.rarity-dots .rarity-dot{width:31px;height:31px;font-size:.76rem}.rarity-dots .rarity-all{height:33px;padding-right:11px;gap:7px;font-size:.8rem}.rarity-orb{width:26px;height:26px}.cards-album.anime-mode{grid-template-columns:1fr;gap:9px}.anime-entry{padding:11px 12px;gap:12px}.anime-cover{width:58px;height:58px;border-radius:12px}.anime-tallies{gap:3px 9px;font-size:.68rem}}
+@media(max-width:380px){.rarity-dots .rarity-dot{width:28px;height:28px}.rarity-dots .rarity-all{padding-right:9px}.rarity-orb{width:22px;height:22px}}
+#cardsAlbum .ac-tile .detail-star-mark{left:7px;top:7px;padding:3px 7px 2px;border-radius:999px;background:#0b1322e6;border:1px solid #f6d88e66;font-size:11px;line-height:1;letter-spacing:1px;box-shadow:0 2px 6px #0008}
+#cardsAlbum .ac-tile.basic-rendered>.detail-star-mark{display:block!important;position:absolute;z-index:12}
