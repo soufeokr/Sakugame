@@ -31,18 +31,18 @@ const ANIME_COVERS =
  },
  {
   "id": 16498,
-  "name": "Shingeki no Kyojin",
+  "name": "Attack on Titan",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx16498-buvcRTBx4NSm.jpg",
   "year": 2013,
-  "al": ["Attack on Titan", "進撃の巨人", "SnK", "AoT", "Ataque a los Titanes", "Ataque dos Titãs", "L'Attacco dei Giganti", "מתקפת הטיטאנים"],
+  "al": ["Shingeki no Kyojin", "Attack on Titan", "進撃の巨人", "SnK", "AoT", "Ataque a los Titanes", "Ataque dos Titãs", "L'Attacco dei Giganti", "מתקפת הטיטאנים"],
   "r": 3
  },
  {
   "id": 5114,
-  "name": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST",
+  "name": "Fullmetal Alchemist: Brotherhood",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx5114-nSWCgQlmOMtj.jpg",
   "year": 2009,
-  "al": ["Fullmetal Alchemist: Brotherhood", "鋼の錬金術師 FULLMETAL ALCHEMIST", "FMA", "FMAB", "Hagaren", "الخيميائي الفولاذي", "אלכימאי המתכת: אחוות אחים", "Full Metal Alchemist: Brotherhood"],
+  "al": ["Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST", "Fullmetal Alchemist: Brotherhood", "鋼の錬金術師 FULLMETAL ALCHEMIST", "FMA", "FMAB", "Hagaren", "الخيميائي الفولاذي", "אלכימאי המתכת: אחוות אחים", "Full Metal Alchemist: Brotherhood"],
   "r": 4
  },
  {
@@ -63,26 +63,26 @@ const ANIME_COVERS =
  },
  {
   "id": 20954,
-  "name": "Koe no Katachi",
+  "name": "A Silent Voice",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20954-sYRfE5jQRtSB.jpg",
   "year": 2016,
-  "al": ["A Silent Voice", "聲の形", "The Shape of Voice", "A Voz do Silêncio", "A Forma da Voz", "La Forma della Voce", "צורתו של קול", "声之形"],
+  "al": ["Koe no Katachi", "A Silent Voice", "聲の形", "The Shape of Voice", "A Voz do Silêncio", "A Forma da Voz", "La Forma della Voce", "צורתו של קול", "声之形"],
   "r": 7
  },
  {
   "id": 154587,
-  "name": "Sousou no Frieren",
+  "name": "Frieren: Beyond Journey's End",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx154587-qQTzQnEJJ3oB.jpg",
   "year": 2023,
-  "al": ["Frieren: Beyond Journey’s End", "葬送のフリーレン", "Frieren at the Funeral", "장송의 프리렌", "Frieren - Oltre la Fine del Viaggio", "คำอธิษฐานในวันที่จากลา Frieren", "Frieren e a Jornada para o Além", "Frieren – Nach dem Ende der Reise"],
+  "al": ["Sousou no Frieren", "Frieren: Beyond Journey’s End", "葬送のフリーレン", "Frieren at the Funeral", "장송의 프리렌", "Frieren - Oltre la Fine del Viaggio", "คำอธิษฐานในวันที่จากลา Frieren", "Frieren e a Jornada para o Além", "Frieren – Nach dem Ende der Reise"],
   "r": 8
  },
  {
   "id": 101922,
-  "name": "Kimetsu no Yaiba",
+  "name": "Demon Slayer",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx101922-WBsBl0ClmgYL.jpg",
   "year": 2019,
-  "al": ["Demon Slayer: Kimetsu no Yaiba", "鬼滅の刃", "KnY", "Kimetsu no Yaiba: Kyoudai no Kizuna", "Demon Slayer: Kimetsu no Yaiba: Bonds of Siblings", "鬼滅の刃-兄妹の絆-", "鬼灭之刃", "הלהב קוטל השדים"],
+  "al": ["Kimetsu no Yaiba", "Demon Slayer: Kimetsu no Yaiba", "鬼滅の刃", "KnY", "Kimetsu no Yaiba: Kyoudai no Kizuna", "Demon Slayer: Kimetsu no Yaiba: Bonds of Siblings", "鬼滅の刃-兄妹の絆-", "鬼灭之刃", "הלהב קוטל השדים"],
   "r": 9
  },
  {
@@ -95,18 +95,18 @@ const ANIME_COVERS =
  },
  {
   "id": 21519,
-  "name": "Kimi no Na wa.",
+  "name": "Your Name.",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21519-SUo3ZQuCbYhJ.png",
   "year": 2016,
-  "al": ["Your Name.", "君の名は。", "Your Name. - Gestern, heute und für immer", "Mi a Neved?", "你的名字。", "너의 이름은.", "Tu nombre", "Твоё имя"],
+  "al": ["Kimi no Na wa.", "Your Name.", "君の名は。", "Your Name. - Gestern, heute und für immer", "Mi a Neved?", "你的名字。", "너의 이름은.", "Tu nombre", "Твоё имя"],
   "r": 11
  },
  {
   "id": 30,
-  "name": "Shin Seiki Evangelion",
+  "name": "Neon Genesis Evangelion",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx30-AI1zr74Dh4ye.jpg",
   "year": 1995,
-  "al": ["Neon Genesis Evangelion", "新世紀エヴァンゲリオン", "NGE", "Eva", "ניאון ג'נסיס אוונגליון", "อีวานเกเลียน มหาสงครามวันพิพากษา", "Евангелион"],
+  "al": ["Shin Seiki Evangelion", "Neon Genesis Evangelion", "新世紀エヴァンゲリオン", "NGE", "Eva", "ניאון ג'נסיס אוונגליון", "อีวานเกเลียน มหาสงครามวันพิพากษา", "Евангелион"],
   "r": 12
  },
  {
@@ -151,10 +151,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20464,
-  "name": "Haikyuu!!",
+  "name": "Haikyu!!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20464-ooZUyBe4ptp9.png",
   "year": 2014,
-  "al": ["HAIKYU!!", "ハイキュー!!", "High Kyuu!!", "HAIKYÛ !!", "排球少年！！", "Haikyu!! L'asso del volley", "ไฮคิว!! คู่ตบฟ้าประทาน"],
+  "al": ["Haikyuu!!", "HAIKYU!!", "ハイキュー!!", "High Kyuu!!", "HAIKYÛ !!", "排球少年！！", "Haikyu!! L'asso del volley", "ไฮคิว!! คู่ตบฟ้าประทาน"],
   "r": 18
  },
  {
@@ -175,18 +175,18 @@ const ANIME_COVERS =
  },
  {
   "id": 20665,
-  "name": "Shigatsu wa Kimi no Uso",
+  "name": "Your Lie in April",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20665-TLgkL8T8IRFd.png",
   "year": 2014,
-  "al": ["Your lie in April", "四月は君の嘘", "KimiUso", "השקר שלך באפריל", "Bugie d'aprile", "四月是你的谎言", "YLIA", "Sekunden in Moll"],
+  "al": ["Shigatsu wa Kimi no Uso", "Your lie in April", "四月は君の嘘", "KimiUso", "השקר שלך באפריל", "Bugie d'aprile", "四月是你的谎言", "YLIA", "Sekunden in Moll"],
   "r": 21
  },
  {
   "id": 1575,
-  "name": "Code Geass: Hangyaku no Lelouch",
+  "name": "Code Geass: Lelouch of the Rebellion",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx1575-hsmWM2ydNm1m.jpg",
   "year": 2006,
-  "al": ["Code Geass: Lelouch of the Rebellion", "コードギアス 反逆のルルーシュ", "Code Geass: Lelouch de la Rebelión", "קוד גיאס: המהפכה של ללוש"],
+  "al": ["Code Geass: Hangyaku no Lelouch", "Code Geass: Lelouch of the Rebellion", "コードギアス 反逆のルルーシュ", "Code Geass: Lelouch de la Rebelión", "קוד גיאס: המהפכה של ללוש"],
   "r": 22
  },
  {
@@ -215,10 +215,10 @@ const ANIME_COVERS =
  },
  {
   "id": 101291,
-  "name": "Seishun Buta Yarou wa Bunny Girl Senpai no Yume wo Minai",
+  "name": "Rascal Does Not Dream of Bunny Girl Senpai",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx101291-wfEdgPqtfU0l.jpg",
   "year": 2018,
-  "al": ["Rascal Does Not Dream of Bunny Girl Senpai", "青春ブタ野郎はバニーガール先輩の夢を見ない", "AoButa", "青春猪头少年不会梦到兔女郎学姐", "Негодник, которому не снилась девушка-кролик", "Этот глупый свин не понимает мечту девочки-зайки", "青ブタ", "เรื่องฝันปั่นป่วยของผมกับรุ่นพี่บันนี่เกิร์ล"],
+  "al": ["Seishun Buta Yarou wa Bunny Girl Senpai no Yume wo Minai", "Rascal Does Not Dream of Bunny Girl Senpai", "青春ブタ野郎はバニーガール先輩の夢を見ない", "AoButa", "青春猪头少年不会梦到兔女郎学姐", "Негодник, которому не снилась девушка-кролик", "Этот глупый свин не понимает мечту девочки-зайки", "青ブタ", "เรื่องฝันปั่นป่วยของผมกับรุ่นพี่บันนี่เกิร์ล"],
   "r": 26
  },
  {
@@ -247,26 +247,26 @@ const ANIME_COVERS =
  },
  {
   "id": 104578,
-  "name": "Shingeki no Kyojin Season 3 Part 2",
+  "name": "Attack on Titan Season 3 Part 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx104578-k61nx3LPjvgd.jpg",
   "year": 2019,
-  "al": ["Attack on Titan Season 3 Part 2", "進撃の巨人 Season３ Part.2", "SnK 3", "AoT 3", "Shingeki no Kyojin Season 3 (2019)", "L'Attaco dei Giganti 3 Parte 2", "L'Attacco dei Giganti - Terza Stagione Parte 2", "מתקפת הטיטאנים עונה 3 חלק 2"],
+  "al": ["Shingeki no Kyojin Season 3 Part 2", "Attack on Titan Season 3 Part 2", "進撃の巨人 Season３ Part.2", "SnK 3", "AoT 3", "Shingeki no Kyojin Season 3 (2019)", "L'Attaco dei Giganti 3 Parte 2", "L'Attacco dei Giganti - Terza Stagione Parte 2", "מתקפת הטיטאנים עונה 3 חלק 2"],
   "r": 30
  },
  {
   "id": 21459,
-  "name": "Boku no Hero Academia",
+  "name": "My Hero Academia",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21459-nYh85uj2Fuwr.jpg",
   "year": 2016,
-  "al": ["My Hero Academia", "僕のヒーローアカデミア", "BNHA", "MHA", "나의 히어로 아카데미아 1기", "나히아 1기", "אקדמיית הגיבורים שלי", "我的英雄学院"],
+  "al": ["Boku no Hero Academia", "My Hero Academia", "僕のヒーローアカデミア", "BNHA", "MHA", "나의 히어로 아카데미아 1기", "나히아 1기", "אקדמיית הגיבורים שלי", "我的英雄学院"],
   "r": 31
  },
  {
   "id": 101921,
-  "name": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen",
+  "name": "Kaguya-sama: Love is War: Tensaitachi no Renai Zunousen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx101921-ufrjLzhSz7L1.jpg",
   "year": 2019,
-  "al": ["Kaguya-sama: Love is War", "かぐや様は告らせたい～天才たちの恋愛頭脳戦～", "Kaguya Wants to be Confessed To: The Geniuses' War of Love and Brains", "קאגויה סאמה", "辉夜大小姐想让我告白～天才们的恋爱头脑战～", "辉夜姬想让人告白", "辉夜姬想让人告白～天才们的恋爱头脑战～", "辉告"],
+  "al": ["Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen", "Kaguya-sama: Love is War", "かぐや様は告らせたい～天才たちの恋愛頭脳戦～", "Kaguya Wants to be Confessed To: The Geniuses' War of Love and Brains", "קאגויה סאמה", "辉夜大小姐想让我告白～天才们的恋爱头脑战～", "辉夜姬想让人告白", "辉夜姬想让人告白～天才们的恋爱头脑战～", "辉告"],
   "r": 32
  },
  {
@@ -287,10 +287,10 @@ const ANIME_COVERS =
  },
  {
   "id": 161645,
-  "name": "Kusuriya no Hitorigoto",
+  "name": "The Apothecary Diaries",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx161645-QLbzHXiYRgV2.jpg",
   "year": 2023,
-  "al": ["The Apothecary Diaries", "薬屋のひとりごと", "Drugstore Soliloquy", "Les Carnets de l'Apothicaire", "Zapiski zielarki", "Diários de uma Apotecária", "Il monologo della Speziale", "Los diarios de la boticaria"],
+  "al": ["Kusuriya no Hitorigoto", "The Apothecary Diaries", "薬屋のひとりごと", "Drugstore Soliloquy", "Les Carnets de l'Apothicaire", "Zapiski zielarki", "Diários de uma Apotecária", "Il monologo della Speziale", "Los diarios de la boticaria"],
   "r": 35
  },
  {
@@ -303,34 +303,34 @@ const ANIME_COVERS =
  },
  {
   "id": 110277,
-  "name": "Shingeki no Kyojin: The Final Season",
+  "name": "Attack on Titan: The Final Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx110277-sKUNXAsWMNFw.jpg",
   "year": 2021,
-  "al": ["Attack on Titan Final Season", "進撃の巨人 The Final Season", "SnK 4", "AoT 4", "Shingeki no Kyojin 4", "進撃の巨人4", "Attack on Titan Season 4", "진격의 거인 더 파이널 시즌"],
+  "al": ["Shingeki no Kyojin: The Final Season", "Attack on Titan Final Season", "進撃の巨人 The Final Season", "SnK 4", "AoT 4", "Shingeki no Kyojin 4", "進撃の巨人4", "Attack on Titan Season 4", "진격의 거인 더 파이널 시즌"],
   "r": 37
  },
  {
   "id": 108465,
-  "name": "Mushoku Tensei: Isekai Ittara Honki Dasu",
+  "name": "Mushoku Tensei: Jobless Reincarnation",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx108465-1ANspF1EWyFx.jpg",
   "year": 2021,
-  "al": ["Mushoku Tensei: Jobless Reincarnation", "無職転生 ～異世界行ったら本気だす～", "Jobless Reincarnation: I Will Seriously Try If I Go To Another World", "无职转生 ~到了异世界就拿出真本事~", "เกิดชาตินี้พี่ต้องเทพ", "Thất nghiệp chuyển sinh"],
+  "al": ["Mushoku Tensei: Isekai Ittara Honki Dasu", "Mushoku Tensei: Jobless Reincarnation", "無職転生 ～異世界行ったら本気だす～", "Jobless Reincarnation: I Will Seriously Try If I Go To Another World", "无职转生 ~到了异世界就拿出真本事~", "เกิดชาตินี้พี่ต้องเทพ", "Thất nghiệp chuyển sinh"],
   "r": 38
  },
  {
   "id": 21234,
-  "name": "Boku dake ga Inai Machi",
+  "name": "Erased",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21234-XmqW39aQ9o7O.jpg",
   "year": 2016,
-  "al": ["ERASED", "僕だけがいない街", "Bokumachi", "Desaparecido", "Miasto beze mnie", "รีไววัล ย้อนอดีตไขปริศนา", "ย้อนอดีตไขปริศนา"],
+  "al": ["Boku dake ga Inai Machi", "ERASED", "僕だけがいない街", "Bokumachi", "Desaparecido", "Miasto beze mnie", "รีไววัล ย้อนอดีตไขปริศนา", "ย้อนอดีตไขปริศนา"],
   "r": 39
  },
  {
   "id": 9756,
-  "name": "Mahou Shoujo Madoka☆Magica",
+  "name": "Puella Magi Madoka Magica",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx9756-QnUGwlwwnsuN.jpg",
   "year": 2011,
-  "al": ["Puella Magi Madoka Magica", "魔法少女まどか☆マギカ", "Mahou Shoujo Madoka Magika", "Magical Girl Madoka Magica", "PMMM", "MSMM", "הנערה הקסומה מאדוקה מאגיקה", "Девочка-волшебница Мадока☆Волшебство"],
+  "al": ["Mahou Shoujo Madoka☆Magica", "Puella Magi Madoka Magica", "魔法少女まどか☆マギカ", "Mahou Shoujo Madoka Magika", "Magical Girl Madoka Magica", "PMMM", "MSMM", "הנערה הקסומה מאדוקה מאגיקה", "Девочка-волшебница Мадока☆Волшебство"],
   "r": 40
  },
  {
@@ -375,10 +375,10 @@ const ANIME_COVERS =
  },
  {
   "id": 101759,
-  "name": "Yakusoku no Neverland",
+  "name": "The Promised Neverland",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx101759-8UR7r9MNVpz2.jpg",
   "year": 2019,
-  "al": ["The Promised Neverland", "約束のネバーランド", "YakuNeba", "TPN", "نيفرلاند الموعودة", "约定的梦幻岛", "พันธสัญญาเนเวอร์แลนด์", "約定的夢幻島"],
+  "al": ["Yakusoku no Neverland", "The Promised Neverland", "約束のネバーランド", "YakuNeba", "TPN", "نيفرلاند الموعودة", "约定的梦幻岛", "พันธสัญญาเนเวอร์แลนด์", "約定的夢幻島"],
   "r": 46
  },
  {
@@ -407,18 +407,18 @@ const ANIME_COVERS =
  },
  {
   "id": 21202,
-  "name": "Kono Subarashii Sekai ni Shukufuku wo!",
+  "name": "KonoSuba: God's Blessing on This Wonderful World!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21202-mPOr80AEjUcZ.png",
   "year": 2016,
-  "al": ["KONOSUBA -God's blessing on this wonderful world!", "この素晴らしい世界に祝福を！", "Konosuba", "Kono Subarashii Sekai ni Syukufuku wo!", "Konosuba - As Bençãos de Deus Neste Mundo Maravilhoso", "为美好的世界献上祝福！", "ขอให้โชคดีมีชัยในโลกแฟนตาซี!", "Konosuba : Sois béni monde merveilleux !"],
+  "al": ["Kono Subarashii Sekai ni Shukufuku wo!", "KONOSUBA -God's blessing on this wonderful world!", "この素晴らしい世界に祝福を！", "Konosuba", "Kono Subarashii Sekai ni Syukufuku wo!", "Konosuba - As Bençãos de Deus Neste Mundo Maravilhoso", "为美好的世界献上祝福！", "ขอให้โชคดีมีชัยในโลกแฟนตาซี!", "Konosuba : Sois béni monde merveilleux !"],
   "r": 50
  },
  {
   "id": 199,
-  "name": "Sen to Chihiro no Kamikakushi",
+  "name": "Spirited Away",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx199-sWefXJvXkDOb.jpg",
   "year": 2001,
-  "al": ["Spirited Away", "千と千尋の神隠し", "Le Voyage de Chihiro", "La Città Incantata", "El Viaje de Chihiro", "Chihiros Reise ins Zauberland", "Ruhların Kaçışı", "המסע המופלא"],
+  "al": ["Sen to Chihiro no Kamikakushi", "Spirited Away", "千と千尋の神隠し", "Le Voyage de Chihiro", "La Città Incantata", "El Viaje de Chihiro", "Chihiros Reise ins Zauberland", "Ruhların Kaçışı", "המסע המופלא"],
   "r": 51
  },
  {
@@ -439,10 +439,10 @@ const ANIME_COVERS =
  },
  {
   "id": 2904,
-  "name": "Code Geass: Hangyaku no Lelouch R2",
+  "name": "Code Geass: Lelouch of the Rebellion R2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx2904-Fet9Q33suC7G.jpg",
   "year": 2008,
-  "al": ["Code Geass: Lelouch of the Rebellion R2", "コードギアス 反逆のルルーシュ R2", "Code Geass: Hangyaku no Lelouch 2nd Season", "Code Geass: Hangyaku no Lelouch Second Season"],
+  "al": ["Code Geass: Hangyaku no Lelouch R2", "Code Geass: Lelouch of the Rebellion R2", "コードギアス 反逆のルルーシュ R2", "Code Geass: Hangyaku no Lelouch 2nd Season", "Code Geass: Hangyaku no Lelouch Second Season"],
   "r": 54
  },
  {
@@ -455,18 +455,18 @@ const ANIME_COVERS =
  },
  {
   "id": 20755,
-  "name": "Ansatsu Kyoushitsu",
+  "name": "Assassination Classroom",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20755-dWrhs569YGUO.jpg",
   "year": 2015,
-  "al": ["Assassination Classroom", "暗殺教室", "כיתת ההתנקשות", "فصل الاغتيال", "Klasa skrytobójców", "Lớp học ám sát"],
+  "al": ["Ansatsu Kyoushitsu", "Assassination Classroom", "暗殺教室", "כיתת ההתנקשות", "فصل الاغتيال", "Klasa skrytobójców", "Lớp học ám sát"],
   "r": 56
  },
  {
   "id": 151807,
-  "name": "Ore dake Level Up na Ken",
+  "name": "Solo Leveling",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx151807-it355ZgzquUd.png",
   "year": 2024,
-  "al": ["Solo Leveling", "俺だけレベルアップな件", "나 혼자만 레벨업", "Na Honjaman Level Up", "Solo Leveling: Поднятие уровня в одиночку"],
+  "al": ["Ore dake Level Up na Ken", "Solo Leveling", "俺だけレベルアップな件", "나 혼자만 레벨업", "Na Honjaman Level Up", "Solo Leveling: Поднятие уровня в одиночку"],
   "r": 57
  },
  {
@@ -479,26 +479,26 @@ const ANIME_COVERS =
  },
  {
   "id": 132405,
-  "name": "Sono Bisque Doll wa Koi wo Suru",
+  "name": "My Dress-Up Darling",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx132405-qP7FQYGmNI3d.jpg",
   "year": 2022,
-  "al": ["My Dress-Up Darling", "その着せ替え人形は恋をする", "Sono Kisekae Ningyou wa Koi wo suru", "หนุ่มเย็บผ้ากับสาวนักคอสเพลย์", "その着せ替え人形（ビスク・ドール）は恋をする", "kisekoi", "Si Boneka Rias Sedang Jatuh Cinta", "Projekt: cosplay"],
+  "al": ["Sono Bisque Doll wa Koi wo Suru", "My Dress-Up Darling", "その着せ替え人形は恋をする", "Sono Kisekae Ningyou wa Koi wo suru", "หนุ่มเย็บผ้ากับสาวนักคอสเพลย์", "その着せ替え人形（ビスク・ドール）は恋をする", "kisekoi", "Si Boneka Rias Sedang Jatuh Cinta", "Projekt: cosplay"],
   "r": 59
  },
  {
   "id": 20958,
-  "name": "Shingeki no Kyojin Season 2",
+  "name": "Attack on Titan Season 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20958-HuFJyr54Mmir.jpg",
   "year": 2017,
-  "al": ["Attack on Titan Season 2", "進撃の巨人 Season２", "SnK 2", "AoT 2", "+מתקפת הטיטאנים עונה 2", "L'Attacco dei Giganti 2", "L'Attacco dei Giganti - Seconda Stagione", "ผ่าพิภพไททัน ภาค 2"],
+  "al": ["Shingeki no Kyojin Season 2", "Attack on Titan Season 2", "進撃の巨人 Season２", "SnK 2", "AoT 2", "+מתקפת הטיטאנים עונה 2", "L'Attacco dei Giganti 2", "L'Attacco dei Giganti - Seconda Stagione", "ผ่าพิภพไททัน ภาค 2"],
   "r": 60
  },
  {
   "id": 99147,
-  "name": "Shingeki no Kyojin Season 3",
+  "name": "Attack on Titan Season 3",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx99147-AiPDD8cwlCfi.jpg",
   "year": 2018,
-  "al": ["Attack on Titan Season 3", "進撃の巨人 Season３", "SnK 3", "AoT 3", "מתקפת הטיטאנים עונה 3", "L'Attacco dei Giganti 3", "L'Attacco dei Giganti - Terza Stagione", "ผ่าพิภพไททัน ภาค 3"],
+  "al": ["Shingeki no Kyojin Season 3", "Attack on Titan Season 3", "進撃の巨人 Season３", "SnK 3", "AoT 3", "מתקפת הטיטאנים עונה 3", "L'Attacco dei Giganti 3", "L'Attacco dei Giganti - Terza Stagione", "ผ่าพิภพไททัน ภาค 3"],
   "r": 61
  },
  {
@@ -511,18 +511,18 @@ const ANIME_COVERS =
  },
  {
   "id": 99750,
-  "name": "Kimi no Suizou wo Tabetai",
+  "name": "I Want to Eat Your Pancreas",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx99750-pNyly9d3MEgV.jpg",
   "year": 2018,
-  "al": ["I Want to Eat Your Pancreas", "君の膵臓をたべたい", "Quiero Comerme tu Páncreas", "Voglio mangiare il tuo pancreas", "Je veux manger ton pancréas", "Vull menjar-me el teu pàncrees", "Kimisui", "Eu Quero Comer Seu Pâncreas"],
+  "al": ["Kimi no Suizou wo Tabetai", "I Want to Eat Your Pancreas", "君の膵臓をたべたい", "Quiero Comerme tu Páncreas", "Voglio mangiare il tuo pancreas", "Je veux manger ton pancréas", "Vull menjar-me el teu pàncrees", "Kimisui", "Eu Quero Comer Seu Pâncreas"],
   "r": 63
  },
  {
   "id": 32,
-  "name": "Shin Seiki Evangelion Movie: Air / Magokoro wo, Kimi ni",
+  "name": "Neon Genesis Evangelion Movie: Air / Magokoro wo, Kimi ni",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx32-5JYsv0wc122I.jpg",
   "year": 1997,
-  "al": ["Neon Genesis Evangelion: The End of Evangelion", "新世紀エヴァンゲリオン劇場版 Air/まごころを、君に", "הסוף של אוונגליון", "אוונגליון של הסוף", "Конец Евангелиона"],
+  "al": ["Shin Seiki Evangelion Movie: Air / Magokoro wo, Kimi ni", "Neon Genesis Evangelion: The End of Evangelion", "新世紀エヴァンゲリオン劇場版 Air/まごころを、君に", "הסוף של אוונגליון", "אוונגליון של הסוף", "Конец Евангелиона"],
   "r": 64
  },
  {
@@ -607,10 +607,10 @@ const ANIME_COVERS =
  },
  {
   "id": 142329,
-  "name": "Kimetsu no Yaiba: Yuukaku-hen",
+  "name": "Demon Slayer: Yuukaku-hen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx142329-kET1PIXJv2eW.jpg",
   "year": 2022,
-  "al": ["Demon Slayer: Kimetsu no Yaiba Entertainment District Arc", "鬼滅の刃 遊郭編", "KnY 2", "Demon Slayer: Kimetsu no Yaiba - Le quartier des plaisirs", "ดาบพิฆาตอสูร ภาค 2 บทย่านเริงรมย์", "Miecz zabójcy demonów – Kimetsu no Yaiba: Dzielnica uciech", "귀멸의 칼날: 환락의 거리편", "Клинок, Рассекающий Демонов: Квартал Красных Фонарей"],
+  "al": ["Kimetsu no Yaiba: Yuukaku-hen", "Demon Slayer: Kimetsu no Yaiba Entertainment District Arc", "鬼滅の刃 遊郭編", "KnY 2", "Demon Slayer: Kimetsu no Yaiba - Le quartier des plaisirs", "ดาบพิฆาตอสูร ภาค 2 บทย่านเริงรมย์", "Miecz zabójcy demonów – Kimetsu no Yaiba: Dzielnica uciech", "귀멸의 칼날: 환락의 거리편", "Клинок, Рассекающий Демонов: Квартал Красных Фонарей"],
   "r": 75
  },
  {
@@ -663,10 +663,10 @@ const ANIME_COVERS =
  },
  {
   "id": 130298,
-  "name": "Kage no Jitsuryokusha ni Naritakute!",
+  "name": "The Eminence in Shadow",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx130298-YMdcKHytpWNH.jpg",
   "year": 2022,
-  "al": ["The Eminence in Shadow", "陰の実力者になりたくて！", "To Be a Power in the Shadows!", "ชีวิตไม่ต้องเด่น ขอแค่เป็นเทพในเงา", "Un giorno sarò l'eminenza grigia", "TEIS", "Кардинал теней"],
+  "al": ["Kage no Jitsuryokusha ni Naritakute!", "The Eminence in Shadow", "陰の実力者になりたくて！", "To Be a Power in the Shadows!", "ชีวิตไม่ต้องเด่น ขอแค่เป็นเทพในเงา", "Un giorno sarò l'eminenza grigia", "TEIS", "Кардинал теней"],
   "r": 82
  },
  {
@@ -679,18 +679,18 @@ const ANIME_COVERS =
  },
  {
   "id": 99263,
-  "name": "Tate no Yuusha no Nariagari",
+  "name": "The Rising of the Shield Hero",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx99263-LcazQwdlWzMy.jpg",
   "year": 2019,
-  "al": ["The Rising of the Shield Hero", "盾の勇者の成り上がり", "盾之勇者成名录", "ผู้กล้าโล่ผงาด", "Восхождение героя щита"],
+  "al": ["Tate no Yuusha no Nariagari", "The Rising of the Shield Hero", "盾の勇者の成り上がり", "盾之勇者成名录", "ผู้กล้าโล่ผงาด", "Восхождение героя щита"],
   "r": 84
  },
  {
   "id": 21311,
-  "name": "Bungou Stray Dogs",
+  "name": "Bungo Stray Dogs",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21311-hAXyT8Yoh6G9.jpg",
   "year": 2016,
-  "al": ["Bungo Stray Dogs", "文豪ストレイドッグス", "BSD", "Văn hào lưu lạc", "คณะประพันธกรจรจัด", "כלבי ספרות נודדים"],
+  "al": ["Bungou Stray Dogs", "Bungo Stray Dogs", "文豪ストレイドッグス", "BSD", "Văn hào lưu lạc", "คณะประพันธกรจรจัด", "כלבי ספרות נודדים"],
   "r": 85
  },
  {
@@ -735,10 +735,10 @@ const ANIME_COVERS =
  },
  {
   "id": 125367,
-  "name": "Kaguya-sama wa Kokurasetai: Ultra Romantic",
+  "name": "Kaguya-sama: Love is War: Ultra Romantic",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx125367-1yuq9NFcQuLI.png",
   "year": 2022,
-  "al": ["Kaguya-sama: Love is War -Ultra Romantic-", "かぐや様は告らせたい-ウルトラロマンティック-", "Kaguya-sama: Love is War Season 3", "辉夜大小姐想让我告白～天才们的恋爱头脑战～ 3", "辉夜大小姐想让我告白～天才们的恋爱头脑战～ 第三季", "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen 3", "สารภาพรักกับคุณคางุยะซะดี ๆ ~สงครามประสาทความรักของเหล่าอัจฉริยะ~ ภาค 3", "สารภาพรักกับคุณคางุยะ ซะดี ๆ -อุลตร้า โรแมนติก-"],
+  "al": ["Kaguya-sama wa Kokurasetai: Ultra Romantic", "Kaguya-sama: Love is War -Ultra Romantic-", "かぐや様は告らせたい-ウルトラロマンティック-", "Kaguya-sama: Love is War Season 3", "辉夜大小姐想让我告白～天才们的恋爱头脑战～ 3", "辉夜大小姐想让我告白～天才们的恋爱头脑战～ 第三季", "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen 3", "สารภาพรักกับคุณคางุยะซะดี ๆ ~สงครามประสาทความรักของเหล่าอัจฉริยะ~ ภาค 3", "สารภาพรักกับคุณคางุยะ ซะดี ๆ -อุลตร้า โรแมนติก-"],
   "r": 91
  },
  {
@@ -751,10 +751,10 @@ const ANIME_COVERS =
  },
  {
   "id": 131681,
-  "name": "Shingeki no Kyojin: The Final Season Part 2",
+  "name": "Attack on Titan: The Final Season Part 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx131681-5ooUqvqNtee1.jpg",
   "year": 2022,
-  "al": ["Attack on Titan Final Season Part 2", "進撃の巨人 The Final Season Part 2", "SnK 4", "AoT 4", "L'attaque des titans Saison Finale Partie 2", "Shingeki no Kyojin: The Final Season (2022)", "اتک عن تایتان", "حمله به غول ها"],
+  "al": ["Shingeki no Kyojin: The Final Season Part 2", "Attack on Titan Final Season Part 2", "進撃の巨人 The Final Season Part 2", "SnK 4", "AoT 4", "L'attaque des titans Saison Finale Partie 2", "Shingeki no Kyojin: The Final Season (2022)", "اتک عن تایتان", "حمله به غول ها"],
   "r": 93
  },
  {
@@ -839,10 +839,10 @@ const ANIME_COVERS =
  },
  {
   "id": 153518,
-  "name": "Dungeon Meshi",
+  "name": "Delicious in Dungeon",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx153518-IVXPDY5ph3kO.jpg",
   "year": 2024,
-  "al": ["Delicious in Dungeon", "ダンジョン飯", "Dungeon Food", "Dungeon Meal", "Tragones y Mazmorras", "Gloutons et Dragons", "Подземелье вкусностей", "던전밥"],
+  "al": ["Dungeon Meshi", "Delicious in Dungeon", "ダンジョン飯", "Dungeon Food", "Dungeon Meal", "Tragones y Mazmorras", "Gloutons et Dragons", "Подземелье вкусностей", "던전밥"],
   "r": 104
  },
  {
@@ -863,10 +863,10 @@ const ANIME_COVERS =
  },
  {
   "id": 176496,
-  "name": "Ore dake Level Up na Ken: Season 2 - Arise from the Shadow",
+  "name": "Solo Leveling: Season 2 - Arise from the Shadow",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx176496-9BDMjAZGEbq4.png",
   "year": 2025,
-  "al": ["Solo Leveling Season 2 -Arise from the Shadow-", "俺だけレベルアップな件 Season 2 -Arise from the Shadow-", "Na Honjaman Level Up 2", "나 혼자만 레벨업 2", "俺だけレベルアップな件 第2期", "Ore dake Level Up na Ken 2nd Season", "Solo Leveling 2ª Temporada -Ergam-se das Sombras-", "나 혼자만 레벨업 -ARISE FROM THE SHADOW-"],
+  "al": ["Ore dake Level Up na Ken: Season 2 - Arise from the Shadow", "Solo Leveling Season 2 -Arise from the Shadow-", "俺だけレベルアップな件 Season 2 -Arise from the Shadow-", "Na Honjaman Level Up 2", "나 혼자만 레벨업 2", "俺だけレベルアップな件 第2期", "Ore dake Level Up na Ken 2nd Season", "Solo Leveling 2ª Temporada -Ergam-se das Sombras-", "나 혼자만 레벨업 -ARISE FROM THE SHADOW-"],
   "r": 107
  },
  {
@@ -903,10 +903,10 @@ const ANIME_COVERS =
  },
  {
   "id": 112151,
-  "name": "Kimetsu no Yaiba: Mugen Ressha-hen",
+  "name": "Demon Slayer: Mugen Ressha-hen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx112151-1qlQwPB1RrJe.png",
   "year": 2020,
-  "al": ["Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train", "鬼滅の刃 無限列車編", "KnY Movie", "Els Guardians de la Nit: El Tren Infinit", "Guardianes de la Noche: Tren Infinito", "Demon Slayer: Mugen Treni", "Demon Slayer: Il Treno Mugen", "鬼灭之刃：无限列车篇"],
+  "al": ["Kimetsu no Yaiba: Mugen Ressha-hen", "Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train", "鬼滅の刃 無限列車編", "KnY Movie", "Els Guardians de la Nit: El Tren Infinit", "Guardianes de la Noche: Tren Infinito", "Demon Slayer: Mugen Treni", "Demon Slayer: Il Treno Mugen", "鬼灭之刃：无限列车篇"],
   "r": 112
  },
  {
@@ -927,10 +927,10 @@ const ANIME_COVERS =
  },
  {
   "id": 127720,
-  "name": "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2",
+  "name": "Mushoku Tensei: Jobless Reincarnation Part 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx127720-ADJgIrUVMdU9.jpg",
   "year": 2021,
-  "al": ["Mushoku Tensei: Jobless Reincarnation Cour 2", "無職転生 ～異世界行ったら本気だす～ 第2クール", "Mushoku Tensei: Jobless Reincarnation Part 2", "เกิดชาตินี้พี่ต้องเทพ พาร์ท 2"],
+  "al": ["Mushoku Tensei: Isekai Ittara Honki Dasu Part 2", "Mushoku Tensei: Jobless Reincarnation Cour 2", "無職転生 ～異世界行ったら本気だす～ 第2クール", "Mushoku Tensei: Jobless Reincarnation Part 2", "เกิดชาตินี้พี่ต้องเทพ พาร์ท 2"],
   "r": 115
  },
  {
@@ -943,18 +943,18 @@ const ANIME_COVERS =
  },
  {
   "id": 21698,
-  "name": "Haikyuu!!: Karasuno Koukou VS Shiratorizawa Gakuen Koukou",
+  "name": "Haikyu!!: Karasuno Koukou VS Shiratorizawa Gakuen Koukou",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21698-RL71mr1YU5Io.png",
   "year": 2016,
-  "al": ["HAIKYU!! 3rd Season", "ハイキュー!! 烏野高校 VS 白鳥沢学園高校", "Haikyu!! Karasuno High vs Shiratorizawa Academy", "Haikyuu!! 3", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 3"],
+  "al": ["Haikyuu!!: Karasuno Koukou VS Shiratorizawa Gakuen Koukou", "HAIKYU!! 3rd Season", "ハイキュー!! 烏野高校 VS 白鳥沢学園高校", "Haikyu!! Karasuno High vs Shiratorizawa Academy", "Haikyuu!! 3", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 3"],
   "r": 117
  },
  {
   "id": 106286,
-  "name": "Tenki no Ko",
+  "name": "Weathering With You",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx106286-5COcpd0J9VbL.png",
   "year": 2019,
-  "al": ["Weathering With You", "天気の子", "El Tiempo Contigo", "Weathering With You - Das Mädchen, das die Sonne berührte", "Les enfants du temps", "O Tempo Com Você", "天气之子", "La ragazza del tempo"],
+  "al": ["Tenki no Ko", "Weathering With You", "天気の子", "El Tiempo Contigo", "Weathering With You - Das Mädchen, das die Sonne berührte", "Les enfants du temps", "O Tempo Com Você", "天气之子", "La ragazza del tempo"],
   "r": 118
  },
  {
@@ -967,10 +967,10 @@ const ANIME_COVERS =
  },
  {
   "id": 105310,
-  "name": "Enen no Shouboutai",
+  "name": "Fire Force",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx105310-2PKUvoaA6fTn.jpg",
   "year": 2019,
-  "al": ["Fire Force", "炎炎ノ消防隊", "หน่วยผจญคนไฟลุก", "כוח האש", "Полум'яні вогнеборці", "Пламенный отряд"],
+  "al": ["Enen no Shouboutai", "Fire Force", "炎炎ノ消防隊", "หน่วยผจญคนไฟลุก", "כוח האש", "Полум'яні вогнеборці", "Пламенный отряд"],
   "r": 120
  },
  {
@@ -983,10 +983,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20992,
-  "name": "Haikyuu!! 2nd Season",
+  "name": "Haikyu!! 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20992-aHgNbcalVEqk.png",
   "year": 2015,
-  "al": ["HAIKYU!! 2nd Season", "ハイキュー!! セカンドシーズン", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 2"],
+  "al": ["Haikyuu!! 2nd Season", "HAIKYU!! 2nd Season", "ハイキュー!! セカンドシーズン", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 2"],
   "r": 122
  },
  {
@@ -1063,10 +1063,10 @@ const ANIME_COVERS =
  },
  {
   "id": 103572,
-  "name": "Go-toubun no Hanayome",
+  "name": "The Quintessential Quintuplets",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx103572-cchriAdH95cQ.png",
   "year": 2019,
-  "al": ["The Quintessential Quintuplets", "五等分の花嫁", "5-toubun no Hanayome", "The Five Wedded Brides", "เจ้าสาวผมเป็นแฝดห้า", "五等分的新娘", "Eşsiz Beşizler", "Sposób na pięcioraczki"],
+  "al": ["Go-toubun no Hanayome", "The Quintessential Quintuplets", "五等分の花嫁", "5-toubun no Hanayome", "The Five Wedded Brides", "เจ้าสาวผมเป็นแฝดห้า", "五等分的新娘", "Eşsiz Beşizler", "Sposób na pięcioraczki"],
   "r": 132
  },
  {
@@ -1095,10 +1095,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21170,
-  "name": "Ansatsu Kyoushitsu 2nd Season",
+  "name": "Assassination Classroom 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21170-kbcfTTZGSaFt.jpg",
   "year": 2016,
-  "al": ["Assassination Classroom Second Season", "暗殺教室 第２期", "فصل الاغتيال 2", "Klasa skrytobójców 2", "Assassination Classroom Season 2"],
+  "al": ["Ansatsu Kyoushitsu 2nd Season", "Assassination Classroom Second Season", "暗殺教室 第２期", "فصل الاغتيال 2", "Klasa skrytobójców 2", "Assassination Classroom Season 2"],
   "r": 136
  },
  {
@@ -1119,10 +1119,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21856,
-  "name": "Boku no Hero Academia 2",
+  "name": "My Hero Academia 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21856-gutauxhWAwn6.png",
   "year": 2017,
-  "al": ["My Hero Academia Season 2", "僕のヒーローアカデミア２", "BNHA 2", "MHA 2", "나의 히어로 아카데미아 2기", "나히아 2기", "我的英雄学院 2", "我的英雄学院第二季"],
+  "al": ["Boku no Hero Academia 2", "My Hero Academia Season 2", "僕のヒーローアカデミア２", "BNHA 2", "MHA 2", "나의 히어로 아카데미아 2기", "나히아 2기", "我的英雄学院 2", "我的英雄学院第二季"],
   "r": 139
  },
  {
@@ -1143,10 +1143,10 @@ const ANIME_COVERS =
  },
  {
   "id": 141391,
-  "name": "Yofukashi no Uta",
+  "name": "Call of the Night",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx141391-M3ZgUKTPENUk.jpg",
   "year": 2022,
-  "al": ["Call of the Night", "よふかしのうた", "Song of the Night Walkers", "Night Owl Song", "เพลงรักมนุษย์ค้างคาว", "نداء الليل", "Zew nocy", "Il richiamo della notte"],
+  "al": ["Yofukashi no Uta", "Call of the Night", "よふかしのうた", "Song of the Night Walkers", "Night Owl Song", "เพลงรักมนุษย์ค้างคาว", "نداء الليل", "Zew nocy", "Il richiamo della notte"],
   "r": 142
  },
  {
@@ -1167,10 +1167,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20923,
-  "name": "Shokugeki no Souma",
+  "name": "Food Wars!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20923-pNT38pjW3RFH.jpg",
   "year": 2015,
-  "al": ["Food Wars!", "食戟のソーマ", "لا سلام على طعام", "Food Wars! The First Plate", "食戟之灵", "ยอดนักปรุงโซมะ"],
+  "al": ["Shokugeki no Souma", "Food Wars!", "食戟のソーマ", "لا سلام على طعام", "Food Wars! The First Plate", "食戟之灵", "ยอดนักปรุงโซมะ"],
   "r": 145
  },
  {
@@ -1191,18 +1191,18 @@ const ANIME_COVERS =
  },
  {
   "id": 176301,
-  "name": "Kusuriya no Hitorigoto 2nd Season",
+  "name": "The Apothecary Diaries 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx176301-TIGmldLffQGX.jpg",
   "year": 2025,
-  "al": ["The Apothecary Diaries Season 2", "薬屋のひとりごと 第2期", "Die Tagebücher der Apothekerin Season 2", "Diários de uma Apotecária 2ª Temporada", "Монолог фармацевта 2", "Les Carnets de l'apothicaire Saison 2", "Los diarios de la boticaria temporada 2", "Dược sư tự sự"],
+  "al": ["Kusuriya no Hitorigoto 2nd Season", "The Apothecary Diaries Season 2", "薬屋のひとりごと 第2期", "Die Tagebücher der Apothekerin Season 2", "Diários de uma Apotecária 2ª Temporada", "Монолог фармацевта 2", "Les Carnets de l'apothicaire Saison 2", "Los diarios de la boticaria temporada 2", "Dược sư tự sự"],
   "r": 148
  },
  {
   "id": 100166,
-  "name": "Boku no Hero Academia 3",
+  "name": "My Hero Academia 3",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx100166-jUCZYbzn2XLw.jpg",
   "year": 2018,
-  "al": ["My Hero Academia Season 3", "僕のヒーローアカデミア３", "BNHA 3", "MHA 3", "我的英雄学院 3", "我的英雄学院第三季", "มายฮีโร่ อคาเดเมีย ภาค 3", "3أكاديميتي للأبطال"],
+  "al": ["Boku no Hero Academia 3", "My Hero Academia Season 3", "僕のヒーローアカデミア３", "BNHA 3", "MHA 3", "我的英雄学院 3", "我的英雄学院第三季", "มายฮีโร่ อคาเดเมีย ภาค 3", "3أكاديميتي للأبطال"],
   "r": 149
  },
  {
@@ -1215,10 +1215,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20789,
-  "name": "Nanatsu no Taizai",
+  "name": "The Seven Deadly Sins",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20789-Ma5ouSYPkru9.jpg",
   "year": 2014,
-  "al": ["The Seven Deadly Sins", "七つの大罪", "七大罪", "ศึกตำนาน 7 อัศวิน", "7DS", "Семь смертных грехов"],
+  "al": ["Nanatsu no Taizai", "The Seven Deadly Sins", "七つの大罪", "七大罪", "ศึกตำนาน 7 อัศวิน", "7DS", "Семь смертных грехов"],
   "r": 151
  },
  {
@@ -1263,18 +1263,18 @@ const ANIME_COVERS =
  },
  {
   "id": 114535,
-  "name": "Fumetsu no Anata e",
+  "name": "To Your Eternity",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx114535-y3NnjexcqKG1.jpg",
   "year": 2021,
-  "al": ["To Your Eternity", "不滅のあなたへ", "To You, the Immortal", "Uma vida imortal", "致不灭的你", "A te, l'immortale", "Ku twej wieczności", "불멸의 그대에게"],
+  "al": ["Fumetsu no Anata e", "To Your Eternity", "不滅のあなたへ", "To You, the Immortal", "Uma vida imortal", "致不灭的你", "A te, l'immortale", "Ku twej wieczności", "불멸의 그대에게"],
   "r": 157
  },
  {
   "id": 104276,
-  "name": "Boku no Hero Academia 4",
+  "name": "My Hero Academia 4",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx104276-SnEowMvesWIE.png",
   "year": 2019,
-  "al": ["My Hero Academia Season 4", "僕のヒーローアカデミア４", "BNHA 4", "MHA 4", "我的英雄学院 4", "我的英雄学院第四季", "มายฮีโร่ อคาเดเมีย ภาค 4", "أكاديميتي للأبطال"],
+  "al": ["Boku no Hero Academia 4", "My Hero Academia Season 4", "僕のヒーローアカデミア４", "BNHA 4", "MHA 4", "我的英雄学院 4", "我的英雄学院第四季", "มายฮีโร่ อคาเดเมีย ภาค 4", "أكاديميتي للأبطال"],
   "r": 158
  },
  {
@@ -1295,10 +1295,10 @@ const ANIME_COVERS =
  },
  {
   "id": 108463,
-  "name": "Jibaku Shounen Hanako-kun",
+  "name": "Toilet-bound Hanako-kun",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx108463-u03vrYnyB3L9.jpg",
   "year": 2020,
-  "al": ["Toilet-bound Hanako-kun", "地縛少年 花子くん", "지박소년 하나코 군", "地缚少年花子君", "Туалетный мальчик Ханако", "Hanako-kun e os Mistérios do Colégio Kamone", "ฮานาโกะคุง วิญญาณติดที่"],
+  "al": ["Jibaku Shounen Hanako-kun", "Toilet-bound Hanako-kun", "地縛少年 花子くん", "지박소년 하나코 군", "地缚少年花子君", "Туалетный мальчик Ханако", "Hanako-kun e os Mistérios do Colégio Kamone", "ฮานาโกะคุง วิญญาณติดที่"],
   "r": 161
  },
  {
@@ -1319,18 +1319,18 @@ const ANIME_COVERS =
  },
  {
   "id": 153288,
-  "name": "Kaijuu 8-gou",
+  "name": "Kaiju No. 8",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx153288-25FBfFJzEQ5O.jpg",
   "year": 2024,
-  "al": ["Kaiju No. 8", "怪獣８号", "Monster #8", "8Kaijuu", "KAIJU No. EIGHT", "Kaiju N°8", "괴수 8호"],
+  "al": ["Kaijuu 8-gou", "Kaiju No. 8", "怪獣８号", "Monster #8", "8Kaijuu", "KAIJU No. EIGHT", "Kaiju N°8", "괴수 8호"],
   "r": 164
  },
  {
   "id": 145139,
-  "name": "Kimetsu no Yaiba: Katanakaji no Sato-hen",
+  "name": "Demon Slayer: Katanakaji no Sato-hen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx145139-rRimpHGWLhym.png",
   "year": 2023,
-  "al": ["Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc", "鬼滅の刃 刀鍛冶の里編", "KnY 3", "ดาบพิฆาตอสูร ภาค 3 บทหมู่บ้านช่างตีดาบ", "Demon Slayer: Kimetsu no Yaiba - Le village des forgerons", "Истребитель демонов: Kimetsu no Yaiba. Деревня кузнецов", "Miecz zabójcy demonów – Kimetsu no Yaiba: Wioska płatnerzy"],
+  "al": ["Kimetsu no Yaiba: Katanakaji no Sato-hen", "Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc", "鬼滅の刃 刀鍛冶の里編", "KnY 3", "ดาบพิฆาตอสูร ภาค 3 บทหมู่บ้านช่างตีดาบ", "Demon Slayer: Kimetsu no Yaiba - Le village des forgerons", "Истребитель демонов: Kimetsu no Yaiba. Деревня кузнецов", "Miecz zabójcy demonów – Kimetsu no Yaiba: Wioska płatnerzy"],
   "r": 165
  },
  {
@@ -1431,10 +1431,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21699,
-  "name": "Kono Subarashii Sekai ni Shukufuku wo! 2",
+  "name": "KonoSuba: God's Blessing on This Wonderful World! 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21699-Fkbnkl9ZC6fW.png",
   "year": 2017,
-  "al": ["KONOSUBA -God's blessing on this wonderful world! 2", "この素晴らしい世界に祝福を！2", "Konosuba 2", "Konosuba! - As Bençãos de Deus Neste Mundo Maravilhoso 2!", "为美好的世界献上祝福！2", "为美好的世界献上祝福第二季", "ขอให้โชคดีมีชัยในโลกแฟนตาซี! ภาค 2", "Konosuba : Une explosion dans ce monde merveilleux !"],
+  "al": ["Kono Subarashii Sekai ni Shukufuku wo! 2", "KONOSUBA -God's blessing on this wonderful world! 2", "この素晴らしい世界に祝福を！2", "Konosuba 2", "Konosuba! - As Bençãos de Deus Neste Mundo Maravilhoso 2!", "为美好的世界献上祝福！2", "为美好的世界献上祝福第二季", "ขอให้โชคดีมีชัยในโลกแฟนตาซี! ภาค 2", "Konosuba : Une explosion dans ce monde merveilleux !"],
   "r": 178
  },
  {
@@ -1511,10 +1511,10 @@ const ANIME_COVERS =
  },
  {
   "id": 182255,
-  "name": "Sousou no Frieren 2nd Season",
+  "name": "Frieren: Beyond Journey's End 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx182255-butzrqd4I0aC.jpg",
   "year": 2026,
-  "al": ["Frieren: Beyond Journey’s End Season 2", "葬送のフリーレン 第2期", "Провожающая в последний путь Фрирен 2", "장송의 프리렌 2기"],
+  "al": ["Sousou no Frieren 2nd Season", "Frieren: Beyond Journey’s End Season 2", "葬送のフリーレン 第2期", "Провожающая в последний путь Фрирен 2", "장송의 프리렌 2기"],
   "r": 188
  },
  {
@@ -1527,10 +1527,10 @@ const ANIME_COVERS =
  },
  {
   "id": 11771,
-  "name": "Kuroko no Basket",
+  "name": "Kuroko's Basketball",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx11771-uvr44RAwRxPw.jpg",
   "year": 2012,
-  "al": ["Kuroko's Basketball", "黒子のバスケ", "Kuroko no Basuke", "The Basketball Which Kuroko Plays", "הכדורסל של קורוקו", "Баскетбол Куроко", "Το Μπάσκετ του Κουρόκο"],
+  "al": ["Kuroko no Basket", "Kuroko's Basketball", "黒子のバスケ", "Kuroko no Basuke", "The Basketball Which Kuroko Plays", "הכדורסל של קורוקו", "Баскетбол Куроко", "Το Μπάσκετ του Κουρόκο"],
   "r": 190
  },
  {
@@ -1575,10 +1575,10 @@ const ANIME_COVERS =
  },
  {
   "id": 523,
-  "name": "Tonari no Totoro",
+  "name": "My Neighbor Totoro",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx523-fErBvxOHP7IX.jpg",
   "year": 1988,
-  "al": ["My Neighbor Totoro", "となりのトトロ", "My Neighbour Totoro", "Meu Amigo Totoro", "Mi Vecino Totoro", "Komşum Totoro", "השכן הקסום שלי טוטורו", "Mój sąsiad Totoro"],
+  "al": ["Tonari no Totoro", "My Neighbor Totoro", "となりのトトロ", "My Neighbour Totoro", "Meu Amigo Totoro", "Mi Vecino Totoro", "Komşum Totoro", "השכן הקסום שלי טוטורו", "Mój sąsiad Totoro"],
   "r": 196
  },
  {
@@ -1591,10 +1591,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20770,
-  "name": "Akatsuki no Yona",
+  "name": "Yona of the Dawn",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20770-brCDvhTXlums.png",
   "year": 2014,
-  "al": ["Yona of the Dawn", "暁のヨナ", "AkaYona", "Йона на заре", "Ёна на заре", "Рассвет Йоны", "Yona, princesse de l'aube"],
+  "al": ["Akatsuki no Yona", "Yona of the Dawn", "暁のヨナ", "AkaYona", "Йона на заре", "Ёна на заре", "Рассвет Йоны", "Yona, princesse de l'aube"],
   "r": 198
  },
  {
@@ -1607,10 +1607,10 @@ const ANIME_COVERS =
  },
  {
   "id": 109261,
-  "name": "Go-toubun no Hanayome ∬",
+  "name": "The Quintessential Quintuplets ∬",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx109261-65rKxMDlcU9r.png",
   "year": 2021,
-  "al": ["The Quintessential Quintuplets 2", "五等分の花嫁∬", "5-toubun no Hanayome ∬", "Go-toubun no Hanayome 2nd Season", "The Five Wedded Brides 2nd Season", "五等分的新娘∬", "เจ้าสาวผมเป็นแฝดห้า ภาค 2"],
+  "al": ["Go-toubun no Hanayome ∬", "The Quintessential Quintuplets 2", "五等分の花嫁∬", "5-toubun no Hanayome ∬", "Go-toubun no Hanayome 2nd Season", "The Five Wedded Brides 2nd Season", "五等分的新娘∬", "เจ้าสาวผมเป็นแฝดห้า ภาค 2"],
   "r": 200
  },
  {
@@ -1655,10 +1655,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20829,
-  "name": "Owari no Seraph",
+  "name": "Seraph of the End",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20829-pgsXVjrfyI5V.png",
   "year": 2015,
-  "al": ["Seraph of the End: Vampire Reign", "終わりのセラフ", "OwaSera", "Seraph of the End: El Reino de los Vampiros", "เทวทูตแห่งโลกมืด"],
+  "al": ["Owari no Seraph", "Seraph of the End: Vampire Reign", "終わりのセラフ", "OwaSera", "Seraph of the End: El Reino de los Vampiros", "เทวทูตแห่งโลกมืด"],
   "r": 206
  },
  {
@@ -1687,10 +1687,10 @@ const ANIME_COVERS =
  },
  {
   "id": 98444,
-  "name": "Yuru Camp△",
+  "name": "Laid-Back Camp",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx98444-Vzysp1EsrzgD.jpg",
   "year": 2018,
-  "al": ["Laid-Back Camp", "ゆるキャン△", "Yurucamp", "Yurukyan△", "摇曳露营△", "แคมป์สบายสไตล์สาวๆ"],
+  "al": ["Yuru Camp△", "Laid-Back Camp", "ゆるキャン△", "Yurucamp", "Yurukyan△", "摇曳露营△", "แคมป์สบายสไตล์สาวๆ"],
   "r": 210
  },
  {
@@ -1743,10 +1743,10 @@ const ANIME_COVERS =
  },
  {
   "id": 98436,
-  "name": "Mahoutsukai no Yome",
+  "name": "The Ancient Magus' Bride",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx98436-n7sK6POCd0XV.png",
   "year": 2017,
-  "al": ["The Ancient Magus' Bride", "魔法使いの嫁", "Mahou Tsukai no Yome", "Mahoyome", "Невеста чародея", "เจ้าสาวผมแดงกับจอมเวทอสูร"],
+  "al": ["Mahoutsukai no Yome", "The Ancient Magus' Bride", "魔法使いの嫁", "Mahou Tsukai no Yome", "Mahoyome", "Невеста чародея", "เจ้าสาวผมแดงกับจอมเวทอสูร"],
   "r": 217
  },
  {
@@ -1759,10 +1759,10 @@ const ANIME_COVERS =
  },
  {
   "id": 162314,
-  "name": "Shingeki no Kyojin: The Final Season - Kanketsu-hen Kouhen",
+  "name": "Attack on Titan: The Final Season - Kanketsu-hen Kouhen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx162314-qIWdAAFtvY8J.jpg",
   "year": 2023,
-  "al": ["Attack on Titan Final Season THE FINAL CHAPTERS Special 2", "進撃の巨人 The Final Season完結編 後編", "Shingeki no Kyojin: The Final Season Final Edition", "Attack on Titan Final Season Part 3 Final Arc Part 2", "Attack on Titan: The Final Season Part 4", "Shingeki no Kyojin: The Final Season Part 4", "SnK 4", "AoT 4"],
+  "al": ["Shingeki no Kyojin: The Final Season - Kanketsu-hen Kouhen", "Attack on Titan Final Season THE FINAL CHAPTERS Special 2", "進撃の巨人 The Final Season完結編 後編", "Shingeki no Kyojin: The Final Season Final Edition", "Attack on Titan Final Season Part 3 Final Arc Part 2", "Attack on Titan: The Final Season Part 4", "Shingeki no Kyojin: The Final Season Part 4", "SnK 4", "AoT 4"],
   "r": 219
  },
  {
@@ -1791,10 +1791,10 @@ const ANIME_COVERS =
  },
  {
   "id": 121,
-  "name": "Hagane no Renkinjutsushi",
+  "name": "Fullmetal Alchemist",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx121-zjmixZ428Mwv.png",
   "year": 2003,
-  "al": ["Fullmetal Alchemist", "鋼の錬金術師", "Full Metal Alchemist", "FMA", "אלכימאי המתכת", "Stalowy alchemik", "강철의 연금술사", "แขนกล คนแปรธาตุ"],
+  "al": ["Hagane no Renkinjutsushi", "Fullmetal Alchemist", "鋼の錬金術師", "Full Metal Alchemist", "FMA", "אלכימאי המתכת", "Stalowy alchemik", "강철의 연금술사", "แขนกล คนแปรธาตุ"],
   "r": 223
  },
  {
@@ -1815,10 +1815,10 @@ const ANIME_COVERS =
  },
  {
   "id": 512,
-  "name": "Majo no Takkyuubin",
+  "name": "Kiki's Delivery Service",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx512-UwP8X4BR8YoM.png",
   "year": 1989,
-  "al": ["Kiki's Delivery Service", "魔女の宅急便", "魔女宅", "Majotaku", "Witch's Express Delivery", "Kiki la petite sorcière", "Nicky, la Aprendiz de Bruja", "O Serviço de Entregas da Kiki"],
+  "al": ["Majo no Takkyuubin", "Kiki's Delivery Service", "魔女の宅急便", "魔女宅", "Majotaku", "Witch's Express Delivery", "Kiki la petite sorcière", "Nicky, la Aprendiz de Bruja", "O Serviço de Entregas da Kiki"],
   "r": 226
  },
  {
@@ -1839,10 +1839,10 @@ const ANIME_COVERS =
  },
  {
   "id": 11981,
-  "name": "Mahou Shoujo Madoka☆Magica: Hangyaku no Monogatari",
+  "name": "Puella Magi Madoka Magica: Hangyaku no Monogatari",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/b11981-koz1IoISs3eU.jpg",
   "year": 2013,
-  "al": ["Puella Magi Madoka Magica the Movie -Rebellion-", "劇場版 魔法少女まどか☆マギカ 叛逆の物語", "Mahou Shoujo Madoka Magika Movie 3", "Magical Girl Madoka Magica Movie 3", "Puella Magi Madoka Magica the Movie Part III: Rebellion", "Puella Magi Madoka Magica the Movie: Rebellion"],
+  "al": ["Mahou Shoujo Madoka☆Magica: Hangyaku no Monogatari", "Puella Magi Madoka Magica the Movie -Rebellion-", "劇場版 魔法少女まどか☆マギカ 叛逆の物語", "Mahou Shoujo Madoka Magika Movie 3", "Magical Girl Madoka Magica Movie 3", "Puella Magi Madoka Magica the Movie Part III: Rebellion", "Puella Magi Madoka Magica the Movie: Rebellion"],
   "r": 229
  },
  {
@@ -1887,10 +1887,10 @@ const ANIME_COVERS =
  },
  {
   "id": 129874,
-  "name": "Kimetsu no Yaiba: Mugen Ressha-hen (TV)",
+  "name": "Demon Slayer: Mugen Ressha-hen (TV)",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx129874-g6ZKXB94Hui1.jpg",
   "year": 2021,
-  "al": ["Demon Slayer: Kimetsu no Yaiba Mugen Train Arc", "鬼滅の刃 無限列車編 (TV)", "KnY 2", "ดาบพิฆาตอสูร : ศึกรถไฟสู่นิรันดร์ (TV)", "鬼灭之刃 无限列车篇", "Demon Slayer: Kimetsu no Yaiba: Le train de l'Infini", "Demon Slayer: Kimetsu no Yaiba season 2", "Miecz zabójcy demonów – Kimetsu no Yaiba: Nieskończony Pociąg"],
+  "al": ["Kimetsu no Yaiba: Mugen Ressha-hen (TV)", "Demon Slayer: Kimetsu no Yaiba Mugen Train Arc", "鬼滅の刃 無限列車編 (TV)", "KnY 2", "ดาบพิฆาตอสูร : ศึกรถไฟสู่นิรันดร์ (TV)", "鬼灭之刃 无限列车篇", "Demon Slayer: Kimetsu no Yaiba: Le train de l'Infini", "Demon Slayer: Kimetsu no Yaiba season 2", "Miecz zabójcy demonów – Kimetsu no Yaiba: Nieskończony Pociąg"],
   "r": 235
  },
  {
@@ -1951,10 +1951,10 @@ const ANIME_COVERS =
  },
  {
   "id": 113538,
-  "name": "Haikyuu!! TO THE TOP 2",
+  "name": "Haikyu!! TO THE TOP 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx113538-tHVE8j5mOPLu.jpg",
   "year": 2020,
-  "al": ["HAIKYU!! TO THE TOP Part 2", "ハイキュー!! TO THE TOP 2", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 4 Part 2", "Haikyu!! Season 4 Part 2", "排球少年!! 第四季"],
+  "al": ["Haikyuu!! TO THE TOP 2", "HAIKYU!! TO THE TOP Part 2", "ハイキュー!! TO THE TOP 2", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 4 Part 2", "Haikyu!! Season 4 Part 2", "排球少年!! 第四季"],
   "r": 243
  },
  {
@@ -1967,10 +1967,10 @@ const ANIME_COVERS =
  },
  {
   "id": 146984,
-  "name": "Shingeki no Kyojin: The Final Season - Kanketsu-hen Zenpen",
+  "name": "Attack on Titan: The Final Season - Kanketsu-hen Zenpen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx146984-GXrLeT6vQqyP.jpg",
   "year": 2023,
-  "al": ["Attack on Titan Final Season THE FINAL CHAPTERS Special 1", "進撃の巨人 The Final Season完結編 前編", "Shingeki no Kyojin: The Final Season Final Edition", "Shingeki no Kyojin: The Final Season Part 3", "ผ่าพิภพไททัน ภาค 4", "ผ่าพิภพไททัน ไฟนอล ซีซั่น Part 3", "Attack on Titan Final Season Part 3 Final Arc Part 1", "Attack on Titan The Final Season The Final Part Special"],
+  "al": ["Shingeki no Kyojin: The Final Season - Kanketsu-hen Zenpen", "Attack on Titan Final Season THE FINAL CHAPTERS Special 1", "進撃の巨人 The Final Season完結編 前編", "Shingeki no Kyojin: The Final Season Final Edition", "Shingeki no Kyojin: The Final Season Part 3", "ผ่าพิภพไททัน ภาค 4", "ผ่าพิภพไททัน ไฟนอล ซีซั่น Part 3", "Attack on Titan Final Season Part 3 Final Arc Part 1", "Attack on Titan The Final Season The Final Part Special"],
   "r": 245
  },
  {
@@ -1991,10 +1991,10 @@ const ANIME_COVERS =
  },
  {
   "id": 578,
-  "name": "Hotaru no Haka",
+  "name": "Grave of the Fireflies",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx578-vU6XcOlb1XFU.jpg",
   "year": 1988,
-  "al": ["Grave of the Fireflies", "火垂るの墓", "Tombstone for Fireflies", "Le Tombeau des lucioles", "La Tumba de las Luciérnagas", "O Túmulo dos Vagalumes", "Die letzten Glühwürmchen", "Una tomba per le lucciole"],
+  "al": ["Hotaru no Haka", "Grave of the Fireflies", "火垂るの墓", "Tombstone for Fireflies", "Le Tombeau des lucioles", "La Tumba de las Luciérnagas", "O Túmulo dos Vagalumes", "Die letzten Glühwürmchen", "Una tomba per le lucciole"],
   "r": 248
  },
  {
@@ -2015,10 +2015,10 @@ const ANIME_COVERS =
  },
  {
   "id": 12355,
-  "name": "Ookami Kodomo no Ame to Yuki",
+  "name": "Wolf Children",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx12355-wNsvhEsXEgrH.png",
   "year": 2012,
-  "al": ["Wolf Children", "おおかみこどもの雨と雪", "The Wolf Children Ame and Yuki", "Los Niños Lobo", "Les Enfants loups, Ame & Yuki", "Wilcze Dzieci", "Ame e Yuki i bambini lupo", "Crianças Lobo"],
+  "al": ["Ookami Kodomo no Ame to Yuki", "Wolf Children", "おおかみこどもの雨と雪", "The Wolf Children Ame and Yuki", "Los Niños Lobo", "Les Enfants loups, Ame & Yuki", "Wilcze Dzieci", "Ame e Yuki i bambini lupo", "Crianças Lobo"],
   "r": 251
  },
  {
@@ -2031,10 +2031,10 @@ const ANIME_COVERS =
  },
  {
   "id": 153152,
-  "name": "Boku no Kokoro no Yabai Yatsu",
+  "name": "The Dangers in My Heart",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx153152-Xnwmx7wuoIWV.jpg",
   "year": 2023,
-  "al": ["The Dangers in My Heart", "僕の心のヤバイやつ", "BokuYaba", "เธอผู้อันตรายต่อใจผม", "내 마음의 위험한 녀석", "我內心的糟糕念頭", "僕ヤバ", "Peligros en mi corazón"],
+  "al": ["Boku no Kokoro no Yabai Yatsu", "The Dangers in My Heart", "僕の心のヤバイやつ", "BokuYaba", "เธอผู้อันตรายต่อใจผม", "내 마음의 위험한 녀석", "我內心的糟糕念頭", "僕ヤバ", "Peligros en mi corazón"],
   "r": 253
  },
  {
@@ -2047,10 +2047,10 @@ const ANIME_COVERS =
  },
  {
   "id": 117193,
-  "name": "Boku no Hero Academia 5",
+  "name": "My Hero Academia 5",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx117193-E75BlZmDh1aB.jpg",
   "year": 2021,
-  "al": ["My Hero Academia Season 5", "僕のヒーローアカデミア５", "BNHA 5", "MHA 5", "我的英雄学院 5", "我的英雄学院第五季", "มายฮีโร่ อคาเดเมีย ภาค 5", "أكاديميتي للأبطال"],
+  "al": ["Boku no Hero Academia 5", "My Hero Academia Season 5", "僕のヒーローアカデミア５", "BNHA 5", "MHA 5", "我的英雄学院 5", "我的英雄学院第五季", "มายฮีโร่ อคาเดเมีย ภาค 5", "أكاديميتي للأبطال"],
   "r": 255
  },
  {
@@ -2063,18 +2063,18 @@ const ANIME_COVERS =
  },
  {
   "id": 15809,
-  "name": "Hataraku Maou-sama!",
+  "name": "The Devil is a Part-Timer!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx15809-ECv3HyOYJKrk.jpg",
   "year": 2013,
-  "al": ["The Devil is a Part-Timer!", "はたらく魔王さま!", "ผู้กล้าซึนซ่าส์กับจอมมารสู้ชีวิต", "Raja Iblis Nyambi!", "打工吧！魔王大人"],
+  "al": ["Hataraku Maou-sama!", "The Devil is a Part-Timer!", "はたらく魔王さま!", "ผู้กล้าซึนซ่าส์กับจอมมารสู้ชีวิต", "Raja Iblis Nyambi!", "打工吧！魔王大人"],
   "r": 257
  },
  {
   "id": 106625,
-  "name": "Haikyuu!! TO THE TOP",
+  "name": "Haikyu!! TO THE TOP",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx106625-UR22wB2NuNVi.png",
   "year": 2020,
-  "al": ["HAIKYU!! TO THE TOP", "ハイキュー!! TO THE TOP", "Haikyu!! Season 4", "Haikyuu!! Season 4", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 4 Part 1", "排球少年!! 第四季"],
+  "al": ["Haikyuu!! TO THE TOP", "HAIKYU!! TO THE TOP", "ハイキュー!! TO THE TOP", "Haikyu!! Season 4", "Haikyuu!! Season 4", "ไฮคิว!! คู่ตบฟ้าประทาน ภาค 4 Part 1", "排球少年!! 第四季"],
   "r": 258
  },
  {
@@ -2087,10 +2087,10 @@ const ANIME_COVERS =
  },
  {
   "id": 142770,
-  "name": "Suzume no Tojimari",
+  "name": "Suzume",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx142770-dDaDIRnsv5jN.jpg",
   "year": 2022,
-  "al": ["Suzume", "すずめの戸締まり", "铃芽之旅", "Khóa Chặt Cửa Nào Suzume", "การผนึกประตูของซุซุเมะ", "Судзуме зачиняє двері", "Судзумэ"],
+  "al": ["Suzume no Tojimari", "Suzume", "すずめの戸締まり", "铃芽之旅", "Khóa Chặt Cửa Nào Suzume", "การผนึกประตูของซุซุเมะ", "Судзуме зачиняє двері", "Судзумэ"],
   "r": 260
  },
  {
@@ -2135,10 +2135,10 @@ const ANIME_COVERS =
  },
  {
   "id": 161964,
-  "name": "Kage no Jitsuryokusha ni Naritakute! 2nd season",
+  "name": "The Eminence in Shadow 2nd season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx161964-JpkEbHI8ivaP.jpg",
   "year": 2023,
-  "al": ["The Eminence in Shadow Season 2", "陰の実力者になりたくて！ 2nd season", "To Be a Power in the Shadows! 2", "ชีวิตไม่ต้องเด่น ขอแค่เป็นเทพในเงา 2", "Un giorno sarò l'eminenza grigia 2", "TEIS 2", "Кардинал теней 2"],
+  "al": ["Kage no Jitsuryokusha ni Naritakute! 2nd season", "The Eminence in Shadow Season 2", "陰の実力者になりたくて！ 2nd season", "To Be a Power in the Shadows! 2", "ชีวิตไม่ต้องเด่น ขอแค่เป็นเทพในเงา 2", "Un giorno sarò l'eminenza grigia 2", "TEIS 2", "Кардинал теней 2"],
   "r": 266
  },
  {
@@ -2159,10 +2159,10 @@ const ANIME_COVERS =
  },
  {
   "id": 139630,
-  "name": "Boku no Hero Academia 6",
+  "name": "My Hero Academia 6",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx139630-3v4gxWtNZxLV.jpg",
   "year": 2022,
-  "al": ["My Hero Academia Season 6", "僕のヒーローアカデミア６", "BNHA 6", "MHA 6", "我的英雄学院 6", "我的英雄学院第六季", "มายฮีโร่ อคาเดเมีย ภาค 6", "أكاديميتي للأبطال"],
+  "al": ["Boku no Hero Academia 6", "My Hero Academia Season 6", "僕のヒーローアカデミア６", "BNHA 6", "MHA 6", "我的英雄学院 6", "我的英雄学院第六季", "มายฮีโร่ อคาเดเมีย ภาค 6", "أكاديميتي للأبطال"],
   "r": 269
  },
  {
@@ -2239,10 +2239,10 @@ const ANIME_COVERS =
  },
  {
   "id": 178788,
-  "name": "Kimetsu no Yaiba: Mugenjou-hen Movie 1 - Akaza Sairai",
+  "name": "Demon Slayer: Mugenjou-hen Movie 1 - Akaza Sairai",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx178788-zm3gtpB9TpRt.jpg",
   "year": 2025,
-  "al": ["Demon Slayer: Kimetsu no Yaiba Infinity Castle", "劇場版「鬼滅の刃」無限城編 第一章 猗窩座再来", "Demon Slayer: Kimetsu no Yaiba La Forteresse infinie", "Demon Slayer: Kimetsu no Yaiba Castelo Infinito", "Клинок, Рассекающий Демонов: Бесконечный Замок"],
+  "al": ["Kimetsu no Yaiba: Mugenjou-hen Movie 1 - Akaza Sairai", "Demon Slayer: Kimetsu no Yaiba Infinity Castle", "劇場版「鬼滅の刃」無限城編 第一章 猗窩座再来", "Demon Slayer: Kimetsu no Yaiba La Forteresse infinie", "Demon Slayer: Kimetsu no Yaiba Castelo Infinito", "Клинок, Рассекающий Демонов: Бесконечный Замок"],
   "r": 279
  },
  {
@@ -2287,10 +2287,10 @@ const ANIME_COVERS =
  },
  {
   "id": 166240,
-  "name": "Kimetsu no Yaiba: Hashira Geiko-hen",
+  "name": "Demon Slayer: Hashira Geiko-hen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx166240-PBV7zukIHW7V.png",
   "year": 2024,
-  "al": ["Demon Slayer: Kimetsu no Yaiba Hashira Training Arc", "鬼滅の刃 柱稽古編", "KnY 4", "Demon Slayer: Kimetsu no Yaiba - L'entraînement des Piliers", "Miecz zabójcy demonów – Kimetsu no Yaiba: Trening Filarów", "Клинок, рассекающий демонов: Тренировка столпов"],
+  "al": ["Kimetsu no Yaiba: Hashira Geiko-hen", "Demon Slayer: Kimetsu no Yaiba Hashira Training Arc", "鬼滅の刃 柱稽古編", "KnY 4", "Demon Slayer: Kimetsu no Yaiba - L'entraînement des Piliers", "Miecz zabójcy demonów – Kimetsu no Yaiba: Trening Filarów", "Клинок, рассекающий демонов: Тренировка столпов"],
   "r": 285
  },
  {
@@ -2335,10 +2335,10 @@ const ANIME_COVERS =
  },
  {
   "id": 113813,
-  "name": "Kanojo, Okarishimasu",
+  "name": "Rent-a-Girlfriend",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx113813-SnljeXpU3Pw7.jpg",
   "year": 2020,
-  "al": ["Rent-a-Girlfriend", "彼女、お借りします", "I'd like to Borrow a Girlfriend", "Kanokari", "สะดุดรักยัยแฟนเช่า", "Pacar Sewaan"],
+  "al": ["Kanojo, Okarishimasu", "Rent-a-Girlfriend", "彼女、お借りします", "I'd like to Borrow a Girlfriend", "Kanokari", "สะดุดรักยัยแฟนเช่า", "Pacar Sewaan"],
   "r": 291
  },
  {
@@ -2351,18 +2351,18 @@ const ANIME_COVERS =
  },
  {
   "id": 102976,
-  "name": "Kono Subarashii Sekai ni Shukufuku wo! Kurenai Densetsu",
+  "name": "KonoSuba: God's Blessing on This Wonderful World! Kurenai Densetsu",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx102976-2Yi5icRbjukO.png",
   "year": 2019,
-  "al": ["KONOSUBA -God's blessing on this wonderful world!- Legend of Crimson", "この素晴らしい世界に祝福を！紅伝説", "Konosuba Movie", "このすば紅伝説", "ขอให้โชคดีมีชัยในโลกแฟนตาซี เดอะ มูฟวี่ ตำนานสีชาด", "Konosuba! Un mundo maravilloso. La leyenda del carmesí"],
+  "al": ["Kono Subarashii Sekai ni Shukufuku wo! Kurenai Densetsu", "KONOSUBA -God's blessing on this wonderful world!- Legend of Crimson", "この素晴らしい世界に祝福を！紅伝説", "Konosuba Movie", "このすば紅伝説", "ขอให้โชคดีมีชัยในโลกแฟนตาซี เดอะ มูฟวี่ ตำนานสีชาด", "Konosuba! Un mundo maravilloso. La leyenda del carmesí"],
   "r": 293
  },
  {
   "id": 154768,
-  "name": "Sono Bisque Doll wa Koi wo Suru Season 2",
+  "name": "My Dress-Up Darling Season 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx154768-DHHvNd4MjV1p.jpg",
   "year": 2025,
-  "al": ["My Dress-Up Darling Season 2", "その着せ替え人形は恋をする Season 2", "Sono Kisekae Ningyou wa Koi wo suru", "หนุ่มเย็บผ้ากับสาวนักคอสเพลย์ ภาค 2", "その着せ替え人形（ビスク・ドール）は恋をする", "Kisekoi 2", "Si Boneka Rias Sedang Jatuh Cinta", "着せ恋 2"],
+  "al": ["Sono Bisque Doll wa Koi wo Suru Season 2", "My Dress-Up Darling Season 2", "その着せ替え人形は恋をする Season 2", "Sono Kisekae Ningyou wa Koi wo suru", "หนุ่มเย็บผ้ากับสาวนักคอสเพลย์ ภาค 2", "その着せ替え人形（ビスク・ドール）は恋をする", "Kisekoi 2", "Si Boneka Rias Sedang Jatuh Cinta", "着せ恋 2"],
   "r": 294
  },
  {
@@ -2407,10 +2407,10 @@ const ANIME_COVERS =
  },
  {
   "id": 166216,
-  "name": "Boku no Kokoro no Yabai Yatsu 2nd Season",
+  "name": "The Dangers in My Heart 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx166216-vCMkF4e3x5FB.jpg",
   "year": 2024,
-  "al": ["The Dangers in My Heart Season 2", "僕の心のヤバイやつ 第2期", "BokuYaba 2", "僕ヤバ 2", "เธอผู้อันตรายต่อใจผม ภาคที่ 2", "Czarne chmury w moim sercu. Sezon 2"],
+  "al": ["Boku no Kokoro no Yabai Yatsu 2nd Season", "The Dangers in My Heart Season 2", "僕の心のヤバイやつ 第2期", "BokuYaba 2", "僕ヤバ 2", "เธอผู้อันตรายต่อใจผม ภาคที่ 2", "Czarne chmury w moim sercu. Sezon 2"],
   "r": 300
  },
  {
@@ -2559,18 +2559,18 @@ const ANIME_COVERS =
  },
  {
   "id": 114236,
-  "name": "Enen no Shouboutai: Ni no Shou",
+  "name": "Fire Force: Ni no Shou",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx114236-wfQOWF0Ii3h2.png",
   "year": 2020,
-  "al": ["Fire Force Season 2", "炎炎ノ消防隊 弐ノ章", "Enen no Shouboutai 2", "หน่วยผจญคนไฟลุก ภาค 2"],
+  "al": ["Enen no Shouboutai: Ni no Shou", "Fire Force Season 2", "炎炎ノ消防隊 弐ノ章", "Enen no Shouboutai 2", "หน่วยผจญคนไฟลุก ภาค 2"],
   "r": 319
  },
  {
   "id": 21679,
-  "name": "Bungou Stray Dogs 2nd Season",
+  "name": "Bungo Stray Dogs 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21679-9MKdz1A7YLV7.jpg",
   "year": 2016,
-  "al": ["Bungo Stray Dogs 2", "文豪ストレイドッグス 第2シーズン", "Bungou Stray Dogs (2016)", "BSD 2", "คณะประพันธกรจรจัด ภาค 2"],
+  "al": ["Bungou Stray Dogs 2nd Season", "Bungo Stray Dogs 2", "文豪ストレイドッグス 第2シーズン", "Bungou Stray Dogs (2016)", "BSD 2", "คณะประพันธกรจรจัด ภาค 2"],
   "r": 320
  },
  {
@@ -2727,18 +2727,18 @@ const ANIME_COVERS =
  },
  {
   "id": 16782,
-  "name": "Kotonoha no Niwa",
+  "name": "The Garden of Words",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx16782-qpFGk18UqaHn.jpg",
   "year": 2013,
-  "al": ["The Garden of Words", "言の葉の庭", "Koto no Ha no Niwa", "The Garden of Kotonoha", "El Jardín de las Palabras", "A szavak kertje", "ยามสายฝนโปรยปราย", "Ogród słów"],
+  "al": ["Kotonoha no Niwa", "The Garden of Words", "言の葉の庭", "Koto no Ha no Niwa", "The Garden of Kotonoha", "El Jardín de las Palabras", "A szavak kertje", "ยามสายฝนโปรยปราย", "Ogród słów"],
   "r": 340
  },
  {
   "id": 585,
-  "name": "Mimi wo Sumaseba",
+  "name": "Whisper of the Heart",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/nx585-5uq7j2xNNVmN.jpg",
   "year": 1995,
-  "al": ["Whisper of the Heart", "耳をすませば", "If You Listen Carefully", "Ghibli Movie 10", "Si tu tends l'oreille", "Stimme des Herzens", "Susurros del Corazón", "Sussurros do Coração"],
+  "al": ["Mimi wo Sumaseba", "Whisper of the Heart", "耳をすませば", "If You Listen Carefully", "Ghibli Movie 10", "Si tu tends l'oreille", "Stimme des Herzens", "Susurros del Corazón", "Sussurros do Coração"],
   "r": 341
  },
  {
@@ -2767,10 +2767,10 @@ const ANIME_COVERS =
  },
  {
   "id": 182896,
-  "name": "Boku no Hero Academia FINAL SEASON",
+  "name": "My Hero Academia FINAL SEASON",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx182896-mvxTVHGdDB4q.jpg",
   "year": 2025,
-  "al": ["My Hero Academia FINAL SEASON", "僕のヒーローアカデミア FINAL SEASON", "Boku no Hero Academia 8", "My Hero Academia 8", "BNHA 8", "MHA 8", "Моя геройская академия 8", "ヒロアカ 8"],
+  "al": ["Boku no Hero Academia FINAL SEASON", "My Hero Academia FINAL SEASON", "僕のヒーローアカデミア FINAL SEASON", "Boku no Hero Academia 8", "My Hero Academia 8", "BNHA 8", "MHA 8", "Моя геройская академия 8", "ヒロアカ 8"],
   "r": 345
  },
  {
@@ -2895,10 +2895,10 @@ const ANIME_COVERS =
  },
  {
   "id": 103223,
-  "name": "Bungou Stray Dogs 3rd Season",
+  "name": "Bungo Stray Dogs 3rd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx103223-bfdnnKWxE4YE.jpg",
   "year": 2019,
-  "al": ["Bungo Stray Dogs 3", "文豪ストレイドッグス 第3シーズン", "Bungou Stray Dogs (2019)", "BSD 3", "BungouSD 3", "คณะประพันธกรจรจัด ภาค 3", "文豪野犬 第三季"],
+  "al": ["Bungou Stray Dogs 3rd Season", "Bungo Stray Dogs 3", "文豪ストレイドッグス 第3シーズン", "Bungou Stray Dogs (2019)", "BSD 3", "BungouSD 3", "คณะประพันธกรจรจัด ภาค 3", "文豪野犬 第三季"],
   "r": 361
  },
  {
@@ -2919,10 +2919,10 @@ const ANIME_COVERS =
  },
  {
   "id": 1689,
-  "name": "Byousoku 5 Centimeter",
+  "name": "5 Centimeters per Second",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx1689-rJKhjLEjQHSy.jpg",
   "year": 2007,
-  "al": ["5 Centimeters per Second", "秒速５センチメートル", "Five Centimeters Per Second", "Byousoku 5 Centimeter - a chain of short stories about their distance", "5 cm per second", "5 Centímetros por Segundo", "5 centimètres par seconde", "Másodpercenként 5 centiméter"],
+  "al": ["Byousoku 5 Centimeter", "5 Centimeters per Second", "秒速５センチメートル", "Five Centimeters Per Second", "Byousoku 5 Centimeter - a chain of short stories about their distance", "5 cm per second", "5 Centímetros por Segundo", "5 centimètres par seconde", "Másodpercenként 5 centiméter"],
   "r": 364
  },
  {
@@ -2935,10 +2935,10 @@ const ANIME_COVERS =
  },
  {
   "id": 572,
-  "name": "Kaze no Tani no Nausicaä",
+  "name": "Nausicaä of the Valley of the Wind",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx572-ZE3kHBA6U0X1.jpg",
   "year": 1984,
-  "al": ["Nausicaä of the Valley of the Wind", "風の谷のナウシカ", "Nausicaa of the Valley of the Wind", "Nausicaä de la vallée du vent", "Kaze no Tani no Nausicaa", "Nausicaä del Valle del Viento", "Nausicaä do Vale do Vento", "Rüzgârlı Vadi"],
+  "al": ["Kaze no Tani no Nausicaä", "Nausicaä of the Valley of the Wind", "風の谷のナウシカ", "Nausicaa of the Valley of the Wind", "Nausicaä de la vallée du vent", "Kaze no Tani no Nausicaa", "Nausicaä del Valle del Viento", "Nausicaä do Vale do Vento", "Rüzgârlı Vadi"],
   "r": 366
  },
  {
@@ -2999,10 +2999,10 @@ const ANIME_COVERS =
  },
  {
   "id": 4081,
-  "name": "Natsume Yuujinchou",
+  "name": "Natsume's Book of Friends",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx4081-xi08naD69tjr.jpg",
   "year": 2008,
-  "al": ["Natsume's Book of Friends Season 1", "夏目友人帳", "Natsume Yujincho", "นัตสึเมะกับบันทึกพิศวง", "Hữu Nhân Sổ - Natsume Yuujinchou", "O Livro de Amigos de Natsume", "나츠메 우인장"],
+  "al": ["Natsume Yuujinchou", "Natsume's Book of Friends Season 1", "夏目友人帳", "Natsume Yujincho", "นัตสึเมะกับบันทึกพิศวง", "Hữu Nhân Sổ - Natsume Yuujinchou", "O Livro de Amigos de Natsume", "나츠메 우인장"],
   "r": 374
  },
  {
@@ -3015,10 +3015,10 @@ const ANIME_COVERS =
  },
  {
   "id": 151384,
-  "name": "Kaguya-sama wa Kokurasetai: First Kiss wa Owaranai",
+  "name": "Kaguya-sama: Love is War: First Kiss wa Owaranai",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx151384-gv0q8wOE6D58.jpg",
   "year": 2023,
-  "al": ["Kaguya-sama: Love is War -The First Kiss That Never Ends-", "かぐや様は告らせたい -ファーストキッスは終わらない-", "Kaguya-sama: Love is War Movie", "Kaguya-sama: Cuộc chiến tỏ tình - Nụ hôn đầu không hồi kết", "Госпожа Кагуя: в любви как на войне. Бесконечный первый поцелуй"],
+  "al": ["Kaguya-sama wa Kokurasetai: First Kiss wa Owaranai", "Kaguya-sama: Love is War -The First Kiss That Never Ends-", "かぐや様は告らせたい -ファーストキッスは終わらない-", "Kaguya-sama: Love is War Movie", "Kaguya-sama: Cuộc chiến tỏ tình - Nụ hôn đầu không hồi kết", "Госпожа Кагуя: в любви как на войне. Бесконечный первый поцелуй"],
   "r": 376
  },
  {
@@ -3215,10 +3215,10 @@ const ANIME_COVERS =
  },
  {
   "id": 136804,
-  "name": "Kono Subarashii Sekai ni Shukufuku wo! 3",
+  "name": "KonoSuba: God's Blessing on This Wonderful World! 3",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx136804-7FVftG67FPBc.jpg",
   "year": 2024,
-  "al": ["KONOSUBA -God's blessing on this wonderful world! 3", "この素晴らしい世界に祝福を！３", "Konosuba 3", "ขอให้โชคดีมีชัยในโลกแฟนตาซี! ภาค 3", "為美好的世界獻上祝福！3", "Да благословят боги сей расчудесный мир! 3", "Konosuba! Un mundo maravilloso 3"],
+  "al": ["Kono Subarashii Sekai ni Shukufuku wo! 3", "KONOSUBA -God's blessing on this wonderful world! 3", "この素晴らしい世界に祝福を！３", "Konosuba 3", "ขอให้โชคดีมีชัยในโลกแฟนตาซี! ภาค 3", "為美好的世界獻上祝福！3", "Да благословят боги сей расчудесный мир! 3", "Konosuba! Un mundo maravilloso 3"],
   "r": 401
  },
  {
@@ -3279,10 +3279,10 @@ const ANIME_COVERS =
  },
  {
   "id": 163139,
-  "name": "Boku no Hero Academia 7",
+  "name": "My Hero Academia 7",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx163139-JchZhUFlNTWU.jpg",
   "year": 2024,
-  "al": ["My Hero Academia Season 7", "僕のヒーローアカデミア 7", "BNHA 7", "MHA 7", "Моя геройская академия 7"],
+  "al": ["Boku no Hero Academia 7", "My Hero Academia Season 7", "僕のヒーローアカデミア 7", "BNHA 7", "MHA 7", "Моя геройская академия 7"],
   "r": 409
  },
  {
@@ -3567,10 +3567,10 @@ const ANIME_COVERS =
  },
  {
   "id": 111321,
-  "name": "Tate no Yuusha no Nariagari Season 2",
+  "name": "The Rising of the Shield Hero Season 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx111321-dIr3dEKOIPer.png",
   "year": 2022,
-  "al": ["The Rising of the Shield Hero Season 2", "盾の勇者の成り上がり Season 2", "ผู้กล้าโล่ผงาด ภาค 2", "Восхождение героя щита 2"],
+  "al": ["Tate no Yuusha no Nariagari Season 2", "The Rising of the Shield Hero Season 2", "盾の勇者の成り上がり Season 2", "ผู้กล้าโล่ผงาด ภาค 2", "Восхождение героя щита 2"],
   "r": 445
  },
  {
@@ -3615,10 +3615,10 @@ const ANIME_COVERS =
  },
  {
   "id": 131520,
-  "name": "Go-toubun no Hanayome Movie",
+  "name": "The Quintessential Quintuplets Movie",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx131520-89Qfo8JnGHI3.png",
   "year": 2022,
-  "al": ["The Quintessential Quintuplets Movie", "映画 五等分の花嫁", "5-toubun no Hanayome Movie", "Eiga Go-toubun no Hanayome", "เจ้าสาวผมเป็นแฝดห้า The Movie"],
+  "al": ["Go-toubun no Hanayome Movie", "The Quintessential Quintuplets Movie", "映画 五等分の花嫁", "5-toubun no Hanayome Movie", "Eiga Go-toubun no Hanayome", "เจ้าสาวผมเป็นแฝดห้า The Movie"],
   "r": 451
  },
  {
@@ -3671,10 +3671,10 @@ const ANIME_COVERS =
  },
  {
   "id": 99539,
-  "name": "Nanatsu no Taizai: Imashime no Fukkatsu",
+  "name": "The Seven Deadly Sins: Imashime no Fukkatsu",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx99539-caPX28RSsgRP.jpg",
   "year": 2018,
-  "al": ["The Seven Deadly Sins: Revival of the Commandments", "七つの大罪 戒めの復活", "The Seven Deadly Sins: Die Rückkehr der Gebote", "ศึกตำนาน 7 อัศวิน ภาค 2 คืนชีพบัญญัติสิบประการ", "The Seven Deadly Sins: Odrodzenie przykazań", "Семь смертных грехов: Возрождение Заповедей"],
+  "al": ["Nanatsu no Taizai: Imashime no Fukkatsu", "The Seven Deadly Sins: Revival of the Commandments", "七つの大罪 戒めの復活", "The Seven Deadly Sins: Die Rückkehr der Gebote", "ศึกตำนาน 7 อัศวิน ภาค 2 คืนชีพบัญญัติสิบประการ", "The Seven Deadly Sins: Odrodzenie przykazań", "Семь смертных грехов: Возрождение Заповедей"],
   "r": 458
  },
  {
@@ -3775,18 +3775,18 @@ const ANIME_COVERS =
  },
  {
   "id": 20725,
-  "name": "Kuroko no Basket 3rd SEASON",
+  "name": "Kuroko's Basketball 3rd SEASON",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20725-DLu8VlkGFQKc.png",
   "year": 2015,
-  "al": ["Kuroko's Basketball 3", "黒子のバスケ 3rd SEASON", "Kuroko no Basuke 3", "הכדורסל של קורוקו 3", "Баскетбол Куроко 3"],
+  "al": ["Kuroko no Basket 3rd SEASON", "Kuroko's Basketball 3", "黒子のバスケ 3rd SEASON", "Kuroko no Basuke 3", "הכדורסל של קורוקו 3", "Баскетбол Куроко 3"],
   "r": 471
  },
  {
   "id": 20993,
-  "name": "Owari no Seraph: Nagoya Kessen-hen",
+  "name": "Seraph of the End: Nagoya Kessen-hen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20993-c34UTma2bCcv.jpg",
   "year": 2015,
-  "al": ["Seraph of the End: Battle in Nagoya", "終わりのセラフ　名古屋決戦編", "OwaSera 2", "Seraph of the End: El Reino de los Vampiros", "เทวทูตแห่งโลกมืด ภาค 2"],
+  "al": ["Owari no Seraph: Nagoya Kessen-hen", "Seraph of the End: Battle in Nagoya", "終わりのセラフ　名古屋決戦編", "OwaSera 2", "Seraph of the End: El Reino de los Vampiros", "เทวทูตแห่งโลกมืด ภาค 2"],
   "r": 472
  },
  {
@@ -3887,10 +3887,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21518,
-  "name": "Shokugeki no Souma: Ni no Sara",
+  "name": "Food Wars!: Ni no Sara",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21518-uBqzDGIuSxJ5.jpg",
   "year": 2016,
-  "al": ["Food Wars! The Second Plate", "食戟のソーマ 弍ノ皿", "食戟之灵 贰之皿", "ยอดนักปรุงโซมะ ภาค 2"],
+  "al": ["Shokugeki no Souma: Ni no Sara", "Food Wars! The Second Plate", "食戟のソーマ 弍ノ皿", "食戟之灵 贰之皿", "ยอดนักปรุงโซมะ ภาค 2"],
   "r": 485
  },
  {
@@ -3959,10 +3959,10 @@ const ANIME_COVERS =
  },
  {
   "id": 175914,
-  "name": "Yofukashi no Uta Season 2",
+  "name": "Call of the Night Season 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx175914-VsbL90WzuqoM.jpg",
   "year": 2025,
-  "al": ["Call of the Night Season 2", "よふかしのうた Season 2", "Zew nocy. Sezon 2"],
+  "al": ["Yofukashi no Uta Season 2", "Call of the Night Season 2", "よふかしのうた Season 2", "Zew nocy. Sezon 2"],
   "r": 494
  },
  {
@@ -3975,10 +3975,10 @@ const ANIME_COVERS =
  },
  {
   "id": 2236,
-  "name": "Toki wo Kakeru Shoujo",
+  "name": "The Girl Who Leapt Through Time",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx2236-tH5fWFkHyVGg.png",
   "year": 2006,
-  "al": ["The Girl Who Leapt Through Time", "時をかける少女", "Toki wo Kakeru Shojo", "TokiKake", "The Girl Who Cut Time", "Das Mädchen, das durch die Zeit sprang", "La Chica que Saltaba a Través del Tiempo", "A Garota que Conquistou o Tempo"],
+  "al": ["Toki wo Kakeru Shoujo", "The Girl Who Leapt Through Time", "時をかける少女", "Toki wo Kakeru Shojo", "TokiKake", "The Girl Who Cut Time", "Das Mädchen, das durch die Zeit sprang", "La Chica que Saltaba a Través del Tiempo", "A Garota que Conquistou o Tempo"],
   "r": 496
  },
  {
@@ -4143,10 +4143,10 @@ const ANIME_COVERS =
  },
  {
   "id": 16894,
-  "name": "Kuroko no Basket 2nd SEASON",
+  "name": "Kuroko's Basketball 2nd SEASON",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx16894-iXt8GDs1L6dr.jpg",
   "year": 2013,
-  "al": ["Kuroko's Basketball 2", "黒子のバスケ 2nd SEASON", "Kuroko no Basuke 2", "הכדורסל של קורוקו 2", "Баскетбол Куроко 2"],
+  "al": ["Kuroko no Basket 2nd SEASON", "Kuroko's Basketball 2", "黒子のバスケ 2nd SEASON", "Kuroko no Basuke 2", "הכדורסל של קורוקו 2", "Баскетбол Куроко 2"],
   "r": 517
  },
  {
@@ -4167,10 +4167,10 @@ const ANIME_COVERS =
  },
  {
   "id": 108725,
-  "name": "Yakusoku no Neverland 2",
+  "name": "The Promised Neverland 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx108725-ZKivuyr4Jtc9.jpg",
   "year": 2021,
-  "al": ["The Promised Neverland Season 2", "約束のネバーランド2", "YakuNeba", "TPN2", "พันธสัญญาเนเวอร์แลนด์ ภาค 2", "約定的夢幻島 第二季"],
+  "al": ["Yakusoku no Neverland 2", "The Promised Neverland Season 2", "約束のネバーランド2", "YakuNeba", "TPN2", "พันธสัญญาเนเวอร์แลนด์ ภาค 2", "約定的夢幻島 第二季"],
   "r": 520
  },
  {
@@ -4223,10 +4223,10 @@ const ANIME_COVERS =
  },
  {
   "id": 141249,
-  "name": "Bungou Stray Dogs 4th Season",
+  "name": "Bungo Stray Dogs 4th Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx141249-8tjavEDHmLoT.jpg",
   "year": 2023,
-  "al": ["Bungo Stray Dogs 4", "文豪ストレイドッグス 第4シーズン", "BSD 4", "BungouSD 4", "คณะประพันธกรจรจัด ภาค 4", "文豪野犬第四季"],
+  "al": ["Bungou Stray Dogs 4th Season", "Bungo Stray Dogs 4", "文豪ストレイドッグス 第4シーズン", "BSD 4", "BungouSD 4", "คณะประพันธกรจรจัด ภาค 4", "文豪野犬第四季"],
   "r": 527
  },
  {
@@ -4327,10 +4327,10 @@ const ANIME_COVERS =
  },
  {
   "id": 108553,
-  "name": "Boku no Hero Academia THE MOVIE: Heroes:Rising",
+  "name": "My Hero Academia THE MOVIE: Heroes:Rising",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx108553-yOLfFogpWnTF.jpg",
   "year": 2019,
-  "al": ["My Hero Academia: Heroes Rising", "僕のヒーローアカデミア THE MOVIE ヒーローズ:ライジング", "Boku no Hero Academia the Movie 2", "My Hero Academia: El Despertar de los Héroes", "มายฮีโร่ อคาเดเมีย เดอะมูฟวี่: วีรบุรุษกู้โลก"],
+  "al": ["Boku no Hero Academia THE MOVIE: Heroes:Rising", "My Hero Academia: Heroes Rising", "僕のヒーローアカデミア THE MOVIE ヒーローズ:ライジング", "Boku no Hero Academia the Movie 2", "My Hero Academia: El Despertar de los Héroes", "มายฮีโร่ อคาเดเมีย เดอะมูฟวี่: วีรบุรุษกู้โลก"],
   "r": 540
  },
  {
@@ -4431,10 +4431,10 @@ const ANIME_COVERS =
  },
  {
   "id": 153658,
-  "name": "Haikyuu!!: Gomi Suteba no Kessen",
+  "name": "Haikyu!!: Gomi Suteba no Kessen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx153658-KVnjW77cQw3y.jpg",
   "year": 2024,
-  "al": ["HAIKYU!! The Dumpster Battle", "ハイキュー!! ゴミ捨て場の決戦", "ハイキュー!! FINAL", "Haikyuu!! FINAL", "Haikyuu!! Battle at the Garbage Dump", "Haikyu!! Movie: Decisive Battle at the Garbage Dump", "HAIKYU!! La Batalla del Basurero", "HAIKYU!! La Guerre des Poubelles"],
+  "al": ["Haikyuu!!: Gomi Suteba no Kessen", "HAIKYU!! The Dumpster Battle", "ハイキュー!! ゴミ捨て場の決戦", "ハイキュー!! FINAL", "Haikyuu!! FINAL", "Haikyuu!! Battle at the Garbage Dump", "Haikyu!! Movie: Decisive Battle at the Garbage Dump", "HAIKYU!! La Batalla del Basurero", "HAIKYU!! La Guerre des Poubelles"],
   "r": 553
  },
  {
@@ -4463,10 +4463,10 @@ const ANIME_COVERS =
  },
  {
   "id": 6213,
-  "name": "Toaru Kagaku no Railgun",
+  "name": "A Certain Scientific Railgun",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx6213-QtrlDQnexApL.jpg",
   "year": 2009,
-  "al": ["A Certain Scientific Railgun", "とある科学の超電磁砲", "Toaru Kagaku no Choudenjihou", "ריילגאן", "المستوى الخامس", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์", "Некий научный Рейлган", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาคที่ 1"],
+  "al": ["Toaru Kagaku no Railgun", "A Certain Scientific Railgun", "とある科学の超電磁砲", "Toaru Kagaku no Choudenjihou", "ריילגאן", "المستوى الخامس", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์", "Некий научный Рейлган", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาคที่ 1"],
   "r": 557
  },
  {
@@ -4535,26 +4535,26 @@ const ANIME_COVERS =
  },
  {
   "id": 163263,
-  "name": "Bungou Stray Dogs 5th Season",
+  "name": "Bungo Stray Dogs 5th Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx163263-uz881pFAyi7P.jpg",
   "year": 2023,
-  "al": ["Bungo Stray Dogs 5", "文豪ストレイドッグス 第5シーズン", "BSD 5"],
+  "al": ["Bungou Stray Dogs 5th Season", "Bungo Stray Dogs 5", "文豪ストレイドッグス 第5シーズン", "BSD 5"],
   "r": 566
  },
  {
   "id": 104459,
-  "name": "Yuru Camp△ SEASON 2",
+  "name": "Laid-Back Camp SEASON 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx104459-pywEKGQON613.jpg",
   "year": 2021,
-  "al": ["LAID-BACK CAMP SEASON2", "ゆるキャン△ SEASON２", "Yurucamp", "Yurukyan△", "摇曳露营△第二季", "摇曳露营△ 2", "โลลิตั้งแคมป์ ภาค 2", "แคมป์สบายสไตล์สาวๆ ภาค 2"],
+  "al": ["Yuru Camp△ SEASON 2", "LAID-BACK CAMP SEASON2", "ゆるキャン△ SEASON２", "Yurucamp", "Yurukyan△", "摇曳露营△第二季", "摇曳露营△ 2", "โลลิตั้งแคมป์ ภาค 2", "แคมป์สบายสไตล์สาวๆ ภาค 2"],
   "r": 567
  },
  {
   "id": 99255,
-  "name": "Shokugeki no Souma: San no Sara",
+  "name": "Food Wars!: San no Sara",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/nx99255-heGTtj5b4owl.jpg",
   "year": 2017,
-  "al": ["Food Wars! The Third Plate", "食戟のソーマ 餐ノ皿", "食戟之灵 餐之皿", "ยอดนักปรุงโซมะ ภาค 3"],
+  "al": ["Shokugeki no Souma: San no Sara", "Food Wars! The Third Plate", "食戟のソーマ 餐ノ皿", "食戟之灵 餐之皿", "ยอดนักปรุงโซมะ ภาค 3"],
   "r": 568
  },
  {
@@ -4583,10 +4583,10 @@ const ANIME_COVERS =
  },
  {
   "id": 178754,
-  "name": "Kaijuu 8-gou 2nd Season",
+  "name": "Kaiju No. 8 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx178754-Dgrub8xgC03M.jpg",
   "year": 2025,
-  "al": ["Kaiju No. 8 Season 2", "怪獣８号 第２期", "KAIJU No. EIGHT 2"],
+  "al": ["Kaijuu 8-gou 2nd Season", "Kaiju No. 8 Season 2", "怪獣８号 第２期", "KAIJU No. EIGHT 2"],
   "r": 572
  },
  {
@@ -4607,10 +4607,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20811,
-  "name": "Shingeki no Kyojin Gaiden: Kuinaki Sentaku",
+  "name": "Attack on Titan Gaiden: Kuinaki Sentaku",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20811-IvXLdxZkYNcP.jpg",
   "year": 2015,
-  "al": ["Attack on Titan: No Regrets", "進撃の巨人 外伝 悔いなき選択", "SnK", "AoT", "ผ่าพิภพไททัน ภาค OAD No Regret", "ผ่าพิภพไททัน OAD", "Атака титанов: Выбор без сожалений"],
+  "al": ["Shingeki no Kyojin Gaiden: Kuinaki Sentaku", "Attack on Titan: No Regrets", "進撃の巨人 外伝 悔いなき選択", "SnK", "AoT", "ผ่าพิภพไททัน ภาค OAD No Regret", "ผ่าพิภพไททัน OAD", "Атака титанов: Выбор без сожалений"],
   "r": 575
  },
  {
@@ -5007,10 +5007,10 @@ const ANIME_COVERS =
  },
  {
   "id": 18689,
-  "name": "Diamond no Ace",
+  "name": "Ace of the Diamond",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx18689-LRIiRcgTJS1f.jpg",
   "year": 2013,
-  "al": ["Ace of the Diamond", "ダイヤのA", "Daiya no Ace", "Ace of Diamond", "Daiya no A"],
+  "al": ["Diamond no Ace", "Ace of the Diamond", "ダイヤのA", "Daiya no Ace", "Ace of Diamond", "Daiya no A"],
   "r": 625
  },
  {
@@ -5055,10 +5055,10 @@ const ANIME_COVERS =
  },
  {
   "id": 100723,
-  "name": "Boku no Hero Academia THE MOVIE: Futari no Hero",
+  "name": "My Hero Academia THE MOVIE: Futari no Hero",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx100723-7f5e1BCTCDoB.jpg",
   "year": 2018,
-  "al": ["My Hero Academia: Two Heroes", "僕のヒーローアカデミア THE MOVIE 〜2人の英雄〜", "My Hero Academia the Movie", "我的英雄学院 ～两位英雄～", "มายฮีโร่ อคาเดเมีย กำเนิดใหม่ 2 วีรบุรุษ"],
+  "al": ["Boku no Hero Academia THE MOVIE: Futari no Hero", "My Hero Academia: Two Heroes", "僕のヒーローアカデミア THE MOVIE 〜2人の英雄〜", "My Hero Academia the Movie", "我的英雄学院 ～两位英雄～", "มายฮีโร่ อคาเดเมีย กำเนิดใหม่ 2 วีรบุรุษ"],
   "r": 631
  },
  {
@@ -5087,10 +5087,10 @@ const ANIME_COVERS =
  },
  {
   "id": 109963,
-  "name": "Shokugeki no Souma: Shin no Sara",
+  "name": "Food Wars!: Shin no Sara",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx109963-t8E9axH0Dvrn.jpg",
   "year": 2019,
-  "al": ["Food Wars! The Fourth Plate", "食戟のソーマ 神ノ皿", "食戟之灵：神之皿", "ยอดนักปรุงโซมะ ภาค 4"],
+  "al": ["Shokugeki no Souma: Shin no Sara", "Food Wars! The Fourth Plate", "食戟のソーマ 神ノ皿", "食戟之灵：神之皿", "ยอดนักปรุงโซมะ ภาค 4"],
   "r": 635
  },
  {
@@ -5103,10 +5103,10 @@ const ANIME_COVERS =
  },
  {
   "id": 20981,
-  "name": "Bakemono no Ko",
+  "name": "The Boy and the Beast",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx20981-D6PAJAOC4jPc.jpg",
   "year": 2015,
-  "al": ["The Boy and the Beast", "バケモノの子", "El niño y la bestia", "O Rapaz e o Monstro", "El nen i la bèstia", "Учень чудовиська", "Ученик чудовища", "Berniukas ir Pabaisa"],
+  "al": ["Bakemono no Ko", "The Boy and the Beast", "バケモノの子", "El niño y la bestia", "O Rapaz e o Monstro", "El nen i la bèstia", "Учень чудовиська", "Ученик чудовища", "Berniukas ir Pabaisa"],
   "r": 637
  },
  {
@@ -5367,10 +5367,10 @@ const ANIME_COVERS =
  },
  {
   "id": 149118,
-  "name": "Enen no Shouboutai: San no Shou",
+  "name": "Fire Force: San no Shou",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx149118-AOQb0xuTssGl.jpg",
   "year": 2025,
-  "al": ["Fire Force Season 3", "炎炎ノ消防隊 参ノ章", "Enen no Shouboutai 3rd Season", "หน่วยผจญคนไฟลุก ภาค 3"],
+  "al": ["Enen no Shouboutai: San no Shou", "Fire Force Season 3", "炎炎ノ消防隊 参ノ章", "Enen no Shouboutai 3rd Season", "หน่วยผจญคนไฟลุก ภาค 3"],
   "r": 670
  },
  {
@@ -5407,10 +5407,10 @@ const ANIME_COVERS =
  },
  {
   "id": 111322,
-  "name": "Tate no Yuusha no Nariagari Season 3",
+  "name": "The Rising of the Shield Hero Season 3",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx111322-2jQMDQva4YD7.png",
   "year": 2023,
-  "al": ["The Rising of the Shield Hero Season 3", "盾の勇者の成り上がり Season 3", "ผู้กล้าโล่ผงาด ภาค 3"],
+  "al": ["Tate no Yuusha no Nariagari Season 3", "The Rising of the Shield Hero Season 3", "盾の勇者の成り上がり Season 3", "ผู้กล้าโล่ผงาด ภาค 3"],
   "r": 675
  },
  {
@@ -5759,10 +5759,10 @@ const ANIME_COVERS =
  },
  {
   "id": 16049,
-  "name": "Toaru Kagaku no Railgun S",
+  "name": "A Certain Scientific Railgun S",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/nx16049-FbOhOsQAuisF.jpg",
   "year": 2013,
-  "al": ["A Certain Scientific Railgun S", "とある科学の超電磁砲S", "Toaru Kagaku no Railgun 2nd Season", "A Certain Scientific Railgun 2nd Season", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาค 2", "Некий научный Рейлган 2", "Некий научный Рейлган С", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาคที่ 2"],
+  "al": ["Toaru Kagaku no Railgun S", "A Certain Scientific Railgun S", "とある科学の超電磁砲S", "Toaru Kagaku no Railgun 2nd Season", "A Certain Scientific Railgun 2nd Season", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาค 2", "Некий научный Рейлган 2", "Некий научный Рейлган С", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาคที่ 2"],
   "r": 719
  },
  {
@@ -5791,10 +5791,10 @@ const ANIME_COVERS =
  },
  {
   "id": 138565,
-  "name": "Fumetsu no Anata e Season 2",
+  "name": "To Your Eternity Season 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx138565-JzvDqH84ILzi.png",
   "year": 2022,
-  "al": ["To Your Eternity Season 2", "不滅のあなたへ Season 2", "不滅のあなたへ 第２シリーズ", "Uma vida imortal 2", "แด่เธอผู้เป็นนิรันดร์ ภาค 2"],
+  "al": ["Fumetsu no Anata e Season 2", "To Your Eternity Season 2", "不滅のあなたへ Season 2", "不滅のあなたへ 第２シリーズ", "Uma vida imortal 2", "แด่เธอผู้เป็นนิรันดร์ ภาค 2"],
   "r": 723
  },
  {
@@ -5839,10 +5839,10 @@ const ANIME_COVERS =
  },
  {
   "id": 179062,
-  "name": "Enen no Shouboutai: San no Shou Part 2",
+  "name": "Fire Force: San no Shou Part 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx179062-pbzYE1miZq61.png",
   "year": 2026,
-  "al": ["Fire Force Season 3 Part 2", "炎炎ノ消防隊 参ノ章 第2クール", "Enen no Shouboutai 3rd Season Part 2", "หน่วยผจญคนไฟลุก ภาค 3"],
+  "al": ["Enen no Shouboutai: San no Shou Part 2", "Fire Force Season 3 Part 2", "炎炎ノ消防隊 参ノ章 第2クール", "Enen no Shouboutai 3rd Season Part 2", "หน่วยผจญคนไฟลุก ภาค 3"],
   "r": 729
  },
  {
@@ -5895,10 +5895,10 @@ const ANIME_COVERS =
  },
  {
   "id": 114043,
-  "name": "Shokugeki no Souma: Gou no Sara",
+  "name": "Food Wars!: Gou no Sara",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx114043-QkgiycojrojN.jpg",
   "year": 2020,
-  "al": ["Food Wars! The Fifth Plate", "食戟のソーマ 豪ノ皿", "食戟之灵：豪之皿", "ยอดนักปรุงโซมะ ภาค 5"],
+  "al": ["Shokugeki no Souma: Gou no Sara", "Food Wars! The Fifth Plate", "食戟のソーマ 豪ノ皿", "食戟之灵：豪之皿", "ยอดนักปรุงโซมะ ภาค 5"],
   "r": 736
  },
  {
@@ -5943,10 +5943,10 @@ const ANIME_COVERS =
  },
  {
   "id": 100773,
-  "name": "Shokugeki no Souma: San no Sara - Tootsuki Ressha-hen",
+  "name": "Food Wars!: San no Sara - Tootsuki Ressha-hen",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/nx100773-KLx4vR0TiC5o.jpg",
   "year": 2018,
-  "al": ["Food Wars! The Third Plate: Totsuki Train Arc", "『食戟のソーマ 餐ノ皿』 遠月列車篇", "食戟之灵 餐之皿 远月列车篇", "ยอดนักปรุงโซมะ ภาค 3 ครึ่งหลัง"],
+  "al": ["Shokugeki no Souma: San no Sara - Tootsuki Ressha-hen", "Food Wars! The Third Plate: Totsuki Train Arc", "『食戟のソーマ 餐ノ皿』 遠月列車篇", "食戟之灵 餐之皿 远月列车篇", "ยอดนักปรุงโซมะ ภาค 3 ครึ่งหลัง"],
   "r": 742
  },
  {
@@ -6031,10 +6031,10 @@ const ANIME_COVERS =
  },
  {
   "id": 108928,
-  "name": "Nanatsu no Taizai: Kamigami no Gekirin",
+  "name": "The Seven Deadly Sins: Kamigami no Gekirin",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx108928-DuyUzi0JyPIr.jpg",
   "year": 2019,
-  "al": ["The Seven Deadly Sins: Imperial Wrath of the Gods", "七つの大罪 神々の逆鱗", "The Seven Deadly Sins: Wrath of the Gods", "ศึกตำนาน 7 อัศวิน ภาค 3 เพลิงพิโรธของเหล่าทวยเทพ", "Семь смертных грехов: Гнев богов"],
+  "al": ["Nanatsu no Taizai: Kamigami no Gekirin", "The Seven Deadly Sins: Imperial Wrath of the Gods", "七つの大罪 神々の逆鱗", "The Seven Deadly Sins: Wrath of the Gods", "ศึกตำนาน 7 อัศวิน ภาค 3 เพลิงพิโรธของเหล่าทวยเทพ", "Семь смертных грехов: Гнев богов"],
   "r": 753
  },
  {
@@ -6143,10 +6143,10 @@ const ANIME_COVERS =
  },
  {
   "id": 98384,
-  "name": "Bungou Stray Dogs: DEAD APPLE",
+  "name": "Bungo Stray Dogs: DEAD APPLE",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx98384-nXEnNzwiJ9BV.jpg",
   "year": 2018,
-  "al": ["Bungo Stray Dogs: DEAD APPLE", "文豪ストレイドッグス DEAD APPLE", "Bungou Stray Dogs Movie"],
+  "al": ["Bungou Stray Dogs: DEAD APPLE", "Bungo Stray Dogs: DEAD APPLE", "文豪ストレイドッグス DEAD APPLE", "Bungou Stray Dogs Movie"],
   "r": 767
  },
  {
@@ -6279,10 +6279,10 @@ const ANIME_COVERS =
  },
  {
   "id": 104462,
-  "name": "Toaru Kagaku no Railgun T",
+  "name": "A Certain Scientific Railgun T",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx104462-KrVWRvPcR7ci.jpg",
   "year": 2020,
-  "al": ["A Certain Scientific Railgun T", "とある科学の超電磁砲T", "Toaru Kagaku no Railgun 3", "とある科学の超電磁砲3", "A Certain Scientific Railgun 3", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ T", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาค 3", "Siêu Railgun của khoa học nào đó"],
+  "al": ["Toaru Kagaku no Railgun T", "A Certain Scientific Railgun T", "とある科学の超電磁砲T", "Toaru Kagaku no Railgun 3", "とある科学の超電磁砲3", "A Certain Scientific Railgun 3", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ T", "เรลกัน แฟ้มลับคดีวิทยาศาสตร์ ภาค 3", "Siêu Railgun của khoa học nào đó"],
   "r": 784
  },
  {
@@ -6423,10 +6423,10 @@ const ANIME_COVERS =
  },
  {
   "id": 124410,
-  "name": "Kanojo, Okarishimasu 2nd Season",
+  "name": "Rent-a-Girlfriend 2nd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx124410-iScdHzzEqdmk.png",
   "year": 2022,
-  "al": ["Rent-a-Girlfriend Season 2", "彼女、お借りします 第2期", "KanoKari 2", "สะดุดรักยัยแฟนเช่า ภาค 2", "Pacar Sewaan 2"],
+  "al": ["Kanojo, Okarishimasu 2nd Season", "Rent-a-Girlfriend Season 2", "彼女、お借りします 第2期", "KanoKari 2", "สะดุดรักยัยแฟนเช่า ภาค 2", "Pacar Sewaan 2"],
   "r": 802
  },
  {
@@ -6927,10 +6927,10 @@ const ANIME_COVERS =
  },
  {
   "id": 116752,
-  "name": "Nanatsu no Taizai: Funnu no Shinpan",
+  "name": "The Seven Deadly Sins: Funnu no Shinpan",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx116752-yIJuKp88adqt.jpg",
   "year": 2021,
-  "al": ["The Seven Deadly Sins: Dragon's Judgement", "七つの大罪 憤怒の審判", "七大罪：愤怒的审判", "The Seven Deadly Sins: Dragens dom", "ศึกตำนาน 7 อัศวิน ภาค 4", "Сім смертних гріхів: Правосуддя Дракона", "Семь смертных грехов: Яростное правосудие"],
+  "al": ["Nanatsu no Taizai: Funnu no Shinpan", "The Seven Deadly Sins: Dragon's Judgement", "七つの大罪 憤怒の審判", "七大罪：愤怒的审判", "The Seven Deadly Sins: Dragens dom", "ศึกตำนาน 7 อัศวิน ภาค 4", "Сім смертних гріхів: Правосуддя Дракона", "Семь смертных грехов: Яростное правосудие"],
   "r": 865
  },
  {
@@ -6959,10 +6959,10 @@ const ANIME_COVERS =
  },
  {
   "id": 111790,
-  "name": "Haikyuu!! Riku VS Kuu",
+  "name": "Haikyu!! Riku VS Kuu",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx111790-MrEJLRJxjPja.jpg",
   "year": 2020,
-  "al": ["HAIKYU!! LAND VS. AIR", "ハイキュー!! 陸 VS 空", "ボールの\"道\"", "Booru no \"Michi\"", "The \"Path\" of the Ball", "Haikyuu!! OVA", "ไฮคิว คู่ตบฟ้าประทาน Riku vs Kuu OVA"],
+  "al": ["Haikyuu!! Riku VS Kuu", "HAIKYU!! LAND VS. AIR", "ハイキュー!! 陸 VS 空", "ボールの\"道\"", "Booru no \"Michi\"", "The \"Path\" of the Ball", "Haikyuu!! OVA", "ไฮคิว คู่ตบฟ้าประทาน Riku vs Kuu OVA"],
   "r": 869
  },
  {
@@ -7135,10 +7135,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21377,
-  "name": "Kuroko no Basket: Last Game",
+  "name": "Kuroko's Basketball: Last Game",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21377-oRcPPiQ1btPZ.jpg",
   "year": 2017,
-  "al": ["Kuroko's Basketball: Last Game", "劇場版 黒子のバスケ Last Game", "Kuroko no Basket: EXTRA GAME", "Το Μπάσκετ του Κουρόκο: Το Τελευταίο Παιχνίδι"],
+  "al": ["Kuroko no Basket: Last Game", "Kuroko's Basketball: Last Game", "劇場版 黒子のバスケ Last Game", "Kuroko no Basket: EXTRA GAME", "Το Μπάσκετ του Κουρόκο: Το Τελευταίο Παιχνίδι"],
   "r": 891
  },
  {
@@ -7295,10 +7295,10 @@ const ANIME_COVERS =
  },
  {
   "id": 126659,
-  "name": "Boku no Hero Academia THE MOVIE: World Heroes' Mission",
+  "name": "My Hero Academia THE MOVIE: World Heroes' Mission",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx126659-i6c1PsXHGyke.jpg",
   "year": 2021,
-  "al": ["My Hero Academia: World Heroes' Mission", "僕のヒーローアカデミア THE MOVIE ワールド ヒーローズ ミッション", "My Hero Academia the Movie 3", "My Hero Academia: Misión Mundial de Héroes", "My Hero Academia: Missão Mundial de Heróis", "มาย ฮีโร่ อาคาเดเมีย : รวมพลฮีโร่กู้วิกฤตโลก"],
+  "al": ["Boku no Hero Academia THE MOVIE: World Heroes' Mission", "My Hero Academia: World Heroes' Mission", "僕のヒーローアカデミア THE MOVIE ワールド ヒーローズ ミッション", "My Hero Academia the Movie 3", "My Hero Academia: Misión Mundial de Héroes", "My Hero Academia: Missão Mundial de Heróis", "มาย ฮีโร่ อาคาเดเมีย : รวมพลฮีโร่กู้วิกฤตโลก"],
   "r": 911
  },
  {
@@ -7983,10 +7983,10 @@ const ANIME_COVERS =
  },
  {
   "id": 195516,
-  "name": "Kusuriya no Hitorigoto 3rd Season",
+  "name": "The Apothecary Diaries 3rd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx195516-MJpUZlOberqH.jpg",
   "year": 2026,
-  "al": ["The Apothecary Diaries Season 3", "薬屋のひとりごと 第3期"],
+  "al": ["Kusuriya no Hitorigoto 3rd Season", "The Apothecary Diaries Season 3", "薬屋のひとりごと 第3期"],
   "r": 997
  },
  {
@@ -8055,10 +8055,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21574,
-  "name": "Kono Subarashii Sekai ni Shukufuku wo!: Kono Subarashii Choker ni Shukufuku wo!",
+  "name": "KonoSuba: God's Blessing on This Wonderful World!: Kono Subarashii Choker ni Shukufuku wo!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21574-CTRsdAGe4mDp.png",
   "year": 2016,
-  "al": ["KONOSUBA -God's blessing on this wonderful world!: God's Blessings On This Wonderful Choker!", "この素晴らしい世界に祝福を！ この素晴らしいチョーカーに祝福を!", "Konosuba - As Bençãos de Deus Neste Mundo Maravilhoso: As Bençãos de Deus Nesta Maravilhosa Gargantilha!", "Konosuba ¡Bendito sea este mundo maravilloso!: ¡Bendita sea esta gargantilla maravillosa!", "Konosuba OVA"],
+  "al": ["Kono Subarashii Sekai ni Shukufuku wo!: Kono Subarashii Choker ni Shukufuku wo!", "KONOSUBA -God's blessing on this wonderful world!: God's Blessings On This Wonderful Choker!", "この素晴らしい世界に祝福を！ この素晴らしいチョーカーに祝福を!", "Konosuba - As Bençãos de Deus Neste Mundo Maravilhoso: As Bençãos de Deus Nesta Maravilhosa Gargantilha!", "Konosuba ¡Bendito sea este mundo maravilloso!: ¡Bendita sea esta gargantilla maravillosa!", "Konosuba OVA"],
   "r": 1006
  },
  {
@@ -8183,10 +8183,10 @@ const ANIME_COVERS =
  },
  {
   "id": 12431,
-  "name": "Uchuu Kyoudai",
+  "name": "Space Brothers",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx12431-vL6wmxLsTzzS.png",
   "year": 2012,
-  "al": ["Space Brothers", "宇宙兄弟", "Uchu Kyodai", "Space Bros"],
+  "al": ["Uchuu Kyoudai", "Space Brothers", "宇宙兄弟", "Uchu Kyodai", "Space Bros"],
   "r": 1022
  },
  {
@@ -8239,10 +8239,10 @@ const ANIME_COVERS =
  },
  {
   "id": 18397,
-  "name": "Shingeki no Kyojin OVA",
+  "name": "Attack on Titan OVA",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx18397-AnpwhLkSjYL1.jpg",
   "year": 2013,
-  "al": ["Attack on Titan OVA", "進撃の巨人 OVA", "Attack on Titan: Ilse's Journal", "Attack on Titan: A Sudden Visitor", "ผ่าพิภพไททัน OAD", "Атака титанов OVA"],
+  "al": ["Shingeki no Kyojin OVA", "Attack on Titan OVA", "進撃の巨人 OVA", "Attack on Titan: Ilse's Journal", "Attack on Titan: A Sudden Visitor", "ผ่าพิภพไททัน OAD", "Атака титанов OVA"],
   "r": 1029
  },
  {
@@ -8647,10 +8647,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21385,
-  "name": "Nanatsu no Taizai: Seisen no Shirushi",
+  "name": "The Seven Deadly Sins: Seisen no Shirushi",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21385-0rOBu6r4C4b9.jpg",
   "year": 2016,
-  "al": ["The Seven Deadly Sins: Signs of A Holy War", "七つの大罪 聖戦の予兆", "The Seven Deadly Sins: Signs of Holy War", "The Seven Deadly Sins - Anzeichen eines Heiligen Kriegs", "ศึกตำนาน 7 อัศวิน ภาค สัญญาณสงครามศักดิ์สิทธิ์", "The Seven Deadly Sins: Ślady Świętej Wojny", "Семь смертных грехов: Знамение священной войны"],
+  "al": ["Nanatsu no Taizai: Seisen no Shirushi", "The Seven Deadly Sins: Signs of A Holy War", "七つの大罪 聖戦の予兆", "The Seven Deadly Sins: Signs of Holy War", "The Seven Deadly Sins - Anzeichen eines Heiligen Kriegs", "ศึกตำนาน 7 อัศวิน ภาค สัญญาณสงครามศักดิ์สิทธิ์", "The Seven Deadly Sins: Ślady Świętej Wojny", "Семь смертных грехов: Знамение священной войны"],
   "r": 1080
  },
  {
@@ -9199,10 +9199,10 @@ const ANIME_COVERS =
  },
  {
   "id": 97996,
-  "name": "Kono Subarashii Sekai ni Shukufuku wo! 2: Kono Subarashii Geijutsu ni Shukufuku wo!",
+  "name": "KonoSuba: God's Blessing on This Wonderful World! 2: Kono Subarashii Geijutsu ni Shukufuku wo!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/b97996-px2KGexuEZpg.jpg",
   "year": 2017,
-  "al": ["KONOSUBA -God's blessing on this wonderful world! 2: God's Blessings on These Wonderful Works of Art!", "この素晴らしい世界に祝福を！ 2 この素晴らしい芸術に祝福を!", "Konosuba 2 OVA", "Konosuba! - As Bençãos de Deus Neste Mundo Maravilhoso 2!: As Bençãos de Deus Nestas Obras de Arte Maravilhosas!", "Konosuba ¡Bendito sea este mundo maravilloso!: ¡Benditas sean estas maravillosas obras de arte!"],
+  "al": ["Kono Subarashii Sekai ni Shukufuku wo! 2: Kono Subarashii Geijutsu ni Shukufuku wo!", "KONOSUBA -God's blessing on this wonderful world! 2: God's Blessings on These Wonderful Works of Art!", "この素晴らしい世界に祝福を！ 2 この素晴らしい芸術に祝福を!", "Konosuba 2 OVA", "Konosuba! - As Bençãos de Deus Neste Mundo Maravilhoso 2!: As Bençãos de Deus Nestas Obras de Arte Maravilhosas!", "Konosuba ¡Bendito sea este mundo maravilloso!: ¡Benditas sean estas maravillosas obras de arte!"],
   "r": 1149
  },
  {
@@ -9327,10 +9327,10 @@ const ANIME_COVERS =
  },
  {
   "id": 120150,
-  "name": "Bungou Stray Dogs Wan!",
+  "name": "Bungo Stray Dogs Wan!",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx120150-hxvcRrYzgP2F.png",
   "year": 2021,
-  "al": ["Bungo Stray Dogs WAN!", "文豪ストレイドッグス わん！", "คณะประพันธกรจรจัด โฮ่ง!"],
+  "al": ["Bungou Stray Dogs Wan!", "Bungo Stray Dogs WAN!", "文豪ストレイドッグス わん！", "คณะประพันธกรจรจัด โฮ่ง!"],
   "r": 1165
  },
  {
@@ -9399,10 +9399,10 @@ const ANIME_COVERS =
  },
  {
   "id": 173780,
-  "name": "Tate no Yuusha no Nariagari Season 4",
+  "name": "The Rising of the Shield Hero Season 4",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx173780-O7v1YfXg61JT.png",
   "year": 2025,
-  "al": ["The Rising of the Shield Hero Season 4", "盾の勇者の成り上がり Season 4"],
+  "al": ["Tate no Yuusha no Nariagari Season 4", "The Rising of the Shield Hero Season 4", "盾の勇者の成り上がり Season 4"],
   "r": 1174
  },
  {
@@ -9463,10 +9463,10 @@ const ANIME_COVERS =
  },
  {
   "id": 141534,
-  "name": "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2 - Eris no Goblin Toubatsu",
+  "name": "Mushoku Tensei: Jobless Reincarnation Part 2 - Eris no Goblin Toubatsu",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx141534-Tmnlz4mvYhaU.jpg",
   "year": 2022,
-  "al": ["Mushoku Tensei: Jobless Reincarnation Cour 2 - Eris the Goblin Slayer", "無職転生 ～異世界行ったら本気だす～ 第2クール エリスのゴブリン討伐", "Mushoku Tensei: Jobless Reincarnation Cour 2 Special", "Mushoku Tensei: Jobless Reincarnation Part 2 Special", "เกิดชาตินี้พี่ต้องเทพ OVA", "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2 Special"],
+  "al": ["Mushoku Tensei: Isekai Ittara Honki Dasu Part 2 - Eris no Goblin Toubatsu", "Mushoku Tensei: Jobless Reincarnation Cour 2 - Eris the Goblin Slayer", "無職転生 ～異世界行ったら本気だす～ 第2クール エリスのゴブリン討伐", "Mushoku Tensei: Jobless Reincarnation Cour 2 Special", "Mushoku Tensei: Jobless Reincarnation Part 2 Special", "เกิดชาตินี้พี่ต้องเทพ OVA", "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2 Special"],
   "r": 1182
  },
  {
@@ -9591,10 +9591,10 @@ const ANIME_COVERS =
  },
  {
   "id": 154745,
-  "name": "Kanojo, Okarishimasu 3rd Season",
+  "name": "Rent-a-Girlfriend 3rd Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx154745-xBr65cJsL3uW.jpg",
   "year": 2023,
-  "al": ["Rent-a-Girlfriend Season 3", "彼女、お借りします 第3期", "KanoKari 3", "สะดุดรักยัยแฟนเช่า ภาค 3"],
+  "al": ["Kanojo, Okarishimasu 3rd Season", "Rent-a-Girlfriend Season 3", "彼女、お借りします 第3期", "KanoKari 3", "สะดุดรักยัยแฟนเช่า ภาค 3"],
   "r": 1198
  },
  {
@@ -9615,10 +9615,10 @@ const ANIME_COVERS =
  },
  {
   "id": 11665,
-  "name": "Natsume Yuujinchou Shi",
+  "name": "Natsume's Book of Friends Shi",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx11665-nfbt94cwKySE.png",
   "year": 2012,
-  "al": ["Natsume's Book of Friends Season 4", "夏目友人帳 肆", "Natsume Yuujinchou Four", "Natsume Yuujinchou 4", "Natsume Yujincho 4"],
+  "al": ["Natsume Yuujinchou Shi", "Natsume's Book of Friends Season 4", "夏目友人帳 肆", "Natsume Yuujinchou Four", "Natsume Yuujinchou 4", "Natsume Yujincho 4"],
   "r": 1201
  },
  {
@@ -9671,10 +9671,10 @@ const ANIME_COVERS =
  },
  {
   "id": 194884,
-  "name": "Kaguya-sama wa Kokurasetai: Otona e no Kaidan",
+  "name": "Kaguya-sama: Love is War: Otona e no Kaidan",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx194884-rHgGAzKSCEWz.jpg",
   "year": 2025,
-  "al": ["Kaguya-sama: Love Is War -Stairway to Adulthood-", "かぐや様は告らせたい 大人への階段", "Kaguya-sama: Love Is War - The Grown-Up Staircase"],
+  "al": ["Kaguya-sama wa Kokurasetai: Otona e no Kaidan", "Kaguya-sama: Love Is War -Stairway to Adulthood-", "かぐや様は告らせたい 大人への階段", "Kaguya-sama: Love Is War - The Grown-Up Staircase"],
   "r": 1208
  },
  {
@@ -9687,10 +9687,10 @@ const ANIME_COVERS =
  },
  {
   "id": 154364,
-  "name": "Mahoutsukai no Yome SEASON 2",
+  "name": "The Ancient Magus' Bride SEASON 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx154364-vz0w1E1mnqhG.png",
   "year": 2023,
-  "al": ["The Ancient Magus' Bride Season 2", "魔法使いの嫁 SEASON2", "Mahoyome 2", "เจ้าสาวผมแดงกับจอมเวทอสูร ภาค 2", "Невеста чародея 2"],
+  "al": ["Mahoutsukai no Yome SEASON 2", "The Ancient Magus' Bride Season 2", "魔法使いの嫁 SEASON2", "Mahoyome 2", "เจ้าสาวผมแดงกับจอมเวทอสูร ภาค 2", "Невеста чародея 2"],
   "r": 1210
  },
  {
@@ -9839,10 +9839,10 @@ const ANIME_COVERS =
  },
  {
   "id": 99634,
-  "name": "Shingeki no Kyojin: LOST GIRLS",
+  "name": "Attack on Titan: LOST GIRLS",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/nx99634-9u4hdvWwmC2s.png",
   "year": 2017,
-  "al": ["Attack on Titan: Lost Girls", "進撃の巨人 LOST GIRLS", "Episode 16.5A: Wall Sina. Goodbye", "Episode 16.5B: Wall Sina. Goodbye", "SnK", "AoT", "ผ่าพิภพไททัน OAD", "ผ่าพิภพไททัน ภาค OAD Lost Girls"],
+  "al": ["Shingeki no Kyojin: LOST GIRLS", "Attack on Titan: Lost Girls", "進撃の巨人 LOST GIRLS", "Episode 16.5A: Wall Sina. Goodbye", "Episode 16.5B: Wall Sina. Goodbye", "SnK", "AoT", "ผ่าพิภพไททัน OAD", "ผ่าพิภพไททัน ภาค OAD Lost Girls"],
   "r": 1229
  },
  {
@@ -10031,10 +10031,10 @@ const ANIME_COVERS =
  },
  {
   "id": 125368,
-  "name": "Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen OVA",
+  "name": "Kaguya-sama: Love is War: Tensaitachi no Renai Zunousen OVA",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx125368-QhcBkbNP0ZfU.png",
   "year": 2021,
-  "al": ["かぐや様は告らせたい～天才たちの恋愛頭脳戦～OVA", "Kaguya-sama: Love is War OVA", "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen OVA"],
+  "al": ["Kaguya-sama wa Kokurasetai: Tensaitachi no Renai Zunousen OVA", "かぐや様は告らせたい～天才たちの恋愛頭脳戦～OVA", "Kaguya-sama: Love is War OVA", "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen OVA"],
   "r": 1253
  },
  {
@@ -10367,10 +10367,10 @@ const ANIME_COVERS =
  },
  {
   "id": 10379,
-  "name": "Natsume Yuujinchou San",
+  "name": "Natsume's Book of Friends San",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx10379-lS2Mk6lX4lZr.jpg",
   "year": 2011,
-  "al": ["Natsume's Book of Friends Season 3", "夏目友人帳 参", "Natsume Yuujinchou Three", "Natsume Yuujinchou 3", "Natsume Yujincho 3", "O Livro de Amigos de Natsume 3"],
+  "al": ["Natsume Yuujinchou San", "Natsume's Book of Friends Season 3", "夏目友人帳 参", "Natsume Yuujinchou Three", "Natsume Yuujinchou 3", "Natsume Yujincho 3", "O Livro de Amigos de Natsume 3"],
   "r": 1295
  },
  {
@@ -10719,10 +10719,10 @@ const ANIME_COVERS =
  },
  {
   "id": 162669,
-  "name": "Fumetsu no Anata e Season 3",
+  "name": "To Your Eternity Season 3",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx162669-FLYUTftoXgMh.jpg",
   "year": 2025,
-  "al": ["To Your Eternity Season 3", "不滅のあなたへ Season 3"],
+  "al": ["Fumetsu no Anata e Season 3", "To Your Eternity Season 3", "不滅のあなたへ Season 3"],
   "r": 1339
  },
  {
@@ -10871,10 +10871,10 @@ const ANIME_COVERS =
  },
  {
   "id": 105749,
-  "name": "Diamond no Ace act II",
+  "name": "Ace of the Diamond act II",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx105749-bbqFNGq0r6mS.jpg",
   "year": 2019,
-  "al": ["Ace of the Diamond act II", "ダイヤのA actⅡ"],
+  "al": ["Diamond no Ace act II", "Ace of the Diamond act II", "ダイヤのA actⅡ"],
   "r": 1358
  },
  {
@@ -10903,10 +10903,10 @@ const ANIME_COVERS =
  },
  {
   "id": 170892,
-  "name": "Jibaku Shounen Hanako-kun 2",
+  "name": "Toilet-bound Hanako-kun 2",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx170892-zhJUSsX6PaF0.jpg",
   "year": 2025,
-  "al": ["Toilet-bound Hanako-kun Season 2", "地縛少年花子くん２", "ฮานาโกะคุง วิญญาณติดที่ ซีซั่น 2"],
+  "al": ["Jibaku Shounen Hanako-kun 2", "Toilet-bound Hanako-kun Season 2", "地縛少年花子くん２", "ฮานาโกะคุง วิญญาณติดที่ ซีซั่น 2"],
   "r": 1362
  },
  {
@@ -10943,10 +10943,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21085,
-  "name": "Diamond no Ace: Second Season",
+  "name": "Ace of the Diamond: Second Season",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21085-qqkUxpMgtFDW.jpg",
   "year": 2015,
-  "al": ["Ace of the Diamond Second Season", "ダイヤのA～Second Season～", "Daiya no Ace 2"],
+  "al": ["Diamond no Ace: Second Season", "Ace of the Diamond Second Season", "ダイヤのA～Second Season～", "Daiya no Ace 2"],
   "r": 1367
  },
  {
@@ -11103,10 +11103,10 @@ const ANIME_COVERS =
  },
  {
   "id": 967,
-  "name": "Hokuto no Ken",
+  "name": "Fist of the North Star",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/n967-84jNBaInec98.png",
   "year": 1984,
-  "al": ["Fist of the North Star", "北斗の拳", "Ken il Guerriero", "Seikimatsu Kyuseishu Densetsu: Hokuto no Ken", "Ken - Rättvisans Kämpe", "Ken: The Great Bearfist"],
+  "al": ["Hokuto no Ken", "Fist of the North Star", "北斗の拳", "Ken il Guerriero", "Seikimatsu Kyuseishu Densetsu: Hokuto no Ken", "Ken - Rättvisans Kämpe", "Ken: The Great Bearfist"],
   "r": 1387
  },
  {
@@ -11719,10 +11719,10 @@ const ANIME_COVERS =
  },
  {
   "id": 104460,
-  "name": "Yuru Camp△ Movie",
+  "name": "Laid-Back Camp Movie",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx104460-EwUV9ZJMCtnR.jpg",
   "year": 2022,
-  "al": ["Laid-Back Camp The Movie", "映画 ゆるキャン△", "Eiga Yuru Camp"],
+  "al": ["Yuru Camp△ Movie", "Laid-Back Camp The Movie", "映画 ゆるキャン△", "Eiga Yuru Camp"],
   "r": 1464
  },
  {
@@ -11823,10 +11823,10 @@ const ANIME_COVERS =
  },
  {
   "id": 204356,
-  "name": "Boku no Hero Academia No. 170+1: More",
+  "name": "My Hero Academia No. 170+1: More",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx204356-RNYmxUVVz3Z2.png",
   "year": 2026,
-  "al": ["My Hero Academia More", "僕のヒーローアカデミア No. 170+1 「More」", "My Hero Academia No. 170+1: “More”"],
+  "al": ["Boku no Hero Academia No. 170+1: More", "My Hero Academia More", "僕のヒーローアカデミア No. 170+1 「More」", "My Hero Academia No. 170+1: “More”"],
   "r": 1477
  },
  {
@@ -11839,10 +11839,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21688,
-  "name": "Mahoutsukai no Yome: Hoshi Matsu Hito",
+  "name": "The Ancient Magus' Bride: Hoshi Matsu Hito",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21688-DOc6RxTYfXEr.jpg",
   "year": 2016,
-  "al": ["The Ancient Magus' Bride: Those Awaiting a Star", "魔法使いの嫁 星待つひと", "Mahou Tsukai no Yome: Hoshi Matsu Hito", "The Ancient Magus Bride", "The Ancient Magus' Bride"],
+  "al": ["Mahoutsukai no Yome: Hoshi Matsu Hito", "The Ancient Magus' Bride: Those Awaiting a Star", "魔法使いの嫁 星待つひと", "Mahou Tsukai no Yome: Hoshi Matsu Hito", "The Ancient Magus Bride", "The Ancient Magus' Bride"],
   "r": 1479
  },
  {
@@ -12007,10 +12007,10 @@ const ANIME_COVERS =
  },
  {
   "id": 21710,
-  "name": "Natsume Yuujinchou Go",
+  "name": "Natsume's Book of Friends Go",
   "image": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/small/bx21710-Y20fKQviC3hL.jpg",
   "year": 2016,
-  "al": ["Natsume's Book of Friends Season 5", "夏目友人帳 伍", "Natsume's Book of Friends Five"],
+  "al": ["Natsume Yuujinchou Go", "Natsume's Book of Friends Season 5", "夏目友人帳 伍", "Natsume's Book of Friends Five"],
   "r": 1500
  }
 ];

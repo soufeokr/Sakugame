@@ -569,7 +569,7 @@ __TEST = (async () => {
     seed(mkWatchRoom());
     playerId = 'B';
     const opPool = hcPoolChars();
-    ok('T23a watched HC pool = only ONE PIECE characters', opPool.length > 0 && opPool.every(c => c.series === 'ONE PIECE'));
+    ok('T23a watched HC pool = only ONE PIECE characters', opPool.length > 0 && opPool.every(c => String(c.series).toUpperCase() === 'ONE PIECE'));
 
     seed(mkWatchRoom({ accounts: { bob: { username: 'bob', characters: [], count: 0,
       watched: [{ i: 21, t: 'ONE PIECE', s: 'completed' }], ws: ['planning'] } } }));
@@ -755,7 +755,7 @@ __TEST = (async () => {
       seed(room); playerId = 'A'; isHost = true;
       await generateCharacterPool();
       const cs = (lastUpd() && lastUpd().o && lastUpd().o.characters) || [];
-      ok('T26d watched Guess Who board = watched-anime characters only', cs.length === 24 && cs.every(c => c.series === 'ONE PIECE'));
+      ok('T26d watched Guess Who board = watched-anime characters only', cs.length === 24 && cs.every(c => String(c.series).toUpperCase() === 'ONE PIECE'));
       isHost = false;
     }
     playerId = 'B';

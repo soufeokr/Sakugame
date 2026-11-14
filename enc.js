@@ -532,7 +532,7 @@ function encRenderHero() {
   const d = encData;
   if (!d) return;
   const tot = document.getElementById('encHeroTotal');
-  if (tot) tot.innerHTML = '<b>' + d.total.toLocaleString('en-US') + '</b><span>' +
+  if (tot) tot.innerHTML = '<b>' + d.total.toLocaleString(((window.SAKU_I18N || {}).lang) || 'en') + '</b><span>' +
     encEsc(encTr('cards', 'cards')) + '</span>';
   const leg = document.getElementById('encLegend');
   if (leg) {
@@ -547,13 +547,13 @@ function encRenderHero() {
         : '') +
       /* Save / Load stay visible even with no edits, so a backup can be
          put back after a cleared cache or on another machine.        */
-      '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-save="1">' +
+      (!window.SAKU_TEST_STUB ? '' : '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-save="1">' +
       '&#8681; ' + encEsc(encTr('Save', 'Save')) + '</button>' +
       '<button type="button" class="enc-legend-chip enc-legend-reset" data-enc-rar-load="1">' +
-      '&#8679; ' + encEsc(encTr('Load', 'Load')) + '</button>';
+      '&#8679; ' + encEsc(encTr('Load', 'Load')) + '</button>');
   }
   const sub = document.getElementById('encSub');
-  if (sub) sub.textContent = d.groups.toLocaleString('en-US') + ' ' +
+  if (sub) sub.textContent = d.groups.toLocaleString(((window.SAKU_I18N || {}).lang) || 'en') + ' ' +
     encTr('anime franchises', 'anime franchises') + ' · ' +
     encTr('including special cards', 'including special cards');
   const rf = document.getElementById('encRarityFilter');

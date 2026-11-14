@@ -174,7 +174,7 @@ __TEST = (async () => {
   playerId = 'C'; await cnJoinTeam('blue'); syncRoom();
   playerId = 'D'; await cnJoinTeam('blue'); syncRoom();
   let tm = cnTeams();
-  ok('C1b first member grabs the spymaster key', tm.red.spy === 'A' && tm.blue.spy === 'C');
+  ok('C1b joining as a guesser never grabs the Ninja key (b102: the key is picked on purpose)', !tm.red.spy && !tm.blue.spy);
   ok('C1c later joins are guessers', tm.red.members.length === 2 && tm.blue.members.length === 2);
   playerId = 'B'; await cnJoinTeam('blue'); syncRoom(); // B hops red→blue
   tm = cnTeams();
@@ -185,14 +185,14 @@ __TEST = (async () => {
   __setRoom(mkTeamsRoom(['A', 'B'], ['C', 'D'], 'A', 'C')); syncRoom();
   await cnSetTeam('A', null); syncRoom(); // spymaster steps out
   tm = cnTeams();
-  ok('C1f spy hand-off when spy leaves', tm.red.spy === 'B');
+  ok('C1f the Ninja key frees up when the Ninja leaves (never auto-handed out)', !tm.red.spy && tm.red.members.indexOf('B') !== -1);
   // gates
   __setRoom(mkTeamsRoom(['A'], ['C', 'D'], 'A', 'C')); syncRoom();
   ok('C1g gate refuses a 1v2 split', !cnTeamsGate().ok);
   __setRoom(mkTeamsRoom(['A', 'B'], ['C', 'D'], 'A', null)); syncRoom();
   ok('C1h gate refuses a team with no spymaster', !cnTeamsGate().ok);
   __setRoom(mkTeamsRoom(['A', 'B'], ['C', 'D'], 'A', 'C')); syncRoom();
-  ok('C1i gate refuses while E+F sit on the bench', !cnTeamsGate().ok);
+  ok('C1i benched E+F simply spectate: a valid 2v2 can start', cnTeamsGate().ok);
   __setRoom(mkTeamsRoom(['A', 'B', 'E'], ['C', 'D', 'F'], 'A', 'C')); syncRoom();
   ok('C1j gate opens on a valid 3v3', cnTeamsGate().ok);
   // random
@@ -207,20 +207,20 @@ __TEST = (async () => {
   await cnDeal(); syncRoom();
   const cn2 = currentRoom.cn || {};
   ok('C2a deal starts the game', currentRoom.state === 'playing' && cn2.phase === 'clue' && cn2.turn === cn2.first);
-  ok('C2b 25 unique characters', (cn2.board || []).length === 25 && new Set((cn2.board || []).map(c => c.id)).size === 25);
+  ok('C2b 24 unique characters (4×6 board)', (cn2.board || []).length === 24 && new Set((cn2.board || []).map(c => c.id)).size === 24);
   const cnt = { red: 0, blue: 0, beige: 0, black: 0 };
   Object.values(cn2.key || {}).forEach(c => { cnt[c] = (cnt[c] || 0) + 1; });
   const other2 = cn2.first === 'red' ? 'blue' : 'red';
-  ok('C2c key is 9 first / 8 other / 7 beige / 1 black', cnt[cn2.first] === 9 && cnt[other2] === 8 && cnt.beige === 7 && cnt.black === 1);
-  ok('C2d rem mirrors the first team', (cn2.rem || {})[cn2.first] === 9 && (cn2.rem || {})[other2] === 8);
+  ok('C2c key is 8 first / 7 other / 8 beige / 1 black', cnt[cn2.first] === 8 && cnt[other2] === 7 && cnt.beige === 8 && cnt.black === 1);
+  ok('C2d rem mirrors the first team', (cn2.rem || {})[cn2.first] === 8 && (cn2.rem || {})[other2] === 7);
 
   // ---------- C3: the clue ----------
   const cnTurnSpy = (cnObj) => (cnObj.turn === 'red' ? 'A' : 'C');
   playerId = cnTurnSpy(cn2); syncRoom();
   document.getElementById('cnClueNum').value = '2';
-  document.getElementById('cnClueWord').value = 'two words';
+  document.getElementById('cnClueWord').value = 'x'.repeat(41); // b123: multi-word clues are allowed, but 40 characters max
   cnSendClue(); syncRoom();
-  ok('C3a two-word clue refused', (currentRoom.cn || {}).phase === 'clue' && !(currentRoom.cn || {}).clue);
+  ok('C3a clue longer than 40 characters refused', (currentRoom.cn || {}).phase === 'clue' && !(currentRoom.cn || {}).clue);
   const someName = String(((cn2.board || [])[3] || {}).name || 'zzz').toLowerCase();
   document.getElementById('cnClueWord').value = someName;
   cnSendClue(); syncRoom();

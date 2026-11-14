@@ -128,8 +128,12 @@
       tr('A game earns 40 XP, plus 20 XP for a win. Blur Guess and Snapshot earn 4 XP per round, plus 2 XP for a correct answer.') + ' ' +
       tr('For daily quests, 10 rounds count as one game and 10 correct rounds as one win.') + '</p>' + gameQuestSection(state) + collectionQuestSection(state);
   }
+  let lastLevel = null;
   function changed() {
     window.sakuSecureCoins = state ? state.coins : null;
+    const lv = state ? Number(state.level) || null : null;
+    if (lastLevel != null && lv != null && lv > lastLevel) { try { document.dispatchEvent(new CustomEvent('saku:level-up', {detail: {level: lv}})); } catch (e) {} }
+    lastLevel = lv;
     render();
     if (window.sakuPlayerRender) window.sakuPlayerRender();
     if (window.sakuShowcaseProgressChanged) window.sakuShowcaseProgressChanged();
@@ -145,7 +149,7 @@
     return fetching;
   }
   function scheduleFetch(delay) { clearTimeout(refetchTimer); refetchTimer = setTimeout(fetchState, delay || 1200); }
-  function detach() { boundUid = null; state = null; loadFailed = false; pending.clear(); clearTimeout(refetchTimer); render(); }
+  function detach() { boundUid = null; state = null; lastLevel = null; loadFailed = false; pending.clear(); clearTimeout(refetchTimer); render(); }
   function attach() {
     if (!currentAccount) { detach(); return; }
     const uid = sakuMyDcId();
@@ -156,6 +160,7 @@
     return [roomCode, currentRoom.createdAt || 0, kind, gid].join('_').replace(/[^A-Za-z0-9_:-]/g, '_').slice(0, 190);
   }
   function game(kind, gid, won) {
+    if (won && window.SakuSfx && gid && roomCode) window.SakuSfx.winOnce(roomCode + ':' + kind + ':' + gid);
     if (!currentAccount || !boundUid || !gid || !roomCode || !currentRoom || kind === 'blur' || kind === 'snapshot') return;
     const id = matchPrefix(kind, gid);
     if (pending.has(id)) return;
@@ -217,6 +222,8 @@
 
   window.sakuClaimGameQuest = claimGameQuest; window.sakuClaimCollectionQuest = claimCollectionQuest;
   window.showQuests = function () { showScreen('questsScreen'); render(); fetchState(); try { window.scrollTo(0, 0); } catch (e) {} };
+  window.sakuProgressRefresh = fetchState;
+  window.sakuProgressSetCoins = c => { c = Number(c); if (state && Number.isFinite(c) && c >= 0) { state = Object.assign({}, state, {coins: Math.floor(c)}); changed(); } };
   window.sakuProgressAttach = attach; window.sakuProgressDetach = detach; window.sakuProgressGame = game; window.sakuProgressRound = round;
   window.sakuProgressMulti = multi; window.sakuClaimQuest = claim; window.sakuProgressRender = render; window.sakuProgressClipboard = renderClipboard;
   window.sakuProgressSnapshot = function () {

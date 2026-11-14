@@ -3478,3 +3478,21 @@ html.no-friends #sideFriendsTab, html.no-friends #sideFriendsView, html.no-frien
 
 .portal-reveal-card,.portal-reveal-card *, .portal-reveal-slot,.portal-reveal-slot *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .portal-reveal-card .cnum,.portal-reveal-card .cletter,.portal-reveal-slot .cnum,.portal-reveal-slot .cletter{fill:#fff!important}
+
+/* Audit 14/11 : contraste du bouton de connexion (texte sombre sur bleu clair) et note des tirages gratuits */
+.home-quest-empty button{color:#06142b}
+.summon-free-note{margin:10px auto 0;max-width:420px;padding:8px 14px;border-radius:12px;background:#0f1d3acc;border:1px solid #9ec3e233;color:#dce8f6;font-size:.85rem;font-weight:600;text-align:center;line-height:1.4}
+/* Homonymes : série affichée sous le nom (Rin — Inuyasha / Rin — KonoSuba) */
+.card-series{display:block;margin-top:2px;font-size:.62rem;font-weight:600;line-height:1.2;color:#9fb5c9;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Audit 14/11 : lisibilité mobile et nouveaux joueurs */
+.card-home-kicker{font-size:.7rem}
+.card-home-summon-copy small,.card-home-shortcuts small{font-size:.76rem}
+.card-home-link small{font-size:.78rem}
+.card-home-empty-cta{display:block;margin-top:6px;font-size:.78rem;line-height:1.4;color:#bff5d6}
+.card-home-empty-cta[hidden]{display:none}
+@media (max-width:640px){
+  .saku-consent{flex-direction:row;align-items:center;gap:10px;left:8px;right:8px;width:auto;bottom:calc(70px + env(safe-area-inset-bottom,0px));padding:10px 12px}
+  .saku-consent-txt{font-size:.74rem;line-height:1.35}
+  .saku-consent .success{min-height:36px;padding:8px 14px;flex:none;width:auto;white-space:nowrap}
+}
+.summon-free-note.has-free{background:#0d2a1fcc;border-color:#3ddc8a55;color:#bff5d6}

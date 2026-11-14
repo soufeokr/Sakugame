@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '261';
+    const SAKU_BUILD = '265';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -429,12 +429,12 @@
       { n: 'Levi — Attack on Titan',        img: 'https://s4.anilist.co/file/anilistcdn/character/large/b45627-CR68RyZmddGG.png' },
       { n: 'Naruto Uzumaki — Naruto',       img: 'https://s4.anilist.co/file/anilistcdn/character/large/b17-phjcWCkRuIhu.png' },
       { n: 'Luffy Monkey D. — One Piece',   img: 'https://s4.anilist.co/file/anilistcdn/character/large/b40-MNypXsxSRb1R.png' },
-      { n: 'Gokuu Son — Dragon Ball',       img: 'https://s4.anilist.co/file/anilistcdn/character/large/246-wsRRr6z1kii8.png' },
+      { n: 'Son Goku — Dragon Ball',       img: 'https://s4.anilist.co/file/anilistcdn/character/large/246-wsRRr6z1kii8.png' },
       { n: 'Eren Yeager — Attack on Titan', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b40882-dsj7IP943WFF.jpg' },
       { n: 'Rem — Re:Zero',                 img: 'https://s4.anilist.co/file/anilistcdn/character/large/b88575-Ayu8UPDA8NS6.png' },
       { n: 'Nezuko Kamado — Demon Slayer',  img: 'https://s4.anilist.co/file/anilistcdn/character/large/b127518-NRlq1CQ1v1ro.png' },
       { n: 'Zoro Roronoa — One Piece',      img: 'https://s4.anilist.co/file/anilistcdn/character/large/b62-S7oAeA9WInjV.png' },
-      { n: 'Satoru Gojou — Jujutsu Kaisen', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b127691-9zqh1xpIubn7.png' },
+      { n: 'Satoru Gojo — Jujutsu Kaisen', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b127691-9zqh1xpIubn7.png' },
       { n: 'Itachi Uchiha — Naruto',        img: 'https://s4.anilist.co/file/anilistcdn/character/large/b14-9Kb1E5oel1ke.png' },
       { n: 'Shouto Todoroki — MHA',         img: 'https://s4.anilist.co/file/anilistcdn/character/large/b89220-KNBwaVFAR8FD.png' },
       { n: 'Zero Two — Darling in the FranXX', img: 'https://s4.anilist.co/file/anilistcdn/character/large/b124381-pkTKi6HHNuVR.png' },
@@ -1496,7 +1496,7 @@
         else if (route === 'collection') showCollection();
         else if (route === 'market') showMarket();
         else if (route === 'quests') showQuests();
-        else if (route === 'summon') showScreen('summonScreen');
+        else if (route === 'summon') { showScreen('summonScreen'); if (window.portalDashboardRefresh) window.portalDashboardRefresh(); if (window.sakuPortalShowcaseRefresh) window.sakuPortalShowcaseRefresh(); if (window.sakuPortalSummonEnter) window.sakuPortalSummonEnter(); requestAnimationFrame(summonUpdateAtmosphere); }
         else if (route === 'support') showScreen('supportScreen');
         else if (route === 'settings') showPreferencesPage();
         else if (route === 'account') showAccountPage();
@@ -1565,6 +1565,16 @@
     function escapeHtml(text) {
       const div = document.createElement('div'); div.textContent = text; return div.innerHTML;
     }
+    // 🛡️ Données venant d'une salle (modifiables par n'importe quel joueur) : jamais insérées brutes dans la page.
+    function sakuSafeImg(u) { u = String(u || ''); return /^https:\/\/[^\s"'<>]+$/i.test(u) ? escapeHtml(u) : ''; }
+    // 👥 Homonymes (Rin, Shion, Haku…) : la série s'affiche sous le nom quand deux cartes du plateau portent le même nom.
+    function sakuHomonymSeries(char, list) {
+      const key = String((char && char.name) || '').trim().toLowerCase();
+      if (!key || !Array.isArray(list)) return '';
+      const dup = list.some(o => o && o !== char && o.id !== char.id && String(o.name || '').trim().toLowerCase() === key);
+      return dup && char.series ? '<small class="card-series">' + sakuSafeName(char.series) + '</small>' : '';
+    }
+    function sakuSafeName(n, fallback) { return escapeHtml(String(n || fallback || '')).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     function toggleBlur() {
       codeBlurred = !codeBlurred;
       const codeEl = document.getElementById('displayRoomCode');
@@ -3329,7 +3339,7 @@
         if (active && brMarks[active] && brMarks[active][char.id]) card.classList.add('eliminated');
         const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
         const info = document.createElement('div'); info.className = 'card-info';
-        info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
+        info.innerHTML = `<div class="card-name">${sakuSafeName(char.name, 'Unknown')}</div>${sakuHomonymSeries(char, currentRoom.characters)}`;
         card.appendChild(info);
         card.addEventListener('click', () => {
           if (brGuessMode) battleGuess(char.id);
@@ -3538,7 +3548,7 @@
         const myChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
         banner.classList.remove('br-hide');
         banner.onclick = () => banner.classList.toggle('br-hide');
-        banner.innerHTML = `<img src="${myChar ? myChar.image : ''}" alt=""><div class="br-mysecret-info"><div class="br-mysecret-label">${ic('target')} You are the TARGET — answer questions honestly (tap to hide)</div><div class="br-mysecret-name">${myChar ? myChar.name : '—'}</div></div>`;
+        banner.innerHTML = `<img src="${myChar ? sakuSafeImg(myChar.image) : ''}" alt=""><div class="br-mysecret-info"><div class="br-mysecret-label">${ic('target')} You are the TARGET — answer questions honestly (tap to hide)</div><div class="br-mysecret-name">${myChar ? sakuSafeName(myChar.name) : '—'}</div></div>`;
       } else {
         banner.onclick = null;
         banner.innerHTML = `<div class="br-mysecret-info"><div class="br-mysecret-label">${ic('bolt')} RACE — mystery character</div><div class="br-mysecret-name">${tPO('hunt_secret', { n: '<b style="color:var(--warning)">' + escapeHtml(targetName) + '</b>' })}</div></div>`;
@@ -3580,7 +3590,7 @@
         if (rcMarks[char.id]) card.classList.add('eliminated');
         const img = document.createElement('img'); img.className = 'card-img'; img.src = char.image || ''; img.alt = char.name || ''; card.appendChild(img);
         const info = document.createElement('div'); info.className = 'card-info';
-        info.innerHTML = `<div class="card-name">${char.name || 'Unknown'}</div>`;
+        info.innerHTML = `<div class="card-name">${sakuSafeName(char.name, 'Unknown')}</div>${sakuHomonymSeries(char, currentRoom.characters)}`;
         card.appendChild(info);
         card.addEventListener('click', () => { rcGuessMode ? raceGuess(char.id) : (rcMarks[char.id] ? delete rcMarks[char.id] : rcMarks[char.id] = true, renderRaceBoard()); });
         board.appendChild(card);
@@ -7704,7 +7714,7 @@
       if (!characters || characters.length === 0) { grid.innerHTML = '<p style="text-align: center; color: var(--muted);">No characters available</p>'; return; }
       characters.forEach(char => {
         const card = document.createElement('div'); card.className = 'selectable-card'; card.setAttribute('data-char-id', char.id);
-        card.innerHTML = `<img src="${char.image || ''}" alt="${char.name || ''}"><div class="info"><div class="char-name">${char.name || 'Unknown'}</div></div>`;
+        card.innerHTML = `<img src="${sakuSafeImg(char.image)}" alt="${sakuSafeName(char.name)}"><div class="info"><div class="char-name">${sakuSafeName(char.name, 'Unknown')}</div>${sakuHomonymSeries(char, characters)}</div>`;
         card.addEventListener('click', () => selectCharacter(char, card));
         grid.appendChild(card);
       });
@@ -7830,7 +7840,7 @@
         const card = document.createElement('div'); card.className = 'card';
         if (myEliminated.has(char.id)) card.classList.add('eliminated');
         if (guessMode) card.classList.add('guessing');
-        card.innerHTML = `<img class="card-img" src="${char.image || ''}" alt="${char.name || ''}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22133%22%3E%3Crect fill=%22%231a1a2e%22 width=%22100%22 height=%22133%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Arial%22 font-size=%2214%22 fill=%22%23888%22 text-anchor=%22middle%22 dy=%22.3em%22%3E?%3C/text%3E%3C/svg%3E'"><div class="card-info"><div class="card-name">${char.name || 'Unknown'}</div></div>`;
+        card.innerHTML = `<img class="card-img" src="${sakuSafeImg(char.image)}" alt="${sakuSafeName(char.name)}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22133%22%3E%3Crect fill=%22%231a1a2e%22 width=%22100%22 height=%22133%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-family=%22Arial%22 font-size=%2214%22 fill=%22%23888%22 text-anchor=%22middle%22 dy=%22.3em%22%3E?%3C/text%3E%3C/svg%3E'"><div class="card-info"><div class="card-name">${sakuSafeName(char.name, 'Unknown')}</div>${sakuHomonymSeries(char, characters)}</div>`;
         card.addEventListener('click', () => onCardClick(char));
         board.appendChild(card);
       });
@@ -9508,6 +9518,10 @@ function sakuCardHomeRefresh(){
   sakuIncludeOwnedCards();
   const owned=Object.keys(cardState.cards || {}).filter(function(id){return !!cardPoolById[id] && cardState.cards[id]>0;});
   el.textContent=String(owned.length);
+  // Nouveau joueur : la carte « Mes cartes » propose d'ouvrir le premier pack au lieu d'afficher un 0 seul
+  let cta=document.getElementById('cardHomeEmptyCta');
+  if(!cta&&el.closest('.card-home-collection-text')){cta=document.createElement('small');cta.id='cardHomeEmptyCta';cta.className='card-home-empty-cta';el.closest('.card-home-collection-text').appendChild(cta);}
+  if(cta){const L=(window.SAKU_I18N||{}).lang||'en';cta.textContent=({fr:'Ouvre ton premier pack : des tirages gratuits t’attendent dans Invoquer.',en:'Open your first pack: free draws are waiting in Summon.',es:'Abre tu primer sobre: tienes tiradas gratis en Invocar.'})[L]||'';cta.hidden=owned.length>0;}
   const preview=document.getElementById('cardHomePreview');
   if(preview){
    // Shuffle within each rarity; fill the second slot from the next tier if necessary.

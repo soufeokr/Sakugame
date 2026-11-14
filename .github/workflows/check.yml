@@ -37,3 +37,6 @@ jobs:
 
       - name: Game-logic test suite (Rejoin offer)
         run: node tools/test_rejoin.js
+
+      - name: Game-logic test suite (Ninja Scrolls)
+        run: node tools/test_codenames.js

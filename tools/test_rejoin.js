@@ -2,7 +2,7 @@
 // queue scoring, Σ-totals classement, guards). REAL app.js in a VM, stub DOM+Firebase.
 const fs = require('fs');
 const vm = require('vm');
-const R = '/home/user/Sakugame/';
+const R = require('path').join(__dirname, '..') + '/';
 
 // ---------- Firebase stub capturing writes ----------
 let ROOM = {};
