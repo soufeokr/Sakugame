@@ -243,6 +243,7 @@ var I18N = {
   "Saving…": { fr:"Enregistrement…", es:"Guardando…" },
   "Changes saved.": { fr:"Modifications enregistrées.", es:"Cambios guardados." },
   "Your changes are published when you save.": { fr:"Tes modifications sont publiées quand tu enregistres.", es:"Tus cambios se publican al guardar." },
+  "Appearance": { fr:"Apparence", es:"Apariencia" },
   "Showcased cards": { fr:"Cartes exposées", es:"Cartas expuestas" },
   "Press and hold a card, then drag it to change its place.": { fr:"Reste appuyé sur une carte, puis fais-la glisser pour changer sa place.", es:"Mantén pulsada una carta y arrástrala para cambiar su posición." },
   "Order of showcased cards": { fr:"Ordre des cartes exposées", es:"Orden de las cartas expuestas" },

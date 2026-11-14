@@ -34,7 +34,7 @@ function identity(){const d=lastData||{},url=String(myAvatar()||'');return {name
 function theme(data){const screen=$('showcaseScreen'),root=document.documentElement;[['--show-bg',color(data.background,'#141d3d')],['--show-bg2',color(data.secondary,'#272047')],['--show-accent',color(data.accent,'#9fd8ff')]].forEach(([key,value])=>{screen.style.setProperty(key,value);root.style.setProperty(key,value);});}
 function cardHTML(c){return (c.edition==='strongest'||c.edition==='hoshi')&&window.sakuStrongestCard?window.sakuStrongestCard(c,true):window.sakuBasicCard?window.sakuBasicCard(c,true):'';}
 function buildView(data){
- if(!data){$('showcasePreview').hidden=true;return;}theme(data);$('showcasePreview').hidden=false;
+ if(!data){$('showcasePreview').hidden=true;$('showcaseHero').classList.remove('is-loaded');return;}theme(data);$('showcasePreview').hidden=false;$('showcaseHero').classList.add('is-loaded');
  txt('showcaseName',String(data.name||tr('Player')).slice(0,60));txt('showcaseLevel',data.level?String(Math.max(1,Math.floor(Number(data.level)||1))):'—');avatar($('showcaseAvatar'),data.avatar);
  const dc=data.showDiscord===true&&!!data.discord,ani=data.showAni===true&&!!data.anilist;$('showcaseDiscordWrap').hidden=!dc;$('showcaseAniWrap').hidden=!ani;$('showcaseConnections').hidden=!dc&&!ani;txt('showcaseDiscord',dc?String(data.discord).slice(0,80):'');txt('showcaseAni',ani?String(data.anilist).slice(0,80):'');
  renderGames(data.gameStats);
@@ -50,16 +50,24 @@ function cardsById(){return new Map(myCards().map(c=>[String(c.id),c]));}
 function inputsState(){return {selected:selected.slice(),bg:$('showcaseBg').value,bg2:$('showcaseBg2').value,accent:$('showcaseAccent').value,discord:$('showcaseShowDiscord').checked,anilist:$('showcaseShowAni').checked};}
 function applyState(st){selected=st.selected.slice();$('showcaseBg').value=st.bg;$('showcaseBg2').value=st.bg2;$('showcaseAccent').value=st.accent;$('showcaseShowDiscord').checked=st.discord;$('showcaseShowAni').checked=st.anilist;privacy={discord:st.discord,anilist:st.anilist};}
 function setDirty(on){dirty=on;txt('showcaseSaveStatus',on?tr('Unsaved changes'):'');$('showcaseSave').disabled=saving;}
+const RARITY_WEIGHT={special:7,mythic:6,legendary:5,epic:4,rare:3,uncommon:2,common:1};
+function shownRarity(c){try{return (c.edition==='strongest'||c.edition==='hoshi')?'special':cardRarityFor(c.testOnlyNinja?{id:c.id}:c,c.rank);}catch(e){return c.rarity||'common';}}
+function sortedCards(){
+ const flags=(typeof cardState!=='undefined'&&cardState&&cardState.flags)||{};
+ return myCards().map((c,i)=>({c,i,fav:!!(flags[String(c.id)]&&flags[String(c.id)].favorite),w:RARITY_WEIGHT[shownRarity(c)]||0}))
+  .sort((a,b)=>(b.fav-a.fav)||(b.w-a.w)||((Number(a.c.rank)||99999)-(Number(b.c.rank)||99999))||(a.i-b.i)).map(x=>x.c);
+}
 function renderChoices(){
  const list=$('showcaseChoices'),scroll=list.scrollTop;clear(list);
- let owned=myCards(),query=$('showcaseSearch').value.trim().toLocaleLowerCase();
+ let owned=sortedCards(),query=$('showcaseSearch').value.trim().toLocaleLowerCase();
  if(query)owned=owned.filter(c=>String(c.name).toLocaleLowerCase().includes(query)||String(c.series).toLocaleLowerCase().includes(query));
  const visible=owned.slice(0,choiceLimit),fragment=document.createDocumentFragment();
  visible.forEach(c=>{const id=String(c.id),b=document.createElement('button');b.type='button';b.className='showcase-choice';b.dataset.id=id;
   b.setAttribute('aria-pressed',String(selected.includes(id)));b.setAttribute('aria-label',c.name+' · '+c.series);b.title=c.name+' · '+c.series;
   const art=document.createElement('span');art.className='showcase-choice-art';art.innerHTML=cardHTML(c);
   const mark=document.createElement('span');mark.className='showcase-choice-mark';mark.textContent=selected.includes(id)?'✓':'+';
-  b.append(art,mark);fragment.appendChild(b);});
+  b.append(art,mark);
+  const fl=(typeof cardState!=='undefined'&&cardState&&cardState.flags)||{};if(fl[id]&&fl[id].favorite){const star=document.createElement('span');star.className='showcase-choice-fav';star.textContent='★';star.title=tr('Favorite');b.appendChild(star);}fragment.appendChild(b);});
  list.appendChild(fragment);list.scrollTop=scroll;
  if(!owned.length){const note=document.createElement('p');note.className='showcase-empty';note.textContent=tr('No owned cards found.');list.appendChild(note);}
  txt('showcaseChoicesCount',visible.length+' / '+owned.length+' '+tr('cards shown'));
@@ -116,10 +124,10 @@ function startPreview(){previewing=true;$('showcaseEditor').hidden=true;document
 function backToEdit(){previewing=false;$('showcasePreviewBar').hidden=true;$('showcaseEditor').hidden=false;document.body.classList.add('showcase-modal-open');previewDraft();
  setTimeout(()=>{try{$('showcasePreviewBtn').focus();}catch(e){}},30);}
 function moveCard(id,to){const from=selected.indexOf(id);if(from<0)return;to=Math.max(0,Math.min(selected.length-1,to));if(to===from)return;selected.splice(from,1);selected.splice(to,0,id);renderOrder();changed();}
-/* Réordonner : appui long (≈0,35 s) sur une carte, puis glisser. Les flèches ‹ › restent disponibles (clavier, accessibilité). */
+/* Réordonner : appui court (≈0,18 s) sur une carte, puis glisser. Les flèches ‹ › restent disponibles (clavier, accessibilité). */
 function setupReorder(list,scroller){
  let press=null,drag=null,raf=0;
- const HOLD=350,SLOP=8;
+ const HOLD=180,SLOP=8;
  function cancelPress(){if(press){clearTimeout(press.timer);press.item.classList.remove('is-pressing');press=null;}}
  function items(){return Array.from(list.querySelectorAll('.showcase-order-item'));}
  function begin(){if(!press)return;const p=press;press=null;p.item.classList.remove('is-pressing');
@@ -153,12 +161,12 @@ function setupReorder(list,scroller){
 }
 async function open(id){
  const token=++request,me=myId();ownerId=id&&validId(id)?String(id):me;loadedId=null;selected=[];choiceLimit=60;
- $('showcaseGuest').hidden=true;$('showcaseEditor').hidden=true;$('showcasePreviewBar').hidden=true;editing=false;previewing=false;dirty=false;saved=null;document.body.classList.remove('showcase-modal-open');$('showcaseEdit').hidden=true;$('showcaseEdit').setAttribute('aria-expanded','false');$('showcasePreview').hidden=true;txt('showcaseStatus','');txt('showcaseSaveStatus','');theme({});
+ $('showcaseGuest').hidden=true;$('showcaseEditor').hidden=true;$('showcasePreviewBar').hidden=true;editing=false;previewing=false;dirty=false;saved=null;document.body.classList.remove('showcase-modal-open');$('showcaseEdit').hidden=true;$('showcaseEdit').setAttribute('aria-expanded','false');$('showcasePreview').hidden=true;$('showcaseHero').classList.remove('is-loaded');txt('showcaseName',tr('Showcase'));txt('showcaseStatus','');txt('showcaseSaveStatus','');theme({});
  if(!ownerId){$('showcaseGuest').hidden=false;return;}txt('showcaseStatus',tr('Loading showcase…'));
  try{const data=await window.sakuRpc('showcase_get',{p_owner:ownerId===me?null:ownerId});if(token!==request)return;if(ownerId===me)lastData=data;loadedId=ownerId;if(window.sakuDataReady)await window.sakuDataReady;if(token!==request)return;
   if(ownerId===me){if(!data)throw Error('public showcase unavailable');const map=new Set(myCards().map(c=>String(c.id)));selected=(Array.isArray(data.cards)?data.cards.map(c=>String(c.id)):[]).filter(id=>map.has(id)).slice(0,10);privacy={discord:data.showDiscord===true,anilist:data.showAni===true};$('showcaseShowDiscord').checked=privacy.discord;$('showcaseShowAni').checked=privacy.anilist;
    $('showcaseBg').value=color(data.background,'#141d3d');$('showcaseBg2').value=color(data.secondary,'#272047');$('showcaseAccent').value=color(data.accent,'#9fd8ff');$('showcaseSearch').value='';$('showcaseEdit').hidden=false;txt('showcaseStatus',tr('Your showcase is public.'));previewDraft();
-  }else if(data){txt('showcaseStatus','');buildView(data);}else txt('showcaseStatus',tr('This player’s showcase is unavailable.'));
+  }else if(data){txt('showcaseStatus',tr('Public player profile'));buildView(data);}else txt('showcaseStatus',tr('This player’s showcase is unavailable.'));
  }catch(e){if(token===request)txt('showcaseStatus',tr(String(e&&e.message)==='unavailable'?'This player’s showcase is unavailable.':'Could not load the showcase. Please try again.'));}
 }
 function refreshPublic(){}
