@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="266">
+<meta name="saku-build" content="267">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=266">
+<link rel="manifest" href="manifest.json?v=267">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=266" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=266">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=266">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=266">
+<link rel="icon" href="favicon.ico?v=267" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=267">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=267">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=267">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=266">
+  <link rel="stylesheet" href="style.css?v=267">
 </head>
 <body>
 
@@ -345,7 +345,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=266" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=267" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Beta</span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <button class="username-change-btn" id="usernameBtn" aria-expanded="false" aria-controls="playerPopover" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
@@ -401,7 +401,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=266" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=267" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -430,7 +430,7 @@
     <main class="card-home">
       <header class="card-home-head"><div><span class="card-home-kicker" data-noi18n>SAKUGAME / CARDS</span><h1>Card game</h1><p>Manage your collection and explore the cards.</p></div></header>
       <div class="card-home-layout card-home-redesign">
-        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><small>Open boosters and discover your cards.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img loading="lazy" decoding="async" src="summon-machines/basic-mini.svg?v=266" alt="" draggable="false"></div></section>
+        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><small>Open boosters and discover your cards.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img loading="lazy" decoding="async" src="summon-machines/basic-mini.svg?v=267" alt="" draggable="false"></div></section>
         <div class="card-home-right"><button type="button" class="card-home-collection" onclick="showCollection()"><span class="card-home-symbol"><svg class="ic"><use href="#i-cards"/></svg></span><span class="card-home-collection-text"><span class="card-home-kicker">YOUR COLLECTION</span><strong>My cards</strong><span><b id="cardHomeOwned">—</b> <span>different cards owned</span></span></span><span id="cardHomePreview" class="card-home-preview" aria-hidden="true"></span><span class="card-home-link-arrow" aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M8 6h10v10"/></svg></span></button>
           <div class="card-home-shortcuts"><button type="button" onclick="showMarket()"><svg class="ic"><use href="#i-market"/></svg><strong>Market</strong><small>Buy, bid and sell</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" onclick="showShowcase()"><svg class="ic"><use href="#i-user"/></svg><strong>Showcase</strong><small>Your public profile</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" onclick="encOpen()"><svg class="ic"><use href="#i-book"/></svg><strong>Encyclopedia</strong><small>Browse all cards</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button></div>
         </div>
@@ -459,11 +459,44 @@
 
         </section>
       </section>
-      <section id="showcaseEditor" class="showcase-editor" hidden><div class="showcase-editor-head"><div><span class="showcase-kicker">YOUR SHOWCASE</span><h2>Customize your showcase</h2><p>Your showcase is public. Changes are saved automatically.</p></div><button type="button" id="showcaseDone" class="showcase-edit-btn">Done</button></div>
-        <div class="showcase-editor-block"><strong>Colors</strong><div class="showcase-colors"><label>Primary color <input id="showcaseBg" type="color" value="#141d3d"></label><label>Secondary color <input id="showcaseBg2" type="color" value="#272047"></label><label>Accent color <input id="showcaseAccent" type="color" value="#9fd8ff"></label></div></div>
-        <div class="showcase-editor-block"><strong>Linked accounts</strong><p>Account names are private by default. Choose what visitors can see.</p><div class="showcase-privacy"><label><input id="showcaseShowDiscord" type="checkbox"><span>Show my Discord account</span></label><label><input id="showcaseShowAni" type="checkbox"><span>Show my AniList account</span></label></div></div>
-        <div class="showcase-editor-title"><strong>Choose up to 10 owned cards</strong><span id="showcaseSelectedCount">0 / 10</span></div><input id="showcaseSearch" type="search" placeholder="Search your cards…" autocomplete="off"><div id="showcaseChoices" class="showcase-choices"></div><div class="showcase-more-row"><span id="showcaseChoicesCount"></span><button type="button" id="showcaseMore" class="showcase-edit-btn" hidden>Show more cards</button></div><p class="showcase-editor-note">Only cards you own can be displayed.</p><p id="showcaseSaveStatus" role="status"></p>
+      <div id="showcaseEditor" class="showcase-modal" hidden role="dialog" aria-modal="true" aria-labelledby="showcaseEditorTitle">
+  <div class="showcase-modal-panel">
+    <header class="showcase-modal-head">
+      <div><span class="showcase-kicker">YOUR SHOWCASE</span><h2 id="showcaseEditorTitle">Customize your showcase</h2><p>Your changes are published when you save.</p></div>
+      <button type="button" id="showcaseClose" class="showcase-modal-close" aria-label="Close">×</button>
+    </header>
+    <div class="showcase-modal-body" id="showcaseModalBody">
+      <section class="showcase-editor-block">
+        <div class="showcase-editor-title"><strong>Showcased cards</strong><span id="showcaseSelectedCount">0 / 10</span></div>
+        <p class="showcase-editor-hint">Press and hold a card, then drag it to change its place.</p>
+        <div id="showcaseOrder" class="showcase-order" role="list" aria-label="Order of showcased cards"></div>
+        <p id="showcaseOrderEmpty" class="showcase-empty" hidden>No cards selected yet. Pick up to 10 cards below.</p>
       </section>
+      <section class="showcase-editor-block">
+        <div class="showcase-editor-title"><strong>Add cards</strong><span id="showcaseChoicesCount"></span></div>
+        <input id="showcaseSearch" type="search" placeholder="Search your cards…" autocomplete="off">
+        <div id="showcaseChoices" class="showcase-choices"></div>
+        <div class="showcase-more-row"><button type="button" id="showcaseMore" class="showcase-edit-btn" hidden>Show more cards</button></div>
+        <p class="showcase-editor-note">Only cards you own can be displayed.</p>
+      </section>
+      <section class="showcase-editor-block"><strong>Colors</strong><div class="showcase-colors"><label>Primary color <input id="showcaseBg" type="color" value="#141d3d"></label><label>Secondary color <input id="showcaseBg2" type="color" value="#272047"></label><label>Accent color <input id="showcaseAccent" type="color" value="#9fd8ff"></label></div></section>
+      <section class="showcase-editor-block"><strong>Linked accounts</strong><p>Account names are private by default. Choose what visitors can see.</p><div class="showcase-privacy"><label><input id="showcaseShowDiscord" type="checkbox"><span>Show my Discord account</span></label><label><input id="showcaseShowAni" type="checkbox"><span>Show my AniList account</span></label></div></section>
+    </div>
+    <footer class="showcase-modal-foot">
+      <p id="showcaseSaveStatus" role="status"></p>
+      <div class="showcase-modal-actions">
+        <button type="button" id="showcasePreviewBtn" class="showcase-edit-btn">👁 <span>Preview</span></button>
+        <button type="button" id="showcaseCancel" class="showcase-edit-btn showcase-btn-ghost">Cancel</button>
+        <button type="button" id="showcaseSave" class="showcase-save-btn">Save</button>
+      </div>
+    </footer>
+  </div>
+</div>
+<div id="showcasePreviewBar" class="showcase-preview-bar" hidden role="region" aria-label="Preview">
+  <span class="showcase-preview-label"><b>Preview</b><small>Not saved yet</small></span>
+  <button type="button" id="showcaseBackToEdit" class="showcase-edit-btn">✎ <span>Back to editing</span></button>
+  <button type="button" id="showcaseSaveFromPreview" class="showcase-save-btn">Save</button>
+</div>
       <section id="showcaseGuest" class="showcase-guest" hidden><h2>Sign in to create your showcase</h2><p>Your public profile is linked to your Discord account.</p><button type="button" class="hub-primary hub-discord" onclick="openAuthModal()"><svg class="ic"><use href="#i-discord"/></svg><span>Continue with Discord</span></button></section>
     </main>
   </div>
@@ -1890,8 +1923,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=266"></script>
-  <script defer src="saku-features.js?v=266"></script>
+  <script defer src="saku-local-account.js?v=267"></script>
+  <script defer src="saku-features.js?v=267"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -1900,7 +1933,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=266', 'charanimes.js?v=266', 'animes.js?v=266', 'nsfwdata.js?v=266', 'snappics.js?v=266'];
+        var files = ['characters.js?v=267', 'charanimes.js?v=267', 'animes.js?v=267', 'nsfwdata.js?v=267', 'snappics.js?v=267'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1919,43 +1952,43 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=266"></script>
-  <script defer src="card-extra.js?v=266"></script>
-  <script defer src="strongest-data.js?v=266"></script>
-  <script defer src="strongest-render.js?v=266"></script>
-  <script defer src="basic-render.js?v=266"></script>
-  <script defer src="cardgame.js?v=266"></script>
-  <script defer src="encyclopedia.js?v=266"></script>
-  <script defer src="character-localization.js?v=266"></script>
-  <script defer src="enc.js?v=266"></script>
-  <script defer src="card-tilt.js?v=266"></script>
-  <script defer src="card-levels.js?v=266"></script>
-  <script defer src="card-controls.js?v=266"></script>
-  <script defer src="library-tools.js?v=266"></script>
-  <script defer src="rarity-sync.js?v=266"></script>
-  <script defer src="strongest-sync.js?v=266"></script>
-  <script defer src="hoshi-data.js?v=266"></script>
-  <script defer src="pic-sync.js?v=266"></script>
-  <script defer src="undercover.js?v=266"></script>
-  <script defer src="music.js?v=266"></script>
-  <script defer src="lang.js?v=266"></script>
-  <script defer src="game-guides.js?v=266"></script>
-  <script defer src="app.js?v=266"></script>
-  <script defer src="supabase-client.js?v=266"></script>
-  <script defer src="saku-session.js?v=266"></script>
-  <script defer src="saku-sfx.js?v=266"></script>
-  <script defer src="retro-index.js?v=266"></script>
-  <script defer src="cinema-index.js?v=266"></script>
-  <script defer src="portal-rates.js?v=266"></script>
-  <script defer src="portal-info.js?v=266"></script>
-  <script defer src="portal-showcase.js?v=266"></script>
-  <script defer src="card-backs.js?v=266"></script>
-  <script defer src="portal-summon.js?v=266"></script>
-  <script defer src="progression.js?v=266"></script>
-  <script defer src="player-popover.js?v=266"></script>
-  <script defer src="friends.js?v=266"></script>
-  <script defer src="showcase.js?v=266"></script>
-  <script defer src="market.js?v=266"></script>
+  <script defer src="card-rarity.js?v=267"></script>
+  <script defer src="card-extra.js?v=267"></script>
+  <script defer src="strongest-data.js?v=267"></script>
+  <script defer src="strongest-render.js?v=267"></script>
+  <script defer src="basic-render.js?v=267"></script>
+  <script defer src="cardgame.js?v=267"></script>
+  <script defer src="encyclopedia.js?v=267"></script>
+  <script defer src="character-localization.js?v=267"></script>
+  <script defer src="enc.js?v=267"></script>
+  <script defer src="card-tilt.js?v=267"></script>
+  <script defer src="card-levels.js?v=267"></script>
+  <script defer src="card-controls.js?v=267"></script>
+  <script defer src="library-tools.js?v=267"></script>
+  <script defer src="rarity-sync.js?v=267"></script>
+  <script defer src="strongest-sync.js?v=267"></script>
+  <script defer src="hoshi-data.js?v=267"></script>
+  <script defer src="pic-sync.js?v=267"></script>
+  <script defer src="undercover.js?v=267"></script>
+  <script defer src="music.js?v=267"></script>
+  <script defer src="lang.js?v=267"></script>
+  <script defer src="game-guides.js?v=267"></script>
+  <script defer src="app.js?v=267"></script>
+  <script defer src="supabase-client.js?v=267"></script>
+  <script defer src="saku-session.js?v=267"></script>
+  <script defer src="saku-sfx.js?v=267"></script>
+  <script defer src="retro-index.js?v=267"></script>
+  <script defer src="cinema-index.js?v=267"></script>
+  <script defer src="portal-rates.js?v=267"></script>
+  <script defer src="portal-info.js?v=267"></script>
+  <script defer src="portal-showcase.js?v=267"></script>
+  <script defer src="card-backs.js?v=267"></script>
+  <script defer src="portal-summon.js?v=267"></script>
+  <script defer src="progression.js?v=267"></script>
+  <script defer src="player-popover.js?v=267"></script>
+  <script defer src="friends.js?v=267"></script>
+  <script defer src="showcase.js?v=267"></script>
+  <script defer src="market.js?v=267"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->

@@ -2,7 +2,7 @@
 (function(){'use strict';
 const $=id=>document.getElementById(id), tr=s=>typeof t==='function'?t(s):s;
 let lastData=null,ownerId=null,loadedId=null,selected=[],request=0,publicUid=null,attachVersion=0,attachPromise=Promise.resolve();
-let saveTimer=null,saveQueue=Promise.resolve(),lastIdentity=null,catalogIndex=null,choiceLimit=60,privacy={discord:false,anilist:false},accountData=null,accountRef=null,accountListener=null;
+let lastIdentity=null,catalogIndex=null,choiceLimit=60,privacy={discord:false,anilist:false},accountData=null,accountRef=null,accountListener=null;
 const validId=id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id||''));
 const color=(s,fallback)=>/^#[0-9a-f]{6}$/i.test(String(s||''))?String(s):fallback;
 const txt=(id,s)=>{const el=$(id);if(el)el.textContent=s;};
@@ -44,19 +44,116 @@ function buildView(data){
  if(ensurePool()&&Array.isArray(data.cards)){data.cards.slice(0,10).forEach(item=>{const id=String(item&&item.id||''),source=publicCard(id);if(!source)return;const c=Object.assign({},source,{rarity:(source.edition==='strongest'||source.edition==='hoshi')?'special':(/^(common|uncommon|rare|epic|legendary|mythic)$/.test(item.rarity)?item.rarity:source.rarity)});const el=document.createElement('div');el.className='showcase-card';el.setAttribute('aria-label',c.name);el.innerHTML=cardHTML(c);grid.appendChild(el);count++;});}
  txt('showcaseCount',count+' / 10');$('showcaseEmpty').hidden=count>0;document.querySelector('.showcase-swipe-note').hidden=count===0;if(window.sakuBasicObserve)window.sakuBasicObserve(grid);
 }
+/* ===== Éditeur (fenêtre) : brouillon, aperçu, enregistrement explicite ===== */
+let saved=null,editing=false,previewing=false,dirty=false,saving=false,lastFocus=null;
+function cardsById(){return new Map(myCards().map(c=>[String(c.id),c]));}
+function inputsState(){return {selected:selected.slice(),bg:$('showcaseBg').value,bg2:$('showcaseBg2').value,accent:$('showcaseAccent').value,discord:$('showcaseShowDiscord').checked,anilist:$('showcaseShowAni').checked};}
+function applyState(st){selected=st.selected.slice();$('showcaseBg').value=st.bg;$('showcaseBg2').value=st.bg2;$('showcaseAccent').value=st.accent;$('showcaseShowDiscord').checked=st.discord;$('showcaseShowAni').checked=st.anilist;privacy={discord:st.discord,anilist:st.anilist};}
+function setDirty(on){dirty=on;txt('showcaseSaveStatus',on?tr('Unsaved changes'):'');$('showcaseSave').disabled=saving;}
 function renderChoices(){
- const list=$('showcaseChoices'),scroll=list.scrollTop;clear(list);let owned=myCards(),query=$('showcaseSearch').value.trim().toLocaleLowerCase();
+ const list=$('showcaseChoices'),scroll=list.scrollTop;clear(list);
+ let owned=myCards(),query=$('showcaseSearch').value.trim().toLocaleLowerCase();
  if(query)owned=owned.filter(c=>String(c.name).toLocaleLowerCase().includes(query)||String(c.series).toLocaleLowerCase().includes(query));
- const visible=owned.slice(0,choiceLimit),fragment=document.createDocumentFragment();visible.forEach(c=>{const id=String(c.id),b=document.createElement('button');b.type='button';b.className='showcase-choice';b.dataset.id=id;b.setAttribute('aria-pressed',String(selected.includes(id)));b.setAttribute('aria-label',c.name+' · '+c.series);b.title=c.name+' · '+c.series;const art=document.createElement('span');art.className='showcase-choice-art';art.innerHTML=cardHTML(c);const mark=document.createElement('span');mark.className='showcase-choice-mark';mark.textContent=selected.includes(id)?'✓':'+';b.append(art,mark);fragment.appendChild(b);});list.appendChild(fragment);list.scrollTop=scroll;
- if(!owned.length){const note=document.createElement('p');note.className='showcase-empty';note.textContent=tr('No owned cards found.');list.appendChild(note);}txt('showcaseSelectedCount',selected.length+' / 10');txt('showcaseChoicesCount',visible.length+' / '+owned.length+' '+tr('cards shown'));$('showcaseMore').hidden=visible.length>=owned.length;if(window.sakuBasicObserve)window.sakuBasicObserve(list);
+ const visible=owned.slice(0,choiceLimit),fragment=document.createDocumentFragment();
+ visible.forEach(c=>{const id=String(c.id),b=document.createElement('button');b.type='button';b.className='showcase-choice';b.dataset.id=id;
+  b.setAttribute('aria-pressed',String(selected.includes(id)));b.setAttribute('aria-label',c.name+' · '+c.series);b.title=c.name+' · '+c.series;
+  const art=document.createElement('span');art.className='showcase-choice-art';art.innerHTML=cardHTML(c);
+  const mark=document.createElement('span');mark.className='showcase-choice-mark';mark.textContent=selected.includes(id)?'✓':'+';
+  b.append(art,mark);fragment.appendChild(b);});
+ list.appendChild(fragment);list.scrollTop=scroll;
+ if(!owned.length){const note=document.createElement('p');note.className='showcase-empty';note.textContent=tr('No owned cards found.');list.appendChild(note);}
+ txt('showcaseChoicesCount',visible.length+' / '+owned.length+' '+tr('cards shown'));
+ $('showcaseMore').hidden=visible.length>=owned.length;
+ if(window.sakuBasicObserve)window.sakuBasicObserve(list);
 }
-function preferenceSnapshot(){const map=new Map(myCards().map(c=>[String(c.id),c]));return {background:color($('showcaseBg').value,'#141d3d'),secondary:color($('showcaseBg2').value,'#272047'),accent:color($('showcaseAccent').value,'#9fd8ff'),cards:selected.filter(id=>map.has(id)).map(id=>{const c=map.get(id);return {id,rarity:(c.edition==='strongest'||c.edition==='hoshi')?'special':cardRarityFor(c.testOnlyNinja?{id:c.id}:c,c.rank)};}),showDiscord:privacy.discord,showAni:privacy.anilist,avatar:identity().avatar,discord:privacy.discord?String(playerName||'').slice(0,80)||null:null,anilist:privacy.anilist?String(currentAccount.anilist||'').slice(0,80)||null:null};}
+function renderOrder(){
+ const list=$('showcaseOrder');clear(list);const map=cardsById();
+ selected=selected.filter(id=>map.has(id)).slice(0,10);
+ selected.forEach((id,i)=>{const c=map.get(id),item=document.createElement('div');item.className='showcase-order-item';item.dataset.id=id;item.setAttribute('role','listitem');
+  item.setAttribute('aria-label',(i+1)+'. '+c.name);item.title=c.name+' · '+c.series;
+  const num=document.createElement('span');num.className='showcase-order-num';num.textContent=String(i+1);
+  const art=document.createElement('span');art.className='showcase-choice-art';art.innerHTML=cardHTML(c);
+  const tools=document.createElement('div');tools.className='showcase-order-tools';
+  [['-1','‹',tr('Move left')],['remove','✕',tr('Remove from showcase')],['1','›',tr('Move right')]].forEach(([k,label,aria])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('aria-label',aria+' — '+c.name);
+   if(k==='remove')b.dataset.remove='1';else{b.dataset.move=k;b.disabled=(k==='-1'&&i===0)||(k==='1'&&i===selected.length-1);}tools.appendChild(b);});
+  item.append(num,art,tools);list.appendChild(item);});
+ $('showcaseOrderEmpty').hidden=selected.length>0;txt('showcaseSelectedCount',selected.length+' / 10');
+ list.querySelectorAll('img,svg').forEach(el=>{el.setAttribute('draggable','false');});
+ if(window.sakuBasicObserve)window.sakuBasicObserve(list);
+}
+function refreshChoiceMarks(){$('showcaseChoices').querySelectorAll('button[data-id]').forEach(b=>{const on=selected.includes(b.dataset.id);b.setAttribute('aria-pressed',String(on));b.querySelector('.showcase-choice-mark').textContent=on?'✓':'+';});}
+function preferenceSnapshot(){const map=cardsById();
+ return {background:color($('showcaseBg').value,'#141d3d'),secondary:color($('showcaseBg2').value,'#272047'),accent:color($('showcaseAccent').value,'#9fd8ff'),
+  cards:selected.filter(id=>map.has(id)).map(id=>{const c=map.get(id);return {id,rarity:(c.edition==='strongest'||c.edition==='hoshi')?'special':cardRarityFor(c.testOnlyNinja?{id:c.id}:c,c.rank)};}),
+  showDiscord:privacy.discord,showAni:privacy.anilist,avatar:identity().avatar,discord:privacy.discord?String(playerName||'').slice(0,80)||null:null,
+  anilist:privacy.anilist?String((currentAccount&&currentAccount.anilist)||'').slice(0,80)||null:null};}
 function previewDraft(){if(!myId()||ownerId!==myId())return;buildView(Object.assign(identity(),preferenceSnapshot()));}
-function enqueue(me,patch,notify){saveQueue=saveQueue.catch(()=>{}).then(()=>window.sakuRpc('showcase_save',{p_background:patch.background,p_secondary:patch.secondary,p_accent:patch.accent,p_cards:(patch.cards||[]).map(c=>String(c.id)),p_show_discord:!!patch.showDiscord,p_show_anilist:!!patch.showAni,p_anilist:patch.showAni?String(currentAccount&&currentAccount.anilist||'').slice(0,80)||null:null})).then(data=>{if(data&&me===myId())lastData=data;if(notify&&me===myId()&&ownerId===me)txt('showcaseSaveStatus',tr('Changes saved.'));}).catch(()=>{if(me===myId()&&ownerId===me)txt('showcaseSaveStatus',tr('Could not save changes. Try again.'));});}
-function queueSave(immediate){const me=myId();if(!me||ownerId!==me||loadedId!==me)return;clearTimeout(saveTimer);const patch=preferenceSnapshot();txt('showcaseSaveStatus',tr('Saving…'));if(immediate)enqueue(me,patch,true);else saveTimer=setTimeout(()=>enqueue(me,patch,true),300);}
+function showSaved(){previewDraft();}
+function changed(){setDirty(true);theme(preferenceSnapshot());}
+async function saveNow(){
+ const me=myId();if(!me||ownerId!==me||loadedId!==me||saving)return false;
+ saving=true;$('showcaseSave').disabled=true;$('showcaseSaveFromPreview').disabled=true;txt('showcaseSaveStatus',tr('Saving…'));
+ const patch=preferenceSnapshot();
+ try{const data=await window.sakuRpc('showcase_save',{p_background:patch.background,p_secondary:patch.secondary,p_accent:patch.accent,p_cards:patch.cards.map(c=>String(c.id)),p_show_discord:!!patch.showDiscord,p_show_anilist:!!patch.showAni,p_anilist:patch.showAni?patch.anilist:null});
+  if(me!==myId())return false;if(data)lastData=data;saved=inputsState();setDirty(false);closeEditor(true);
+  if(typeof showNotification==='function')showNotification(tr('Showcase saved.'));return true;
+ }catch(e){txt('showcaseSaveStatus',tr('Could not save changes. Try again.'));return false;}
+ finally{saving=false;$('showcaseSave').disabled=false;$('showcaseSaveFromPreview').disabled=false;}
+}
+function openEditor(){if(!myId()||ownerId!==myId()||loadedId!==myId())return;
+ lastFocus=document.activeElement;saved=inputsState();editing=true;previewing=false;choiceLimit=60;$('showcaseSearch').value='';
+ $('showcasePreviewBar').hidden=true;$('showcaseEditor').hidden=false;$('showcaseEdit').setAttribute('aria-expanded','true');document.body.classList.add('showcase-modal-open');
+ renderOrder();renderChoices();setDirty(false);$('showcaseModalBody').scrollTop=0;
+ setTimeout(()=>{try{$('showcaseClose').focus();}catch(e){}},30);}
+function closeEditor(keep){
+ if(!keep&&dirty&&!window.confirm(tr('Discard your unsaved changes?')))return false;
+ if(!keep&&saved){applyState(saved);}
+ editing=false;previewing=false;$('showcaseEditor').hidden=true;$('showcasePreviewBar').hidden=true;$('showcaseEdit').setAttribute('aria-expanded','false');
+ document.body.classList.remove('showcase-modal-open');setDirty(false);showSaved();
+ try{(lastFocus&&document.contains(lastFocus)?lastFocus:$('showcaseEdit')).focus();}catch(e){}return true;}
+function startPreview(){previewing=true;$('showcaseEditor').hidden=true;document.body.classList.remove('showcase-modal-open');$('showcasePreviewBar').hidden=false;
+ previewDraft();try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){}setTimeout(()=>{try{$('showcaseBackToEdit').focus();}catch(e){}},30);}
+function backToEdit(){previewing=false;$('showcasePreviewBar').hidden=true;$('showcaseEditor').hidden=false;document.body.classList.add('showcase-modal-open');previewDraft();
+ setTimeout(()=>{try{$('showcasePreviewBtn').focus();}catch(e){}},30);}
+function moveCard(id,to){const from=selected.indexOf(id);if(from<0)return;to=Math.max(0,Math.min(selected.length-1,to));if(to===from)return;selected.splice(from,1);selected.splice(to,0,id);renderOrder();changed();}
+/* Réordonner : appui long (≈0,35 s) sur une carte, puis glisser. Les flèches ‹ › restent disponibles (clavier, accessibilité). */
+function setupReorder(list,scroller){
+ let press=null,drag=null,raf=0;
+ const HOLD=350,SLOP=8;
+ function cancelPress(){if(press){clearTimeout(press.timer);press.item.classList.remove('is-pressing');press=null;}}
+ function items(){return Array.from(list.querySelectorAll('.showcase-order-item'));}
+ function begin(){if(!press)return;const p=press;press=null;p.item.classList.remove('is-pressing');
+  const r=p.item.getBoundingClientRect(),ghost=p.item.cloneNode(true);ghost.classList.add('showcase-order-ghost');ghost.removeAttribute('role');ghost.setAttribute('aria-hidden','true');
+  ghost.style.width=r.width+'px';ghost.style.height=r.height+'px';ghost.style.left=r.left+'px';ghost.style.top=r.top+'px';document.body.appendChild(ghost);
+  p.item.classList.add('is-placeholder');document.body.classList.add('showcase-dragging');
+  drag={item:p.item,id:p.item.dataset.id,ghost,dx:p.x-r.left,dy:p.y-r.top,x:p.x,y:p.y,pointerId:p.pointerId};
+  try{list.setPointerCapture(p.pointerId);}catch(e){}
+  try{if(navigator.vibrate)navigator.vibrate(12);}catch(e){}
+  position();}
+ function position(){if(!drag)return;drag.ghost.style.transform='translate('+(drag.x-drag.dx-parseFloat(drag.ghost.style.left))+'px,'+(drag.y-drag.dy-parseFloat(drag.ghost.style.top))+'px) scale(1.06)';}
+ function reflow(){if(!drag)return;const others=items().filter(el=>el!==drag.item);let best=null,bestD=Infinity;
+  others.forEach(el=>{const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,d=Math.hypot(drag.x-cx,(drag.y-cy)*1.4);if(d<bestD){bestD=d;best={el,cx,cy,r};}});
+  if(!best)return;const after=Math.abs(drag.y-best.cy)>best.r.height/2?drag.y>best.cy:drag.x>best.cx;
+  const ref=after?best.el.nextSibling:best.el;if(ref!==drag.item&&ref!==drag.item.nextSibling)list.insertBefore(drag.item,ref);
+  if(scroller){const sr=scroller.getBoundingClientRect();if(drag.y<sr.top+40)scroller.scrollTop-=12;else if(drag.y>sr.bottom-40)scroller.scrollTop+=12;}}
+ function finish(commit){if(!drag)return;const d=drag;drag=null;cancelAnimationFrame(raf);d.ghost.remove();d.item.classList.remove('is-placeholder');document.body.classList.remove('showcase-dragging');
+  try{list.releasePointerCapture(d.pointerId);}catch(e){}
+  if(commit){const order=items().map(el=>el.dataset.id);if(order.join()!==selected.join()){selected=order;renderOrder();changed();return;}}renderOrder();}
+ list.addEventListener('pointerdown',e=>{if(drag||(e.pointerType==='mouse'&&e.button!==0))return;const item=e.target.closest('.showcase-order-item');if(!item||e.target.closest('button'))return;
+  cancelPress();item.classList.add('is-pressing');press={item,x:e.clientX,y:e.clientY,pointerId:e.pointerId,timer:setTimeout(begin,HOLD)};});
+ list.addEventListener('pointermove',e=>{if(drag){if(e.pointerId!==drag.pointerId)return;drag.x=e.clientX;drag.y=e.clientY;position();cancelAnimationFrame(raf);raf=requestAnimationFrame(reflow);e.preventDefault();return;}
+  if(press){press.x2=e.clientX;if(Math.hypot(e.clientX-press.x,e.clientY-press.y)>SLOP)cancelPress();}});
+ list.addEventListener('pointerup',()=>{if(drag)finish(true);else cancelPress();});
+ list.addEventListener('pointercancel',()=>{if(drag)finish(true);else cancelPress();});
+ list.addEventListener('lostpointercapture',()=>{if(drag)finish(true);});
+ list.addEventListener('touchmove',e=>{if(drag)e.preventDefault();},{passive:false});
+ list.addEventListener('contextmenu',e=>{if(press||drag||e.target.closest('.showcase-order-item'))e.preventDefault();});
+ list.addEventListener('dragstart',e=>e.preventDefault());
+ document.addEventListener('keydown',e=>{if(drag&&e.key==='Escape'){finish(false);}});
+}
 async function open(id){
  const token=++request,me=myId();ownerId=id&&validId(id)?String(id):me;loadedId=null;selected=[];choiceLimit=60;
- $('showcaseGuest').hidden=true;$('showcaseEditor').hidden=true;$('showcaseEdit').hidden=true;$('showcaseEdit').setAttribute('aria-expanded','false');$('showcasePreview').hidden=true;txt('showcaseStatus','');txt('showcaseSaveStatus','');theme({});
+ $('showcaseGuest').hidden=true;$('showcaseEditor').hidden=true;$('showcasePreviewBar').hidden=true;editing=false;previewing=false;dirty=false;saved=null;document.body.classList.remove('showcase-modal-open');$('showcaseEdit').hidden=true;$('showcaseEdit').setAttribute('aria-expanded','false');$('showcasePreview').hidden=true;txt('showcaseStatus','');txt('showcaseSaveStatus','');theme({});
  if(!ownerId){$('showcaseGuest').hidden=false;return;}txt('showcaseStatus',tr('Loading showcase…'));
  try{const data=await window.sakuRpc('showcase_get',{p_owner:ownerId===me?null:ownerId});if(token!==request)return;if(ownerId===me)lastData=data;loadedId=ownerId;if(window.sakuDataReady)await window.sakuDataReady;if(token!==request)return;
   if(ownerId===me){if(!data)throw Error('public showcase unavailable');const map=new Set(myCards().map(c=>String(c.id)));selected=(Array.isArray(data.cards)?data.cards.map(c=>String(c.id)):[]).filter(id=>map.has(id)).slice(0,10);privacy={discord:data.showDiscord===true,anilist:data.showAni===true};$('showcaseShowDiscord').checked=privacy.discord;$('showcaseShowAni').checked=privacy.anilist;
@@ -65,16 +162,33 @@ async function open(id){
  }catch(e){if(token===request)txt('showcaseStatus',tr(String(e&&e.message)==='unavailable'?'This player’s showcase is unavailable.':'Could not load the showcase. Please try again.'));}
 }
 function refreshPublic(){}
-window.sakuShowcaseProgressChanged=function(){if(ownerId&&ownerId===myId()&&loadedId===ownerId&&!$('showcasePreview').hidden&&window.sakuRpc)window.sakuRpc('showcase_get',{p_owner:null}).then(d=>{if(d&&ownerId===myId()){lastData=d;previewDraft();}}).catch(()=>{});};
+window.sakuShowcaseProgressChanged=function(){if(ownerId&&ownerId===myId()&&loadedId===ownerId&&!$('showcasePreview').hidden&&window.sakuRpc)window.sakuRpc('showcase_get',{p_owner:null}).then(d=>{if(d&&ownerId===myId()){lastData=d;if(!editing)previewDraft();}}).catch(()=>{});};
 window.sakuShowcaseDetach=function(){lastData=null;privacy={discord:false,anilist:false};};
 window.sakuShowcaseAttach=function(){window.sakuShowcaseDetach();};
 window.showShowcase=function(id){id=validId(id)?String(id):'';showScreen('showcaseScreen');if(id){try{history.replaceState(null,'','#/showcase/'+encodeURIComponent(id));}catch(e){}}open(id);try{window.scrollTo(0,0);}catch(e){}};
 document.addEventListener('DOMContentLoaded',()=>{
- function edit(on){$('showcaseEditor').hidden=!on;$('showcaseEdit').setAttribute('aria-expanded',String(on));if(on){renderChoices();$('showcaseEditor').scrollIntoView({behavior:'smooth',block:'start'});}else $('showcaseEdit').focus();}
- $('showcaseEdit').addEventListener('click',()=>edit($('showcaseEditor').hidden));$('showcaseDone').addEventListener('click',()=>edit(false));
- $('showcaseChoices').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(!b)return;const id=b.dataset.id,i=selected.indexOf(id);if(i>=0)selected.splice(i,1);else if(selected.length<10)selected.push(id);else{txt('showcaseSaveStatus',tr('Choose up to 10 cards.'));return;}b.setAttribute('aria-pressed',String(selected.includes(id)));b.querySelector('.showcase-choice-mark').textContent=selected.includes(id)?'✓':'+';txt('showcaseSelectedCount',selected.length+' / 10');previewDraft();queueSave();});
- $('showcaseSearch').addEventListener('input',()=>{choiceLimit=60;$('showcaseChoices').scrollTop=0;renderChoices();});$('showcaseMore').addEventListener('click',()=>{choiceLimit+=60;renderChoices();});
- ['showcaseBg','showcaseBg2','showcaseAccent'].forEach(id=>$(id).addEventListener('input',()=>{previewDraft();queueSave();}));
- ['showcaseShowDiscord','showcaseShowAni'].forEach(id=>$(id).addEventListener('change',()=>{privacy={discord:$('showcaseShowDiscord').checked,anilist:$('showcaseShowAni').checked};lastIdentity=null;previewDraft();queueSave(true);}));
+ $('showcaseEdit').addEventListener('click',openEditor);
+ $('showcaseClose').addEventListener('click',()=>closeEditor(false));
+ $('showcaseCancel').addEventListener('click',()=>closeEditor(false));
+ $('showcaseSave').addEventListener('click',saveNow);
+ $('showcaseSaveFromPreview').addEventListener('click',saveNow);
+ $('showcasePreviewBtn').addEventListener('click',startPreview);
+ $('showcaseBackToEdit').addEventListener('click',backToEdit);
+ $('showcaseEditor').addEventListener('click',e=>{if(e.target===$('showcaseEditor'))closeEditor(false);});
+ document.addEventListener('keydown',e=>{if(e.key!=='Escape'||document.body.classList.contains('showcase-dragging'))return;if(previewing){e.preventDefault();backToEdit();}else if(editing){e.preventDefault();closeEditor(false);}});
+ $('showcaseChoices').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(!b)return;
+  const id=b.dataset.id,i=selected.indexOf(id);
+  if(i>=0)selected.splice(i,1);else if(selected.length<10)selected.push(id);else{txt('showcaseSaveStatus',tr('Choose up to 10 cards.'));return;}
+  refreshChoiceMarks();renderOrder();changed();});
+ $('showcaseOrder').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const item=b.closest('.showcase-order-item');if(!item)return;const id=item.dataset.id;
+  if(b.dataset.remove){selected=selected.filter(x=>x!==id);renderOrder();refreshChoiceMarks();changed();}
+  else if(b.dataset.move){moveCard(id,selected.indexOf(id)+Number(b.dataset.move));const again=$('showcaseOrder').querySelector('.showcase-order-item[data-id="'+CSS.escape(id)+'"] button[data-move="'+b.dataset.move+'"]');if(again&&!again.disabled)again.focus();}});
+ setupReorder($('showcaseOrder'),$('showcaseModalBody'));
+ $('showcaseSearch').addEventListener('input',()=>{choiceLimit=60;$('showcaseChoices').scrollTop=0;renderChoices();});
+ $('showcaseMore').addEventListener('click',()=>{choiceLimit+=60;renderChoices();});
+ ['showcaseBg','showcaseBg2','showcaseAccent'].forEach(id=>$(id).addEventListener('input',changed));
+ ['showcaseShowDiscord','showcaseShowAni'].forEach(id=>$(id).addEventListener('change',()=>{privacy={discord:$('showcaseShowDiscord').checked,anilist:$('showcaseShowAni').checked};lastIdentity=null;changed();}));
+ try{new MutationObserver(()=>{if((editing||previewing)&&!$('showcaseScreen').classList.contains('active')){dirty=false;closeEditor(false);}}).observe($('showcaseScreen'),{attributes:true,attributeFilter:['class']});}catch(e){}
+ window.addEventListener('beforeunload',e=>{if(dirty&&(editing||previewing)){e.preventDefault();e.returnValue='';}});
 });
 })();
