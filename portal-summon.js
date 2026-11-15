@@ -12,7 +12,7 @@ async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s
 window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0));updateFreeArtwork();refreshDashboard()};
 window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws);if(n>0){freeDraws-=n;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
 const lang=()=>((window.SAKU_I18N||{}).lang||'en');
-const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas'}};
+const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes',skip:'Clique pour passer'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards',skip:'Tap to skip'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas',skip:'Pulsa para saltar'}};
 const tr=k=>(dict[lang()]||dict.en)[k]||k,uid=()=>window.sakuSecureUserId||null;
 function notice(k){if(typeof showNotification==='function')showNotification(tr(k));}
 function safe(n){return Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):0;}
@@ -88,15 +88,49 @@ async function buy(i,n){
 window.sakuPortalBuy=buy;
 function animateDrop(i,n,done){let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide){done();return}let tray=document.createElement('div');tray.className='portal-falling';tray.setAttribute('aria-hidden','true');for(let x=0;x<n;x++){let img=document.createElement('img');img.src='summon-machines/pack-'+keys[i]+'.png';img.style.setProperty('--pack-n',x);img.style.setProperty('--pack-total',n);tray.appendChild(img)}slide.appendChild(tray);clearTimeout(fallTimer);let ms=matchMedia('(prefers-reduced-motion: reduce)').matches?120:1250;fallTimer=setTimeout(()=>{if(window.SakuSfx)SakuSfx.play('drop');tray.remove();done()},ms)}
 function modalEl(){if(modal)return modal;modal=document.createElement('div');modal.id='portalOpenModal';modal.className='portal-open-modal';modal.hidden=true;modal.innerHTML='<div class="portal-open-panel" role="dialog" aria-modal="true" aria-labelledby="portalOpenTitle"><header><div><span>SAKUGAME / PORTALS</span><h2 id="portalOpenTitle"></h2></div><button type="button" class="portal-open-dismiss" aria-label="Close">×</button></header><div id="portalOpenBody"></div></div>';document.body.appendChild(modal);modal.querySelector('.portal-open-dismiss').onclick=closeModal;return modal;}
-function closeModal(){if(!modal)return;if(pending&&pending.phase==='reveal'&&uid()===session){finish();return}clearTimeout(autoTimer);clearTimeout(revealTimer);modal.hidden=true;document.body.classList.remove('portal-modal-open');}
+function closeModal(){if(!modal)return;if(typeof dropPackSkip==='function')dropPackSkip();if(pending&&pending.phase==='reveal'&&uid()===session){finish();return}clearTimeout(autoTimer);clearTimeout(revealTimer);modal.hidden=true;document.body.classList.remove('portal-modal-open');}
 function openModal(){if(!pending||!uid())return;session=uid();let m=modalEl();m.hidden=false;document.body.classList.add('portal-modal-open');$('portalOpenTitle').textContent=names[pending.portal]+' · '+pending.count+' '+(pending.count===1?(lang()==='es'?'sobre':'booster'):tr('packs'));m.querySelector('.portal-open-panel').classList.toggle('portal-results-mode',pending.phase==='reveal');let body=$('portalOpenBody');body.innerHTML='';body.classList.remove('portal-automatic');if(pending.phase==='reveal'){renderResults(body);m.querySelector('.portal-open-panel').scrollTop=0;return}
  let text=document.createElement('p');text.className='portal-open-instruction';text.textContent=tr('click');body.appendChild(text);let button=document.createElement('button');button.className='portal-open-pack';button.type='button';button.setAttribute('aria-label',tr('click'));let src='summon-machines/pack-'+keys[pending.portal]+'.png';button.innerHTML='<span class="portal-pack-art"><img class="portal-pack-base" alt="" src="'+src+'"><img class="portal-pack-lid" alt="" src="'+src+'"><i class="portal-pack-flash"></i></span><span class="portal-pack-count">×'+pending.count+'</span>';button.onclick=()=>openPack(button);body.appendChild(button);
  let label=document.createElement('label');label.className='portal-quick';let input=document.createElement('input');input.type='checkbox';input.checked=quick();input.onchange=()=>{setQuick(input.checked);if(input.checked&&pending&&pending.phase==='reveal'&&uid()===session){clearTimeout(revealTimer);openModal()}};label.append(input,document.createTextNode(' '+tr('quick')));body.appendChild(label);let later=document.createElement('button');later.type='button';later.className='portal-later';later.textContent=tr('later');later.onclick=closeModal;body.appendChild(later);button.focus();}
+/* Ouverture du booster : la mise en scène dépend de la meilleure carte obtenue.
+   burst = moment où le booster s'ouvre, total = moment où les cartes apparaissent (ms). */
+let packSkip=null;
+function dropPackSkip(){if(modal){delete modal.dataset.packTier;if(packSkip)modal.removeEventListener('click',packSkip,true)}packSkip=null}
+const PACK_RANK=['common','uncommon','rare','epic','legendary','mythic','special'];
+const PACK_FX={common:{burst:150,total:700},uncommon:{burst:150,total:760},rare:{burst:380,total:1050},epic:{burst:720,total:1450},legendary:{burst:1050,total:1900},mythic:{burst:1450,total:2400},special:{burst:1750,total:2800}};
+function bestRarity(packs){let b=0;(packs||[]).forEach(p=>(p||[]).forEach(c=>{const k=PACK_RANK.indexOf(c&&c.rarity);if(k>b)b=k}));return PACK_RANK[b];}
+function packFx(tier){
+ const sparks=Array.from({length:16},(_,k)=>'<i style="--a:'+(k*22.5+(k%3)*7)+'deg;--d:'+(70+(k*37)%55)+'%;--s:'+(.6+(k%4)*.18)+'"></i>').join('');
+ const stars=Array.from({length:14},(_,k)=>'<i style="--x:'+((k*53)%100)+'%;--y:'+((k*31+17)%100)+'%;--t:'+((k*0.13)%0.9).toFixed(2)+'s"></i>').join('');
+ const ticks=Array.from({length:12},(_,k)=>'<line x1="50" y1="4" x2="50" y2="'+(k%3?9:12)+'" transform="rotate('+(k*30)+' 50 50)"/>').join('');
+ const back='<span class="portal-fx portal-fx-back" aria-hidden="true"><i class="fx-aura"></i><i class="fx-rays"></i><i class="fx-pillar"></i><span class="fx-stars">'+stars+'</span>'+
+  (tier==='special'?'<svg class="fx-runes" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="38"/>'+ticks+'<path d="M50 14 L57 50 L50 86 L43 50 Z"/></svg>':'')+'</span>';
+ const front='<span class="portal-fx portal-fx-front" aria-hidden="true"><i class="fx-ring"></i><i class="fx-ring r2"></i><i class="fx-ring r3"></i><span class="fx-sparks">'+sparks+'</span></span>';
+ return {back,front};
+}
 async function openPack(btn){
  if(busy||!pending||uid()!==session)return;
- busy=true;btn.classList.add('opening');if(window.SakuSfx)SakuSfx.play('pack');const who=uid(),id=pending.id;
- try{pending.phase='reveal';const delay=quick()||matchMedia('(prefers-reduced-motion: reduce)').matches?60:700;
-  clearTimeout(revealTimer);revealTimer=setTimeout(()=>{if(uid()===who&&pending&&pending.id===id)openModal()},delay);
+ busy=true;const who=uid(),id=pending.id;
+ try{
+  const fast=quick()||matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tier=bestRarity(pending.packs),fx=PACK_FX[tier];
+  pending.phase='reveal';
+  if(!fast){
+   const art=btn.querySelector('.portal-pack-art'),parts=packFx(tier);
+   art.insertAdjacentHTML('afterbegin',parts.back);art.insertAdjacentHTML('beforeend',parts.front);
+   btn.dataset.tier=tier;btn.style.setProperty('--burst',fx.burst+'ms');
+   if(modal)modal.dataset.packTier=tier;
+  }
+  btn.classList.add('opening');
+  if(window.SakuSfx)SakuSfx.play('pack',fast?'common':tier,fast?0:fx.burst/1000);
+  const reveal=()=>{clearTimeout(revealTimer);dropPackSkip();if(uid()===who&&pending&&pending.id===id)openModal()};
+  const skip=e=>{if(!modal||!modal.dataset.packTier||e.target.closest('.portal-open-dismiss'))return;e.stopPropagation();reveal()};
+  clearTimeout(revealTimer);revealTimer=setTimeout(reveal,fast?60:fx.total);
+  if(!fast&&fx.total>1000&&modal){
+   setTimeout(()=>{if(modal&&modal.dataset.packTier===tier&&!packSkip){packSkip=skip;modal.addEventListener('click',skip,true)}},250);
+   const text=modal.querySelector('.portal-open-instruction');if(text)text.textContent=tr('skip');
+   const q=modal.querySelector('.portal-quick'),l=modal.querySelector('.portal-later');if(q)q.style.visibility='hidden';if(l)l.style.visibility='hidden';
+  }
  }finally{busy=false}
 }
 /* The previous opening: one card on the central stage, first click turns

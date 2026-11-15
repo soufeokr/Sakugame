@@ -3663,3 +3663,92 @@ body.anime-modal-open{overflow:hidden}
 .anime-modal-body{overflow:auto;overscroll-behavior:contain;padding:12px 20px 20px}
 @media(max-width:700px){.cards-view-switch{width:100%}.cards-view-switch button{flex:1}.anime-modal{padding:0}.anime-modal-panel{max-height:100dvh;height:100dvh;border-radius:0;border:0}.anime-modal-head{padding:14px;gap:12px}.anime-modal-head .anime-cover{width:58px;height:58px}.anime-modal-id h2{font-size:1.1rem}.anime-modal-tools{padding:8px 14px 0}.anime-modal-body{padding:10px 12px 16px}.ac-upgradable{width:18px;height:18px}.ac-upgradable svg{width:11px;height:11px}.saku-stars svg{width:9px;height:9px}}
 .cards-tools input[type="search"]#cardsSearch{flex:1 1 200px}.strongest-tile .saku-stars svg{width:11px;height:11px}
+/* ===== Ouverture de booster selon la meilleure rareté ===== */
+.portal-open-pack[data-tier=common]{--fx:#cdd9e6}.portal-open-pack[data-tier=uncommon]{--fx:#3eeeb5}.portal-open-pack[data-tier=rare]{--fx:#52e8ff}.portal-open-pack[data-tier=epic]{--fx:#c49fff}.portal-open-pack[data-tier=legendary]{--fx:#ffd06e}.portal-open-pack[data-tier=mythic]{--fx:#b5d7ff}.portal-open-pack[data-tier=special]{--fx:#e8c469}
+.portal-open-pack[data-tier] .portal-pack-art{isolation:isolate}
+.portal-open-pack[data-tier] .portal-pack-base,.portal-open-pack[data-tier] .portal-pack-lid{z-index:2}
+.portal-fx{position:absolute;inset:0;pointer-events:none;display:block}
+.portal-fx-back{z-index:0}.portal-fx-front{z-index:3}
+.portal-fx i,.portal-fx span{position:absolute;display:block}
+/* flash et timing communs */
+.portal-open-pack.opening[data-tier]{animation:none}
+.portal-open-pack.opening[data-tier] .portal-pack-lid{animation:portal-lid .7s var(--burst) ease-out forwards}
+.portal-open-pack.opening[data-tier] .portal-pack-base{animation:portal-pack-away .65s calc(var(--burst) + 50ms) ease-in forwards}
+.portal-open-pack.opening[data-tier] .portal-pack-flash{z-index:4;background:radial-gradient(circle,#fff 0%,color-mix(in srgb,var(--fx) 80%,transparent) 26%,transparent 70%);animation:portal-flash .6s var(--burst) ease-out forwards}
+.portal-open-pack.opening[data-tier] .portal-pack-art{animation:none}
+/* anneaux et étincelles (éclatement) */
+.fx-ring{left:50%;top:42%;width:60%;aspect-ratio:1;border-radius:50%;border:2px solid var(--fx);box-shadow:0 0 18px var(--fx),inset 0 0 14px var(--fx);opacity:0;transform:translate(-50%,-50%) scale(.2)}
+.fx-sparks{inset:0}.fx-sparks i{left:50%;top:42%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px var(--fx);opacity:0}
+.portal-open-pack.opening .fx-ring{animation:fx-ring .8s var(--burst) cubic-bezier(.2,.7,.3,1) forwards}
+.portal-open-pack.opening .fx-ring.r2{animation-delay:calc(var(--burst) + 120ms)}
+.portal-open-pack.opening .fx-ring.r3{animation-delay:calc(var(--burst) + 240ms)}
+.portal-open-pack.opening .fx-sparks i{animation:fx-spark-out .9s var(--burst) cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes fx-ring{0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.6)}}
+@keyframes fx-spark-out{0%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(var(--s))}100%{opacity:0;transform:rotate(var(--a)) translateY(calc(var(--d) * -3.2)) scale(.2)}}
+/* commun / peu commun : seulement le flash + un anneau */
+.portal-open-pack[data-tier=common] .fx-ring:not(.r2):not(.r3),.portal-open-pack[data-tier=uncommon] .fx-ring:not(.r2):not(.r3){border-width:1px}
+.portal-open-pack[data-tier=common] .fx-ring.r2,.portal-open-pack[data-tier=common] .fx-ring.r3,.portal-open-pack[data-tier=uncommon] .fx-ring.r3,.portal-open-pack[data-tier=common] .fx-sparks,.portal-open-pack[data-tier=uncommon] .fx-sparks,.portal-open-pack[data-tier=rare] .fx-ring.r3{display:none}
+.portal-open-pack.opening[data-tier=common] .portal-pack-art,.portal-open-pack.opening[data-tier=uncommon] .portal-pack-art{animation:portal-jolt .35s ease-out both}
+/* aura (rare et plus) */
+.fx-aura{left:50%;top:45%;width:120%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;background:radial-gradient(circle,color-mix(in srgb,var(--fx) 55%,transparent),transparent 65%);filter:blur(6px)}
+.portal-open-pack.opening .fx-aura{animation:fx-aura var(--burst) ease-in forwards}
+.portal-open-pack.opening[data-tier=common] .fx-aura,.portal-open-pack.opening[data-tier=uncommon] .fx-aura{display:none}
+@keyframes fx-aura{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}100%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}}
+/* RARE : deux secousses, lueur cyan */
+.portal-open-pack.opening[data-tier=rare] .portal-pack-art{animation:fx-shake2 var(--burst) ease-in-out both}
+@keyframes fx-shake2{0%{filter:none}20%{transform:rotate(-4deg)}40%{transform:rotate(4deg)}60%{transform:rotate(-3deg)}80%{transform:rotate(2deg)}100%{transform:none;filter:drop-shadow(0 0 14px var(--fx))}}
+/* ÉPIQUE : recul, tremblement, étincelles aspirées */
+.portal-open-pack.opening[data-tier=epic] .portal-pack-art{animation:fx-charge var(--burst) cubic-bezier(.5,0,.8,.4) both}
+@keyframes fx-charge{0%{transform:none}30%{transform:scale(.93)}40%{transform:scale(.93) translate(-2px,1px)}50%{transform:scale(.92) translate(2px,-1px)}60%{transform:scale(.92) translate(-3px,0)}70%{transform:scale(.91) translate(3px,1px)}80%{transform:scale(.91) translate(-3px,-1px)}90%{transform:scale(.9) translate(3px,0)}100%{transform:scale(1.05);filter:drop-shadow(0 0 22px var(--fx)) brightness(1.3)}}
+.portal-open-pack.opening[data-tier=epic] .fx-sparks i{animation:fx-spark-in calc(var(--burst) - 80ms) ease-in both,fx-spark-out .9s var(--burst) cubic-bezier(.15,.7,.3,1) forwards}
+@keyframes fx-spark-in{0%{opacity:0;transform:rotate(var(--a)) translateY(calc(var(--d) * -2.4)) scale(var(--s))}25%{opacity:1}100%{opacity:1;transform:rotate(var(--a)) translateY(0) scale(.4)}}
+/* LÉGENDAIRE : rayons dorés, lévitation, tremblement croissant */
+.fx-rays{left:50%;top:44%;width:260%;aspect-ratio:1;transform:translate(-50%,-50%);opacity:0;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--fx) 45%,transparent) 0deg 6deg,transparent 6deg 22deg);
+  -webkit-mask:radial-gradient(circle,#000 8%,transparent 62%);mask:radial-gradient(circle,#000 8%,transparent 62%)}
+.portal-open-pack.opening[data-tier=legendary] .fx-rays,.portal-open-pack.opening[data-tier=mythic] .fx-rays,.portal-open-pack.opening[data-tier=special] .fx-rays{animation:fx-rays calc(var(--burst) + 900ms) linear forwards}
+@keyframes fx-rays{0%{opacity:0;transform:translate(-50%,-50%) rotate(0) scale(.6)}35%{opacity:.9}75%{opacity:1;transform:translate(-50%,-50%) rotate(55deg) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(80deg) scale(1.25)}}
+.portal-open-pack.opening[data-tier=legendary] .portal-pack-art{animation:fx-rise var(--burst) cubic-bezier(.4,0,.6,1) both}
+@keyframes fx-rise{0%{transform:none}25%{transform:translateY(-10px)}45%{transform:translateY(-14px) rotate(-1.5deg)}55%{transform:translateY(-14px) rotate(1.5deg)}65%{transform:translateY(-15px) rotate(-2.5deg)}75%{transform:translateY(-15px) rotate(2.5deg)}85%{transform:translateY(-16px) rotate(-3.5deg)}93%{transform:translateY(-16px) rotate(3.5deg)}100%{transform:translateY(-16px) scale(1.08);filter:drop-shadow(0 0 28px var(--fx)) brightness(1.45)}}
+/* MYTHIQUE : nuit étoilée, colonne de lumière glacée */
+.fx-stars{inset:-60% -90%}.fx-stars i{left:var(--x);top:var(--y);width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 6px 1px var(--fx);opacity:0}
+.portal-open-pack.opening[data-tier=mythic] .fx-stars i,.portal-open-pack.opening[data-tier=special] .fx-stars i{animation:fx-twinkle 1.1s var(--t) ease-in-out infinite}
+@keyframes fx-twinkle{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
+.fx-pillar{left:50%;top:-140%;width:46%;height:330%;transform:translateX(-50%) scaleX(0);opacity:0;border-radius:50%;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--fx) 70%,transparent) 30%,#fff 50%,color-mix(in srgb,var(--fx) 70%,transparent) 70%,transparent);filter:blur(5px)}
+.portal-open-pack.opening[data-tier=mythic] .fx-pillar{animation:fx-pillar calc(var(--burst) + 600ms) ease-in forwards}
+@keyframes fx-pillar{0%,45%{opacity:0;transform:translateX(-50%) scaleX(0)}80%{opacity:.95;transform:translateX(-50%) scaleX(.55)}100%{opacity:0;transform:translateX(-50%) scaleX(1.6)}}
+.portal-open-pack.opening[data-tier=mythic] .portal-pack-art{animation:fx-levitate var(--burst) cubic-bezier(.45,0,.55,1) both}
+@keyframes fx-levitate{0%{transform:none;filter:none}40%{transform:translateY(-22px);filter:drop-shadow(0 0 12px var(--fx))}70%{transform:translateY(-26px) rotate(-1deg)}80%{transform:translateY(-26px) rotate(1.5deg)}90%{transform:translateY(-27px) rotate(-2deg)}100%{transform:translateY(-28px) scale(1.1);filter:drop-shadow(0 0 34px var(--fx)) brightness(1.7) saturate(.7)}}
+/* SPÉCIALE : noir total, cercle de runes doré, rotation */
+.fx-runes{position:absolute;left:50%;top:44%;width:170%;transform:translate(-50%,-50%);overflow:visible;fill:none;stroke:var(--fx);stroke-width:.8;filter:drop-shadow(0 0 3px var(--fx));opacity:0}
+.fx-runes circle,.fx-runes path{stroke-dasharray:300;stroke-dashoffset:300}
+.fx-runes path{fill:color-mix(in srgb,var(--fx) 18%,transparent);stroke-width:.6}
+.portal-open-pack.opening[data-tier=special] .fx-runes{animation:fx-runes calc(var(--burst) + 500ms) ease-out forwards}
+.portal-open-pack.opening[data-tier=special] .fx-runes circle,.portal-open-pack.opening[data-tier=special] .fx-runes path{animation:fx-draw calc(var(--burst) - 300ms) ease-in-out forwards}
+@keyframes fx-runes{0%{opacity:0;transform:translate(-50%,-50%) rotate(-60deg) scale(.8)}20%{opacity:1}85%{opacity:1;transform:translate(-50%,-50%) rotate(30deg) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(1.5)}}
+@keyframes fx-draw{to{stroke-dashoffset:0}}
+.portal-open-pack.opening[data-tier=special] .portal-pack-art{animation:fx-special var(--burst) cubic-bezier(.5,0,.5,1) both;perspective:600px}
+@keyframes fx-special{0%{transform:none;filter:none}30%{transform:translateY(-12px);filter:brightness(.25) drop-shadow(0 0 2px var(--fx))}70%{transform:translateY(-18px) rotateY(180deg);filter:brightness(.3) drop-shadow(0 0 8px var(--fx))}92%{transform:translateY(-20px) rotateY(360deg);filter:brightness(1) drop-shadow(0 0 20px var(--fx))}100%{transform:translateY(-20px) rotateY(360deg) scale(1.12);filter:brightness(1.6) drop-shadow(0 0 40px var(--fx))}}
+.portal-open-pack.opening[data-tier=special] .fx-ring{border-width:3px}
+/* assombrissement du panneau (légendaire et plus) */
+.portal-open-modal[data-pack-tier] .portal-open-panel{transition:box-shadow .5s ease,border-color .5s ease}
+.portal-open-modal[data-pack-tier=legendary] .portal-open-panel{box-shadow:0 22px 80px #000a,inset 0 0 0 2000px #0006;border-color:#ffd06e}
+.portal-open-modal[data-pack-tier=mythic] .portal-open-panel{box-shadow:0 22px 80px #000a,inset 0 0 0 2000px #000b;border-color:#b5d7ff;transition-duration:.9s}
+.portal-open-modal[data-pack-tier=special] .portal-open-panel{box-shadow:0 22px 80px #000a,inset 0 0 0 2000px #000e;border-color:#e8c469;transition-duration:.6s}
+.portal-open-modal[data-pack-tier] .portal-open-panel header{transition:opacity .5s}
+.portal-open-modal[data-pack-tier=mythic] .portal-open-panel header,.portal-open-modal[data-pack-tier=special] .portal-open-panel header{opacity:.25}
+.portal-open-modal[data-pack-tier] .portal-open-pack-wrap,.portal-open-modal[data-pack-tier] #portalOpenBody{cursor:pointer}
+.portal-open-modal[data-pack-tier] .portal-open-pack .portal-pack-count{opacity:0;transition:opacity .3s}
+.portal-open-modal[data-pack-tier] #portalOpenBody{overflow:visible}
+.portal-open-modal[data-pack-tier] .portal-open-panel{overflow:hidden}
+@media(prefers-reduced-motion:reduce){.portal-fx{display:none}}
+.portal-open-pack .portal-fx,.portal-open-pack .portal-fx span{background:none;border:0;padding:0;border-radius:0;right:auto;bottom:auto;color:inherit;font-weight:inherit}
+.portal-open-pack .portal-fx{inset:0}
+.portal-open-pack .portal-fx .fx-sparks{inset:0}
+.portal-open-pack .portal-fx .fx-stars{inset:-60% -90%}
+.portal-open-pack.opening[data-tier=special] .portal-pack-art{animation:fx-special-rise var(--burst) cubic-bezier(.5,0,.5,1) both;perspective:none}
+.portal-open-pack.opening[data-tier=special] .portal-pack-base{animation:fx-special-spin var(--burst) cubic-bezier(.5,0,.5,1) both,portal-pack-away .65s calc(var(--burst) + 50ms) ease-in forwards}
+.portal-open-pack.opening[data-tier=special] .portal-pack-lid{animation:fx-special-spin var(--burst) cubic-bezier(.5,0,.5,1) both,portal-lid .7s var(--burst) ease-out forwards}
+@keyframes fx-special-rise{0%{transform:none}30%{transform:translateY(-12px)}100%{transform:translateY(-20px) scale(1.1)}}
+@keyframes fx-special-spin{0%{transform:perspective(600px);filter:none}30%{transform:perspective(600px);filter:brightness(.22)}70%{transform:perspective(600px) rotateY(180deg);filter:brightness(.3)}92%{transform:perspective(600px) rotateY(360deg);filter:brightness(1) drop-shadow(0 0 14px #e8c469)}100%{transform:perspective(600px) rotateY(360deg);filter:brightness(1.6) drop-shadow(0 0 30px #e8c469)}}
