@@ -3752,3 +3752,4 @@ body.anime-modal-open{overflow:hidden}
 .portal-open-pack.opening[data-tier=special] .portal-pack-lid{animation:fx-special-spin var(--burst) cubic-bezier(.5,0,.5,1) both,portal-lid .7s var(--burst) ease-out forwards}
 @keyframes fx-special-rise{0%{transform:none}30%{transform:translateY(-12px)}100%{transform:translateY(-20px) scale(1.1)}}
 @keyframes fx-special-spin{0%{transform:perspective(600px);filter:none}30%{transform:perspective(600px);filter:brightness(.22)}70%{transform:perspective(600px) rotateY(180deg);filter:brightness(.3)}92%{transform:perspective(600px) rotateY(360deg);filter:brightness(1) drop-shadow(0 0 14px #e8c469)}100%{transform:perspective(600px) rotateY(360deg);filter:brightness(1.6) drop-shadow(0 0 30px #e8c469)}}
+.portal-open-pack.opening,.portal-open-pack:focus:not(:focus-visible){outline:none}
