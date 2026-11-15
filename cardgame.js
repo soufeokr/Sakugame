@@ -485,21 +485,46 @@ function cardsRenderTop() {
     btn.disabled = !cardPoolReady();
   }
 }
-/* ---------------- groupement par animé (mêmes regroupements que l'encyclopédie) ---------------- */
-let cardAlbumAnime = null;           // clé de l'animé ouvert dans la vue « Album par animé »
+/* ---------------- vue Personnages / Animés ---------------- */
+const CARD_PREFS_KEY = 'sakuCollectionPrefs';
+let cardView = 'cards';               // 'cards' (personnages) ou 'anime'
+let cardAnimeOpen = null;             // clé de l'animé ouvert dans la fenêtre
 let cardAnimeCache = null;
+let cardPrefsLoaded = false;
+function cardTr(s) { return (typeof t === 'function') ? t(s) : s; }
 function cardAnimeLabel(raw) { try { return (typeof translateAnimeTitle === 'function') ? (translateAnimeTitle(raw) || raw) : raw; } catch (e) { return raw; } }
+function cardEditionLabel(p) { return p && p.edition === 'hoshi' ? 'hoshi' : p && p.edition === 'strongest' ? 'the strongest' : ''; }
+/* Cartes Hoshi dont la série n'a pas le même nom que l'animé de l'encyclopédie. */
+const CARD_SPECIAL_ANIME = {
+  'evangelion': 'Neon Genesis Evangelion', 'le voyage de chihiro': 'Spirited Away', 'dragon ball super broly': 'Dragon Ball',
+  'josee le tigre et les poissons': 'Josee, the Tiger and the Fish', 'kuroko no basket': "Kuroko's Basketball",
+  'spider man spider verse': 'Spider-Man: Miles Morales', 'je veux manger ton pancreas': 'I Want to Eat Your Pancreas',
+  'bunny girl senpai': 'Rascal Does Not Dream of Bunny Girl Senpai', 'princesse mononoke': 'Princess Mononoke',
+  'monogatari': 'Monogatari Series', 'one piece film red': 'One Piece'
+};
+function cardNorm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
 function cardsAnimeGroups() {
   cardBuildPool();
   const encN = (typeof ENCYCLOPEDIA !== 'undefined' && ENCYCLOPEDIA && ENCYCLOPEDIA.list) ? ENCYCLOPEDIA.list.length : 0;
   if (cardAnimeCache && cardAnimeCache.n === cardPool.length && cardAnimeCache.enc === encN) return cardAnimeCache;
-  const byId = {}, groups = [], byKey = {};
-  const add = (key, label, edition) => { if (!byKey[key]) { byKey[key] = { key: key, label: label, edition: edition || '', ids: [] }; groups.push(byKey[key]); } return byKey[key]; };
+  const byId = {}, groups = [], byKey = {}, bySeries = {}, byLabel = {};
+  const add = (key, label) => { if (!byKey[key]) { byKey[key] = { key: key, label: label, ids: [] }; groups.push(byKey[key]); } return byKey[key]; };
+  const put = (g, id) => { if (!byId[id]) { byId[id] = g; g.ids.push(id); } };
+  const specials = [];
   if (encN) ENCYCLOPEDIA.list.forEach(b => {
-    const g = add('enc:' + b.label, b.edition === 'strongest' ? 'The Strongest' : b.edition === 'hoshi' ? 'Hoshi' : b.label, b.edition);
-    b.cards.forEach(c => { const id = String(c.i); if (cardPoolById[id] && !byId[id]) { byId[id] = g; g.ids.push(id); } });
+    if (b.edition) { b.cards.forEach(c => specials.push(String(c.i))); return; }
+    const g = add('enc:' + b.label, b.label); byLabel[cardNorm(b.label)] = g;
+    b.cards.forEach(c => { const id = String(c.i), p = cardPoolById[id]; if (!p) return; put(g, id); if (p.series && !bySeries[cardNorm(p.series)]) bySeries[cardNorm(p.series)] = g; });
   });
-  cardPool.forEach(c => { const id = String(c.id); if (byId[id]) return; const g = add('series:' + (c.series || '?'), c.series || '?', c.edition === 'hoshi' || c.edition === 'strongest' ? c.edition : ''); byId[id] = g; g.ids.push(id); });
+  // Hoshi / The Strongest : rangées avec leur animé (la recherche « hoshi » / « strongest » les retrouve).
+  cardPool.forEach(p => { if (p.edition && specials.indexOf(String(p.id)) < 0) specials.push(String(p.id)); });
+  specials.forEach(id => {
+    const p = cardPoolById[id]; if (!p || byId[id]) return;
+    const n = cardNorm(p.series), alias = CARD_SPECIAL_ANIME[n];
+    const g = bySeries[n] || byLabel[n] || (alias && byLabel[cardNorm(alias)]) || add('series:' + (p.series || '?'), p.series || '?');
+    put(g, id);
+  });
+  cardPool.forEach(c => { const id = String(c.id); if (byId[id]) return; put(bySeries[cardNorm(c.series)] || add('series:' + (c.series || '?'), c.series || '?'), id); });
   const live = groups.filter(g => g.ids.length);
   cardAnimeCache = { n: cardPool.length, enc: encN, byId: byId, groups: live, byKey: byKey };
   return cardAnimeCache;
@@ -509,67 +534,151 @@ function cardsLevelOf(id) {
   const ct = window.sakuCardLevelCounts(cardState, String(id));
   return [3, 2, 1].find(n => ct[n]) || 0;
 }
-function cardsStarMark(id, count) { const lv = count ? cardsLevelOf(id) : 0; return lv ? '<span class="detail-star-mark">' + '★'.repeat(lv) + '</span>' : ''; }
-function cardsSetAnime(key) {
-  cardAlbumAnime = key || null; cardAlbumLimit = CARD_ALBUM_STEP;
-  cardsRenderAlbum();
-  const tools = document.querySelector('#collectionScreen .cards-tools');
-  if (tools && tools.getBoundingClientRect().top < 0) try { tools.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+function cardsCanUpgrade(id) { return !!(window.sakuCardLevelInfo && cardState && window.sakuCardLevelInfo(cardState, String(id)).canUpgrade); }
+function cardsBadges(id, count) {
+  if (!count) return '';
+  const lv = cardsLevelOf(id), up = cardsCanUpgrade(id);
+  if (!lv && !up) return '';
+  return '<span class="ac-badges">' + (lv && window.sakuStarBadge ? window.sakuStarBadge(lv) : '') +
+    (up ? '<span class="ac-upgradable" title="' + escapeHtml(cardTr('Can be upgraded')) + '" aria-label="' + escapeHtml(cardTr('Can be upgraded')) + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6m0 0-6 6m6-6 6 6"/></svg></span>' : '') + '</span>';
 }
 const cardAnimeCollator = (typeof Intl !== 'undefined' && Intl.Collator) ? new Intl.Collator(undefined, { sensitivity: 'base', ignorePunctuation: true, numeric: true }) : null;
 function cardAnimeCompare(a, b) { return cardAnimeCollator ? cardAnimeCollator.compare(a, b) : a.localeCompare(b); }
 const CARD_RARITY_LETTER = { common: 'C', uncommon: 'U', rare: 'R', epic: 'E', legendary: 'L', mythic: 'M', special: 'S' };
+function cardMatches(p, q) {
+  return p.name.toLowerCase().indexOf(q) >= 0 || (p.series || '').toLowerCase().indexOf(q) >= 0 ||
+    (p.edition && (cardEditionLabel(p).indexOf(q) >= 0 || ((window.sakuSpecialNumber && window.sakuSpecialNumber(p)) || '').toLowerCase().indexOf(q) >= 0));
+}
+function cardsAnimeStats(g, rf) {
+  const owned = cardState.cards || {};
+  const ids = rf ? g.ids.filter(id => cardPoolById[id].rarity === rf) : g.ids;
+  const have = ids.filter(id => Number(owned[id]) > 0), per = {};
+  g.ids.forEach(id => { const r = cardPoolById[id].rarity; per[r] = per[r] || [0, 0]; per[r][1]++; if (Number(owned[id]) > 0) per[r][0]++; });
+  return { ids: ids, have: have, per: per, pct: ids.length ? Math.floor(have.length * 100 / ids.length) : 0 };
+}
+function cardsTallyHtml(per, rf) {
+  return CARD_RARITY_ORDER.filter(r => per[r]).map(r =>
+    '<span class="anime-tally' + (rf === r ? ' on' : '') + '" style="--rarity:' + cardRarityMeta(r).color + '" title="' + escapeHtml(cardRarityLabel(r)) + '"><b>' + CARD_RARITY_LETTER[r] + '</b> ' + per[r][0] + '/' + per[r][1] + '</span>').join('');
+}
+function cardsAnimeCover(ids, have) {
+  const pick = (have.length ? have : ids).slice().sort((a, b) => cardPoolById[a].rank - cardPoolById[b].rank)[0];
+  return cardPoolById[pick];
+}
 function cardsRenderAnimeList(grid, q, rf, ownedOnly, favOnly) {
-  const data = cardsAnimeGroups(), owned = cardState.cards || {}, flags = cardState.flags || {};
-  const tr = s => (typeof t === 'function') ? t(s) : s;
-  let list = data.groups.map(g => {
-    const ids = rf ? g.ids.filter(id => cardPoolById[id].rarity === rf) : g.ids;
-    const have = ids.filter(id => Number(owned[id]) > 0);
-    const per = {};
-    g.ids.forEach(id => { const r = cardPoolById[id].rarity; per[r] = per[r] || [0, 0]; per[r][1]++; if (Number(owned[id]) > 0) per[r][0]++; });
-    return { g: g, label: cardAnimeLabel(g.label), ids: ids, have: have, per: per };
-  }).filter(x => x.ids.length);
+  const data = cardsAnimeGroups(), flags = cardState.flags || {};
+  const order = (document.getElementById('cardsAnimeSort') || {}).value || 'name';
+  let list = data.groups.map(g => Object.assign({ g: g, label: cardAnimeLabel(g.label) }, cardsAnimeStats(g, rf))).filter(x => x.ids.length);
   if (ownedOnly) list = list.filter(x => x.have.length);
   if (favOnly) list = list.filter(x => x.ids.some(id => (flags[id] || {}).favorite));
-  if (q) list = list.filter(x => x.label.toLowerCase().indexOf(q) >= 0 || x.g.label.toLowerCase().indexOf(q) >= 0 || x.ids.some(id => cardPoolById[id].name.toLowerCase().indexOf(q) >= 0));
-  list.sort((a, b) => (!!b.g.edition - !!a.g.edition) || cardAnimeCompare(a.label, b.label));
+  if (q) list = list.filter(x => x.label.toLowerCase().indexOf(q) >= 0 || x.g.label.toLowerCase().indexOf(q) >= 0 || x.ids.some(id => cardMatches(cardPoolById[id], q)));
+  if (order === 'progress') list.sort((a, b) => b.pct - a.pct || b.have.length - a.have.length || cardAnimeCompare(a.label, b.label));
+  else if (order === 'size') list.sort((a, b) => b.ids.length - a.ids.length || cardAnimeCompare(a.label, b.label));
+  else list.sort((a, b) => cardAnimeCompare(a.label, b.label));
   const more = document.getElementById('cardsMoreBtn');
   const shown = list.slice(0, cardAlbumLimit);
-  if (more) { more.style.display = list.length > cardAlbumLimit ? '' : 'none'; more.textContent = tr('Show more') + ' (' + (list.length - cardAlbumLimit) + ')'; }
+  if (more) { more.style.display = list.length > cardAlbumLimit ? '' : 'none'; more.textContent = cardTr('Show more') + ' (' + (list.length - cardAlbumLimit) + ')'; }
   if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
-  grid.classList.add('anime-mode'); grid.classList.remove('anime-open');
-  if (!grid.dataset.animeClick) { grid.dataset.animeClick = '1'; grid.addEventListener('click', e => { const b = e.target.closest('[data-anime]'); if (b && grid.contains(b)) cardsSetAnime(b.dataset.anime); }); }
-  if (!shown.length) { grid.innerHTML = '<p class="ac-empty">' + escapeHtml(tr('No anime matches.')) + '</p>'; return; }
+  grid.classList.add('anime-mode');
+  if (!grid.dataset.animeClick) { grid.dataset.animeClick = '1'; grid.addEventListener('click', e => { const b = e.target.closest('[data-anime]'); if (b && grid.contains(b)) cardsOpenAnime(b.dataset.anime); }); }
+  if (!shown.length) { grid.innerHTML = '<p class="ac-empty">' + escapeHtml(cardTr('No anime matches.')) + '</p>'; return; }
   grid.innerHTML = shown.map(x => {
-    const pick = (x.have.length ? x.have : x.ids).slice().sort((a, b) => cardPoolById[a].rank - cardPoolById[b].rank)[0];
-    const cover = cardPoolById[pick], pct = x.ids.length ? Math.round(x.have.length * 100 / x.ids.length) : 0;
+    const cover = cardsAnimeCover(x.ids, x.have);
     const keyAttr = String(x.g.key).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-    const tally = CARD_RARITY_ORDER.filter(r => x.per[r]).map(r =>
-      '<span class="anime-tally' + (rf === r ? ' on' : '') + '" style="--rarity:' + cardRarityMeta(r).color + '" title="' + escapeHtml(cardRarityLabel(r)) + '"><b>' + CARD_RARITY_LETTER[r] + '</b> ' + x.per[r][0] + '/' + x.per[r][1] + '</span>').join('');
-    return '<button type="button" class="anime-entry' + (x.have.length ? '' : ' empty') + (pct === 100 ? ' complete' : '') + '" data-anime="' + keyAttr + '">' +
+    const special = x.ids.filter(id => cardPoolById[id].edition).length;
+    return '<button type="button" class="anime-entry' + (x.have.length ? '' : ' empty') + (x.pct === 100 ? ' complete' : '') + '" data-anime="' + keyAttr + '">' +
       '<span class="anime-cover"><img src="' + escapeHtml(cardThumb(cover.image)) + '" alt="" loading="lazy" decoding="async" onerror="this.style.opacity=0"></span>' +
       '<span class="anime-info"><strong>' + escapeHtml(x.label) + '</strong>' +
-      '<span class="anime-progress">' + x.have.length + '/' + x.ids.length + ' · ' + pct + ' %</span>' +
-      '<span class="anime-tallies">' + tally + '</span></span>' +
-      '<span class="anime-bar" aria-hidden="true"><i style="width:' + pct + '%"></i></span></button>';
+      '<span class="anime-progress">' + x.have.length + '/' + x.ids.length + ' · ' + x.pct + ' %</span>' +
+      '<span class="anime-tallies">' + cardsTallyHtml(x.per, rf) + '</span></span>' +
+      '<span class="anime-bar" aria-hidden="true"><i style="width:' + x.pct + '%"></i></span></button>';
   }).join('');
+}
+/* Fenêtre d'un animé */
+let cardAnimeFocus = null;
+function cardsOpenAnime(key) {
+  const g = cardsAnimeGroups().byKey[key]; const box = document.getElementById('cardsAnimeModal');
+  if (!g || !box) return;
+  if (!cardAnimeOpen) cardAnimeFocus = document.activeElement;
+  cardAnimeOpen = key; box.hidden = false; document.body.classList.add('anime-modal-open');
+  cardsRenderAnimeModal();
+  try { document.getElementById('cardsAnimeClose').focus({ preventScroll: true }); } catch (e) {}
+}
+function cardsCloseAnime() {
+  const box = document.getElementById('cardsAnimeModal'); if (!box || box.hidden) return;
+  box.hidden = true; cardAnimeOpen = null; document.body.classList.remove('anime-modal-open');
+  const grid = document.getElementById('cardsAnimeGrid'); if (grid) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); grid.innerHTML = ''; }
+  if (cardAnimeFocus && cardAnimeFocus.isConnected) try { cardAnimeFocus.focus({ preventScroll: true }); } catch (e) {}
+  cardAnimeFocus = null;
+}
+function cardsRenderAnimeModal() {
+  if (!cardAnimeOpen || !cardState) return;
+  const g = cardsAnimeGroups().byKey[cardAnimeOpen]; if (!g) { cardsCloseAnime(); return; }
+  const st = cardsAnimeStats(g, ''), owned = cardState.cards || {}, mine = !!document.getElementById('cardsAnimeMine')?.checked;
+  const cover = cardsAnimeCover(st.ids, st.have);
+  document.getElementById('cardsAnimeCover').src = cardThumb(cover.image);
+  document.getElementById('cardsAnimeTitle').textContent = cardAnimeLabel(g.label);
+  document.getElementById('cardsAnimeProgress').textContent = st.have.length + '/' + st.ids.length + ' · ' + st.pct + ' %';
+  document.getElementById('cardsAnimeTallies').innerHTML = cardsTallyHtml(st.per, '');
+  document.getElementById('cardsAnimeBar').style.width = st.pct + '%';
+  let rows = g.ids.map(id => ({ p: cardPoolById[id], count: Number(owned[id]) || 0 }));
+  if (mine) rows = rows.filter(r => r.count > 0);
+  rows.sort((a, b) => (!!b.count - !!a.count) || CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
+  const grid = document.getElementById('cardsAnimeGrid');
+  if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
+  grid.innerHTML = rows.length ? rows.map(cardsTileHtml).join('') : '<p class="ac-empty">' + escapeHtml(cardTr('No card matches — open a booster to start your collection!')) + '</p>';
+  if (window.sakuAppendWishlist) grid.querySelectorAll('[data-card-id]').forEach(tile => window.sakuAppendWishlist(tile, tile.dataset.cardId));
+  if (window.sakuBasicObserve) window.sakuBasicObserve(grid);
+}
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' || !cardAnimeOpen || document.getElementById('cardsDetail')?.classList.contains('show')) return;
+  e.preventDefault(); cardsCloseAnime();
+});
+/* Mémoriser la vue, le tri et les filtres */
+function cardsLoadPrefs() {
+  if (cardPrefsLoaded) return; cardPrefsLoaded = true;
+  let p = null; try { p = JSON.parse(localStorage.getItem(CARD_PREFS_KEY) || 'null'); } catch (e) {}
+  if (!p || typeof p !== 'object') return;
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v != null && Array.from(el.options || []).some(o => o.value === v)) el.value = v; };
+  if (p.view === 'anime' || p.view === 'cards') cardView = p.view;
+  set('cardsSort', p.sort); set('cardsAnimeSort', p.animeSort); set('cardsRarityFilter', p.rarity);
+  const own = document.getElementById('cardsOwnedOnly'); if (own && typeof p.owned === 'boolean') own.checked = p.owned;
+  const fav = document.getElementById('cardsFavoriteOnly'); if (fav && typeof p.fav === 'boolean') fav.checked = p.fav;
+}
+function cardsSavePrefs() {
+  try {
+    localStorage.setItem(CARD_PREFS_KEY, JSON.stringify({
+      view: cardView, sort: (document.getElementById('cardsSort') || {}).value, animeSort: (document.getElementById('cardsAnimeSort') || {}).value,
+      rarity: (document.getElementById('cardsRarityFilter') || {}).value || '', owned: !!document.getElementById('cardsOwnedOnly')?.checked, fav: !!document.getElementById('cardsFavoriteOnly')?.checked
+    }));
+  } catch (e) {}
+}
+function cardsSetView(view) {
+  cardView = view === 'anime' ? 'anime' : 'cards'; cardAlbumLimit = CARD_ALBUM_STEP; cardsRenderAlbum();
+}
+function cardsSyncViewUi() {
+  document.querySelectorAll('#cardsViewSwitch [data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === cardView)));
+  const s = document.getElementById('cardsSort'), a = document.getElementById('cardsAnimeSort');
+  if (s) s.hidden = cardView === 'anime'; if (a) a.hidden = cardView !== 'anime';
+  const search = document.getElementById('cardsSearch');
+  if (search) { const ph = cardTr(cardView === 'anime' ? 'Search an anime or a character…' : 'Search a character or a series…'); if (search.placeholder !== ph) search.placeholder = ph; }
+  document.querySelectorAll('#cardsRarityChips button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.rarity === ((document.getElementById('cardsRarityFilter') || {}).value || ''))));
 }
 
 function cardsRenderAlbum() {
   const grid = document.getElementById('cardsAlbum');
   if (!grid || !cardState) return;
   cardBuildPool();
+  cardsLoadPrefs();
+  cardsSyncViewUi();
+  cardsSavePrefs();
   const q = ((document.getElementById('cardsSearch') || {}).value || '').trim().toLowerCase();
   const rf = (document.getElementById('cardsRarityFilter') || {}).value || '';
   const sort = (document.getElementById('cardsSort') || {}).value || 'rarity';
   const ownedOnly = (document.getElementById('cardsOwnedOnly') || {}).checked !== false;
   const favOnly = !!document.getElementById('cardsFavoriteOnly')?.checked;
-  const head = document.getElementById('cardsAnimeHead');
-  if (sort !== 'album') cardAlbumAnime = null;
-  if (sort === 'album' && cardAlbumAnime && !cardsAnimeGroups().byKey[cardAlbumAnime]) cardAlbumAnime = null;
-  if (head) head.hidden = !(sort === 'album' && cardAlbumAnime);
-  grid.classList.remove('anime-mode', 'anime-open');
-  if (sort === 'album' && !cardAlbumAnime) { cardsRenderAnimeList(grid, q, rf, ownedOnly, favOnly); return; }
+  grid.classList.remove('anime-mode');
+  if (cardAnimeOpen) cardsRenderAnimeModal();
+  if (cardView === 'anime') { cardsRenderAnimeList(grid, q, rf, ownedOnly, favOnly); return; }
   const byId = {};
   Object.keys(cardState.cards).forEach(id => { byId[String(id)] = cardState.cards[id]; });
 
@@ -577,44 +686,30 @@ function cardsRenderAlbum() {
     const count = byId[String(p.id)] || 0;
     return { p: p, count: count, key: count ? (1000000 - count) * 100000 + p.rank : 100000000 + p.rank };
   });
-  let animeGroup = null;
-  if (sort === 'album' && cardAlbumAnime) {
-    animeGroup = cardsAnimeGroups().byKey[cardAlbumAnime];
-    const keep = {}; animeGroup.ids.forEach(id => keep[id] = 1);
-    rows = rows.filter(r => keep[String(r.p.id)]);
-    if (head) {
-      const all = animeGroup.ids.length, got = animeGroup.ids.filter(id => Number(byId[id]) > 0).length;
-      const tr = s => (typeof t === 'function') ? t(s) : s;
-      head.innerHTML = '<button type="button" class="anime-back" onclick="cardsSetAnime(null)"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg><span>' + escapeHtml(tr('All anime')) + '</span></button>' +
-        '<div><strong>' + escapeHtml(cardAnimeLabel(animeGroup.label)) + '</strong><span>' + got + '/' + all + ' · ' + (all ? Math.round(got * 100 / all) : 0) + ' %</span></div>';
-    }
-    grid.classList.add('anime-open');
-  }
   if (ownedOnly) rows = rows.filter(r => r.count > 0);
-  if(document.getElementById('cardsFavoriteOnly')?.checked)rows=rows.filter(r=>!!(((cardState.flags||{})[String(r.p.id)]||{}).favorite));
+  if (favOnly) rows = rows.filter(r => !!(((cardState.flags || {})[String(r.p.id)] || {}).favorite));
   if (rf) rows = rows.filter(r => r.p.rarity === rf);
-  if (q) rows = rows.filter(r => r.p.name.toLowerCase().indexOf(q) >= 0 || (r.p.series || '').toLowerCase().indexOf(q) >= 0 || ((r.p.edition === 'strongest' || r.p.edition === 'hoshi') && (window.sakuSpecialNumber(r.p)||'').toLowerCase().indexOf(q)>=0));
+  if (q) rows = rows.filter(r => cardMatches(r.p, q));
   if (sort === 'name') rows.sort((a, b) => a.p.name.localeCompare(b.p.name));
   else if (sort === 'rarity') rows.sort((a, b) => CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
-  else if(sort==='duplicates') rows.sort((a,b)=>Math.max(0,b.count-1)-Math.max(0,a.count-1)||a.p.rank-b.p.rank);
-  else if (sort === 'level') { rows.forEach(r => r.lv = r.count ? cardsLevelOf(r.p.id) : -1); rows.sort((a, b) => b.lv - a.lv || CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank); }
-  else if (sort === 'anime' || sort === 'album') {
+  else if (sort === 'duplicates') rows.sort((a, b) => Math.max(0, b.count - 1) - Math.max(0, a.count - 1) || a.p.rank - b.p.rank);
+  else if (sort === 'level') { rows.forEach(r => { r.lv = r.count ? cardsLevelOf(r.p.id) : -1; r.up = r.count && cardsCanUpgrade(r.p.id) ? 1 : 0; }); rows.sort((a, b) => b.lv - a.lv || b.up - a.up || CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank); }
+  else if (sort === 'anime') {
     const groups = cardsAnimeGroups().byId;
-    rows.forEach(r => { const g = groups[String(r.p.id)]; r.g = g; r.gl = g ? cardAnimeLabel(g.label) : (r.p.series || ''); r.ge = g && g.edition ? 0 : 1; });
-    rows.sort((a, b) => (sort === 'anime' ? (a.ge - b.ge || cardAnimeCompare(a.gl, b.gl) || (a.g === b.g ? 0 : String(a.g && a.g.key).localeCompare(String(b.g && b.g.key)))) : 0) || CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
+    rows.forEach(r => { const g = groups[String(r.p.id)]; r.g = g; r.gl = g ? cardAnimeLabel(g.label) : (r.p.series || ''); });
+    rows.sort((a, b) => cardAnimeCompare(a.gl, b.gl) || (a.g === b.g ? 0 : String(a.g && a.g.key).localeCompare(String(b.g && b.g.key))) || CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
   }
-  else rows.sort((a, b) => a.p.rank-b.p.rank);
+  else rows.sort((a, b) => a.p.rank - b.p.rank);
 
   const more = document.getElementById('cardsMoreBtn');
   const shown = rows.slice(0, cardAlbumLimit);
   if (more) {
     more.style.display = rows.length > cardAlbumLimit ? '' : 'none';
-    more.textContent = ((typeof t === 'function') ? t('Show more') : 'Show more') + ' (' + (rows.length - cardAlbumLimit) + ')';
+    more.textContent = cardTr('Show more') + ' (' + (rows.length - cardAlbumLimit) + ')';
   }
   if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
   if (!shown.length) {
-    grid.innerHTML = '<p class="ac-empty">' + ((typeof t === 'function')
-      ? t('No card matches — open a booster to start your collection!') : 'No card matches — open a booster to start your collection!') + '</p>';
+    grid.innerHTML = '<p class="ac-empty">' + escapeHtml(cardTr('No card matches — open a booster to start your collection!')) + '</p>';
     return;
   }
   grid.innerHTML = shown.map(cardsTileHtml).join('');
@@ -629,14 +724,14 @@ function cardsTileHtml(r) {
       return '<div class="ac-tile strongest-tile' + (r.count ? '' : ' missing') + '" role="button" tabindex="0" ' +
         'data-card-id="' + escapeHtml(String(r.p.id)) + '" onclick="cardsOpenDetail(' + idArg + ')" onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
         '<span class="strongest-art">' + window.sakuStrongestCard(r.p,true) + '</span>' +
-        ((window.sakuCardLevelCounts&&r.count)?(()=>{let ct=window.sakuCardLevelCounts(cardState,String(r.p.id)),lv=[3,2,1].find(n=>ct[n])||0;return lv?'<span class="detail-star-mark">'+'★'.repeat(lv)+'</span>':''})():'') +
+        cardsBadges(r.p.id, r.count) +
         (r.count ? '<span class="strongest-ownership">×' + r.count + '</span>' : '<span class="strongest-ownership">' + escapeHtml((typeof t === 'function') ? t('Not obtained') : 'Not obtained') + '</span>') + '</div>';
     }
     return '<div class="ac-tile' + (typeof window.sakuBasicCard === 'function' ? ' basic-rendered' : '') + (r.p.rarity === 'mythic' ? ' mythic' : '') + (r.count ? '' : ' missing') + '" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '" ' +
       'data-card-id="' + escapeHtml(String(r.p.id)) + '" onclick="cardsOpenDetail(' + idArg + ')" role="button" tabindex="0" ' +
       'onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
       (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(r.p, true, {image:cardThumb(r.p.image)}) + '</span>' : '') +
-      cardsStarMark(r.p.id, r.count) +
+      cardsBadges(r.p.id, r.count) +
       '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
       (r.count > 1 ? '<span class="ac-count">×' + r.count + '</span>' : '') +
       '<span class="ac-art"><img src="' + escapeHtml(cardThumb(r.p.image)) + '" alt="' + escapeHtml(String(r.p.name)) + '" ' +

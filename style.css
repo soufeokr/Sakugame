@@ -3607,15 +3607,59 @@ svg.hoshi-card{aspect-ratio:260/372}
 .anime-tallies{display:flex;flex-wrap:wrap;gap:4px 11px;font:600 .72rem ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#c5cedd;font-variant-numeric:tabular-nums}
 .anime-tally b{color:var(--rarity);font-weight:800}.anime-tally{opacity:.95}.anime-tally.on{color:#fff;text-decoration:underline;text-decoration-color:var(--rarity);text-underline-offset:3px}
 .anime-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:#ffffff0c}.anime-bar i{display:block;height:100%;background:linear-gradient(90deg,#4caf50,#02a9ff,#b28cff,#f4d389)}
-.cards-anime-head{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:10px 12px;border-radius:14px;border:1px solid #ffffff14;background:#0d1626b3}
-.cards-anime-head[hidden]{display:none}
-.cards-anime-head strong{display:block;font:800 1.05rem Outfit,system-ui,sans-serif}.cards-anime-head span{font-size:.78rem;color:#a9b3c4}
-.anime-back{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:10px;border:1px solid #ffffff24;background:#ffffff0d;color:#e7f2ff;font:700 .78rem Outfit,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
-.anime-back .saku-arrow-icon{width:16px;height:16px}.anime-back:hover{background:#ffffff1c}
-.anime-sep{grid-column:1/-1;display:flex;align-items:baseline;gap:10px;margin:14px 2px 2px;padding-bottom:6px;border-bottom:1px solid #ffffff17}
-.anime-sep:first-child{margin-top:0}.anime-sep strong{font:800 1rem Outfit,system-ui,sans-serif;color:#eef3fb}.anime-sep span{font-size:.75rem;color:#a9b3c4}
 .ac-tile .detail-star-mark{z-index:3}
 @media(max-width:700px){.rarity-chips.rarity-dots{gap:4px;padding:4px}.rarity-dots .rarity-dot{width:31px;height:31px;font-size:.76rem}.rarity-dots .rarity-all{height:33px;padding-right:11px;gap:7px;font-size:.8rem}.rarity-orb{width:26px;height:26px}.cards-album.anime-mode{grid-template-columns:1fr;gap:9px}.anime-entry{padding:11px 12px;gap:12px}.anime-cover{width:58px;height:58px;border-radius:12px}.anime-tallies{gap:3px 9px;font-size:.68rem}}
 @media(max-width:380px){.rarity-dots .rarity-dot{width:28px;height:28px}.rarity-dots .rarity-all{padding-right:9px}.rarity-orb{width:22px;height:22px}}
-#cardsAlbum .ac-tile .detail-star-mark{left:7px;top:7px;padding:3px 7px 2px;border-radius:999px;background:#0b1322e6;border:1px solid #f6d88e66;font-size:11px;line-height:1;letter-spacing:1px;box-shadow:0 2px 6px #0008}
-#cardsAlbum .ac-tile.basic-rendered>.detail-star-mark{display:block!important;position:absolute;z-index:12}
+/* Sélecteur Personnages / Animés */
+.cards-view-switch{display:inline-flex;padding:4px;gap:3px;border-radius:12px;background:#0b1322;border:1px solid #ffffff14;flex:none}
+.cards-view-switch button{border:0;border-radius:9px;padding:9px 15px;background:transparent;color:#aab6c8;font:800 .84rem Outfit,system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.cards-view-switch button:hover{color:#fff}
+.cards-view-switch button[aria-pressed=true]{background:linear-gradient(180deg,#2a3956,#1b2741);color:#fff;box-shadow:0 2px 8px #0007,inset 0 1px 0 #ffffff1f}
+.cards-view-switch button:focus-visible{outline:2px solid #9fd8ff;outline-offset:1px}
+.cards-tools select[hidden]{display:none!important}
+/* Pastille S : doré sur fond noir */
+.rarity-dots .rarity-dot[data-rarity=special]{background:radial-gradient(circle at 35% 28%,#2b2516,#070707 70%);color:#f4d389;box-shadow:inset 0 0 0 1.5px #f4d389b3,inset 0 -2px 4px #000}
+.rarity-dots .rarity-dot[data-rarity=special][aria-pressed=true]{box-shadow:inset 0 0 0 1.5px #f4d389,0 0 0 2px #0b1322,0 0 0 4px #f4d389,0 0 16px #f4d38999}
+/* Étoiles de niveau : 3 emplacements, bronze / argent / or */
+.saku-stars{display:inline-flex;align-items:center;gap:1px;padding:3px 5px;border-radius:999px;background:linear-gradient(180deg,#1d2433f2,#090d17f2);border:1px solid var(--star-edge,#e0a46e88);box-shadow:0 2px 8px #000b,inset 0 1px 0 #ffffff1c;line-height:0;pointer-events:none;--star:#e0a46e;--star-glow:#e0a46e80}
+.saku-stars svg{width:11px;height:11px;display:block}
+.saku-stars svg path{stroke:#05070c;stroke-width:1.6;stroke-linejoin:round}
+.saku-stars svg.on path{fill:var(--star)}.saku-stars svg.on{filter:drop-shadow(0 0 2.5px var(--star-glow))}
+.saku-stars svg.off path{fill:#ffffff1f;stroke:#ffffff2e;stroke-width:1.2}
+.saku-stars.lv-2{--star:#e9eff8;--star-glow:#cfe2ff99;--star-edge:#dbe6f6aa}
+.saku-stars.lv-3{--star:#ffd257;--star-glow:#ffc94db3;--star-edge:#ffd257cc;background:linear-gradient(180deg,#30260fef,#0b0904f2);animation:sakuStarGlow 2.6s ease-in-out infinite}
+@keyframes sakuStarGlow{50%{box-shadow:0 2px 8px #000b,0 0 12px #ffd25766,inset 0 1px 0 #ffffff26}}
+.detail-star-mark.saku-stars{position:absolute;left:6px;top:6px;z-index:12;font-size:0;letter-spacing:0;text-shadow:none}
+.ac-badges{position:absolute;left:6px;top:6px;z-index:12;display:flex;align-items:center;gap:4px;pointer-events:none}
+.ac-badges .detail-star-mark.saku-stars{position:static}
+#cardsAlbum .ac-tile.basic-rendered>.ac-badges,#cardsAnimeGrid .ac-tile.basic-rendered>.ac-badges{display:flex!important}
+.ac-upgradable{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#38d39f,#139a6f);border:1.5px solid #071a14;box-shadow:0 0 0 1px #5ff0bd88,0 2px 8px #000a,0 0 10px #38d39f88;animation:sakuUpBounce 1.8s ease-in-out infinite}
+.ac-upgradable svg{width:13px;height:13px;fill:none;stroke:#04130e;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+@keyframes sakuUpBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.saku-stars-lg{position:static!important;padding:6px 9px;gap:3px}.saku-stars-lg svg{width:22px;height:22px}
+.market-sell-tile .saku-stars svg,.market-card-art .saku-stars svg,.strongest-tile .saku-stars svg{width:9px;height:9px}
+.ac-detail-card .detail-star-mark.saku-stars,.enc-detail-card .detail-star-mark.saku-stars{left:10px;top:10px;padding:5px 8px}.ac-detail-card .saku-stars svg,.enc-detail-card .saku-stars svg{width:17px;height:17px}
+@media(prefers-reduced-motion:reduce){.saku-stars.lv-3,.ac-upgradable{animation:none}}
+/* Panneau de niveau (détail d'une carte) */
+.card-level-current{display:flex;align-items:center;gap:13px;padding:4px 0 12px}
+.card-level-current strong{display:block;color:#f2d289;font-size:.9rem}.card-level-current small{color:#a9bfd0;font-size:.72rem}
+.card-level-next{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px;padding:11px 0 2px;border-top:1px solid #e3c99220}
+.card-level-next p{display:flex;align-items:center;gap:7px;margin:0!important;color:#c9d6e2!important;font-size:.74rem!important}
+.card-level-next p .saku-stars{position:static}.card-level-next p span{color:#9fb4c5}
+.card-level-missing{flex-basis:100%;color:#ffb48a;font-size:.68rem}
+.card-level-max{margin:4px 0 0!important;color:#ffd257!important;font-weight:800;font-size:.76rem!important}
+.card-levels>.card-level-muted{margin:10px 0 0!important}
+/* Fenêtre d'un animé */
+body.anime-modal-open{overflow:hidden}
+.anime-modal{position:fixed;inset:0;z-index:1150;display:grid;place-items:center;padding:16px;background:#020813d4;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.anime-modal[hidden]{display:none}
+.anime-modal-panel{width:min(1180px,100%);max-height:min(92dvh,980px);display:flex;flex-direction:column;overflow:hidden;border-radius:20px;border:1px solid #ffffff1f;background:linear-gradient(160deg,#141a27,#0b0f18);box-shadow:0 30px 90px #000b;animation:showcaseModalIn .2s ease-out}
+.anime-modal-head{position:relative;display:flex;align-items:center;gap:16px;padding:18px 20px 16px;border-bottom:1px solid #ffffff14}
+.anime-modal-head .anime-cover{width:76px;height:76px}
+.anime-modal-id{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1}
+.anime-modal-id h2{margin:0;font:800 1.35rem Outfit,system-ui,sans-serif;color:#f3f7fd;overflow-wrap:anywhere}
+.anime-modal-close{flex:none;align-self:flex-start;width:44px;height:44px;border-radius:13px;border:1px solid #ffffff2e;background:#ffffff12;color:#fff;font-size:1.6rem;line-height:1;cursor:pointer}.anime-modal-close:hover{background:#ffffff24}
+.anime-modal-tools{display:flex;justify-content:flex-end;padding:10px 20px 0}
+.anime-modal-body{overflow:auto;overscroll-behavior:contain;padding:12px 20px 20px}
+@media(max-width:700px){.cards-view-switch{width:100%}.cards-view-switch button{flex:1}.anime-modal{padding:0}.anime-modal-panel{max-height:100dvh;height:100dvh;border-radius:0;border:0}.anime-modal-head{padding:14px;gap:12px}.anime-modal-head .anime-cover{width:58px;height:58px}.anime-modal-id h2{font-size:1.1rem}.anime-modal-tools{padding:8px 14px 0}.anime-modal-body{padding:10px 12px 16px}.ac-upgradable{width:18px;height:18px}.ac-upgradable svg{width:11px;height:11px}.saku-stars svg{width:9px;height:9px}}
+.cards-tools input[type="search"]#cardsSearch{flex:1 1 200px}.strongest-tile .saku-stars svg{width:11px;height:11px}
