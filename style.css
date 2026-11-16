@@ -3996,3 +3996,37 @@ body.anime-modal-open{overflow:hidden}
 @media(max-width:640px){.enc-anime-chev{right:13px;bottom:10px}}
 /* Blur Guess : « Regrouper les saisons » n'a de sens qu'en mode couvertures d'animés */
 .host-bg-chars #hostBgGroupWrap,.room-bg-chars #modalBgGroupWrap{display:none!important}
+
+/* ===================== b279 · révision des fenêtres ===================== */
+/* Bulles d'aide : une bulle masquée ne doit pas élargir la page (téléphone : « Créer un salon » faisait 579 px) */
+.info-btn:not(:hover):not(:focus):not(:focus-within) .info-bubble{display:none}
+.info-btn:hover .info-bubble,.info-btn:focus .info-bubble,.info-btn:focus-within .info-bubble{animation:infoIn .15s ease}
+@keyframes infoIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+/* Bulle de discussion : ne recouvre plus les derniers boutons (Quitter le salon…) */
+@media(min-width:700px){.has-chat-fab .screen.active{padding-bottom:84px}}
+.has-chat-fab #lobbyScreen .lobby-container{padding-bottom:72px}
+/* Supprimer mon compte : titre dégagé de la croix, texte aéré */
+#deleteAccountModal h2{padding:0 34px;line-height:1.25}
+#deleteAccountModal p{margin:12px 0 18px;line-height:1.55}
+/* Lobby : carte du jeu choisi, aux couleurs du jeu */
+.lobby-game-card{margin-top:18px;padding:16px;border-radius:16px;border:1px solid color-mix(in srgb,var(--g,#5aa9e6) 38%,#ffffff12);
+  background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--g,#5aa9e6) 28%,transparent),transparent 62%),#0d1527;text-align:left}
+.lobby-game-card[hidden]{display:none}
+.lgc-top{display:flex;align-items:center;gap:12px}
+.lgc-logo{flex:none;width:56px;height:56px;filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--g,#5aa9e6) 55%,transparent))}
+.lgc-id{display:flex;flex-direction:column;min-width:0}
+.lgc-kicker{font-size:.62rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gl,#9fd8ff)}
+.lgc-id strong{color:#f4f8ff;font-size:1.08rem;line-height:1.2}
+.lgc-players{font-size:.75rem;color:#aab9cc;margin-top:2px}
+.lgc-desc{margin:12px 0 14px;color:#c3d0e0;font-size:.84rem;line-height:1.5}
+.lobby-game-card .lgc-rules{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border-color:color-mix(in srgb,var(--gl,#9fd8ff) 40%,transparent);color:var(--gl,#9fd8ff)}
+@media(max-width:700px){.lobby-game-card{margin-top:14px;padding:13px}.lgc-logo{width:46px;height:46px}.lgc-desc{margin:10px 0 12px}}
+/* Logos de jeux en ligne (lobby, fenêtre de salon, salons publics) : un peu plus grands que le texte */
+#lobbyGameName .ic,.pub-game-icon .ic,.lobby-title .ic{width:1.25em;height:1.25em;vertical-align:-.28em}
+.quest-retry{margin-left:10px;padding:6px 12px;border-radius:9px;border:1px solid #9fd8ff55;background:#0d1a2e;color:#cfeaff;font-weight:700;cursor:pointer}
+/* Titres de fenêtres : jamais sous la croix de fermeture (téléphone) */
+.modal-content > .modal-close ~ h2{padding-left:34px;padding-right:34px}
+/* Barre d'actions fixe des parties (téléphone) : fond opaque, le texte du dessous ne transparaît plus entre les boutons */
+@media(max-width:600px){
+  .game-controls{padding:8px 10px!important;background:linear-gradient(180deg,#0b1222e6,#0b1222f7);box-shadow:0 -10px 24px -12px #000;backdrop-filter:blur(8px)}
+}

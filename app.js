@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '278';
+    const SAKU_BUILD = '279';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -32,7 +32,7 @@
     function ic(n, cls) {
       return '<svg class="ic' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
     }
-    const GAME_ICONS = { guesswho: 'mask', undercover: 'spy', battle: 'users', race: 'bolt', blur: 'layers', hotcold: 'target', codenames: 'key' };
+    const GAME_ICONS = { guesswho: 'game-guesswho', undercover: 'game-undercover', battle: 'game-battle', race: 'game-race', blur: 'game-blur', hotcold: 'game-hotcold', codenames: 'game-codenames', snapshot: 'game-snapshot' }; // b279 : logos des jeux
 
     // 🌐 i18n shims (lang.js). Everything stays English if lang.js fails to load.
     function tPO(id, vars) { // sentence pattern with a name/word inside
@@ -1177,6 +1177,7 @@
       // 📱 b121: during any GAME screen the phone hides the big site logo (body.in-game)
       document.body.classList.toggle('in-game', ['gameScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'snapshotScreen', 'codenamesScreen', 'hotcoldScreen', 'undercoverScreen'].indexOf(screenId) !== -1);
       if (chatBtn) chatBtn.style.display = chatVisible ? 'flex' : 'none';
+      document.body.classList.toggle('has-chat-fab', !!chatVisible); // laisse de la place sous le contenu pour la bulle de discussion
       if (!chatVisible) { closeChatOverlay(); chatUnread = 0; updateChatBadge(); }
       // The 🌐 public room list only streams while the join screen is open
       if (screenId === 'joinRoomScreen') startPublicRoomsWatch(); else stopPublicRoomsWatch();
@@ -1528,7 +1529,7 @@
     }
     function showPlayMenu() { goHome(); }
     function showGamesMenu() { showScreen('gamesMenuScreen'); }
-    function showHostRoom() { if(sakuRoomBlocked())return; showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} }
+    function showHostRoom() { if(sakuRoomBlocked())return; showScreen('hostRoomScreen'); autoSyncHostAccount(); try { onGameSelectChange(); } catch (e) {} try { paintDiffChecks('hostBg', hostBgDiff); paintDiffChecks('hostSn', hostSnDiff); } catch (e) {} }
     function showJoinRoom() { if(sakuRoomBlocked())return; showScreen('joinRoomScreen'); }
 
     // 🌐 language radios (Personalization tab — the old bar buttons are gone).
@@ -1579,11 +1580,14 @@
       const dup = list.some(o => o && o !== char && o.id !== char.id && String(o.name || '').trim().toLowerCase() === key);
       return dup && char.series ? '<small class="card-series">' + sakuSafeName(char.series) + '</small>' : '';
     }
+    function sakuYouTag() { return ' ' + (window.t ? t('(You)') : '(You)'); } // « (toi) » après son propre nom
     function sakuSafeName(n, fallback) { return escapeHtml(String(n || fallback || '')).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
     function toggleBlur() {
       codeBlurred = !codeBlurred;
       const codeEl = document.getElementById('displayRoomCode');
       if (codeBlurred) codeEl.classList.add('blurred'); else codeEl.classList.remove('blurred');
+      const btn = document.getElementById('blurCodeBtn'); // libellé selon l'état : masquer / afficher
+      if (btn) { const k = codeBlurred ? 'Show code' : 'Hide code'; btn.querySelector('span').textContent = window.t ? t(k) : k; btn.setAttribute('aria-pressed', codeBlurred ? 'true' : 'false'); }
     }
 
     // ===== 🔗 SHARE ROOM (one-tap join link) =====
@@ -2513,8 +2517,24 @@
       });
     }
 
+    /* b279 · carte du jeu choisi dans le panneau gauche du lobby (logo, joueurs, description, règles) */
+    function sakuLobbyGameCard() {
+      const box = document.getElementById('lobbyGameCard');
+      if (!box || !currentRoom) return;
+      const g = currentRoom.game || 'guesswho', meta = (typeof SAKU_HOME_GAMES !== 'undefined' && SAKU_HOME_GAMES[g]) || null;
+      if (!meta) { box.hidden = true; return; }
+      if (box.dataset.game === g && box.childElementCount) return;
+      box.hidden = false; box.dataset.game = g;
+      const tr = k => (window.t ? t(k) : k);
+      box.innerHTML = '<div class="lgc-top"><svg class="lgc-logo" aria-hidden="true"><use href="#i-game-' + g + '"/></svg>' +
+        '<div class="lgc-id"><span class="lgc-kicker">' + escapeHtml(tr('Game')) + '</span><strong>' + escapeHtml(meta.title) + '</strong>' +
+        '<span class="lgc-players">' + escapeHtml(tr(meta.players)) + '</span></div></div>' +
+        '<p class="lgc-desc">' + escapeHtml(tr(meta.desc)) + '</p>' +
+        '<button type="button" class="lgc-rules secondary" onclick="openHowTo(\'' + g + '\')">' + ic('book') + ' ' + escapeHtml(tr('How to play')) + '</button>';
+    }
     function updateLobby() {
       if (!currentRoom) return;
+      try { sakuLobbyGameCard(); } catch (e) {}
       const playersList = document.getElementById('playersList');
       playersList.innerHTML = '';
       // 🥷🎴 SPECIAL Ninja lobby: the ready-list is REPLACED by the teams
@@ -2529,7 +2549,7 @@
         const card = document.createElement('div'); card.className = 'player-card';
         if (player.ready) card.classList.add('ready');
         if (player.isHost) card.classList.add('host');
-        card.innerHTML = `<div class="player-head">${avatarCircle(player.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${player.isHost ? '<span class="host-badge">' + ic('crown') + ' HOST</span>' : ''}${escapeHtml(String(player.name || ''))}</div><div class="status">${player.id === playerId ? '(You)' : ''}</div></div></div>${player.ready ? '<div class="ready-badge">' + ic('check') + ' Ready</div>' : ''}`;
+        card.innerHTML = `<div class="player-head">${avatarCircle(player.avatar, 'ava-lobby')}<div class="player-info"><div class="name">${player.isHost ? '<span class="host-badge">' + ic('crown') + ' ' + (window.t ? t('HOST') : 'HOST') + '</span>' : ''}${escapeHtml(String(player.name || ''))}</div><div class="status">${player.id === playerId ? (window.t ? t('(You)') : '(You)') : ''}</div></div></div>${player.ready ? '<div class="ready-badge">' + ic('check') + ' Ready</div>' : ''}`;
         const rightWrap = document.createElement('div');
         rightWrap.className = 'player-card-right';
         if (card.lastElementChild && card.lastElementChild.classList.contains('ready-badge')) rightWrap.appendChild(card.lastElementChild);
@@ -3289,7 +3309,7 @@
       const turnName = (players[turnPid] || {}).name || '—';
       const phaseNames = { ask: 'Question time', answers: 'Answering…', over: 'Game over' };
       const phaseIcons = { ask: 'chat', answers: 'hand', over: 'flag' };
-      document.getElementById('brTurnBadge').innerHTML = br.phase === 'over' ? ic('flag') + ' Finished' : (ic('mic') + ' Turn: ' + escapeHtml(String(turnName)) + (turnPid === playerId ? ' (You)' : ''));
+      document.getElementById('brTurnBadge').innerHTML = br.phase === 'over' ? ic('flag') + ' ' + (window.t ? t('Finished') : 'Finished') : (ic('mic') + ' ' + (window.t ? t('Turn:') : 'Turn:') + ' ' + escapeHtml(String(turnName)) + (turnPid === playerId ? sakuYouTag() : ''));
       document.getElementById('brPhaseBadge').innerHTML = phaseNames[br.phase] ? ic(phaseIcons[br.phase]) + ' ' + phaseNames[br.phase] : '';
       // New deal? Local notes (❌ marks per board + active board) start fresh
       if (br.gameId && br.gameId !== lastBrGameId) { lastBrGameId = br.gameId; brMarks = {}; brGuessMode = false; brActiveBoard = null; }
@@ -3546,7 +3566,7 @@
       if (rc.gameId && rc.gameId !== lastRcGameId) { lastRcGameId = rc.gameId; rcMarks = {}; rcGuessMode = false; }
       const turnPid = rcTurnPid();
       const turnName = (players[turnPid] || {}).name || '—';
-      document.getElementById('rcTurnBadge').innerHTML = rc.phase === 'over' ? ic('flag') + ' Finished' : (ic('mic') + ' Turn: ' + escapeHtml(String(turnName)) + (turnPid === playerId ? ' (You)' : ''));
+      document.getElementById('rcTurnBadge').innerHTML = rc.phase === 'over' ? ic('flag') + ' ' + (window.t ? t('Finished') : 'Finished') : (ic('mic') + ' ' + (window.t ? t('Turn:') : 'Turn:') + ' ' + escapeHtml(String(turnName)) + (turnPid === playerId ? sakuYouTag() : ''));
       document.getElementById('rcPhaseBadge').innerHTML = rc.phase === 'over' ? ic('flag') + ' Game over' : (rc.question ? ic('hand') + ' Target answering…' : ic('chat') + ' Question time');
       // Banner: target sees their own secret; hunters see the mystery card
       const banner = document.getElementById('rcBanner');
@@ -3583,7 +3603,7 @@
         chip.style.setProperty('--c', rcColorOf(pid));
         const hearts = ic('heart').repeat(lives) + ic('heart', 'ic-off').repeat(Math.max(0, maxLives - lives));
         const livesTxt = spectating ? '—' : (lives <= 0 ? ic('skull') : hearts);
-        chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="rc-hunter-res" title="Lives (wrong guesses allowed)">${livesTxt}</span><span class="rc-hunter-res" title="Questions left">${ic('help')}${qs}</span>${turnPid === pid && !out && rc.phase !== 'over' ? '<span class="rc-hunter-turn">' + ic('mic') + '</span>' : ''}`;
+        chip.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="rc-hunter-res" title="Lives (wrong guesses allowed)">${livesTxt}</span><span class="rc-hunter-res" title="Questions left">${ic('help')}${qs}</span>${turnPid === pid && !out && rc.phase !== 'over' ? '<span class="rc-hunter-turn">' + ic('mic') + '</span>' : ''}`;
         bar.appendChild(chip);
       });
     }
@@ -4479,7 +4499,7 @@
       document.getElementById('bgImgWrap').classList.toggle('revealed', revealed && bg.phase !== 'over');
       // guess bar
       const gin = document.getElementById('bgGuessInput');
-      if (gin) gin.placeholder = bgModeNow === 'covers' ? 'Type the anime name…' : "Type the character's name… (any name: Deku, Burdock…)";
+      if (gin) { const ph = bgModeNow === 'covers' ? 'Type the anime name…' : "Type the character's name… (any name: Deku, Burdock…)"; gin.placeholder = window.t ? t(ph) : ph; }
       const myFind = (bg.found || {})[playerId];
       const barVisible = bg.phase === 'playing' && !myFind && !!((currentRoom.players || {})[playerId]); // 👀 spectators just watch
       document.getElementById('bgGuessBar').style.display = barVisible ? 'flex' : 'none';
@@ -4511,7 +4531,7 @@
         const chip = document.createElement('div');
         chip.className = 'rc-hunter' + (f ? ' turn' : '');
         chip.style.setProperty('--c', '#02a9ff');
-        chip.innerHTML = `<span class="rc-hunter-turn">${i + 1}</span>${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="chip-pts">${(bg.scores || {})[pid] || 0} pts</span>${f ? '<span class="rc-hunter-res">' + ic('check') + ' stage ' + f.stage + '</span>' : ''}`;
+        chip.innerHTML = `<span class="rc-hunter-turn">${i + 1}</span>${avatarCircle(p.avatar, 'ava-chat')}<span class="rc-hunter-name">${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="chip-pts">${(bg.scores || {})[pid] || 0} pts</span>${f ? '<span class="rc-hunter-res">' + ic('check') + ' stage ' + f.stage + '</span>' : ''}`;
         chips.appendChild(chip);
       });
       const skipBtn = document.getElementById('bgSkipBtn');
@@ -5803,7 +5823,7 @@
           const row = document.createElement('div');
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
           row.style.setProperty('--c', brColorOf(pid));
-          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${(br.points || {})[pid] || 0} pts${found ? '' : ' · never found'}</span>`;
+          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="me-pts">${(br.points || {})[pid] || 0} pts${found ? '' : ' · never found'}</span>`;
           if (secChar) { const s = document.createElement('small'); s.style.color = 'var(--muted)'; s.style.width = '100%'; s.textContent = (found ? 'secret: ' : 'secret was: ') + (secChar.name || '?'); row.appendChild(s); row.style.flexWrap = 'wrap'; }
           list.appendChild(row);
         });
@@ -5819,7 +5839,7 @@
           const p = players[pid] || {};
           const row = document.createElement('div');
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
-          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${scores[pid] || 0} pts</span>`;
+          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="me-pts">${scores[pid] || 0} pts</span>`;
           list.appendChild(row);
         });
       } else if (kind === 'blur') {
@@ -5834,7 +5854,7 @@
           const p = players[pid] || {};
           const row = document.createElement('div');
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
-          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${scores[pid] || 0} pts</span>`;
+          row.innerHTML = `<span class="me-rank">${(i + 1) + '.'}</span>${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="me-pts">${scores[pid] || 0} pts</span>`;
           list.appendChild(row);
         });
         const played = (bg.rounds || []).length;
@@ -5864,7 +5884,7 @@
             const row = document.createElement('div');
             row.className = 'me-row cn-end-row ' + team + (pid === playerId ? ' me' : '');
             const isSpy = teams[team].spy === pid;
-            row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${isSpy ? '🕵️ Ninja' : 'Shogun'}</span>`;
+            row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="me-pts">${isSpy ? '🕵️ Ninja' : 'Shogun'}</span>`;
             list.appendChild(row);
           });
         });
@@ -5901,7 +5921,7 @@
           const row = document.createElement('div');
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
           const label = pid === rc.targetPid ? (pid === winner ? 'winning target' : 'target') : (pid === winner ? 'winner' : (rcLivesOf(currentRoom, pid) <= 0 ? 'hunter (out)' : 'hunter'));
-          row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? ' (You)' : ''}</span><span class="me-pts">${label}</span>`;
+          row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="me-pts">${label}</span>`;
           list.appendChild(row);
         });
       }
@@ -7536,7 +7556,7 @@
           else if (pid !== hc.hider && st === 'found') tag = '<span class="hc-done-tag ok">' + ic('check') + '</span>';
           else if (pid !== hc.hider && st === 'busted') tag = '<span class="hc-done-tag no">×</span>';
           row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'hc-av') +
-            '<span class="hc-gname">' + escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? ' (You)' : '') + tag + '</span>' +
+            '<span class="hc-gname">' + escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? sakuYouTag() : '') + tag + '</span>' +
             '<span class="hc-gnum">' + (totals[pid] || 0) + '</span>';
           rank.appendChild(row);
         });
@@ -7622,7 +7642,7 @@
           const row = document.createElement('div');
           row.className = 'me-row' + (pid === playerId ? ' me' : '');
           const crown = (winner !== 'draw' && pid === winner) ? ic('trophy') + ' ' : '';
-          const tag = escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? ' (You)' : '') + (out ? ' <small style="color:var(--muted);">(' + tPO('hc_pts_left') + ')</small>' : '');
+          const tag = escapeHtml(hcNameOf(players, pid)) + (pid === playerId ? sakuYouTag() : '') + (out ? ' <small style="color:var(--muted);">(' + tPO('hc_pts_left') + ')</small>' : '');
           row.innerHTML = '<span class="hc-rank">' + (i + 1) + '.</span>' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + crown + tag + '</span><span class="me-pts">' + tPO(ptsMode ? 'hc_pts_word' : 'hc_round_word', { c: totals[pid] || 0 }) + '</span>';
           list.appendChild(row);
         });
@@ -8990,7 +9010,7 @@
           else { status = ''; statusCls = 'uc-tile-wait'; } // a little ☁️ with a ? in it
         }
         else if (uc.phase === 'voting') status = votes[pid] ? 'voted' : 'voting…';
-        tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</div>'
+        tile.innerHTML = avatarCircle(p.avatar, 'ava-tile') + '<div class="uc-tile-name">' + escapeHtml(String(p.name || '?')) + (pid === playerId ? sakuYouTag() : '') + '</div>'
           + (statusCls === 'uc-tile-wait'
             ? '<div class="uc-tile-status uc-tile-wait"><svg class="ic uc-cloudsvg"><use href="#i-cloudq"/></svg></div>'
             : (statusCls === 'uc-tile-speaking'
@@ -9098,7 +9118,7 @@
             wait.textContent = 'Your clue is in! Waiting for the others (' + alive.filter(p => clues[p]).length + '/' + alive.length + ')…';
           } else if (speaker && speaker !== playerId) {
             const spName = (currentRoom.players && currentRoom.players[speaker]) ? currentRoom.players[speaker].name : 'A player';
-            wait.textContent = spName + ' is describing their word… your turn comes after (' + alive.filter(p => clues[p]).length + '/' + alive.length + ' done)';
+            wait.textContent = spName + ' ' + (window.t ? t('is describing their word… your turn comes after') : 'is describing their word… your turn comes after') + ' (' + alive.filter(p => clues[p]).length + '/' + alive.length + ' ' + (window.t ? t('done') : 'done') + ')';
           } else wait.textContent = '';
         }
         else if (uc.phase === 'voting') {
@@ -9147,7 +9167,7 @@
         const p = players[pid] || {};
         const row = document.createElement('div');
         row.className = 'uc-reveal-row';
-        row.innerHTML = '<span class="uc-reveal-who">' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + escapeHtml(String(p.name || '?')) + (pid === playerId ? ' (You)' : '') + '</span></span><span class="uc-reveal-role" style="color: ' + (roleColor[roles[pid]] || 'var(--text)') + ';">' + (roleLabel[roles[pid]] || 'Civilian') + '</span>';
+        row.innerHTML = '<span class="uc-reveal-who">' + avatarCircle(p.avatar, 'ava-chat') + '<span>' + escapeHtml(String(p.name || '?')) + (pid === playerId ? sakuYouTag() : '') + '</span></span><span class="uc-reveal-role" style="color: ' + (roleColor[roles[pid]] || 'var(--text)') + ';">' + (roleLabel[roles[pid]] || 'Civilian') + '</span>';
         list.appendChild(row);
       });
 

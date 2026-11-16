@@ -78,7 +78,7 @@
   function renderClipboard() {
     const box = $('homeQuestContent'); if (!box) return;
     if (!currentAccount) { box.innerHTML = '<p class="home-quest-empty">' + tr('Sign in to track your quests.') + ' <button type="button" onclick="openAuthModal()">' + tr('Continue with Discord') + '</button></p>'; return; }
-    if (!state) { box.innerHTML = '<p class="home-quest-empty">' + tr(loadFailed ? 'Could not load progression. Please try again.' : 'Loading progression…') + '</p>'; return; }
+    if (!state) { box.innerHTML = '<p class="home-quest-empty">' + tr(loadFailed ? 'Could not load progression. Please try again.' : 'Loading progression…') + (loadFailed ? ' <button type="button" class="quest-retry" onclick="window.sakuProgressRetry&&window.sakuProgressRetry()">' + tr('Try again') + '</button>' : '') + '</p>'; return; }
     const near = [];
     (state.game_quests || []).forEach(q => {
       if (q.done || !q.goal_games || !q.goal_wins) return;
@@ -111,10 +111,10 @@
   function render() {
     const acc = $('accountProgress'), box = $('questsContent'), signed = !!currentAccount;
     renderClipboard();
-    if (acc) { acc.hidden = !signed; if (signed) acc.innerHTML = state ? panel(state) : '<p>' + tr(loadFailed ? 'Could not load progression. Please try again.' : 'Loading progression…') + '</p>'; }
+    if (acc) { acc.hidden = !signed; if (signed) acc.innerHTML = state ? panel(state) : '<p>' + tr(loadFailed ? 'Could not load progression. Please try again.' : 'Loading progression…') + (loadFailed ? ' <button type="button" class="quest-retry" onclick="window.sakuProgressRetry&&window.sakuProgressRetry()">' + tr('Try again') + '</button>' : '') + '</p>'; }
     if (!box) return;
     if (!signed) { box.innerHTML = '<section class="quest-guest"><div class="quest-guest-star">✦</div><h2>' + tr('Your quests are waiting') + '</h2><p>' + tr('Sign in to earn experience, collect coins and track your quests.') + '</p><button class="hub-primary hub-discord" onclick="openAuthModal()"><svg class="ic"><use href="#i-discord"/></svg> ' + tr('Continue with Discord') + '</button></section>'; return; }
-    if (!state) { box.innerHTML = '<section class="quest-empty">' + tr(loadFailed ? 'Could not load progression. Please try again.' : 'Loading progression…') + '</section>'; return; }
+    if (!state) { box.innerHTML = '<section class="quest-empty">' + tr(loadFailed ? 'Could not load progression. Please try again.' : 'Loading progression…') + (loadFailed ? ' <button type="button" class="quest-retry" onclick="window.sakuProgressRetry&&window.sakuProgressRetry()">' + tr('Try again') + '</button>' : '') + '</section>'; return; }
     const limitReached = safe(state.claimed_count) >= safe(state.max_claims);
     box.innerHTML = '<section class="quest-progress">' + panel(state) + '</section><div class="quest-section-head"><div><span class="progress-eyebrow">' + tr('YOUR OBJECTIVES') +
       '</span><h2>' + tr('Daily quests') + '</h2><p>' + tr('Resets every day at 00:00 UTC. Claim your rewards before the reset.') + '</p></div></div><div class="quest-list">' +
@@ -221,6 +221,7 @@
     ? claimWith('progress_claim_collection', {p_quest: id, p_tier: tier}, 'Quest reward collected!') : undefined;
 
   window.sakuClaimGameQuest = claimGameQuest; window.sakuClaimCollectionQuest = claimCollectionQuest;
+  window.sakuProgressRetry = function () { loadFailed = false; render(); fetchState(); };
   window.showQuests = function () { showScreen('questsScreen'); render(); fetchState(); try { window.scrollTo(0, 0); } catch (e) {} };
   window.sakuProgressRefresh = fetchState;
   window.sakuProgressSetCoins = c => { c = Number(c); if (state && Number.isFinite(c) && c >= 0) { state = Object.assign({}, state, {coins: Math.floor(c)}); changed(); } };
