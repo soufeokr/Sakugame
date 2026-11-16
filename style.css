@@ -3753,3 +3753,22 @@ body.anime-modal-open{overflow:hidden}
 @keyframes fx-special-rise{0%{transform:none}30%{transform:translateY(-12px)}100%{transform:translateY(-20px) scale(1.1)}}
 @keyframes fx-special-spin{0%{transform:perspective(600px);filter:none}30%{transform:perspective(600px);filter:brightness(.22)}70%{transform:perspective(600px) rotateY(180deg);filter:brightness(.3)}92%{transform:perspective(600px) rotateY(360deg);filter:brightness(1) drop-shadow(0 0 14px #e8c469)}100%{transform:perspective(600px) rotateY(360deg);filter:brightness(1.6) drop-shadow(0 0 30px #e8c469)}}
 .portal-open-pack.opening,.portal-open-pack:focus:not(:focus-visible){outline:none}
+/* Écran de retournement : ouverture rapide et « passer tout » à gauche de la carte */
+.portal-reveal-stage{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:18px;flex:none}
+.portal-reveal-stage .portal-reveal-scene{margin-left:0;margin-right:0}
+.portal-reveal-side{justify-self:end;display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-bottom:18px;max-width:170px}
+.portal-reveal-side[hidden]{display:none}
+.portal-quick.portal-quick-side{justify-content:flex-start;gap:9px;padding:9px 12px;border:1px solid #ffffff22;border-radius:10px;background:#0a1326aa;font-size:.8rem;line-height:1.2}
+.portal-quick-side input{flex:none}
+.portal-skip-all{border:1px solid #b99c5e;background:#e2bd69;color:#111a2d;border-radius:10px;padding:9px 12px;font-weight:800;font-size:.82rem;cursor:pointer}
+.portal-skip-all:hover{background:#ecca7c}
+.portal-skip-all:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.portal-results-mode .portal-reveal-stage{flex:none}
+@media(max-width:550px){
+ .portal-reveal-stage{grid-template-columns:auto auto;justify-content:center;gap:10px}
+ .portal-reveal-spacer{display:none}
+ .portal-reveal-side{max-width:96px;gap:8px}
+ .portal-quick.portal-quick-side{flex-direction:column;align-items:flex-start;gap:5px;padding:8px;font-size:.72rem}
+ .portal-skip-all{padding:8px;font-size:.74rem}
+ .portal-results-mode .portal-reveal-card{width:min(190px,27dvh,50vw)}
+}
