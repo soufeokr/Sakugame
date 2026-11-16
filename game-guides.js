@@ -286,13 +286,37 @@
  const labels={en:['OBJECTIVE','How to play','How to win','Good to know','Example gameplay · French interface','Enlarge image','Close image','In the game','Step'],fr:['OBJECTIF','Comment jouer','Pour gagner','À retenir','Exemple de partie · interface en français','Agrandir l’image','Fermer l’image','En partie','Étape'],es:['OBJETIVO','Cómo jugar','Cómo ganar','A tener en cuenta','Ejemplo de partida · interfaz en francés','Ampliar imagen','Cerrar imagen','En la partida','Paso']};
  function escape(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
  function ic(n){return '<svg class="ic" aria-hidden="true"><use href="#i-'+n+'"/></svg>';}
- /* Tutoriel d'un jeu : objectif en bandeau, trois étapes, capture annotée, victoire et astuce. */
- window.sakuGameGuide=function(id){const g=guides[id];if(!g)return null;const lang=(window.SAKU_I18N&&window.SAKU_I18N.lang)||'en', v=g[lang]||g.en, l=labels[lang]||labels.en, anno=annotations[id], notes=anno[lang]||anno.en;
-  const hero='<section class="guide-hero"><div class="guide-hero-text"><span class="guide-eyebrow">'+l[0]+'</span><p>'+escape(v[1])+'</p></div><svg class="guide-hero-logo" aria-hidden="true"><use href="#i-game-'+id+'"/></svg></section>';
-  const steps='<section class="guide-block"><h4 class="guide-h">'+l[1]+'</h4><ol class="guide-steps">'+v[2].map((x,i)=>'<li><span class="guide-num" aria-hidden="true">'+(i+1)+'</span><p><span class="sr-only">'+l[8]+' '+(i+1)+' : </span>'+escape(x)+'</p></li>').join('')+'</ol></section>';
-  const shot='<section class="guide-block guide-shot"><h4 class="guide-h">'+l[7]+'</h4><div class="guide-shot-grid"><figure class="guide-figure"><button type="button" class="guide-image-button" onclick="sakuGuideImage(\''+id+'\')" aria-label="'+escape(l[5])+'"><img src="guide-images/'+id+'.jpg?v=232" alt="'+escape(l[4])+'" loading="lazy">'+anno.pos.map((p,i)=>'<span class="guide-pin" style="left:'+p[0]+'%;top:'+p[1]+'%" aria-hidden="true">'+(i+1)+'</span>').join('')+'<span class="guide-image-zoom" aria-hidden="true">⤢</span></button><figcaption>'+l[4]+'</figcaption></figure><ol class="guide-annotations">'+notes.map((n,i)=>'<li><span>'+(i+1)+'</span><p>'+escape(n)+'</p></li>').join('')+'</ol></div></section>';
-  const end='<section class="guide-end"><div class="guide-win"><span class="guide-end-icon">'+ic('trophy')+'</span><div><h4>'+l[2]+'</h4><p>'+escape(v[3])+'</p></div></div><div class="guide-tip"><span class="guide-end-icon">'+ic('info')+'</span><div><h4>'+l[3]+'</h4><p>'+escape(v[4])+'</p></div></div></section>';
-  return {players:v[0],html:'<div class="guide-layout guide-v2" data-game="'+id+'">'+hero+steps+shot+end+'</div>'};
+ /* Tutoriel en diaporama illustré par la vraie capture du jeu.
+    0 objectif (capture entière) · 1-3 étapes (zoom sur la zone annotée) · 4 victoire et astuce. */
+ const RATIO={battle:1408/756,blur:1408/756,codenames:1408/756,guesswho:1408/756,hotcold:1408/616,race:1408/756,snapshot:1408/606,undercover:1408/711};
+ const slideLabels={en:['Step','of','Tap the image to enlarge it'],fr:['Étape','sur','Touche l’image pour l’agrandir'],es:['Paso','de','Toca la imagen para ampliarla']};
+ function camera(id,idx){
+  const pos=annotations[id].pos;
+  if(idx<1||idx>3)return {s:1,x:0,y:0,pin:-1};
+  const p=pos[idx-1],sc=window.matchMedia&&matchMedia('(max-width:640px)').matches?2.1:1.9;
+  const cl=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+  return {s:sc,x:cl(50-p[0]*sc,100-100*sc,0),y:cl(50-p[1]*sc,100-100*sc,0),pin:idx-1};
+ }
+ window.sakuGameGuide=function(id){const g=guides[id];if(!g)return null;const lang=(window.SAKU_I18N&&window.SAKU_I18N.lang)||'en', v=g[lang]||g.en, l=labels[lang]||labels.en, sl=slideLabels[lang]||slideLabels.en, anno=annotations[id], notes=anno[lang]||anno.en;
+  function text(idx){
+   if(idx===0)return '<span class="gs-eyebrow">'+l[0]+'</span><p class="gs-lead">'+escape(v[1])+'</p><span class="gs-players">'+escape(v[0])+'</span>';
+   if(idx<=3)return '<span class="gs-eyebrow">'+l[1]+' · '+sl[0]+' '+idx+' '+sl[1]+' 3</span><p class="gs-step"><span class="gs-num" aria-hidden="true">'+idx+'</span>'+escape(v[2][idx-1])+'</p>';
+   return '<div class="gs-win"><span class="guide-end-icon">'+ic('trophy')+'</span><div><h4>'+l[2]+'</h4><p>'+escape(v[3])+'</p></div></div><div class="gs-tip"><span class="guide-end-icon">'+ic('info')+'</span><div><h4>'+l[3]+'</h4><p>'+escape(v[4])+'</p></div></div>';
+  }
+  function mount(root,idx){
+   let stage=root.querySelector('.gs-stage');
+   if(!stage||stage.dataset.game!==id||stage.dataset.lang!==lang){
+    root.innerHTML='<div class="gs-stage guide-v2" data-game="'+id+'" data-lang="'+lang+'"><div class="gs-media"><button type="button" class="gs-frame" style="aspect-ratio:'+RATIO[id]+'" onclick="sakuGuideImage(\''+id+'\')" aria-label="'+escape(l[5])+'"><span class="gs-zoom"><img src="guide-images/'+id+'.jpg?v=232" alt="'+escape(l[4])+'">'+anno.pos.map((p,i)=>'<span class="guide-pin gs-pin" data-i="'+i+'" style="left:'+p[0]+'%;top:'+p[1]+'%" aria-hidden="true">'+(i+1)+'</span>').join('')+'</span><span class="guide-image-zoom" aria-hidden="true">⤢</span></button><span class="gs-callout" aria-live="polite"></span><span class="gs-caption">'+escape(l[4])+' · '+escape(sl[2])+'</span></div><div class="gs-text" aria-live="polite"></div></div>';
+    stage=root.querySelector('.gs-stage');
+   }
+   const cam=camera(id,idx),zoom=stage.querySelector('.gs-zoom'),call=stage.querySelector('.gs-callout'),txt=stage.querySelector('.gs-text');
+   zoom.style.setProperty('--s',cam.s);zoom.style.transform='translate('+cam.x+'%,'+cam.y+'%) scale('+cam.s+')';
+   stage.querySelectorAll('.gs-pin').forEach(p=>p.classList.toggle('on',+p.dataset.i===cam.pin));
+   stage.classList.toggle('gs-zoomed',cam.pin>=0);stage.dataset.slide=idx<1?'goal':idx>3?'end':'step';
+   call.innerHTML=cam.pin>=0?'<b>'+(cam.pin+1)+'</b><span>'+escape(notes[cam.pin])+'</span>':'';
+   txt.classList.remove('gs-in');void txt.offsetWidth;txt.innerHTML=text(idx);txt.classList.add('gs-in');
+  }
+  return {players:v[0],slides:5,mount:mount};
  };
  /* Page Règles : nombre de joueurs sur chaque carte, dans la langue courante. */
  function decorateRuleCards(){const lang=(window.SAKU_I18N&&window.SAKU_I18N.lang)||'en';document.querySelectorAll('#gamesMenuScreen .game-card[data-game]').forEach(card=>{const g=guides[card.dataset.game];if(!g)return;const v=g[lang]||g.en;let chip=card.querySelector('.game-card-players');if(!chip){chip=document.createElement('span');chip.className='game-card-players';chip.setAttribute('data-noi18n','');const img=card.querySelector('.game-card-img');(img||card).appendChild(chip);}chip.textContent=v[0];});}
