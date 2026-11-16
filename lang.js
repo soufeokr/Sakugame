@@ -259,6 +259,17 @@ var I18N = {
   "Saved settings": { fr: "Réglages enregistrés", es: "Ajustes guardados" },
   "How many players?": { fr: "Combien de joueurs ?", es: "¿Cuántos jugadores?" },
   "No game fits this number of players.": { fr: "Aucun jeu ne se joue à ce nombre de joueurs.", es: "Ningún juego encaja con este número de jugadores." },
+  // ---- b281 · Marché : limites contre les comptes secondaires ----
+  "Price below the minimum for this rarity.": { fr: "Prix inférieur au minimum pour cette rareté.", es: "Precio inferior al mínimo para esta rareza." },
+  "Price above the maximum for this rarity.": { fr: "Prix supérieur au maximum pour cette rareté.", es: "Precio superior al máximo para esta rareza." },
+  "Your bid is too low.": { fr: "Ton enchère est trop basse.", es: "Tu puja es demasiado baja." },
+  "Bid above the maximum for this rarity.": { fr: "Enchère supérieure au maximum pour cette rareté.", es: "Puja superior al máximo para esta rareza." },
+  "Trade limit reached with this player: over 14 days, two accounts can trade at most 1 special, 3 mythic and 15 legendary cards.": { fr: "Limite d'échanges atteinte avec ce joueur : sur 14 jours, deux comptes peuvent s'échanger au maximum 1 carte spéciale, 3 mythiques et 15 légendaires.", es: "Límite de intercambios alcanzado con este jugador: en 14 días, dos cuentas pueden intercambiar como máximo 1 carta especial, 3 míticas y 15 legendarias." },
+  "Not enough coins.": { fr: "Pas assez de pièces.", es: "No tienes suficientes monedas." },
+  "This is your own listing.": { fr: "C'est ta propre annonce.", es: "Es tu propio anuncio." },
+  "This listing is no longer available.": { fr: "Cette annonce n'est plus disponible.", es: "Este anuncio ya no está disponible." },
+  "This auction has ended.": { fr: "Cette enchère est terminée.", es: "Esta subasta ha terminado." },
+  "You no longer have this card.": { fr: "Tu n'as plus cette carte.", es: "Ya no tienes esta carta." },
   // ---- b279 · révision des fenêtres : textes restés en anglais ----
   "Finished": { fr: "Terminé", es: "Terminado" },
   "Back to cards": { fr: "Retour aux cartes", es: "Volver a las cartas" },

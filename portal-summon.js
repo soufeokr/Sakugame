@@ -112,7 +112,8 @@ async function openPack(btn){
  if(busy||!pending||uid()!==session)return;
  busy=true;const who=uid(),id=pending.id;
  try{
-  const fast=quick()||matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // L'ouverture rapide accélère seulement la révélation des cartes : l'animation du pack se joue toujours (clic pour la passer).
+  const fast=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const tier=bestRarity(pending.packs),fx=PACK_FX[tier];
   pending.phase='reveal';
   if(!fast){
