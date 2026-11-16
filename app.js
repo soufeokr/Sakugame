@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '274';
+    const SAKU_BUILD = '275';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -345,7 +345,7 @@
       const slide=document.getElementById('howtoSlide'),prev=document.getElementById('howtoPrev'),next=document.getElementById('howtoNext'),dots=document.getElementById('howtoDots');
       document.getElementById('howtoModal').classList.toggle('howto-guide',!!guide);
       prev.style.display=guide?'none':'';next.style.display=guide?'none':'';dots.style.display=guide?'none':'';
-      if(guide){document.getElementById('howtoIcon').innerHTML=ic(meta.icon);document.getElementById('howtoTitle').textContent=meta.title;document.getElementById('howtoPlayers').textContent=guide.players;slide.innerHTML=guide.html;slide.scrollTop=0;slide.parentElement.scrollTop=0;document.getElementById('howtoCta').innerHTML=ic('play')+' '+(window.t?t('Host a room'):'Host a room');return;}
+      if(guide){document.getElementById('howtoModal').dataset.game=HT.game;document.getElementById('howtoIcon').innerHTML=ic(meta.icon);document.getElementById('howtoTitle').textContent=meta.title;document.getElementById('howtoPlayers').textContent=guide.players;slide.innerHTML=guide.html;slide.scrollTop=0;slide.parentElement.scrollTop=0;document.getElementById('howtoCta').innerHTML=ic('play')+' '+(window.t?t('Host a room'):'Host a room');return;}
       const n = meta.slides.length;
       document.getElementById('howtoIcon').innerHTML = ic(meta.icon);
       document.getElementById('howtoTitle').textContent = meta.title;

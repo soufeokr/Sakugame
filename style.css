@@ -3772,3 +3772,108 @@ body.anime-modal-open{overflow:hidden}
  .portal-skip-all{padding:8px;font-size:.74rem}
  .portal-results-mode .portal-reveal-card{width:min(190px,27dvh,50vw)}
 }
+
+/* ===================== Logos des jeux, page Règles et tutoriels (refonte) ===================== */
+[data-game=guesswho]{--g:#2f8fe0;--gl:#9ad8ff;--gd:#0d2a55}
+[data-game=undercover]{--g:#7b5cf0;--gl:#cdbcff;--gd:#1f1550}
+[data-game=battle]{--g:#e0a21f;--gl:#ffe29a;--gd:#4a2a06}
+[data-game=race]{--g:#f0622e;--gl:#ffc2a3;--gd:#4d1407}
+[data-game=blur]{--g:#17b39b;--gl:#a6f5e6;--gd:#06363a}
+[data-game=hotcold]{--g:#6f86f0;--gl:#ffc9c2;--gd:#1b2257}
+[data-game=codenames]{--g:#c23ab0;--gl:#ffb8f0;--gd:#3d0d3f}
+[data-game=snapshot]{--g:#74b81a;--gl:#dcf7a1;--gd:#15300a}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* --- Page Règles --- */
+#gamesMenuScreen .games-grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+#gamesMenuScreen .games-grid .game-card[data-game]{position:relative;display:flex;flex-direction:column;border-radius:20px;border:1px solid color-mix(in srgb,var(--g) 34%,#ffffff12);
+  background:radial-gradient(120% 85% at 0% 0%,color-mix(in srgb,var(--g) 30%,transparent),transparent 62%),linear-gradient(180deg,#121d33,#0c1528);
+  box-shadow:0 10px 30px -18px #000;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;overflow:hidden}
+#gamesMenuScreen .games-grid .game-card[data-game]:hover,#gamesMenuScreen .games-grid .game-card[data-game]:focus-visible{transform:translateY(-4px);border-color:color-mix(in srgb,var(--gl) 70%,transparent);box-shadow:0 18px 40px -16px color-mix(in srgb,var(--g) 70%,transparent);outline:none}
+#gamesMenuScreen .games-grid .game-card[data-game] .game-card-img{height:auto!important;padding:20px 20px 4px;background:none;justify-content:space-between;align-items:flex-start;gap:10px}
+#gamesMenuScreen .games-grid .game-card[data-game] .game-card-img .ic{width:68px!important;height:68px!important;filter:drop-shadow(0 8px 18px color-mix(in srgb,var(--g) 55%,transparent));transition:transform .25s ease}
+#gamesMenuScreen .games-grid .game-card[data-game]:hover .game-card-img .ic{transform:rotate(-6deg) scale(1.06)}
+.game-card-players{flex:none;font-size:.68rem;font-weight:800;letter-spacing:.04em;color:var(--gl);padding:5px 10px;border-radius:99px;border:1px solid color-mix(in srgb,var(--gl) 35%,transparent);background:color-mix(in srgb,var(--gd) 70%,transparent);white-space:nowrap}
+#gamesMenuScreen .games-grid .game-card[data-game] .game-card-content{padding:12px 20px 18px;display:flex;flex-direction:column;flex:1}
+#gamesMenuScreen .games-grid .game-card[data-game] h3{color:#f4f8ff;font-size:1.18rem;margin:0 0 6px;text-align:left}
+#gamesMenuScreen .games-grid .game-card[data-game] p{color:#b7c6da;font-size:.84rem;line-height:1.5;margin:0}
+#gamesMenuScreen .games-grid .game-card[data-game] .game-card-content::after{margin-top:auto;padding-top:14px;color:var(--gl);opacity:1;font-size:.78rem}
+@media(max-width:640px){
+  #gamesMenuScreen .games-grid{grid-template-columns:1fr 1fr;gap:10px}
+  #gamesMenuScreen .games-grid .game-card[data-game]{border-radius:16px}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-img{padding:12px 12px 2px;flex-direction:column;gap:8px}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-img .ic{width:48px!important;height:48px!important}
+  .game-card-players{font-size:.6rem;padding:3px 8px}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-content{padding:8px 12px 12px}
+  #gamesMenuScreen .games-grid .game-card[data-game] h3{font-size:.95rem;text-align:left}
+  #gamesMenuScreen .games-grid .game-card[data-game] p{font-size:.74rem;line-height:1.4}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-content::after{padding-top:8px;font-size:.68rem}
+}
+
+/* --- Tutoriel --- */
+.howto-guide[data-game] .howto-panel{border-color:color-mix(in srgb,var(--g) 45%,#ffffff14);
+  background:radial-gradient(90% 55% at 0% 0%,color-mix(in srgb,var(--g) 24%,transparent),transparent 60%),linear-gradient(180deg,#111b30,#0b1324)}
+.howto-guide[data-game] .howto-head{border-bottom-color:color-mix(in srgb,var(--g) 25%,#ffffff10)}
+.howto-guide[data-game] .howto-gameicon{background:none;border:0;width:56px;height:56px;filter:drop-shadow(0 8px 18px color-mix(in srgb,var(--g) 60%,transparent))}
+.howto-guide[data-game] .howto-gameicon .ic{width:56px;height:56px}
+.howto-guide[data-game] .howto-tag{color:var(--gl)}
+.howto-guide[data-game] .howto-head h3{font-size:1.45rem;letter-spacing:-.01em}
+.howto-guide[data-game] .howto-players{color:var(--gl);border-color:color-mix(in srgb,var(--gl) 35%,transparent);background:color-mix(in srgb,var(--gd) 70%,transparent);font-weight:800}
+.guide-layout.guide-v2{display:flex;flex-direction:column;gap:22px}
+.guide-hero{position:relative;overflow:hidden;border-radius:18px;padding:24px 28px;min-height:120px;display:flex;align-items:center;
+  background:linear-gradient(115deg,color-mix(in srgb,var(--g) 55%,#0d1628) 0%,color-mix(in srgb,var(--gd) 85%,#0d1628) 75%);border:1px solid color-mix(in srgb,var(--gl) 30%,transparent)}
+.guide-v2[data-game=hotcold] .guide-hero{background:linear-gradient(115deg,#2f5fcf 0%,#2a2766 55%,#a53530 100%)}
+.guide-hero-text{position:relative;z-index:1;max-width:min(560px,78%)}
+.guide-hero .guide-eyebrow{color:var(--gl);font-size:.66rem;letter-spacing:.18em;font-weight:800}
+.guide-hero p{margin:8px 0 0;color:#fff;font-weight:800;font-size:clamp(1.15rem,2.3vw,1.62rem);line-height:1.28;text-wrap:balance}
+.guide-hero-logo{position:absolute;right:-14px;bottom:-30px;width:170px;height:170px;opacity:.28;transform:rotate(-12deg)}
+.guide-h{margin:0 0 12px;font-size:.68rem!important;letter-spacing:.16em;text-transform:uppercase;color:var(--gl)!important;font-weight:800}
+.guide-v2 .guide-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:none}
+.guide-v2 .guide-steps li{display:block;position:relative;padding:16px 16px 16px;border-radius:14px;background:#ffffff07;border:1px solid #ffffff12}
+.guide-v2 .guide-num{display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:11px;margin-bottom:10px;
+  background:linear-gradient(135deg,var(--g),color-mix(in srgb,var(--g) 55%,#000));color:#fff;font-size:1rem;font-weight:900;box-shadow:0 6px 14px -6px var(--g)}
+.guide-v2 .guide-steps p{margin:0;color:#cfdbea;font-size:.86rem;line-height:1.5}
+.guide-shot-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:18px;align-items:start}
+.guide-v2 .guide-figure{margin:0}
+.guide-v2 .guide-image-button{border-color:color-mix(in srgb,var(--gl) 35%,transparent);border-radius:12px}
+.guide-v2 .guide-figure figcaption{margin-top:7px;color:#8fa3bb;font-size:.68rem}
+.guide-v2 .guide-pin,.guide-image-dialog .guide-pin{background:var(--g,#368ac8)}
+.guide-v2 .guide-annotations{margin:0;gap:12px}
+.guide-v2 .guide-annotations li{grid-template-columns:26px minmax(0,1fr);gap:10px}
+.guide-v2 .guide-annotations li>span{width:24px;height:24px;background:var(--g);font-size:.72rem;box-shadow:0 0 0 3px color-mix(in srgb,var(--g) 25%,transparent)}
+.guide-v2 .guide-annotations li p{font-size:.84rem;line-height:1.5;color:#cfdbea}
+.guide-end{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px}
+.guide-v2 .guide-win,.guide-v2 .guide-tip{display:flex;gap:14px;align-items:flex-start;margin:0;padding:16px 18px;border-radius:14px;border:1px solid #ffffff12;background:#ffffff07}
+.guide-v2 .guide-win{background:color-mix(in srgb,var(--g) 16%,#0d1628);border-color:color-mix(in srgb,var(--g) 40%,transparent)}
+.guide-end-icon{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:color-mix(in srgb,var(--g) 30%,#0d1628);color:var(--gl)}
+.guide-v2 .guide-win .guide-end-icon{background:linear-gradient(135deg,#f6d27a,#c8902a);color:#2a1a02}
+.guide-end-icon .ic{width:19px;height:19px}
+.guide-v2 .guide-win h4,.guide-v2 .guide-tip h4{margin:0;font-size:.9rem;color:#f2f7ff;text-transform:none;letter-spacing:0}
+.guide-v2 .guide-win p,.guide-v2 .guide-tip p{margin:4px 0 0;font-size:.84rem;line-height:1.5;color:#c6d3e3}
+.howto-guide[data-game] .howto-foot{border-top-color:color-mix(in srgb,var(--g) 25%,#ffffff10)}
+.howto-guide[data-game] .howto-cta{background:var(--gl);color:#0b1424;border:1px solid var(--g);box-shadow:0 10px 24px -12px var(--g);font-weight:800}
+.howto-guide[data-game] .howto-cta:hover{filter:brightness(1.06)}
+.howto-guide[data-game] .howto-cta .ic{color:#0b1424}
+@media(max-width:760px){
+  .guide-v2 .guide-steps{grid-template-columns:1fr;gap:8px}
+  .guide-v2 .guide-steps li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;padding:12px}
+  .guide-v2 .guide-num{margin:0}
+  .guide-shot-grid,.guide-end{grid-template-columns:1fr;gap:12px}
+}
+@media(max-width:640px){
+  .howto-guide[data-game] .howto-head{grid-template-columns:46px minmax(0,1fr) auto}
+  .howto-guide[data-game] .howto-gameicon,.howto-guide[data-game] .howto-gameicon .ic{width:46px;height:46px}
+  .howto-guide[data-game] .howto-head h3{font-size:1.12rem}
+  .guide-layout.guide-v2{gap:16px}
+  .guide-hero{padding:16px 18px;min-height:0;border-radius:14px}
+  .guide-hero-text{max-width:82%}
+  .guide-hero p{font-size:1.05rem}
+  .guide-hero-logo{width:110px;height:110px;right:-18px;bottom:-22px}
+  .guide-v2 .guide-steps p,.guide-v2 .guide-annotations li p,.guide-v2 .guide-win p,.guide-v2 .guide-tip p{font-size:.8rem}
+  .guide-v2 .guide-win,.guide-v2 .guide-tip{padding:13px 14px}
+}
+/* Logos de jeux : tailles sur l'accueil et dans « Créer un salon » */
+.game-selected-icon,.game-selected-icon[class]{width:52px;height:52px;background:none;border:0;border-radius:0;filter:drop-shadow(0 6px 14px #0008)}
+.game-selected-icon .ic{width:52px!important;height:52px!important}
+.game-pick-img .ic,#settingsModal .game-pick-img .ic{width:2.4rem!important;height:2.4rem!important;filter:drop-shadow(0 4px 10px #0007)}
+@media(max-width:640px){.game-selected-icon,.game-selected-icon[class]{width:44px;height:44px}.game-selected-icon .ic{width:44px!important;height:44px!important}}
