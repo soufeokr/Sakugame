@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '277';
+    const SAKU_BUILD = '278';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -174,7 +174,7 @@
       return '<div class="mk-hc-row">' + img + '<div class="mk-hc-name">' + escapeHtml(name) + '</div><div class="mk-hc-num ' + cls + '">' + score + '</div></div>';
     }
     const HT_CN_NAMES10 = ['Levi', 'Zoro Roronoa', 'Naruto Uzumaki', 'Eren Yeager', 'Mikasa Ackerman', 'Ichigo Kurosaki', 'Rem', 'Saitama', 'Light Yagami', 'Usagi Tsukino']; // 🎯 10 DISTINCT cards + genuine sword-fighters for the demo clue ("sword, 2" → Levi & Zoro) — exact AniList pool names so every card carries its photo
-    function htCnBoard(clsFor) { // Ninja Scrolls' real 4×6 card board
+    function htCnBoard(clsFor) { // Ninja' real 4×6 card board
       return '<div class="mk-cn">' + HT_CN_NAMES10.map(function (n, i) { return htCharReal(n, clsFor ? (clsFor(i) || '') : ''); }).join('') + '</div>';
     }
 
@@ -277,7 +277,7 @@
         { t: 'Fewer guesses wins', d: 'Everyone hides once! Your classement score = the TOTAL NUMBER of guesses you took across every secret (16 + 14 guesses = 30). Scores only guide you — the LOWEST guess count takes the match!',
           s: htScene('<div class="mk-board-list"><p>' + htChip('1st — You', 'ok') + ' with 30 guesses</p><p>' + htChip('2nd — Aria', 'dim') + ' with 34 guesses</p><p>' + htChip('3rd — Rex', 'dim') + ' with 41 guesses</p></div>') }
       ]},
-      codenames: { title: 'Ninja Scrolls', icon: 'game-codenames', players: '4-12 players', slides: [
+      codenames: { title: 'Ninja', icon: 'game-codenames', players: '4-12 players', slides: [
         { t: 'Two teams, 24 characters', d: 'Split into RED and BLUE (2+ each). A 4×6 grid of anime characters is dealt — 🔵 8, 🔴 7, 8 bystanders… and ONE 💀 assassin. BLUE always starts (it owns the extra agent!). Only the two NINJAS see the color key.',
           s: htScene(htBadges([['🔴 0/7', 'red'], ['🔵 0/8', 'blue']]) + '<div class="mk-cluebar">You are a SHOGUN — wait for the clue…</div>' + htCnBoard() + '<div class="mk-note">The real 4×6 board — names only, all colors hidden.</div>') },
         { t: 'One word, then tap the targets', d: 'On your team\'s turn its Ninja gives ONE word — "sword" — then TAPS the cards it targets (2 taps = 2 picks allowed). Teammates flip up to that many cards. Every correct pick keeps the turn alive… and finishing the count with only good picks earns a +1 BONUS, chainable until a wrong pick or a pass!',
@@ -1055,7 +1055,7 @@
     //   opponent gets a ❌ color, finds give points, ranking at the end.
     // game === 'race': one player is the TARGET (picks the mystery character
     //   & answers questions); the hunters race to find it first.
-    const GAME_LABELS = { guesswho: 'Detective Showdown', undercover: 'Undercover', battle: 'Detective Royale', race: 'Wanted!', blur: 'Blur Guess', hotcold: 'Cold Case', codenames: 'Ninja Scrolls', snapshot: 'Snapshot!' };
+    const GAME_LABELS = { guesswho: 'Detective Showdown', undercover: 'Undercover', battle: 'Detective Royale', race: 'Wanted!', blur: 'Blur Guess', hotcold: 'Cold Case', codenames: 'Ninja', snapshot: 'Snapshot!' };
     let hostHcMode = 'shared';    // 🔀 Hot & Cold hint mode: 'shared' (everyone sees every proposal) | 'individual' (each seeker sees ONLY their own)
     let hostHcHideRank = false;   // 📊 Hot & Cold: hide the live points ranking until match end
     function setHostHcMode(m) {
@@ -1093,6 +1093,7 @@
     let hostSnGroup = 0;                // 🧩 Snapshot! unite seasons & parts of one franchise
     let hostBgStageSec = BLUR_STAGE_SEC;    // timer option on the create-room screen
     let hostBgMode = 'characters';          // 'characters' | 'covers' on the create-room screen
+    document.documentElement.classList.add('host-bg-chars'); // mode Personnages par défaut : pas d'option de saisons
     let bgWatchBusy = false;           // host watchdog guard
     let bgHostTimer = null;            // host-only 1s heartbeat for stages/reveals
     let blurTicker = null;             // 500ms countdown renderer (display only)
@@ -1230,7 +1231,7 @@
       });
     }
 
-    // 📱 b122: Ninja Scrolls clue field — same Discord-style lift as the chat input
+    // 📱 b122: Ninja clue field — same Discord-style lift as the chat input
     document.addEventListener('focusin', function (e) {
       if (!window.matchMedia || !window.matchMedia('(max-width: 900px)').matches) return;
       if (e.target && e.target.id === 'cnClueWord') {
@@ -2058,6 +2059,7 @@
       hostBgMode = mode === 'covers' ? 'covers' : 'characters';
       document.getElementById('hostBgModeChars').classList.toggle('selected', hostBgMode === 'characters');
       document.getElementById('hostBgModeCovers').classList.toggle('selected', hostBgMode === 'covers');
+      document.documentElement.classList.toggle('host-bg-chars', hostBgMode !== 'covers'); // « Regrouper les saisons » ne concerne que les couvertures
     }
     function selectUcMrWhite(on) {
       ucMrWhite = !!on;
@@ -2257,7 +2259,7 @@
         purgeDisconnectedPlayers();
         if (currentRoom.state !== 'finished') gameResultCounted = false; // re-arm stat counting for the next game
         const isUcRoom = currentRoom.game === 'undercover';
-        // 🥷🎴 legacy 'teams' state = just the merged Ninja Scrolls lobby now
+        // 🥷🎴 legacy 'teams' state = just the merged Ninja lobby now
         if (currentRoom.state === 'lobby' || (currentRoom.game === 'codenames' && currentRoom.state === 'teams')) { if (previousRoomState && previousRoomState !== 'lobby' && previousRoomState !== 'teams' && R_ROOM_SCREENS.some(id=>document.getElementById(id).classList.contains('active'))) showScreen('lobbyScreen'); document.getElementById('winningScreen').classList.remove('show'); document.getElementById('ucEndScreen').classList.remove('show'); document.getElementById('multiEndScreen').classList.remove('show'); document.getElementById('hcEndScreen').classList.remove('show'); if(previousRoomState && previousRoomState!=='lobby' && previousRoomState!=='teams')document.getElementById('interactionWindow').classList.remove('show'); }
         // 👀 Queued visitors auto-SPECTATE the live game (public info only);
         // an `away` queue entry parks in the lobby instead (never promoted).
@@ -2515,7 +2517,7 @@
       if (!currentRoom) return;
       const playersList = document.getElementById('playersList');
       playersList.innerHTML = '';
-      // 🥷🎴 SPECIAL Ninja Scrolls lobby: the ready-list is REPLACED by the teams
+      // 🥷🎴 SPECIAL Ninja lobby: the ready-list is REPLACED by the teams
       // board (everyone is a spectator by default — teams + bench tell the story)
       const isCnLobby = currentRoom.game === 'codenames';
       const cnBox = document.getElementById('lobbyCnBox');
@@ -2574,7 +2576,7 @@
       const isHcGame = currentRoom.game === 'hotcold'; // 🔥 2-6 seats (multiplayer rework)
       const isSnGame = currentRoom.game === 'snapshot'; // 📸 2-8 anime-still guessers
       const isCnGame = currentRoom.game === 'codenames'; // 🗝 4-8 (2+ per team)
-      // 🗝 Ninja Scrolls: the START button appears as soon as the TEAMS are
+      // 🗝 Ninja: the START button appears as soon as the TEAMS are
       // valid — un-teamed players are spectators (never blockers), joining = ready
       const canStart = (isHost && sakuIsAdmin() && allReady) ? true : isCnGame ? cnTeamsGate().ok : isSnGame ? (allReady && playerCount >= 1) : isMultiGame ? (allReady && playerCount >= 3) : isBlurGame ? (allReady && playerCount >= 1) : isHcGame ? (allReady && playerCount >= 2) : (allReady && playerCount === 2); // 🌫️😉 Blur & Snapshot! are playable SOLO · 🛠️ admins launch anything solo
       document.getElementById('startGameBtn').style.display = (isHost && canStart && !imQueued) ? 'block' : 'none';
@@ -2619,7 +2621,7 @@
       if (queueList.length === 0 || isCnLobby) { qSection.style.display = 'none'; } // 🥷🎴 CN: one shared spectator bench instead
       else {
         qSection.style.display = 'block';
-        // 🥷🎴 in Ninja Scrolls the queue never auto-seats — it spectates until setup
+        // 🥷🎴 in Ninja the queue never auto-seats — it spectates until setup
         const qNote = document.getElementById('queueAutoNote');
         if (qNote) qNote.textContent = (currentRoom && currentRoom.game === 'codenames') ? '— spectators: pick a team when the setup opens' : '— joins automatically when a seat opens';
         qList.innerHTML = '';
@@ -2655,7 +2657,7 @@
           qList.appendChild(card);
         });
       }
-      // 🥷🎴 SPECIAL Ninja Scrolls lobby: the teams board lives HERE (same screen)
+      // 🥷🎴 SPECIAL Ninja lobby: the teams board lives HERE (same screen)
       if (isCnLobby) { renderCnTeams(); if (isHost) cnPruneTeams(); }
     }
 
@@ -2707,7 +2709,7 @@
         } finally { queuePromoting = false; }
         return;
       }
-      // 🥷🎴 Ninja Scrolls: nobody gets auto-seated — players are spectators by
+      // 🥷🎴 Ninja: nobody gets auto-seated — players are spectators by
       // default and join a team by THEIR OWN choice (even from a full room's queue)
       if (currentRoom.game === 'codenames') return;
       if (!isHost || (!inLobby && !force)) return;
@@ -2919,7 +2921,7 @@
       // 📱 mirrored badge on the in-game bar's chat button (phone Detective Showdown)
       const rb = document.getElementById('chatUnreadBadgeRow');
       if (rb) { rb.textContent = chatUnread > 0 ? String(chatUnread) : ''; rb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
-      // 🥷🎴 mirrored badge on the Ninja Scrolls chat row button (phone)
+      // 🥷🎴 mirrored badge on the Ninja chat row button (phone)
       const cb = document.getElementById('cnChatBadgeRow');
       if (cb) { cb.textContent = chatUnread > 0 ? String(chatUnread) : ''; cb.style.display = chatUnread > 0 ? 'flex' : 'none'; }
       // 🎭👥 mirrored badge on the Detective Royale chat row button (phone)
@@ -2980,7 +2982,7 @@
       publicRoomsCache=rooms||{};const list=document.getElementById('publicRoomsList');if(!list)return;
       const tt=s=>window.t?t(s):s, input=document.getElementById('publicRoomsSearch'),select=document.getElementById('publicRoomsGameFilter');
       const search=String(input&&input.value||'').trim().toLocaleLowerCase(),game=String(select&&select.value||'');
-      const names={guesswho:'Detective Showdown',undercover:'Undercover',battle:'Detective Royale',race:'Wanted!',blur:'Blur Guess',hotcold:'Cold Case',codenames:'Ninja Scrolls',snapshot:'Snapshot!'};
+      const names={guesswho:'Detective Showdown',undercover:'Undercover',battle:'Detective Royale',race:'Wanted!',blur:'Blur Guess',hotcold:'Cold Case',codenames:'Ninja',snapshot:'Snapshot!'};
       const states={lobby:'In the lobby',selection:'Picking characters',playing:'Game in progress',finished:'Game ending'};
       const entries=Object.entries(publicRoomsCache).filter(([,r])=>r&&r.players&&Object.keys(r.players).length>0).map(([code,r])=>{const playerCount=Object.keys(r.players).length,maxP=r.maxPlayers||2,queueCount=Object.keys(r.queue||{}).length;return {code,r,playerCount,maxP,queueCount,joinable:r.state==='lobby'&&playerCount<maxP};}).filter(e=>e.joinable||e.queueCount<QUEUE_MAX).filter(e=>!game||e.r.game===game).filter(e=>!search||[e.code,names[e.r.game]||'',...Object.values(e.r.players).map(p=>p.name||'')].join(' ').toLocaleLowerCase().includes(search)).sort((a,b)=>(b.joinable-a.joinable)||((b.r.lastActivity||0)-(a.r.lastActivity||0)));
       const count=document.getElementById('publicRoomsCount');if(count)count.textContent=String(entries.length);list.innerHTML='';
@@ -3673,12 +3675,128 @@
       if (SN_DIFF_BANDS.indexOf(d) >= 0) return [d];
       return SN_DIFF_BANDS.slice();
     }
-    function sakuDiffBand(rank) { const r = (rank | 0) || 1500; return r <= 375 ? 'easy' : r <= 750 ? 'normal' : r <= 1125 ? 'hard' : 'extreme'; }
+    // b278 — bandes revues : le classement AniList est très tassé en tête, les
+    // quartiles égaux (375) mettaient des titres déjà pointus en « Facile ».
+    const SN_ANIME_BANDS = [150, 400, 800];      // animés (1500) : top 150 · 151-400 · 401-800 · 801+
+    const SN_CHAR_BANDS = [300, 1000, 2500];     // personnages (≈5250) : top 300 · 301-1000 · 1001-2500 · 2501+
+    function sakuBandOf(rank, cuts) { const r = (rank | 0) || 99999; return r <= cuts[0] ? 'easy' : r <= cuts[1] ? 'normal' : r <= cuts[2] ? 'hard' : 'extreme'; }
+    function sakuDiffBand(rank) { return sakuBandOf((rank | 0) || 1500, SN_ANIME_BANDS); }
     function sakuDiffOf(entry) { return sakuDiffBand((entry && (entry.r | 0)) || 1500); }
-    function sakuFilterDiff(pool, diff) {
+    // grouped = saisons réunies : un animé prend la difficulté de sa famille (son titre le plus connu)
+    function sakuFilterDiff(pool, diff, grouped) {
       const set = sakuDiffSetSan(diff);
       if (set.length >= SN_DIFF_BANDS.length) return pool || [];
-      return (pool || []).filter(c => c && set.indexOf(sakuDiffOf(c)) >= 0);
+      const fam = grouped ? sakuAnimeFamilies() : null;
+      return (pool || []).filter(c => {
+        if (!c) return false;
+        const r = fam && fam.famOf[c.id] != null ? fam.rank[fam.famOf[c.id]] : (c.r | 0) || 1500;
+        return set.indexOf(sakuDiffBand(r)) >= 0;
+      });
+    }
+    // Personnages de Blur Guess : rang = ordre de popularité AniList du fichier characters.js
+    let sakuCharRankMemo = null;
+    function sakuCharRank(id) {
+      const src = (typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : [];
+      if (!sakuCharRankMemo || sakuCharRankMemo.n !== src.length) { const m = {}; src.forEach((c, i) => { if (c && m[c.id] == null) m[c.id] = i + 1; }); sakuCharRankMemo = { n: src.length, m: m }; }
+      return sakuCharRankMemo.m[id] || 99999;
+    }
+    function sakuFilterCharDiff(pool, diff) {
+      const set = sakuDiffSetSan(diff);
+      if (set.length >= SN_DIFF_BANDS.length) return pool || [];
+      return (pool || []).filter(c => c && set.indexOf(sakuBandOf(sakuCharRank(c.id), SN_CHAR_BANDS)) >= 0);
+    }
+
+    /* 🧩 b278 — FAMILLES D'ANIMÉS (saisons, parties, films, spin-offs).
+       Calculées une seule fois sur le catalogue COMPLET (jamais sur la sélection
+       filtrée) : le tirage et la vérification des réponses voient toujours les
+       mêmes familles. Règles :
+         1. même titre une fois les suffixes de saison retirés (« Season 3 », « Part 2 », « II »…)
+            ou un titre qui en prolonge un autre (« Bleach: Sennen Kessen-hen » → « Bleach »),
+            À CONDITION que les deux partagent au moins un personnage (si l'on a les
+            données) — évite « Monster » ⊃ « Monster Musume », « Blood » ⊃ « Blood Lad » ;
+         2. deux animés qui partagent ≥ 3 personnages (et ≥ 40 % du plus petit) sont
+            la même famille — rattrape Mushoku Tensei III, The Last: Naruto, Monogatari…
+         3. un crossover (Isekai Quartet, Carnival Phantasm) qui relierait plusieurs
+            familles reste seul.                                                        */
+    let sakuFamMemo = null;
+    function sakuAnimeFamilies() {
+      const list = (typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : [];
+      const hasChars = typeof CHAR_ANIME_IDS !== 'undefined' && CHAR_ANIME_IDS ? 1 : 0;
+      if (sakuFamMemo && sakuFamMemo.n === list.length && sakuFamMemo.c === hasChars) return sakuFamMemo;
+      const ids = list.map(a => a && a.id), idx = {}; ids.forEach((id, i) => { if (id != null) idx[id] = i; });
+      const parent = ids.map((_, i) => i);
+      const find = i => { while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; } return i; };
+      const union = (a, b) => { a = find(a); b = find(b); if (a !== b) parent[Math.max(a, b)] = Math.min(a, b); };
+      // personnages de chaque animé
+      const chars = ids.map(() => null);
+      if (hasChars) Object.keys(CHAR_ANIME_IDS).forEach(cid => { (CHAR_ANIME_IDS[cid] || []).forEach(aid => { const i = idx[aid]; if (i == null) return; (chars[i] = chars[i] || []).push(cid); }); });
+      const sets = chars.map(c => c ? new Set(c) : null);
+      const shared = (a, b) => { if (!sets[a] || !sets[b]) return -1; let n = 0; const [x, y] = sets[a].size < sets[b].size ? [sets[a], sets[b]] : [sets[b], sets[a]]; x.forEach(v => { if (y.has(v)) n++; }); return n; };
+      const linked = (a, b) => { const n = shared(a, b); return n !== 0; }; // -1 = pas de données → on se fie au titre
+      // 1. titres
+      const norms = list.map(a => bgNorm(a && a.name)), keys = list.map(a => { const t = snapGroupNorm(a && a.name); return SN_GROUP_MAP[t] ? bgNorm(SN_GROUP_MAP[t]) : t; });
+      const byNorm = {}; norms.forEach((n, i) => { if (n && byNorm[n] == null) byNorm[n] = i; });
+      const byKey = {}; keys.forEach((k, i) => { if (k) (byKey[k] = byKey[k] || []).push(i); });
+      Object.keys(byKey).forEach(k => { const m = byKey[k]; for (let a = 0; a < m.length; a++) for (let b = a + 1; b < m.length; b++) if (linked(m[a], m[b])) union(m[a], m[b]); });
+      keys.forEach((k, i) => {
+        if (!k) return;
+        const words = k.split(' ');
+        for (let w = 1; w < words.length; w++) { // préfixes du titre, du plus court au plus long
+          const p = words.slice(0, w).join(' '), j = byNorm[p];
+          if (p.length >= 3 && j != null && j !== i && linked(i, j)) { union(i, j); break; }
+        }
+      });
+      // 2. personnages communs (sans crossovers) — part minimale dans le plus grand des deux : écarte les caméos (Fire Force / Soul Eater)
+      if (hasChars) {
+        const links = [];
+        const owners = {}; chars.forEach((c, i) => { if (c) c.forEach(cid => (owners[cid] = owners[cid] || []).push(i)); });
+        const seen = {};
+        Object.keys(owners).forEach(cid => { const o = owners[cid]; for (let a = 0; a < o.length; a++) for (let b = a + 1; b < o.length; b++) { const key = o[a] + ':' + o[b]; if (seen[key]) continue; seen[key] = 1; const n = shared(o[a], o[b]); if (n >= 3 && n >= 0.5 * Math.min(sets[o[a]].size, sets[o[b]].size) && n >= 0.2 * Math.max(sets[o[a]].size, sets[o[b]].size)) links.push([o[a], o[b]]); } });
+        // crossover = relie des familles qui ne sont PAS liées entre elles sans lui
+        // (Isekai Quartet : Overlord, KonoSuba… ; les saisons de Mushoku Tensei, elles, se lient toutes entre elles)
+        const roots = ids.map((_, i) => find(i));
+        const partners = {}; links.forEach(([a, b]) => { (partners[a] = partners[a] || new Set()).add(roots[b]); (partners[b] = partners[b] || new Set()).add(roots[a]); });
+        const crossover = i => {
+          const p = partners[i]; if (!p) return false;
+          const others = [...p].filter(r => r !== roots[i]); if (others.length < 2) return false;
+          const up = {}; const f2 = x => { while (up[x] != null && up[x] !== x) x = up[x]; return x; };
+          links.forEach(([a, b]) => { if (a === i || b === i) return; const ra = f2(roots[a]), rb = f2(roots[b]); if (ra !== rb) up[ra] = rb; });
+          const c0 = f2(others[0]); return others.some(r => f2(r) !== c0);
+        };
+        const cross = {}; Object.keys(partners).forEach(i => { if (crossover(+i)) cross[i] = 1; });
+        links.forEach(([a, b]) => { if (!cross[a] && !cross[b]) union(a, b); });
+      }
+      // familles : libellé = titre de base le plus connu, rang = meilleur rang
+      const famOf = {}, members = {}, label = {}, rank = {};
+      list.forEach((a, i) => { if (!a || a.id == null) return; const f = 'f' + ids[find(i)]; famOf[a.id] = f; (members[f] = members[f] || []).push(a); });
+      Object.keys(members).forEach(f => {
+        const m = members[f].slice().sort((x, y) => ((x.r | 0) || 9999) - ((y.r | 0) || 9999));
+        rank[f] = (m[0].r | 0) || 1500;
+        // nom affiché : le titre dominant de la famille (le plus de saisons), sa version la plus courte
+        // titre racine (que prolongent les autres : « Fire Force » ⊂ « Fire Force: San no Shou »), sinon titre dominant
+        const freq = {}; m.forEach(x => { const k = snapGroupNorm(x.name); freq[k] = (freq[k] || 0) + 1; });
+        const score = x => { const n = bgNorm(x.name); let pre = 0; m.forEach(y => { const o = bgNorm(y.name); if (y !== x && o.indexOf(n + ' ') === 0) pre++; }); const alias = SN_GROUP_MAP[snapGroupNorm(x.name)]; return (alias && bgNorm(alias) === bgNorm(x.name) ? 100 : 0) + pre * 3 + freq[snapGroupNorm(x.name)] + (x === m[0] ? 0.5 : 0); };
+        const pick = m.slice().sort((x, y) => score(y) - score(x) || bgNorm(x.name).length - bgNorm(y.name).length || ((x.r | 0) || 9999) - ((y.r | 0) || 9999))[0];
+        label[f] = String(pick.name);
+      });
+      sakuFamMemo = { n: list.length, c: hasChars, famOf: famOf, members: members, label: label, rank: rank };
+      return sakuFamMemo;
+    }
+    function sakuFamilyOf(entry) { const F = sakuAnimeFamilies(); const f = entry && F.famOf[entry.id]; return f ? { id: f, members: F.members[f], label: F.label[f], rank: F.rank[f] } : null; }
+    // noms acceptés pour une manche groupée : tous les titres + alias des membres (ids stockés dans la manche)
+    function sakuFamilyNames(memberIds) {
+      const want = {}; (memberIds || []).forEach(id => { want[id] = 1; });
+      const out = [];
+      const titles = [];
+      ((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []).forEach(c => { if (c && want[c.id]) { titles.push(bgNorm(c.name)); out.push(String(c.name)); (c.al || []).forEach(a => { if (a) out.push(String(a)); }); } });
+      // début de titre commun à toute la famille (« Mushoku Tensei », « Shingeki no Kyojin ») : accepté s'il fait 5 lettres ou plus
+      if (titles.length > 1) {
+        let words = titles[0].split(' ');
+        titles.forEach(t => { const w = t.split(' '); let k = 0; while (k < words.length && k < w.length && words[k] === w[k]) k++; words = words.slice(0, k); });
+        const root = words.join(' ');
+        if (root.replace(/ /g, '').length >= 5) out.push(root);
+      }
+      return out;
     }
     // checkbox painting (create-room + lobby modal use the same row markup)
     function paintDiffChecks(kind, val) {
@@ -3749,7 +3867,7 @@
       const bg = r.bg || {};
       const mode = bg.mode || s.bgMode || 'characters';
       if (mode === 'covers') {
-        const covers = sakuFilterDiff(sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []), s.bgDiff); // 🎚️ popularity band
+        const covers = sakuFilterDiff(sakuCleanAnimes((typeof ANIME_COVERS !== 'undefined' && Array.isArray(ANIME_COVERS)) ? ANIME_COVERS : []), s.bgDiff, !!s.bgGroup); // 🎚️ popularity band (famille si saisons réunies)
         if (s.pool !== 'watched') return covers;
         const wset = roomWatchSet(r);
         return covers.filter(c => c && c.id != null && c.name && wset.ids[c.id]);
@@ -3757,7 +3875,7 @@
       const generic = sakuCleanChars((typeof GENERIC_CHARACTERS !== 'undefined' && Array.isArray(GENERIC_CHARACTERS)) ? GENERIC_CHARACTERS : []);
       if (s.pool === 'watched') return watchedPoolChars(r);
       const seen = new Set();
-      return generic.filter(c => { if (!c || c.id == null || !c.name || seen.has(c.id)) return false; seen.add(c.id); return true; });
+      return sakuFilterCharDiff(generic, s.bgDiff).filter(c => { if (!c || c.id == null || !c.name || seen.has(c.id)) return false; seen.add(c.id); return true; }); // 🎚️ b278 : difficulté = popularité du personnage
     }
 
     // Compact the rounds entry we store in Firebase: everything the clients
@@ -3782,13 +3900,17 @@
       const fresh = snap.val() || {};
       const cand = bgCandidateChars();
       let picks = shuffleArray(cand.slice());
-      if (s.bgGroup && mode === 'covers') { // 🧩 b116: rounds never repeat a family (Naruto OR Shippuden — not both)
-        const norms = cand.map(c => bgNorm(c.name));
+      const grouped = !!(s.bgGroup && mode === 'covers');
+      if (grouped) { // 🧩 b278: une seule manche par famille (Naruto OU Shippuden — pas les deux)
         const seen = {}; const uniq = [];
-        picks.forEach(c => { const k = snapGroupKey(c.name, norms); if (!seen[k]) { seen[k] = 1; uniq.push(c); } });
+        picks.forEach(c => { const F = sakuFamilyOf(c), k = F ? F.id : 'a' + c.id; if (!seen[k]) { seen[k] = 1; uniq.push(c); } });
         picks = uniq;
       }
-      const rounds = picks.slice(0, Math.min(totalRounds, picks.length)).map(bgRoundEntry);
+      const rounds = picks.slice(0, Math.min(totalRounds, picks.length)).map(c => {
+        const e = bgRoundEntry(c);
+        if (grouped) { const F = sakuFamilyOf(c); if (F && F.members.length > 1) { e.fm = F.members.map(x => x.id); e.fl = F.label; } } // membres stockés : tous les joueurs acceptent les mêmes titres
+        return e;
+      });
       if (!rounds.length) {
         await database.ref('rooms/' + roomCode).update({ state: 'lobby', characters: null, selections: null, bg: null });
         showNotification('Not enough pictures for Blur Guess! Check the pool settings — Watched needs synced AniList accounts with watched anime.');
@@ -3989,6 +4111,7 @@
       if (gid !== bgGroupMemo.gid) bgGroupMemo = { gid: gid, map: {} };
       const mk = String(ch.id || ch.name);
       if (mk in bgGroupMemo.map) return bgGroupMemo.map[mk];
+      if (Array.isArray(ch.fm)) { const names = sakuFamilyNames(ch.fm); bgGroupMemo.map[mk] = names.length ? names : null; return bgGroupMemo.map[mk]; } // b278
       const pool = snapPool();
       if (!pool.length) { bgGroupMemo.map[mk] = null; return null; }
       const norms = pool.map(c => bgNorm(c.name));
@@ -4005,7 +4128,7 @@
       return sibs.some(nm => bgMatches(text, nm));
     }
     function bgRevealName(ch) { // reveal line: family label when covers+group
-      if (bgGroupSiblings(ch) && ch && ch.name) return snapGroupLabelOf(ch, snapPool());
+      if (bgGroupSiblings(ch) && ch && ch.name) return ch.fl ? String(ch.fl) : snapGroupLabelOf(ch, snapPool());
       return bgIsCovers() ? dTitle((ch && ch.name) || '?') : ((ch && ch.name) || '?');
     }
 
@@ -4569,23 +4692,18 @@
       await database.ref('rooms/' + roomCode).update({ restarts: null, 'sn/gameId': gameId, 'sn/phase': 'setup' });
       const snap = await database.ref('rooms/' + roomCode).once('value');
       const fresh = snap.val() || {};
-      let pool = sakuFilterDiff(snapPool(), (currentRoom.settings || {}).snDiff).filter(c => c && c.id != null && c.name && snapStillsOf(c).length >= SNAP_STAGES);
-      const grpOn = !!((currentRoom.settings || {}).snGroup); // 🧩 b110 grouping · b112 frame bank
-      let grpNorms = null;
-      if (grpOn) {
-        grpNorms = pool.map(c => bgNorm(c.name));
-        const seenFam = {};
-        pool = pool.filter(c => { const k = snapGroupKey(c.name, grpNorms); if (!k || seenFam[k]) return false; seenFam[k] = 1; return true; });
-        grpNorms = pool.map(c => bgNorm(c.name));
-      }
-      const rounds = shuffleArray(pool.slice()).slice(0, Math.min(totalRounds, pool.length)).map(e => {
+      const grpOn = !!((currentRoom.settings || {}).snGroup); // 🧩 saisons réunies
+      // b278 : difficulté de la FAMILLE quand les saisons sont réunies ; familles calculées sur le catalogue complet
+      let pool = shuffleArray(sakuFilterDiff(snapPool(), (currentRoom.settings || {}).snDiff, grpOn).filter(c => c && c.id != null && c.name && snapStillsOf(c).length >= SNAP_STAGES));
+      if (grpOn) { const seenFam = {}; pool = pool.filter(c => { const F = sakuFamilyOf(c), k = F ? F.id : 'a' + c.id; if (seenFam[k]) return false; seenFam[k] = 1; return true; }); }
+      const rounds = pool.slice(0, Math.min(totalRounds, pool.length)).map(e => {
         if (!grpOn) return snapRoundEntry(e); // solo: snapRoundEntry's default long ladder
-        const key = snapGroupKey(e.name, grpNorms);
-        const sibs = pool.filter(s => s.id !== e.id && snapGroupKey(s.name, grpNorms) === key);
+        const F = sakuFamilyOf(e);
+        if (!F || F.members.length < 2) return snapRoundEntry(e);
         const ownThumbs = (snapMetaOf(e.id) || {}).p || [];
-        const famThumbs = sibs.length ? shuffleArray(sibs.flatMap(s => ((snapMetaOf(s.id) || {}).p || [])).filter(u => u && ownThumbs.indexOf(u) < 0)) : []; // b111: sibling seasons feed the ladder
+        const famThumbs = shuffleArray(F.members.filter(m => m.id !== e.id).flatMap(m => ((snapMetaOf(m.id) || {}).p || [])).filter(u => u && ownThumbs.indexOf(u) < 0)); // les autres saisons nourrissent les images
         const r = snapRoundEntry(e, famThumbs);
-        r.gk = key; r.n = snapGroupLabelOf(e, pool); r.h = snapHintOf(e, r.n); // family id · family name · family letters (b112)
+        r.gk = F.id; r.fm = F.members.map(m => m.id); r.n = F.label; r.h = snapHintOf(e, r.n); // famille · membres · nom · lettres
         return r;
       });
       if (!rounds.length) {
@@ -4615,7 +4733,8 @@
       const g = bgNorm(text);
       if (!g) return false;
       const names = [round.n].concat(snapAliasesOf(round.al));
-      if (round.gk) { // 🧩 b110 — grouped family: every sibling title/alias of the franchise wins
+      if (Array.isArray(round.fm)) names.push.apply(names, sakuFamilyNames(round.fm)); // 🧩 b278 — membres stockés dans la manche
+      else if (round.gk) { // 🧩 b110 — anciennes parties : clé calculée sur le titre
         const norms = snapPoolNorms();
         snapPool().forEach(c => {
           if (!c || !c.name || c.id === round.al) return;
@@ -4857,7 +4976,8 @@
     function snFindSuggestions(q) {
       const g = bgNorm(q);
       if (!g) return [];
-      const pool = sakuFilterDiff(snapPool(), ((currentRoom || {}).settings || {}).snDiff); // 🎚️ band-matched suggestions
+      const ss = ((currentRoom || {}).settings || {}); // 🎚️ suggestions de la difficulté ; saisons réunies → tout le catalogue (une autre saison de la famille est acceptée)
+      const pool = ss.snGroup ? snapPool() : sakuFilterDiff(snapPool(), ss.snDiff);
       const hits = [];
       pool.forEach((c, i) => {
         if (!c || !c.name) return;
@@ -4962,7 +5082,7 @@
       const redN = teams.red.members.length, blueN = teams.blue.members.length;
       // 🥷🎴 players are SPECTATORS by default — only team members count as ready,
       // so a benched player (or a queued one) never blocks the start
-      if (redN + blueN < 4) return { ok: false, msg: tt('Ninja Scrolls needs at least 4 players in teams (2+ per team)!') };
+      if (redN + blueN < 4) return { ok: false, msg: tt('Ninja needs at least 4 players in teams (2+ per team)!') };
       if (redN < 2 || blueN < 2) return { ok: false, msg: tt('Each team needs at least 2 players!') };
       if (!teams.red.spy || !teams.blue.spy) return { ok: false, msg: tt('Each team needs a Ninja — drag a name tag into a NINJA spot!') };
       const spect = Object.keys(room.players || {}).filter(pid => !cnTeamOf(pid)).length + Object.keys(room.queue || {}).length;
@@ -5289,7 +5409,7 @@
       const endTurn = () => { res.upd['cn/turn'] = other; res.upd['cn/phase'] = 'clue'; res.upd['cn/clue'] = null; res.upd['cn/guessesLeft'] = 0; res.upd['cn/bonus'] = null; };
       const win = (team2, reason) => {
         res.upd['cn/phase'] = 'over'; res.upd['cn/winner'] = { team: team2, reason: reason }; res.upd['state'] = 'finished'; res.upd['cn/guessesLeft'] = 0;
-        res.logs.push({ k: 'win', txt: '🏆 ' + cnEmoji(team2) + ' ' + t('team WINS the Ninja Scrolls game!') });
+        res.logs.push({ k: 'win', txt: '🏆 ' + cnEmoji(team2) + ' ' + t('team WINS the Ninja game!') });
         res.winnerFlag = true;
       };
       if (color === turn) {
@@ -5651,7 +5771,7 @@
         }
       }
     }
-    // =============================== 🗝 (Ninja Scrolls ends) ===============================
+    // =============================== 🗝 (Ninja ends) ===============================
     function renderMultiEnd(kind) {
       const screen = document.getElementById('multiEndScreen');
       const activeScreen = document.querySelector('.screen.active');
@@ -5728,7 +5848,7 @@
         const cn = currentRoom.cn || {};
         const winTeam = cn.winner ? cn.winner.team : null;
         const myTeam = cnTeamOf(playerId, cn);
-        title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Ninja Scrolls over') : 'Ninja Scrolls over');
+        title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Ninja over') : 'Ninja over');
         sub.innerHTML = (!cn.winner || !cn.winner.reason) ? ''
           : cn.winner.reason === 'assassin' ? (myTeam === winTeam ? (window.t ? t('The other team hit the 💀 assassin — lucky break!') : 'The other team hit the 💀 assassin — lucky break!') : (window.t ? t('Your team hit the 💀 assassin card…') : 'Your team hit the 💀 assassin card…'))
           : cn.winner.reason === 'team-left' ? (window.t ? t('The other team left the game!') : 'The other team left the game!')
@@ -6063,6 +6183,7 @@
           const m = s.bgMode === 'covers' ? 'covers' : 'characters';
           document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
           document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
+          document.documentElement.classList.toggle('room-bg-chars', m !== 'covers');
           paintDiffChecks('modalBg', s.bgDiff); // 🎚️
           paintSnGroup('modalBgGroup', s.bgGroup); // 🧩
         }
@@ -6297,6 +6418,7 @@
       const m = mode === 'covers' ? 'covers' : 'characters';
       document.getElementById('modalBgModeChars').classList.toggle('selected', m === 'characters');
       document.getElementById('modalBgModeCovers').classList.toggle('selected', m === 'covers');
+      document.documentElement.classList.toggle('room-bg-chars', m !== 'covers');
       if (isHost && currentRoom && currentRoom.game === 'blur') { await database.ref('rooms/' + roomCode + '/settings/bgMode').set(m); touchActivity(); }
     }
 
@@ -7607,7 +7729,7 @@
       if (g === 'codenames') {
         // 🥷🎴 merged special lobby: teams already picked on THIS screen — just deal
         const gate = cnTeamsGate();
-        if (!gate.ok && !sakuIsAdmin()) { showNotification(gate.msg || 'Ninja Scrolls needs at least 4 players in teams (2+ per team)!'); return; }
+        if (!gate.ok && !sakuIsAdmin()) { showNotification(gate.msg || 'Ninja needs at least 4 players in teams (2+ per team)!'); return; }
         touchActivity();
         await cnStartGame();
         return;
@@ -9504,7 +9626,7 @@ const SAKU_HOME_GAMES={
  race:{title:'Wanted!',icon:'game-race',players:'3–12 players',desc:'Race to identify the target’s character.'},
  blur:{title:'Blur Guess',icon:'game-blur',players:'Solo or up to 12',desc:'Recognize an image as the blur disappears.'},
  hotcold:{title:'Cold Case',icon:'game-hotcold',players:'2–12 players',desc:'Follow the clues to find the hidden character.'},
- codenames:{title:'Ninja Scrolls',icon:'game-codenames',players:'4–12 players',desc:'Give one-word clues to guide your team.'},
+ codenames:{title:'Ninja',icon:'game-codenames',players:'4–12 players',desc:'Give one-word clues to guide your team.'},
  snapshot:{title:'Snapshot!',icon:'game-snapshot',players:'Solo or up to 12',desc:'Identify an anime from its images.'}
 };
 function sakuHomeGameSelect(key){

@@ -7,7 +7,7 @@
     {id:'classic',name:'Detective Showdown',icon:'guesswho'}, {id:'undercover',name:'Undercover',icon:'undercover'},
     {id:'battle',name:'Detective Royale',icon:'battle'}, {id:'race',name:'Wanted!',icon:'race'},
     {id:'blur',name:'Blur Guess',icon:'blur'}, {id:'hotcold',name:'Cold Case',icon:'hotcold'},
-    {id:'codenames',name:'Ninja Scrolls',icon:'codenames'}, {id:'snapshot',name:'Snapshot!',icon:'snapshot'}
+    {id:'codenames',name:'Ninja',icon:'codenames'}, {id:'snapshot',name:'Snapshot!',icon:'snapshot'}
   ];
   const COLLECTION_NAMES = {
     collection: 'Collection completed', boosters: 'Boosters opened',

@@ -200,6 +200,7 @@ function encSyncRarities() {
   encRenumber();
   encFlat = [];
   encData.list.forEach((block, bi) => block.cards.forEach(card => encFlat.push({ card, block, bi })));
+  encBuildGroups();
 }
 function sakuStrongestRefreshEnc() {
   if (!encData) return;
@@ -221,58 +222,74 @@ function encBuild() {
   return true;
 }
 
-/* ---------------- filtering / sorting ---------------- */
-function encVisible() {
-  const q = encQuery.trim().toLowerCase();
-  let rows = encFlat;
-  if(document.getElementById('encWishlistOnly')?.checked)rows=rows.filter(r=>!!((cardState?.flags||{})[String(r.card.i)]||{}).wishlist);
-  if (encRarity) rows = rows.filter(r => r.card.r === encRarity);
-  if (q) {
-    rows = rows.filter(r => {
-      if (r.card.m.toLowerCase().indexOf(q) >= 0) return true;
-      if ((r.card.edition==='strongest'||r.card.edition==='hoshi') && window.sakuSpecialNumber && (window.sakuSpecialNumber(r.card)||'').toLowerCase().indexOf(q)>=0) return true;
-      if (r.block.label.toLowerCase().indexOf(q) >= 0) return true;
-      if (r.card.s && r.card.s.toLowerCase().indexOf(q) >= 0) return true;
-      if ((r.card.edition==='strongest'||r.card.edition==='hoshi') && r.card.series && r.card.series.toLowerCase().indexOf(q) >= 0) return true;
-      if (r.card.a) for (let i = 0; i < r.card.a.length; i++) if (r.card.a[i].toLowerCase().indexOf(q) >= 0) return true;
-      return false;
+/* ---------------- animés : regroupement, filtres ----------------
+   L'encyclopédie s'affiche en cartes d'animé qui se déplient sur leurs
+   cartes. Les cartes spéciales (Hoshi, The Strongest) sont rangées avec
+   leur animé ; la recherche « hoshi » / « strongest » les retrouve.     */
+const ENC_GROUP_STEP = 48;          // cartes d'animé par « Voir plus »
+let encGroups = [];                 // [{ label, cards, special }]
+let encOpenSet = new Set();         // libellés des animés dépliés
+let encGroupShown = 0, encLastVisible = [];
+function encNormLabel(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+function encIsSpecial(c) { return c.edition === 'strongest' || c.edition === 'hoshi'; }
+function encBuildGroups() {
+  const main = [], byLabel = {}, byNorm = {};
+  encData.list.forEach(b => { if (b.edition) return; const g = { label: b.label, cards: b.cards.slice(), special: 0 }; main.push(g); byLabel[b.label] = g; byNorm[encNormLabel(b.label)] = g; });
+  let map = null;
+  try { if (typeof cardsAnimeGroups === 'function') map = cardsAnimeGroups().byId; } catch (e) { map = null; }
+  encData.list.forEach(b => {
+    if (!b.edition) return;
+    b.cards.forEach(c => {
+      const hit = map && map[String(c.i)];
+      let g = hit && hit.key && hit.key.indexOf('enc:') === 0 ? byLabel[hit.key.slice(4)] : null;
+      if (!g) g = byNorm[encNormLabel(c.series)] || null;
+      if (!g) { const k = '§' + (c.series || b.label); g = byLabel[k] || (byLabel[k] = { label: c.series || b.label, cards: [], special: 0 }); if (main.indexOf(g) < 0) main.push(g); }
+      g.cards.push(c); g.special++;
     });
-  }
-  if (encSort === 'name') {
-    rows = rows.slice().sort((a, b) => a.card.m.localeCompare(b.card.m) || a.card.n - b.card.n);
-  } else if (encSort === 'rarity') {
-    rows = rows.slice().sort((a, b) =>
-      ENC_RARITIES.indexOf(a.card.r) - ENC_RARITIES.indexOf(b.card.r) || a.card.n - b.card.n);
-  }
-  return rows;
+  });
+  encGroups = main;
 }
-
-/* ---------------- the index rail ---------------- */
-function encRenderIndex() {
-  const box = document.getElementById('encIndexList');
-  if (!box || !encData) return;
+function encCardMatches(card, q, label) {
+  if (card.m.toLowerCase().indexOf(q) >= 0) return true;
+  if (encIsSpecial(card)) {
+    if ((card.edition === 'hoshi' ? 'hoshi' : 'the strongest').indexOf(q) >= 0) return true;
+    if (window.sakuSpecialNumber && (window.sakuSpecialNumber(card) || '').toLowerCase().indexOf(q) >= 0) return true;
+    if (card.series && card.series.toLowerCase().indexOf(q) >= 0) return true;
+  }
+  if (card.s && card.s.toLowerCase().indexOf(q) >= 0) return true;
+  if (card.a) for (let i = 0; i < card.a.length; i++) if (card.a[i].toLowerCase().indexOf(q) >= 0) return true;
+  return false;
+}
+function encSortCards(cards) {
+  if (encSort === 'name') return cards.slice().sort((a, b) => a.m.localeCompare(b.m) || a.n - b.n);
+  if (encSort === 'rarity') return cards.slice().sort((a, b) => ENC_RARITIES.indexOf(a.r) - ENC_RARITIES.indexOf(b.r) || a.n - b.n);
+  return cards.slice().sort((a, b) => (encIsSpecial(a) - encIsSpecial(b)) || a.n - b.n);
+}
+/* Animés visibles avec leurs cartes filtrées (recherche, rareté, wishlist). */
+function encVisibleGroups() {
   const q = encQuery.trim().toLowerCase();
-  const blocks = encData.list.filter(b => !q || b.label.toLowerCase().indexOf(q) >= 0);
-  box.innerHTML = blocks.map((b, i) => {
-    const pinned = ENC_PINNED.indexOf(b.label.toLowerCase()) >= 0 ? ' pinned' : '';
-    return '<button type="button" class="enc-idx' + pinned + '" data-enc-jump="' + i + '">' +
-      '<span>' + encEsc(encFranchiseLabel(b.label)) + '</span><b>' + b.count + '</b></button>';
-  }).join('') || '<p class="enc-empty" style="padding:14px 6px">' + encEsc(encTr('No anime matches.', 'No anime matches.')) + '</p>';
-  const note = document.getElementById('encIndexCount');
-  if (note) note.textContent = blocks.length + ' / ' + encData.groups;
+  const wish = !!document.getElementById('encWishlistOnly')?.checked, flags = (typeof cardState !== 'undefined' && cardState && cardState.flags) || {};
+  const out = [];
+  encGroups.forEach((g, gi) => {
+    const label = encFranchiseLabel(g.label);
+    const labelHit = q && (g.label.toLowerCase().indexOf(q) >= 0 || label.toLowerCase().indexOf(q) >= 0);
+    let cards = g.cards;
+    if (wish) cards = cards.filter(c => !!(flags[String(c.i)] || {}).wishlist);
+    if (encRarity) cards = cards.filter(c => c.r === encRarity);
+    if (q && !labelHit) cards = cards.filter(c => encCardMatches(c, q, g.label));
+    if (cards.length) out.push({ g: g, gi: gi, label: label, cards: encSortCards(cards), labelHit: !!labelHit });
+  });
+  return out;
 }
+/* compat : liste à plat des cartes visibles */
+function encVisible() { const rows = []; encVisibleGroups().forEach(v => v.cards.forEach(card => rows.push({ card: card, block: v.g, bi: v.gi }))); return rows; }
 
-function encJump(i) {
-  let guard = 0;
-  while (!encBlockEls[i] && encShown < encVisible().length && guard++ < 60) encRender(false);
-  const el = encBlockEls[i];
-  if (!el) return;
-  try { if (el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  catch (e) { if (el.scrollTop !== undefined) el.scrollTop = 0; }
-  document.querySelectorAll('.enc-idx.on').forEach(n => n.classList.remove('on'));
-  const btn = document.querySelector('.enc-idx[data-enc-jump="' + i + '"]');
-  if (btn) btn.classList.add('on');
+/* ---------------- the index rail (remplacé par les cartes d'animé) ---------------- */
+function encRenderIndex() {
+  const note = document.getElementById('encIndexCount');
+  if (note && encData) note.textContent = encGroups.length + ' / ' + encData.groups;
 }
+function encJump(i) { const el = document.querySelector('[data-enc-group="' + i + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
 /* ---------------- the binder ---------------- */
 function encSlotHtml(card) {
@@ -305,70 +322,102 @@ function encBlockHeadHtml(block, st) {
   const from = st ? st.from : block.from, to = st ? st.to : block.to;
   return '<div class="enc-block-head">' +
     '<h3>' + encEsc(encFranchiseLabel(block.label)) + '</h3>' +
-    '<span class="enc-block-nums">' + (block.edition==='strongest' ? 'S-001 – S-022' : block.edition==='hoshi' ? 'S-023 – S-044' : encNum(from) + ' – ' + encNum(to)) + '</span>' +
+    '<span class="enc-block-nums">' + (block.edition==='strongest' ? 'S-001 – S-022' : block.edition==='hoshi' ? 'S-023 – S-044' : from ? encNum(from) + ' – ' + encNum(to) : '') + '</span>' +
     '<span class="enc-block-tally">' + tally + '</span>' +
     '</div>';
 }
 
-function encRender(reset) {
+function encAnimeTally(cards) {
+  const rar = {};
+  cards.forEach(c => { rar[c.r] = (rar[c.r] || 0) + 1; });
+  return ENC_RARITIES.filter(r => rar[r]).map(r =>
+    '<span class="anime-tally" style="--rarity:' + (ENC_RARITY_META[r] || {}).color + '"><b>' + (r === 'uncommon' ? 'U' : r.charAt(0).toUpperCase()) + '</b> ' + rar[r] + '</span>').join('');
+}
+function encGroupCover(g) {
+  let best = null;
+  g.cards.forEach(c => { if (!encIsSpecial(c) && c.u && (!best || (c.k || 99999) < (best.k || 99999))) best = c; });
+  return best || g.cards[0];
+}
+function encGroupBody(sec, v) {
+  const body = sec.querySelector('.enc-anime-body');
+  if (window.sakuBasicRelease) window.sakuBasicRelease(body);
+  const main = v.g.cards.filter(c => !encIsSpecial(c));
+  const head = { label: v.g.label, from: main.length ? Math.min.apply(null, main.map(c => c.n)) : 0, to: main.length ? Math.max.apply(null, main.map(c => c.n)) : 0 };
+  const rar = {}; v.cards.forEach(c => { rar[c.r] = (rar[c.r] || 0) + 1; });
+  body.innerHTML = encBlockHeadHtml(head, { rar: rar, from: head.from, to: head.to }) + '<div class="enc-grid"></div>';
+  const holder = body.querySelector('.enc-grid'), tmp = document.createElement('div');
+  v.cards.forEach(card => {
+    tmp.innerHTML = encSlotHtml(card);
+    if (window.sakuAppendWishlist) window.sakuAppendWishlist(tmp.firstElementChild, String(card.i));
+    holder.appendChild(tmp.firstElementChild);
+  });
+  if (window.sakuBasicObserve) window.sakuBasicObserve(body);
+}
+function encGroupEl(v) {
+  const open = encOpenSet.has(v.g.label), cover = encGroupCover(v.g), total = v.g.cards.length;
+  const sec = document.createElement('section');
+  sec.className = 'enc-anime' + (open ? ' open' : '');
+  sec.dataset.encGroup = String(v.gi);
+  const filtered = v.cards.length !== total;
+  const count = (filtered ? v.cards.length + ' / ' : '') + total + ' ' + encTr('cards', 'cards') + (v.g.special ? ' · ' + v.g.special + ' ' + (v.g.special === 1 ? encTr('special·1', 'special') : encTr('special', 'special')) : '');
+  sec.innerHTML = '<button type="button" class="enc-anime-head" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+    '<span class="anime-cover">' + (cover && cover.u ? '<img src="' + encEsc(encThumb(cover.u)) + '" alt="" loading="lazy" decoding="async" onerror="this.style.opacity=0">' : '') + '</span>' +
+    '<span class="anime-info"><strong>' + encEsc(v.label) + '</strong><span class="anime-progress">' + encEsc(count) + '</span>' +
+    '<span class="anime-tallies">' + encAnimeTally(v.cards) + '</span></span>' +
+    '<span class="enc-anime-chev" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></button>' +
+    '<div class="enc-anime-body"></div>';
+  if (window.sakuAnimeWish) sec.appendChild(window.sakuAnimeWish(v.g.cards.map(c => String(c.i))));
+  if (open) encGroupBody(sec, v);
+  return sec;
+}
+function encToggleGroup(sec) {
+  const v = encLastVisible.find(x => String(x.gi) === sec.dataset.encGroup);
+  if (!v) return;
+  const open = !sec.classList.contains('open');
+  sec.classList.toggle('open', open);
+  sec.querySelector('.enc-anime-head').setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (open) { encOpenSet.add(v.g.label); encGroupBody(sec, v); }
+  else { encOpenSet.delete(v.g.label); const body = sec.querySelector('.enc-anime-body'); if (window.sakuBasicRelease) window.sakuBasicRelease(body); body.innerHTML = ''; }
+  encSyncExpandAll();
+}
+function encSyncExpandAll() {
+  const btn = document.getElementById('encExpandAll'); if (!btn) return;
+  const shown = encLastVisible.slice(0, encGroupShown), allOpen = shown.length && shown.every(v => encOpenSet.has(v.g.label));
+  btn.textContent = allOpen ? encTr('Collapse all', 'Collapse all') : encTr('Expand all', 'Expand all');
+  btn.setAttribute('aria-pressed', allOpen ? 'true' : 'false');
+}
+function encExpandAll() {
+  const shown = encLastVisible.slice(0, encGroupShown), allOpen = shown.length && shown.every(v => encOpenSet.has(v.g.label));
+  shown.forEach(v => { if (allOpen) encOpenSet.delete(v.g.label); else encOpenSet.add(v.g.label); });
+  const keep = encGroupShown; encRender(true, keep);
+}
+function encRender(reset, keepCount) {
   const grid = document.getElementById('encBinder');
   if (!grid || !encData) return;
-  if (reset) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); encShown = 0; encBlockEls = {}; grid.innerHTML = ''; }
-
-  const rows = encVisible();
-  const total = rows.length;
-
-  if (!total) {
+  if (!encGroups.length) encBuildGroups();
+  if (reset) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); encGroupShown = 0; encBlockEls = {}; grid.innerHTML = ''; }
+  const vis = encVisibleGroups(); encLastVisible = vis;
+  grid.classList.add('enc-anime-grid');
+  if (!vis.length) {
     grid.innerHTML = '<p class="enc-empty">' + encEsc(encTr('No card matches your filters.', 'No card matches your filters.')) + '</p>';
-    encShown = 0;
+    encGroupShown = 0;
   } else {
-    const stale = grid.querySelector('.enc-empty');
-    if (stale) stale.remove();
-    // live per-block stats so a search / rarity filter rewrites each header
-    let stats = null;
-    if (encRarity || encQuery) {
-      stats = {};
-      for (let i = 0; i < total; i++) {
-        const r = rows[i];
-        const st = stats[r.bi] || (stats[r.bi] = { rar: {}, from: Infinity, to: 0 });
-        st.rar[r.card.r] = (st.rar[r.card.r] || 0) + 1;
-        if (r.card.n < st.from) st.from = r.card.n;
-        if (r.card.n > st.to) st.to = r.card.n;
-      }
-    }
-    const target = Math.min(total, encShown + ENC_STEP);
-    let cur = grid.lastElementChild;
-    while (encShown < target) {
-      const row = rows[encShown];
-      if (!cur || cur.dataset.encBlock !== String(row.bi)) {
-        const sec = document.createElement('section');
-        sec.className = 'enc-block';
-        sec.dataset.encBlock = String(row.bi);
-        sec.innerHTML = encBlockHeadHtml(row.block, stats && stats[row.bi]) + '<div class="enc-grid"></div>';
-        grid.appendChild(sec);
-        cur = sec;
-        encBlockEls[row.bi] = sec;
-      }
-      const holder = cur.querySelector('.enc-grid');
-      const tmp = document.createElement('div');
-      while (encShown < target && rows[encShown].bi === row.bi) {
-        tmp.innerHTML = encSlotHtml(rows[encShown].card);
-        if(window.sakuAppendWishlist)window.sakuAppendWishlist(tmp.firstElementChild,String(rows[encShown].card.i));
-        holder.appendChild(tmp.firstElementChild);
-        encShown++;
-      }
-    }
+    const stale = grid.querySelector('.enc-empty'); if (stale) stale.remove();
+    const q = encQuery.trim();
+    // Une recherche déplie d'elle-même les premiers animés trouvés par un personnage.
+    if (reset && q) vis.slice(0, 6).forEach(v => { if (!v.labelHit || vis.length <= 3) encOpenSet.add(v.g.label); });
+    const target = Math.min(vis.length, Math.max(encGroupShown + ENC_GROUP_STEP, keepCount || 0));
+    for (let k = encGroupShown; k < target; k++) { const el = encGroupEl(vis[k]); grid.appendChild(el); encBlockEls[vis[k].gi] = el; }
+    encGroupShown = target;
   }
-
-  if (window.sakuBasicObserve) window.sakuBasicObserve(grid);
-  const left = total - encShown;
+  const left = vis.length - encGroupShown;
   const more = document.getElementById('encMoreBtn');
-  if (more) {
-    more.style.display = left > 0 ? '' : 'none';
-    more.textContent = encTr('Show more', 'Show more') + ' (' + left + ')';
-  }
+  if (more) { more.style.display = left > 0 ? '' : 'none'; more.textContent = encTr('Show more', 'Show more') + ' (' + left + ')'; }
+  const nCards = vis.reduce((t, v) => t + v.cards.length, 0);
   const note = document.getElementById('encCountNote');
-  if (note) note.textContent = encShown + ' / ' + total;
+  if (note) note.textContent = vis.length + ' ' + encTr('anime', 'anime') + ' · ' + nCards + ' ' + encTr('cards', 'cards');
+  encShown = nCards;
+  encSyncExpandAll();
 }
 function encShowMore() { encRender(false); }
 
@@ -432,13 +481,15 @@ function encApplyEdits() {
   encRender(true);
 }
 function encScrollToCard(n) {
-  const rows = encVisible();
-  let idx = -1;
-  for (let i = 0; i < rows.length; i++) if (rows[i].card.n === n) { idx = i; break; }
-  let guard = 0;
-  while (idx >= 0 && encShown <= idx && guard++ < 90) encRender(false);
-  const el = document.querySelector('[data-enc-card="' + n + '"]');
-  if (el && el.scrollIntoView) { try { el.scrollIntoView({ block: 'center' }); } catch (e) {} }
+  const vis = encVisibleGroups();
+  const k = vis.findIndex(v => v.cards.some(c => c.n === n));
+  if (k < 0) return;
+  encOpenSet.add(vis[k].g.label);
+  let el = document.querySelector('[data-enc-group="' + vis[k].gi + '"]');
+  if (!el || k >= encGroupShown) { encRender(true, k + 1); el = document.querySelector('[data-enc-group="' + vis[k].gi + '"]'); }
+  else if (!el.classList.contains('open')) encToggleGroup(el);
+  const card = document.querySelector('[data-enc-card="' + n + '"]');
+  if (card && card.scrollIntoView) { try { card.scrollIntoView({ block: 'center' }); } catch (e) {} }
 }
 function encSetRarity(n, r) {
   const found = encFind(n);
@@ -553,7 +604,7 @@ function encRenderHero() {
       '&#8679; ' + encEsc(encTr('Load', 'Load')) + '</button>');
   }
   const sub = document.getElementById('encSub');
-  if (sub) sub.textContent = d.groups.toLocaleString(((window.SAKU_I18N || {}).lang) || 'en') + ' ' +
+  if (sub) sub.textContent = (encGroups.length || d.groups).toLocaleString(((window.SAKU_I18N || {}).lang) || 'en') + ' ' +
     encTr('anime franchises', 'anime franchises') + ' · ' +
     encTr('including special cards', 'including special cards');
   const rf = document.getElementById('encRarityFilter');
@@ -591,6 +642,8 @@ function encWire() {
   if (so) so.addEventListener('change', () => { encSort = so.value || 'num'; encRender(true); });
 
   document.addEventListener('click', e => {
+    const head = e.target.closest && e.target.closest('.enc-anime-head');
+    if (head) { encToggleGroup(head.closest('.enc-anime')); return; }
     const jump = e.target.closest && e.target.closest('[data-enc-jump]');
     if (jump) { encJump(parseInt(jump.getAttribute('data-enc-jump'), 10)); return; }
     const slot = e.target.closest && e.target.closest('[data-enc-card]');

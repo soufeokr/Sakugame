@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="277">
+<meta name="saku-build" content="278">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=277">
+<link rel="manifest" href="manifest.json?v=278">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=277" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=277">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=277">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=277">
+<link rel="icon" href="favicon.ico?v=278" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=278">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=278">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=278">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=277">
+  <link rel="stylesheet" href="style.css?v=278">
 </head>
 <body>
 
@@ -339,7 +339,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=277" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=278" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" data-noi18n title="Sakugame is in public beta — thanks for your patience!">Beta</span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <button class="username-change-btn" id="usernameBtn" aria-expanded="false" aria-controls="playerPopover" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
@@ -395,7 +395,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=277" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=278" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -412,7 +412,7 @@
             <button type="button" data-home-game="race" onclick="sakuHomeGameSelect('race')"><svg class="ic"><use href="#i-game-race"/></svg><span>Wanted!</span></button>
             <button type="button" data-home-game="blur" onclick="sakuHomeGameSelect('blur')"><svg class="ic"><use href="#i-game-blur"/></svg><span>Blur Guess</span></button>
             <button type="button" data-home-game="hotcold" onclick="sakuHomeGameSelect('hotcold')"><svg class="ic"><use href="#i-game-hotcold"/></svg><span>Cold Case</span></button>
-            <button type="button" data-home-game="codenames" onclick="sakuHomeGameSelect('codenames')"><svg class="ic"><use href="#i-game-codenames"/></svg><span>Ninja Scrolls</span></button>
+            <button type="button" data-home-game="codenames" onclick="sakuHomeGameSelect('codenames')"><svg class="ic"><use href="#i-game-codenames"/></svg><span>Ninja</span></button>
             <button type="button" data-home-game="snapshot" onclick="sakuHomeGameSelect('snapshot')"><svg class="ic"><use href="#i-game-snapshot"/></svg><span>Snapshot!</span></button>
           </div></div>
           <div class="game-selected" aria-live="polite"><div class="game-selected-top"><span class="game-selected-icon"><svg class="ic"><use id="homeGameIcon" href="#i-game-guesswho"/></svg></span><span id="homeGamePlayers" class="game-selected-players">2 players</span></div><div><span class="game-selected-label">Selected game</span><h2 id="homeGameName">Detective Showdown</h2><p id="homeGameDesc">Ask questions to find your opponent’s character.</p></div><div class="game-selected-actions"><button type="button" class="dashboard-create" onclick="sakuHomeGameHost()"><span>Host Room</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" class="dashboard-rules" onclick="sakuHomeGameRules()">How to play</button></div></div>
@@ -424,7 +424,7 @@
     <main class="card-home">
       <header class="card-home-head"><div><span class="card-home-kicker" data-noi18n>SAKUGAME / CARDS</span><h1>Card game</h1><p>Manage your collection and explore the cards.</p></div></header>
       <div class="card-home-layout card-home-redesign">
-        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><small>Open boosters and discover your cards.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img loading="lazy" decoding="async" src="summon-machines/basic-mini.svg?v=277" alt="" draggable="false"></div></section>
+        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><small>Open boosters and discover your cards.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img loading="lazy" decoding="async" src="summon-machines/basic-mini.svg?v=278" alt="" draggable="false"></div></section>
         <div class="card-home-right"><button type="button" class="card-home-collection" onclick="showCollection()"><span class="card-home-symbol"><svg class="ic"><use href="#i-cards"/></svg></span><span class="card-home-collection-text"><span class="card-home-kicker">YOUR COLLECTION</span><strong>My cards</strong><span><b id="cardHomeOwned">—</b> <span>different cards owned</span></span></span><span id="cardHomePreview" class="card-home-preview" aria-hidden="true"></span><span class="card-home-link-arrow" aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M8 6h10v10"/></svg></span></button>
           <div class="card-home-shortcuts"><button type="button" onclick="showMarket()"><svg class="ic"><use href="#i-market"/></svg><strong>Market</strong><small>Buy, bid and sell</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" onclick="showShowcase()"><svg class="ic"><use href="#i-user"/></svg><strong>Showcase</strong><small>Your public profile</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" onclick="encOpen()"><svg class="ic"><use href="#i-book"/></svg><strong>Encyclopedia</strong><small>Browse all cards</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button></div>
         </div>
@@ -704,7 +704,7 @@
           <option value="rarity">Rarity</option>
           <option value="name">A &rarr; Z</option>
         </select>
-        <label class="cards-owned"><input type="checkbox" id="encWishlistOnly" onchange="encRender(true)"> <span>Wishlist only</span></label><span class="enc-count-note" id="encCountNote"></span>
+        <label class="cards-owned"><input type="checkbox" id="encWishlistOnly" onchange="encRender(true)"> <span>Wishlist only</span></label><button type="button" class="secondary small enc-expand-all" id="encExpandAll" onclick="encExpandAll()" aria-pressed="false">Expand all</button><span class="enc-count-note" id="encCountNote"></span>
       </div>
 
       <div class="enc-body">
@@ -772,7 +772,7 @@
         <div class="game-card" data-game="codenames" onclick="openHowTo('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openHowTo('codenames')">
           <div class="game-card-img"><svg class="ic"><use href="#i-game-codenames"/></svg></div>
           <div class="game-card-content">
-            <h3>Ninja Scrolls</h3>
+            <h3>Ninja</h3>
             <p>Use clues to reveal your team’s agents, not the assassin.</p>
           </div>
         </div>
@@ -852,14 +852,14 @@
               </div>
               <div class="game-pick-card" data-game="codenames" onclick="selectHostGame('codenames')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-game-codenames"/></svg></div>
-                <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-12 players</small></div>
+                <div class="game-pick-content"><h4>Ninja</h4><small>4-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="snapshot" onclick="selectHostGame('snapshot')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-game-snapshot"/></svg></div>
                 <div class="game-pick-content"><h4>Snapshot!</h4><small>1-12 players</small></div>
               </div>
             </div>
-            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Detective Showdown (2 players)</option><option value="battle">Detective Royale (3-12 players)</option><option value="race">Wanted! (3-12 players)</option><option value="blur">Blur Guess (solo or up to 12 players)</option><option value="undercover">Undercover (3-12 players)</option><option value="hotcold">Cold Case (2-12 players)</option><option value="codenames">Ninja Scrolls (4-12 players)</option><option value="snapshot">Snapshot! (solo or up to 12 players)</option></select>
+            <select id="gameSelect" style="display: none;" onchange="onGameSelectChange()"><option value="guesswho">Detective Showdown (2 players)</option><option value="battle">Detective Royale (3-12 players)</option><option value="race">Wanted! (3-12 players)</option><option value="blur">Blur Guess (solo or up to 12 players)</option><option value="undercover">Undercover (3-12 players)</option><option value="hotcold">Cold Case (2-12 players)</option><option value="codenames">Ninja (4-12 players)</option><option value="snapshot">Snapshot! (solo or up to 12 players)</option></select>
             <!-- 📱 phone only: compact game picker — opens the selection window -->
             <button type="button" id="gamePickOpenBtn" onclick="openGamePickModal()"><span id="gamePickOpenLabel"><svg class="ic"><use href="#i-gamepad"/></svg> Choose a game…</span><span class="gpo-chev">▾</span></button>
           </div>
@@ -950,7 +950,7 @@
             </div>
           </div>
           <div class="input-group blur-only-settings" style="display: none;">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — anime: Easy = top 150 · Normal = 151-400 · Hard = 401-800 · Extreme = 801+ (with seasons united, a sequel counts as its franchise) · characters: Easy = top 300 · Normal = 301-1000 · Hard = 1001-2500 · Extreme = 2501+. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="hostBgDiffRow">
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostBg','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostBg','normal')">Normal</button>
@@ -959,7 +959,7 @@
             </div>
             
           </div>
-          <div class="input-group blur-only-settings" style="display: none;">
+          <div class="input-group blur-only-settings bg-covers-only" id="hostBgGroupWrap" style="display: none;">
             <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
             <div class="radio-group diff-row">
               <label class="radio-option selected" id="hostBgGroupOff" onclick="selectBgGroup(0)"><div>Separate</div></label>
@@ -979,7 +979,7 @@
             <input type="range" id="hostSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateSnRoundsSlider()">
           </div>
           <div class="input-group snap-only-settings" style="display: none;">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — anime: Easy = top 150 · Normal = 151-400 · Hard = 401-800 · Extreme = 801+ (with seasons united, a sequel counts as its franchise) · characters: Easy = top 300 · Normal = 301-1000 · Hard = 1001-2500 · Extreme = 2501+. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="hostSnDiffRow">
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('hostSn','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('hostSn','normal')">Normal</button>
@@ -1006,7 +1006,7 @@
     <main class="join-page"><header class="join-header"><button type="button" class="page-back" onclick="goHome()" aria-label="Back"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg></button><div><span class="join-kicker" data-noi18n>SAKUGAME / ROOMS</span><h1>Join a room</h1><p>Find an open game or join friends with a code.</p></div><button type="button" class="join-create" onclick="showHostRoom()">Create a room <span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button></header>
       <div class="join-layout"><section class="join-code-panel"><span class="join-icon"><svg class="ic"><use href="#i-key"/></svg></span><h2>Have a code?</h2><p>Enter the four-character code shared by your friends.</p><label for="joinRoomInput">Room code</label><div class="join-code-form"><input type="text" id="joinRoomInput" placeholder="ABCD" maxlength="4" autocomplete="off" style="text-transform:uppercase"><button type="button" onclick="joinGameRoom()">Join</button></div></section>
       <section class="join-browser"><div class="join-browser-head"><div><span class="join-kicker">EXPLORE</span><h2>Public rooms <small id="publicRoomsCount"></small></h2><p>Choose a room that suits you.</p></div><button type="button" class="join-refresh" onclick="refreshPublicRooms()" aria-label="Refresh the list"><svg class="ic"><use href="#i-refresh"/></svg></button></div>
-       <div class="join-filters"><input type="search" id="publicRoomsSearch" placeholder="Search a player or code…" oninput="filterPublicRooms()"><select id="publicRoomsGameFilter" aria-label="Game" onchange="filterPublicRooms()"><option value="">All games</option><option value="guesswho">Detective Showdown</option><option value="undercover">Undercover</option><option value="battle">Detective Royale</option><option value="race">Wanted!</option><option value="blur">Blur Guess</option><option value="hotcold">Cold Case</option><option value="codenames">Ninja Scrolls</option><option value="snapshot">Snapshot!</option></select></div>
+       <div class="join-filters"><input type="search" id="publicRoomsSearch" placeholder="Search a player or code…" oninput="filterPublicRooms()"><select id="publicRoomsGameFilter" aria-label="Game" onchange="filterPublicRooms()"><option value="">All games</option><option value="guesswho">Detective Showdown</option><option value="undercover">Undercover</option><option value="battle">Detective Royale</option><option value="race">Wanted!</option><option value="blur">Blur Guess</option><option value="hotcold">Cold Case</option><option value="codenames">Ninja</option><option value="snapshot">Snapshot!</option></select></div>
        <div id="publicRoomsList" class="public-rooms-list"><p class="pub-empty">Looking for open rooms…</p></div></section></div>
     </main>
   </div>
@@ -1033,7 +1033,7 @@
           <strong style="color: var(--accent);">Room:</strong> <span id="lobbyRoomType">Private</span><br>
           <strong style="color: var(--accent);">Players:</strong> <span id="lobbyPlayerCount">1/2</span>
         </div>
-        <!-- 🥷🎴 NINJA SCROLLS special lobby: the team setup IS the lobby (spectators by default) -->
+        <!-- 🥷🎴 NINJA special lobby: the team setup IS the lobby (spectators by default) -->
         <div id="lobbyCnBox" class="cn-setup" style="display: none;">
           <p id="cnTeamsHint">Spectating by default — join a box (or drag your name tag) to play; joining = ready. One 🔑 Ninja per team — first tap wins. The host can drag anyone into place or shuffle.</p>
           <!-- 👀 spectators strip — players who haven't picked a team yet -->
@@ -1559,7 +1559,7 @@
               </div>
               <div class="game-pick-card" data-game="codenames" onclick="modalCardGame('codenames')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-key"/></svg></div>
-                <div class="game-pick-content"><h4>Ninja Scrolls</h4><small>4-12 players</small></div>
+                <div class="game-pick-content"><h4>Ninja</h4><small>4-12 players</small></div>
               </div>
               <div class="game-pick-card" data-game="snapshot" onclick="modalCardGame('snapshot')">
                 <div class="game-pick-img"><svg class="ic"><use href="#i-image"/></svg></div>
@@ -1573,7 +1573,7 @@
               <option value="blur">Blur Guess (solo or up to 12 players)</option>
               <option value="undercover">Undercover (3-12 players)</option>
               <option value="hotcold">Cold Case (2-12 players)</option>
-              <option value="codenames">Ninja Scrolls (4-12 players)</option>
+              <option value="codenames">Ninja (4-12 players)</option>
               <option value="snapshot">Snapshot! (solo or up to 12 players)</option>
             </select>
           </div>
@@ -1667,7 +1667,7 @@
             </div>
           </div>
           <div class="input-group">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — anime: Easy = top 150 · Normal = 151-400 · Hard = 401-800 · Extreme = 801+ (with seasons united, a sequel counts as its franchise) · characters: Easy = top 300 · Normal = 301-1000 · Hard = 1001-2500 · Extreme = 2501+. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="modalBgDiffRow">
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalBg','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalBg','normal')">Normal</button>
@@ -1676,7 +1676,7 @@
             </div>
             
           </div>
-          <div class="input-group">
+          <div class="input-group bg-covers-only" id="modalBgGroupWrap">
             <label>Group seasons &amp; parts <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">Unite every season &amp; part of an anime under one identity — Naruto + Shippuden = Naruto · all Monogatari parts = Bakemonogatari · every My Hero Academia season = My Hero Academia. Rounds never repeat a family and any variant name wins.</span></button></label>
             <div class="radio-group diff-row">
               <label class="radio-option selected" id="modalBgGroupOff" onclick="changeBgGroup(0)"><div>Separate</div></label>
@@ -1699,7 +1699,7 @@
             <input type="range" id="modalSnRoundsSlider" min="4" max="20" step="1" value="10" oninput="updateModalSnRounds()">
           </div>
           <div class="input-group">
-            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — Easy = rank 1-375 · Normal = 376-750 · Hard = 751-1125 · Extreme = 1126-1500. Tick the bands you want to play — picks will come from any of them!</span></button></label>
+            <label>Difficulty <button type="button" class="info-btn" aria-label="More info"><svg class="ic"><use href="#i-info"/></svg><span class="info-bubble">How popular the picks are — anime: Easy = top 150 · Normal = 151-400 · Hard = 401-800 · Extreme = 801+ (with seasons united, a sequel counts as its franchise) · characters: Easy = top 300 · Normal = 301-1000 · Hard = 1001-2500 · Extreme = 2501+. Tick the bands you want to play — picks will come from any of them!</span></button></label>
 <div class="check-row diff-row" id="modalSnDiffRow">
               <button type="button" class="diff-check" data-d="easy" onclick="toggleDiffBand('modalSn','easy')">Easy</button>
               <button type="button" class="diff-check" data-d="normal" onclick="toggleDiffBand('modalSn','normal')">Normal</button>
@@ -1945,8 +1945,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=277"></script>
-  <script defer src="saku-features.js?v=277"></script>
+  <script defer src="saku-local-account.js?v=278"></script>
+  <script defer src="saku-features.js?v=278"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -1955,7 +1955,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=277', 'charanimes.js?v=277', 'animes.js?v=277', 'nsfwdata.js?v=277', 'snappics.js?v=277'];
+        var files = ['characters.js?v=278', 'charanimes.js?v=278', 'animes.js?v=278', 'nsfwdata.js?v=278', 'snappics.js?v=278'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1974,43 +1974,43 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=277"></script>
-  <script defer src="card-extra.js?v=277"></script>
-  <script defer src="strongest-data.js?v=277"></script>
-  <script defer src="strongest-render.js?v=277"></script>
-  <script defer src="basic-render.js?v=277"></script>
-  <script defer src="cardgame.js?v=277"></script>
-  <script defer src="encyclopedia.js?v=277"></script>
-  <script defer src="character-localization.js?v=277"></script>
-  <script defer src="enc.js?v=277"></script>
-  <script defer src="card-tilt.js?v=277"></script>
-  <script defer src="card-levels.js?v=277"></script>
-  <script defer src="card-controls.js?v=277"></script>
-  <script defer src="library-tools.js?v=277"></script>
-  <script defer src="rarity-sync.js?v=277"></script>
-  <script defer src="strongest-sync.js?v=277"></script>
-  <script defer src="hoshi-data.js?v=277"></script>
-  <script defer src="pic-sync.js?v=277"></script>
-  <script defer src="undercover.js?v=277"></script>
-  <script defer src="music.js?v=277"></script>
-  <script defer src="lang.js?v=277"></script>
-  <script defer src="game-guides.js?v=277"></script>
-  <script defer src="app.js?v=277"></script>
-  <script defer src="supabase-client.js?v=277"></script>
-  <script defer src="saku-session.js?v=277"></script>
-  <script defer src="saku-sfx.js?v=277"></script>
-  <script defer src="retro-index.js?v=277"></script>
-  <script defer src="cinema-index.js?v=277"></script>
-  <script defer src="portal-rates.js?v=277"></script>
-  <script defer src="portal-info.js?v=277"></script>
-  <script defer src="portal-showcase.js?v=277"></script>
-  <script defer src="card-backs.js?v=277"></script>
-  <script defer src="portal-summon.js?v=277"></script>
-  <script defer src="progression.js?v=277"></script>
-  <script defer src="player-popover.js?v=277"></script>
-  <script defer src="friends.js?v=277"></script>
-  <script defer src="showcase.js?v=277"></script>
-  <script defer src="market.js?v=277"></script>
+  <script defer src="card-rarity.js?v=278"></script>
+  <script defer src="card-extra.js?v=278"></script>
+  <script defer src="strongest-data.js?v=278"></script>
+  <script defer src="strongest-render.js?v=278"></script>
+  <script defer src="basic-render.js?v=278"></script>
+  <script defer src="cardgame.js?v=278"></script>
+  <script defer src="encyclopedia.js?v=278"></script>
+  <script defer src="character-localization.js?v=278"></script>
+  <script defer src="enc.js?v=278"></script>
+  <script defer src="card-tilt.js?v=278"></script>
+  <script defer src="card-levels.js?v=278"></script>
+  <script defer src="card-controls.js?v=278"></script>
+  <script defer src="library-tools.js?v=278"></script>
+  <script defer src="rarity-sync.js?v=278"></script>
+  <script defer src="strongest-sync.js?v=278"></script>
+  <script defer src="hoshi-data.js?v=278"></script>
+  <script defer src="pic-sync.js?v=278"></script>
+  <script defer src="undercover.js?v=278"></script>
+  <script defer src="music.js?v=278"></script>
+  <script defer src="lang.js?v=278"></script>
+  <script defer src="game-guides.js?v=278"></script>
+  <script defer src="app.js?v=278"></script>
+  <script defer src="supabase-client.js?v=278"></script>
+  <script defer src="saku-session.js?v=278"></script>
+  <script defer src="saku-sfx.js?v=278"></script>
+  <script defer src="retro-index.js?v=278"></script>
+  <script defer src="cinema-index.js?v=278"></script>
+  <script defer src="portal-rates.js?v=278"></script>
+  <script defer src="portal-info.js?v=278"></script>
+  <script defer src="portal-showcase.js?v=278"></script>
+  <script defer src="card-backs.js?v=278"></script>
+  <script defer src="portal-summon.js?v=278"></script>
+  <script defer src="progression.js?v=278"></script>
+  <script defer src="player-popover.js?v=278"></script>
+  <script defer src="friends.js?v=278"></script>
+  <script defer src="showcase.js?v=278"></script>
+  <script defer src="market.js?v=278"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->

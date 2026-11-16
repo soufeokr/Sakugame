@@ -581,17 +581,19 @@ function cardsRenderAnimeList(grid, q, rf, ownedOnly, favOnly) {
   grid.classList.add('anime-mode');
   if (!grid.dataset.animeClick) { grid.dataset.animeClick = '1'; grid.addEventListener('click', e => { const b = e.target.closest('[data-anime]'); if (b && grid.contains(b)) cardsOpenAnime(b.dataset.anime); }); }
   if (!shown.length) { grid.innerHTML = '<p class="ac-empty">' + escapeHtml(cardTr('No anime matches.')) + '</p>'; return; }
-  grid.innerHTML = shown.map(x => {
+  grid.innerHTML = shown.map((x, k) => {
     const cover = cardsAnimeCover(x.ids, x.have);
     const keyAttr = String(x.g.key).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     const special = x.ids.filter(id => cardPoolById[id].edition).length;
-    return '<button type="button" class="anime-entry' + (x.have.length ? '' : ' empty') + (x.pct === 100 ? ' complete' : '') + '" data-anime="' + keyAttr + '">' +
+    return '<div class="anime-entry-wrap" data-wish-slot="' + k + '"><button type="button" class="anime-entry' + (x.have.length ? '' : ' empty') + (x.pct === 100 ? ' complete' : '') + '" data-anime="' + keyAttr + '">' +
       '<span class="anime-cover"><img src="' + escapeHtml(cardThumb(cover.image)) + '" alt="" loading="lazy" decoding="async" onerror="this.style.opacity=0"></span>' +
       '<span class="anime-info"><strong>' + escapeHtml(x.label) + '</strong>' +
       '<span class="anime-progress">' + x.have.length + '/' + x.ids.length + ' · ' + x.pct + ' %</span>' +
       '<span class="anime-tallies">' + cardsTallyHtml(x.per, rf) + '</span></span>' +
-      '<span class="anime-bar" aria-hidden="true"><i style="width:' + x.pct + '%"></i></span></button>';
+      '<span class="anime-bar" aria-hidden="true"><i style="width:' + x.pct + '%"></i></span></button></div>';
   }).join('');
+  // Cœur : tout l'univers en wishlist (toutes raretés, même hors filtre).
+  if (window.sakuAnimeWish) grid.querySelectorAll('[data-wish-slot]').forEach(w => { const x = shown[+w.dataset.wishSlot]; if (x) w.appendChild(window.sakuAnimeWish(x.g.ids)); });
 }
 /* Fenêtre d'un animé */
 let cardAnimeFocus = null;

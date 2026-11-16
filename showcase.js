@@ -7,7 +7,7 @@ const validId=id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
 const color=(s,fallback)=>/^#[0-9a-f]{6}$/i.test(String(s||''))?String(s):fallback;
 const txt=(id,s)=>{const el=$(id);if(el)el.textContent=s;};
 const num=n=>Math.max(0,Math.floor(Number(n)||0));
-const GAMES=[['classic','Detective Showdown','i-game-guesswho'],['undercover','Undercover','i-game-undercover'],['battle','Detective Royale','i-game-battle'],['race','Wanted!','i-game-race'],['blur','Blur Guess','i-game-blur'],['hotcold','Cold Case','i-game-hotcold'],['codenames','Ninja Scrolls','i-game-codenames'],['snapshot','Snapshot!','i-game-snapshot']];
+const GAMES=[['classic','Detective Showdown','i-game-guesswho'],['undercover','Undercover','i-game-undercover'],['battle','Detective Royale','i-game-battle'],['race','Wanted!','i-game-race'],['blur','Blur Guess','i-game-blur'],['hotcold','Cold Case','i-game-hotcold'],['codenames','Ninja','i-game-codenames'],['snapshot','Snapshot!','i-game-snapshot']];
 function gameSummary(a){
  const games={};GAMES.forEach(([id])=>games[id]={played:0,wins:0,partial:false});
  const matches=a&&a.progress&&a.progress.matches||{};
