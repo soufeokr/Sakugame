@@ -4030,3 +4030,92 @@ body.anime-modal-open{overflow:hidden}
 @media(max-width:600px){
   .game-controls{padding:8px 10px!important;background:linear-gradient(180deg,#0b1222e6,#0b1222f7);box-shadow:0 -10px 24px -12px #000;backdrop-filter:blur(8px)}
 }
+
+/* ---- b280 · Créer un salon, Règles, soldes dans la barre, suppression du compte ---- */
+/* Créer un salon : le choix du jeu et ses réglages à gauche, le résumé et le bouton Créer à droite (collant). */
+#hostRoomScreen .panel{height:auto!important;max-height:none!important;overflow:visible!important;width:min(1240px,100%);grid-template-columns:minmax(0,1fr) minmax(320px,390px);grid-template-areas:"head head" "pick side" "game side";column-gap:18px;row-gap:14px;align-items:start}
+#hostRoomScreen .host-head{grid-area:head}
+#hostRoomScreen #createTabRoom{grid-area:pick}
+#hostRoomScreen #createTabGame{grid-area:game}
+#hostRoomScreen .host-summary{grid-area:side;align-self:start;position:sticky;top:78px;display:flex;flex-direction:column;gap:12px;min-width:0}
+#hostRoomScreen .game-pick-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+#hostRoomScreen #createTabRoom .settings-section{margin:0}
+#hostRoomScreen #hostPoolGroup>h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:.92rem;color:#c9dcea}
+#hostRoomScreen #hostPoolGroup>h3 .ic{width:1rem;height:1rem}
+.host-game-card{margin:0}
+.host-game-card .lgc-desc{margin:10px 0 12px}
+.host-summary-room{min-width:0;background:linear-gradient(145deg,#172d49,#101d32);border:1px solid #96bad738;border-radius:16px;padding:18px 18px 8px;box-shadow:0 10px 26px #06102030}
+.host-summary-room .input-group,.host-summary-room .slider-container{margin-bottom:12px}
+.host-actions{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid #96bad738;background:#0d1a2ef2;box-shadow:0 10px 26px #06102040}
+.host-create-main{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:12px;background:#a2dafa;color:#10243a;font:800 1.02rem Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:0 8px 22px #7ccaf533;transition:filter .15s,transform .15s}
+.host-create-main:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.host-create-main:focus-visible{outline:3px solid #e4f5ff;outline-offset:2px}
+.host-create-main .ic{width:1.1rem;height:1.1rem}
+.host-cfg{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.host-cfg-label{flex:1;min-width:110px;font-size:.76rem;color:#9fb3c8}
+.host-cfg-btn{width:auto;display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:6px 12px;border-radius:9px;border:1px solid #9fccec40;background:#75b1d814;color:#d8eeff;font:700 .78rem Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:none}
+.host-cfg-btn:hover{background:#75b1d82b;transform:none}
+.host-cfg-btn .ic{width:.9rem;height:.9rem}
+@media(max-width:1100px){#hostRoomScreen .game-pick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){
+  #hostRoomScreen .panel{grid-template-columns:minmax(0,1fr);grid-template-areas:none;row-gap:12px}
+  #hostRoomScreen .host-head,#hostRoomScreen #createTabRoom,#hostRoomScreen #createTabGame{grid-area:auto}
+  #hostRoomScreen .host-summary,#hostRoomScreen .host-actions{display:contents}
+  #hostRoomScreen .host-head{order:0}#hostRoomScreen #createTabRoom{order:1}#hostRoomScreen .host-game-card{order:2}#hostRoomScreen .host-summary-room{order:3}#hostRoomScreen #createTabGame{order:4}
+  #hostRoomScreen .host-cfg{order:5;padding:12px 14px;border-radius:14px;border:1px solid #96bad738;background:#0d1a2e}
+  #hostRoomScreen .host-create-main{order:6;position:sticky;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:5;box-shadow:0 10px 28px #000a,0 0 0 6px #0a1326d9}
+}
+@media(max-width:650px){.host-game-card .lgc-desc{font-size:.8rem}.host-summary-room{padding:16px 16px 6px}}
+@media(max-width:900px){#hostRoomScreen #createTabRoom{padding-bottom:14px}#hostRoomScreen #createTabRoom .input-group{margin-bottom:0}}
+
+/* Règles : filtre par nombre de joueurs et deux boutons sur chaque carte. */
+.rules-filter{display:flex;flex-wrap:wrap;align-items:center;gap:8px;max-width:1200px;margin:0 auto 18px}
+.rules-filter-label{font-size:.8rem;font-weight:700;color:#adc3d5;margin-right:4px}
+.rules-chip{width:auto;min-height:36px;padding:6px 14px;border-radius:99px;border:1px solid #9fccec40;background:#0f1d33;color:#d8eeff;font:700 .8rem Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:none}
+.rules-chip:hover{background:#18304f;transform:none}
+.rules-chip[aria-pressed="true"]{background:#a2dafa;border-color:#a2dafa;color:#10243a}
+.rules-chip:focus-visible{outline:2px solid #e4f5ff;outline-offset:2px}
+.rules-empty{grid-column:1/-1;padding:22px;border:1px dashed #92c4e461;border-radius:14px;color:#adc3d5;text-align:center}
+#gamesMenuScreen .games-grid .game-card[data-game][hidden]{display:none}
+#gamesMenuScreen .games-grid .game-card[data-game] .game-card-content::after{content:none!important;display:none}
+.game-card-actions{display:flex;gap:8px;padding:0 20px 18px}
+#gamesMenuScreen .games-grid .game-card[data-game] .game-card-content{padding-bottom:14px}
+.game-card-actions button{flex:1;width:auto;min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;border-radius:10px;font:700 .78rem Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:none;white-space:nowrap}
+.game-card-actions .ic{width:.95rem;height:.95rem;flex:none}
+.game-card-actions .gca-how{border:1px solid color-mix(in srgb,var(--gl,#9fd8ff) 38%,transparent);background:transparent;color:var(--gl,#9fd8ff)}
+.game-card-actions .gca-how:hover{background:color-mix(in srgb,var(--g,#5aa9e6) 18%,transparent);transform:none}
+.game-card-actions .gca-play{border:0;background:color-mix(in srgb,var(--gl,#9fd8ff) 88%,#fff);color:#0d1b2e}
+.game-card-actions .gca-play:hover{filter:brightness(1.08);transform:none}
+@media(max-width:640px){
+  #gamesMenuScreen .games-grid{grid-template-columns:minmax(0,1fr)!important;gap:10px}
+  #gamesMenuScreen .games-grid .game-card[data-game]{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;padding:14px;align-items:start}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-img{padding:0!important;flex-direction:column;align-items:center;gap:7px}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-img .ic{width:52px!important;height:52px!important}
+  #gamesMenuScreen .games-grid .game-card[data-game] .game-card-content{padding:0!important;min-width:0}
+  #gamesMenuScreen .games-grid .game-card[data-game] h3{font-size:1.02rem;margin-bottom:4px}
+  #gamesMenuScreen .games-grid .game-card[data-game] p{font-size:.8rem;-webkit-line-clamp:unset;display:block;overflow:visible}
+  .game-card-actions{grid-column:1/-1;padding:12px 0 0}
+  .game-card-actions button{min-height:36px;font-size:.76rem;padding:6px 8px}
+  .rules-filter{gap:6px}.rules-filter-label{flex-basis:100%;margin:0 0 2px}.rules-chip{min-height:34px;padding:5px 12px}
+}
+
+/* Barre du haut sur ordinateur : packs gratuits et pièces à gauche du pseudo. */
+.top-balances{display:flex;align-items:center;gap:6px;margin-left:auto}
+.top-balances[hidden]{display:none!important}
+.top-balances:not([hidden])~.username-change-btn{margin-left:0!important}
+.top-bal{width:auto;display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:5px 13px 5px 10px;border-radius:99px;border:1px solid #9fccec38;background:#102540;color:#e8f5ff;font:800 .82rem Outfit,system-ui,sans-serif;font-variant-numeric:tabular-nums;cursor:pointer;box-shadow:none;white-space:nowrap}
+.top-bal:hover{background:#17345a;transform:none}
+.top-bal:focus-visible{outline:2px solid #bfe6ff;outline-offset:2px}
+.top-bal .ic{width:17px;height:17px;color:#b9a7ff}
+.top-bal img{width:19px;height:19px}
+@media(max-width:900px),(hover:none) and (max-width:1100px){.top-balances{display:none!important}}
+
+/* Page Compte : zone dangereuse. */
+.hub-icon.danger{color:#ffb4b4;background:#ff5b5b1f}
+.hub-danger{border-color:#ff7a7a33}
+.hub-danger-btn{display:inline-flex;align-items:center;gap:8px;width:auto;min-height:42px;padding:10px 16px;border-radius:10px;border:1px solid #ff8a8a59;background:#ff5b5b14;color:#ffc9c9;font:700 .82rem/1.2 Outfit,system-ui,sans-serif;cursor:pointer;box-shadow:none}
+.hub-danger-btn:hover{background:#ff5b5b2b;transform:none}
+.hub-danger-btn .ic{width:16px;height:16px}
+
+/* Rejoindre : le bouton Créer un salon tient sur une ligne. */
+.join-create{white-space:nowrap;display:inline-flex;align-items:center;gap:6px}

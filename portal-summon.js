@@ -82,7 +82,7 @@ async function buy(i,n){
   await refreshFreeStatus();
   if(window.sakuPlayerRefreshDraws)window.sakuPlayerRefreshDraws();
   setServerResult(result);await refreshCollection();
-  if(window.sakuProgressSetCoins&&Number.isFinite(Number(result.coins)))window.sakuProgressSetCoins(result.coins);if(window.sakuProgressRefresh)setTimeout(window.sakuProgressRefresh,600);
+  if(window.sakuProgressSetCoins&&Number.isFinite(Number(result.coins)))window.sakuProgressSetCoins(result.coins);if(window.sakuPlayerRefreshDraws)setTimeout(window.sakuPlayerRefreshDraws,700);if(window.sakuProgressRefresh)setTimeout(window.sakuProgressRefresh,600);
   animateDrop(i,result.packs.length,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
  }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}}
 window.sakuPortalBuy=buy;

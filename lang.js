@@ -252,6 +252,13 @@ var I18N = {
   "special": { fr: "spéciales", es: "especiales" },
   "anime": { fr: "animés", es: "animes" },
   "special·1": { en: "special", fr: "spéciale", es: "especial" },
+  // ---- b280 · Créer un salon, Règles, barre du haut, compte ----
+  "Free packs": { fr: "Packs gratuits", es: "Packs gratis" },
+  "Coins": { fr: "Pièces", es: "Monedas" },
+  "Deleting your account erases your profile, cards, coins and listings. This cannot be undone.": { fr: "Supprimer ton compte efface ton profil, tes cartes, tes pièces et tes annonces. C'est définitif.", es: "Eliminar tu cuenta borra tu perfil, tus cartas, tus monedas y tus anuncios. No se puede deshacer." },
+  "Saved settings": { fr: "Réglages enregistrés", es: "Ajustes guardados" },
+  "How many players?": { fr: "Combien de joueurs ?", es: "¿Cuántos jugadores?" },
+  "No game fits this number of players.": { fr: "Aucun jeu ne se joue à ce nombre de joueurs.", es: "Ningún juego encaja con este número de jugadores." },
   // ---- b279 · révision des fenêtres : textes restés en anglais ----
   "Finished": { fr: "Terminé", es: "Terminado" },
   "Back to cards": { fr: "Retour aux cartes", es: "Volver a las cartas" },

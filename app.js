@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '279';
+    const SAKU_BUILD = '280';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1641,7 +1641,7 @@
 
     function selectVisibility(type) {
       roomVisibility = type;
-      document.querySelectorAll('#createTabRoom input[name="visibility"]').forEach(function(input){input.checked=input.value===type;input.closest('.radio-option').classList.toggle('selected',input.checked);});
+      document.querySelectorAll('#hostRoomScreen input[name="visibility"]').forEach(function(input){input.checked=input.value===type;input.closest('.radio-option').classList.toggle('selected',input.checked);});
     }
 
     function updateHostCharCount() {
@@ -1713,7 +1713,7 @@
       // 🔒 visibility radios
       const vis = cfg.visibility === 'public' ? 'public' : 'private';
       roomVisibility = vis;
-      document.querySelectorAll('#createTabRoom input[name="visibility"]').forEach(function (inp) {
+      document.querySelectorAll('#hostRoomScreen input[name="visibility"]').forEach(function (inp) {
         inp.checked = inp.value === vis;
         const lab = inp.closest('.radio-option');
         if (lab) lab.classList.toggle('selected', inp.value === vis);
@@ -1958,6 +1958,7 @@
         const hmd = document.getElementById('hostMultiDesc'); if (hmd) hmd.textContent = ''; // descriptions removed (b124)
       }
       try { syncGamePickBtn(); } catch (e) {} // keep the 📱 picker button synced with the selection
+      try { sakuGameCardInto(document.getElementById('hostGameCard'), hostGame); } catch (e) {}
     }
     // 📱 compact game picker (phone): a small button opens a window listing all games
     const GAME_PICK_ORDER = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'];
@@ -2518,19 +2519,24 @@
     }
 
     /* b279 · carte du jeu choisi dans le panneau gauche du lobby (logo, joueurs, description, règles) */
-    function sakuLobbyGameCard() {
-      const box = document.getElementById('lobbyGameCard');
-      if (!box || !currentRoom) return;
-      const g = currentRoom.game || 'guesswho', meta = (typeof SAKU_HOME_GAMES !== 'undefined' && SAKU_HOME_GAMES[g]) || null;
+    // Carte « jeu » : logo, nom, joueurs, description et bouton Comment jouer (lobby et Créer un salon).
+    function sakuGameCardInto(box, g) {
+      if (!box) return;
+      const meta = (typeof SAKU_HOME_GAMES !== 'undefined' && SAKU_HOME_GAMES[g]) || null;
       if (!meta) { box.hidden = true; return; }
-      if (box.dataset.game === g && box.childElementCount) return;
-      box.hidden = false; box.dataset.game = g;
+      const lang = (window.SAKU_I18N && SAKU_I18N.lang) || '';
+      if (box.dataset.game === g && box.dataset.lang === lang && box.childElementCount) return;
+      box.hidden = false; box.dataset.game = g; box.dataset.lang = lang;
       const tr = k => (window.t ? t(k) : k);
       box.innerHTML = '<div class="lgc-top"><svg class="lgc-logo" aria-hidden="true"><use href="#i-game-' + g + '"/></svg>' +
         '<div class="lgc-id"><span class="lgc-kicker">' + escapeHtml(tr('Game')) + '</span><strong>' + escapeHtml(meta.title) + '</strong>' +
         '<span class="lgc-players">' + escapeHtml(tr(meta.players)) + '</span></div></div>' +
         '<p class="lgc-desc">' + escapeHtml(tr(meta.desc)) + '</p>' +
         '<button type="button" class="lgc-rules secondary" onclick="openHowTo(\'' + g + '\')">' + ic('book') + ' ' + escapeHtml(tr('How to play')) + '</button>';
+    }
+    function sakuLobbyGameCard() {
+      if (!currentRoom) return;
+      sakuGameCardInto(document.getElementById('lobbyGameCard'), currentRoom.game || 'guesswho');
     }
     function updateLobby() {
       if (!currentRoom) return;
@@ -9594,6 +9600,7 @@ function sakuAccountRender() {
   document.getElementById('accountPageNameInput').value = playerName;
   document.getElementById('accountPageLogin').hidden = signed;
   document.getElementById('accountPageLogout').hidden = !signed;
+  { const dz = document.getElementById('accountPageDanger'); if (dz) dz.hidden = !signed; }
   document.getElementById('accountPageAvatarBtn').hidden = !signed;
   document.getElementById('accountPageWatchSettings').hidden = !signed;
   loadWatchStatusesIntoUI();
@@ -9696,3 +9703,44 @@ window.sakuMobileScreenChanged=function(id){if(cardScreens.has(id))mark('cards')
 window.sakuMobileGo=function(section){if(!['games','cards'].includes(section))return;if(typeof sakuNavClose==='function')sakuNavClose(false);mark(section);showScreen('homepageScreen');if(section==='cards'&&typeof sakuCardHomeRefresh==='function')sakuCardHomeRefresh();window.scrollTo({top:0,behavior:'auto'});};
 window.sakuMobileBrandHome=function(){if(matchMedia('(max-width:900px)').matches)sakuMobileGo('games');else goHome();};
 })();
+
+
+// ---- b280 · Page Règles : filtre par nombre de joueurs, boutons « Comment jouer » et « Créer un salon » ----
+const SAKU_GAME_SEATS = { guesswho: [2, 2], undercover: [3, 12], battle: [3, 12], race: [3, 12], blur: [1, 12], hotcold: [2, 12], codenames: [4, 12], snapshot: [1, 12] };
+function sakuSeatsFit(g, n) {
+  const r = SAKU_GAME_SEATS[g]; if (!r || n === 'all') return true;
+  if (n === '1') return r[0] <= 1;
+  if (n === '2') return r[0] <= 2 && r[1] >= 2;
+  if (n === '3-4') return r[0] <= 4 && r[1] >= 3;
+  if (n === '5') return r[1] >= 5;
+  return true;
+}
+function sakuRulesFilter(n) {
+  const scr = document.getElementById('gamesMenuScreen'); if (!scr) return;
+  scr.querySelectorAll('.rules-chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.n === n ? 'true' : 'false'));
+  let shown = 0;
+  scr.querySelectorAll('.games-grid .game-card[data-game]').forEach(c => { const ok = sakuSeatsFit(c.dataset.game, n); c.hidden = !ok; if (ok) shown++; });
+  const grid = scr.querySelector('.games-grid'); let empty = grid && grid.querySelector('.rules-empty');
+  if (grid && !shown && !empty) { empty = document.createElement('p'); empty.className = 'rules-empty'; empty.textContent = window.t ? t('No game fits this number of players.') : 'No game fits this number of players.'; grid.appendChild(empty); }
+  if (empty) empty.hidden = !!shown;
+}
+function sakuRulesPlay(g) {
+  try { closeHowTo(); } catch (e) {}
+  showHostRoom(); selectHostGame(g);
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
+function sakuRulesEnhance() {
+  document.querySelectorAll('#gamesMenuScreen .games-grid .game-card[data-game]').forEach(card => {
+    if (card.querySelector('.game-card-actions')) return;
+    const g = card.dataset.game, box = card;
+    const row = document.createElement('div'); row.className = 'game-card-actions';
+    row.innerHTML = '<button type="button" class="gca-how" onclick="event.stopPropagation();openHowTo(\'' + g + '\')" onkeydown="event.stopPropagation()">' + ic('book') + '<span>How to play</span></button>' +
+      '<button type="button" class="gca-play" onclick="event.stopPropagation();sakuRulesPlay(\'' + g + '\')" onkeydown="event.stopPropagation()">' + ic('play') + '<span>Play</span></button>';
+    box.appendChild(row);
+  });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', sakuRulesEnhance); else sakuRulesEnhance();
+window.addEventListener('saku-lang-change', function () {
+  try { const hs = document.getElementById('hostRoomScreen'); if (hs && hs.classList.contains('active')) sakuGameCardInto(document.getElementById('hostGameCard'), hostGame); } catch (e) {}
+  try { const em = document.querySelector('#gamesMenuScreen .rules-empty'); if (em) em.textContent = t('No game fits this number of players.'); } catch (e) {}
+});

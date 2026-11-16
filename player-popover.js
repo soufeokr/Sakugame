@@ -25,7 +25,19 @@
       console.warn('Solde des tirages gratuits indisponible',e);
     } finally {busy=false;}
   }
-  function detach() { uid=null;state=null;busy=false;retryAfter=0;close(false); }
+  // Barre du haut (ordinateur) : packs gratuits et pièces à gauche du pseudo.
+  function renderBar() {
+    const box=document.getElementById('topBalances'); if(!box)return;
+    const on=!!currentAccount; box.hidden=!on; if(!on)return;
+    const p=window.sakuProgressSnapshot&&window.sakuProgressSnapshot();
+    const draws=state?state.available+'/'+MAX:'—', coins=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
+    const d=document.getElementById('topBalDrawsVal'), c=document.getElementById('topBalCoinsVal');
+    if(d.textContent!==draws)d.textContent=draws; if(c.textContent!==coins)c.textContent=coins;
+    const db=document.getElementById('topBalDraws'), cb=document.getElementById('topBalCoins');
+    const dl=tr('Free packs')+' · '+draws, cl=tr('Coins')+' · '+coins;
+    if(db.title!==dl){db.title=dl;db.setAttribute('aria-label',dl);} if(cb.title!==cl){cb.title=cl;cb.setAttribute('aria-label',cl);}
+  }
+  function detach() { uid=null;state=null;busy=false;retryAfter=0;close(false);renderBar(); }
   function attach() { if(!currentAccount){detach();return;} refresh(true); }
   function position() {
     const pop=document.getElementById('playerPopover'), btn=document.getElementById('usernameBtn');
@@ -37,6 +49,7 @@
     pop.style.left=left+'px';pop.style.top=top+'px';
   }
   function render() {
+    renderBar();
     const pop=document.getElementById('playerPopover'); if(!pop||pop.hidden)return;
     const p=window.sakuProgressSnapshot&&window.sakuProgressSnapshot();
     document.getElementById('playerPopLevel').textContent=p?tr('Level')+' '+p.level:tr('Loading…');
@@ -58,6 +71,6 @@
   document.addEventListener('keydown',e=>{const pop=document.getElementById('playerPopover');if(e.key==='Escape'&&pop&&!pop.hidden){e.preventDefault();close(true);}});
   window.addEventListener('resize',position);window.addEventListener('scroll',position,{passive:true});
   document.addEventListener('DOMContentLoaded',()=>{if(currentAccount)attach();});
-  setInterval(()=>{if(!currentAccount)return;if(getUid()!==uid){uid=getUid();state=null;refresh(true);}else refresh(false);render();},1000);
+  setInterval(()=>{if(!currentAccount){renderBar();return;}if(getUid()!==uid){uid=getUid();state=null;refresh(true);}else refresh(false);render();},1000);
   window.sakuPlayerToggle=toggle;window.sakuPlayerClose=()=>close(true);window.sakuPlayerAttach=attach;window.sakuPlayerDetach=detach;window.sakuPlayerRender=render;window.sakuPlayerRefreshDraws=()=>refresh(true);
 })();

@@ -69,7 +69,7 @@ async function refresh(){
    const seller=o.is_own?actor:'seller:'+o.id;if(!o.is_own)rootData.accounts[seller]={name:o.seller_name};
    rootData.market.listings[o.id]={seller,cardId:o.card_id,cardLevel:o.card_level,type:o.kind,price:Number(o.price),bid:o.has_bid?Number(o.price):0,bidder:o.has_bid?'reserved':null,endsAt:o.ends_at?Date.parse(o.ends_at):0,createdAt:Date.parse(o.created_at),status:'active'};
   });
-  catalogue=indexCards();$('marketBalance').textContent=Number(coins).toLocaleString();renderForms();renderListings();renderTrades();
+  catalogue=indexCards();$('marketBalance').textContent=Number(coins).toLocaleString();if(window.sakuProgressSetCoins)window.sakuProgressSetCoins(coins);renderForms();renderListings();renderTrades();
  }catch(e){msg(e.message||'Could not load the market.',true)}
 }
 async function action(fn,success){if(busy){msg('Please wait for the current action.',true);return false;}busy=true;try{await fn();await refresh();if(window.sakuProgressRefresh)window.sakuProgressRefresh();msg(success,false);return true}catch(e){msg(e.message||'Action impossible.',true);return false}finally{busy=false}}
