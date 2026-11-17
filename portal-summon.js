@@ -4,13 +4,15 @@ const keys=['basic','strongest','retro','cinema'], names=['Basic','The Strongest
 window.sakuInfiniteCoins=()=>false;
 // Prix par défaut côté client (Basic et Retro : 200 x1 / 1000 x5)
 const PORTAL_PRICE={[0]:{1:200,5:1000},[2]:{1:200,5:1000}};
-let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTimer=0,autoTimer=0,freeDraws=0;
-function updateFreeArtwork(){const stems=['basic','strongest','retro','cinema'];document.querySelectorAll('.summon-slide[data-index]').forEach(slide=>{const i=Number(slide.dataset.index),stem=stems[i];if(!stem)return;const freeSuffix=freeDraws>=5?'-free5':freeDraws>0?'-free':'';slide.querySelectorAll('.summon-machine-button img').forEach(img=>{const isStill=img.classList.contains('summon-still');const suffix=isStill&&i!==1?'-static':'';const src='summon-machines/'+stem+suffix+freeSuffix+'.svg';if(!img.src.endsWith('/'+src))img.src=src;});});}
-function applyFreeStatus(s){if(!s)return;const n=Number(s.available);if(Number.isInteger(n))freeDraws=Math.max(0,Math.min(5,n));updateFreeArtwork();refreshDashboard();}
-window.sakuPortalFreeCount=()=>uid()?freeDraws:0;
+let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTimer=0,autoTimer=0,freeDraws=0,bonusDraws=0;
+function updateFreeArtwork(){const stems=['basic','strongest','retro','cinema'];document.querySelectorAll('.summon-slide[data-index]').forEach(slide=>{const i=Number(slide.dataset.index),stem=stems[i];if(!stem)return;const totalFree=freeDraws+bonusDraws,freeSuffix=totalFree>=5?'-free5':totalFree>0?'-free':'';slide.querySelectorAll('.summon-machine-button img').forEach(img=>{const isStill=img.classList.contains('summon-still');const suffix=isStill&&i!==1?'-static':'';const src='summon-machines/'+stem+suffix+freeSuffix+'.svg';if(!img.src.endsWith('/'+src))img.src=src;});});}
+function applyFreeStatus(s){if(!s)return;const n=Number(s.available),b=Number(s.bonus);if(Number.isInteger(n))freeDraws=Math.max(0,Math.min(5,n));if(Number.isInteger(b))bonusDraws=Math.max(0,b);updateFreeArtwork();refreshDashboard();}
+// Tirages gratuits normaux (5 max, recharge) + tirages bonus du parrainage (sans plafond ni recharge).
+window.sakuPortalFreeCount=()=>uid()?freeDraws+bonusDraws:0;
+window.sakuPortalBonusDraws=n=>{n=Number(n);if(Number.isFinite(n)){bonusDraws=Math.max(0,Math.floor(n));updateFreeArtwork();refreshDashboard();}};
 async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s=await window.sakuBackend.freeDrawStatus();applyFreeStatus(s);return s}
 window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0));updateFreeArtwork();refreshDashboard()};
-window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws);if(n>0){freeDraws-=n;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
+window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws+bonusDraws);if(n>0){const a=Math.min(n,freeDraws);freeDraws-=a;bonusDraws-=n-a;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
 const lang=()=>((window.SAKU_I18N||{}).lang||'en');
 const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes',skip:'Clique pour passer',skipAll:'Passer tout'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards',skip:'Tap to skip',skipAll:'Skip all'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas',skip:'Pulsa para saltar',skipAll:'Saltar todo'}};
 const tr=k=>(dict[lang()]||dict.en)[k]||k,uid=()=>window.sakuSecureUserId||null;
@@ -78,7 +80,7 @@ async function buy(i,n){
   if(window.sakuDataReady)await window.sakuDataReady;
   await refreshFreeStatus();
   const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
-  if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
+  if(Number.isInteger(result.bonus_remaining))bonusDraws=Math.max(0,result.bonus_remaining);if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
   await refreshFreeStatus();
   if(window.sakuPlayerRefreshDraws)window.sakuPlayerRefreshDraws();
   setServerResult(result);await refreshCollection();

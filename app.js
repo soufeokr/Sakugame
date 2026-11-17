@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '282';
+    const SAKU_BUILD = '283';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -586,6 +586,7 @@
       if (window.sakuProgressAttach) window.sakuProgressAttach();
       if (window.sakuPlayerAttach) window.sakuPlayerAttach();
       if (window.sakuFriendsAttach) window.sakuFriendsAttach();
+      if (window.sakuReferralAttach) window.sakuReferralAttach();
       // 🎴 fold the guest card collection into the freshly signed-in account
       try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
       playerName = currentAccount.username;
@@ -692,6 +693,7 @@
       if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuReferralDetach) window.sakuReferralDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
       if (typeof cardsLoad === 'function') cardsLoad();
       anilistAutoSyncDone = false;
@@ -2841,6 +2843,7 @@
         if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuReferralDetach) window.sakuReferralDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
         updateUserButton();
         try { sakuRenderDiscordBox(null); } catch (e) {}
@@ -9589,6 +9592,7 @@ function sakuAccountRender() {
   const screen = document.getElementById('accountScreen'); if (!screen) return;
   const signed = !!currentAccount;
   if (window.sakuProgressRender) window.sakuProgressRender();
+  if (window.sakuReferralRender) window.sakuReferralRender();
   const put = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
   const tr = text => typeof t === 'function' ? t(text) : text;
   put('accountPageName', playerName);

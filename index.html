@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="282">
+<meta name="saku-build" content="283">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=282">
+<link rel="manifest" href="manifest.json?v=283">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=282" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=282">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=282">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=282">
+<link rel="icon" href="favicon.ico?v=283" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=283">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=283">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=283">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=282">
+  <link rel="stylesheet" href="style.css?v=283">
 </head>
 <body>
 
@@ -339,7 +339,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=282" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=283" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" title="Sakugame is in public beta — thanks for your patience!"><span data-noi18n>Beta</span></span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <div id="topBalances" class="top-balances" hidden><button type="button" class="top-bal" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button><button type="button" class="top-bal" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button></div>
@@ -396,7 +396,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=282" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=283" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -425,7 +425,7 @@
     <main class="card-home">
       <header class="card-home-head"><div><span class="card-home-kicker" data-noi18n>SAKUGAME / CARDS</span><h1>Card game</h1><p>Manage your collection and explore the cards.</p></div></header>
       <div class="card-home-layout card-home-redesign">
-        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><small>Open boosters and discover your cards.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img loading="lazy" decoding="async" src="summon-machines/basic-mini.svg?v=282" alt="" draggable="false"></div></section>
+        <section class="card-home-summon"><div class="card-home-summon-copy"><span class="card-home-kicker" data-noi18n>SAKUGAME / PORTALS</span><h2>Discover the portals</h2><p>Explore the machines and their card showcases.</p><button type="button" onclick="sakuNavGo('summon')" class="card-home-summon-cta"><span>Explore summoning</span><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><small>Open boosters and discover your cards.</small></div><div class="card-home-portal" aria-hidden="true"><div class="card-home-portal-glow"></div><img loading="lazy" decoding="async" src="summon-machines/basic-mini.svg?v=283" alt="" draggable="false"></div></section>
         <div class="card-home-right"><button type="button" class="card-home-collection" onclick="showCollection()"><span class="card-home-symbol"><svg class="ic"><use href="#i-cards"/></svg></span><span class="card-home-collection-text"><span class="card-home-kicker">YOUR COLLECTION</span><strong>My cards</strong><span><b id="cardHomeOwned">—</b> <span>different cards owned</span></span></span><span id="cardHomePreview" class="card-home-preview" aria-hidden="true"></span><span class="card-home-link-arrow" aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M8 6h10v10"/></svg></span></button>
           <div class="card-home-shortcuts"><button type="button" onclick="showMarket()"><svg class="ic"><use href="#i-market"/></svg><strong>Market</strong><small>Buy, bid and sell</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" onclick="showShowcase()"><svg class="ic"><use href="#i-user"/></svg><strong>Showcase</strong><small>Your public profile</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button><button type="button" onclick="encOpen()"><svg class="ic"><use href="#i-book"/></svg><strong>Encyclopedia</strong><small>Browse all cards</small><span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button></div>
         </div>
@@ -551,6 +551,7 @@
         <section class="hub-card hub-identity"><div class="hub-avatar" id="accountPageAvatar"><svg class="ic"><use href="#i-user"/></svg></div><span class="hub-status" id="accountPageStatus"></span><h2 id="accountPageName" data-noi18n></h2><p id="accountPageIntro"></p><button type="button" class="hub-subtle" id="accountPageAvatarBtn" onclick="openAvatarModal()" hidden>Change picture</button></section>
         <div class="hub-stack">
           <section class="hub-card progression-account" id="accountProgress" hidden></section>
+          <section class="hub-card ref-card" id="accountReferral" hidden></section>
           <section class="hub-card"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-user"/></svg></span><div><h2>Profile</h2><p>Choose the name shown to other players.</p></div></div><form class="hub-form" onsubmit="sakuAccountSaveName(event)"><label for="accountPageNameInput">Username</label><div class="hub-form-row"><input id="accountPageNameInput" type="text" maxlength="20" autocomplete="nickname" required><button type="submit" class="hub-primary">Save</button></div><p class="hub-helper" id="accountPageNameHint"></p></form></section>
           <section class="hub-card"><div class="hub-card-head"><span class="hub-icon discord"><svg class="ic"><use href="#i-discord"/></svg></span><div><h2>Discord account</h2><p id="accountPageDiscordNote"></p></div></div><button type="button" class="hub-primary hub-discord" id="accountPageLogin" onclick="loginWithDiscord()"><svg class="ic"><use href="#i-discord"/></svg><span>Continue with Discord</span></button><button type="button" class="hub-subtle" id="accountPageLogout" onclick="sakuAccountPageLogout()" hidden>Log Out</button></section>
           <section class="hub-card" id="accountPageAniCard"><div class="hub-card-head"><span class="hub-icon"><svg class="ic"><use href="#i-andlist"/></svg></span><div><h2>AniList Account</h2><p id="accountPageAniNote"></p></div></div><form class="hub-form hub-anilist-form" id="accountPageAniForm" onsubmit="sakuAccountSyncAniList(event)" hidden><label for="accountPageAniInput">Your AniList username</label><div class="hub-form-row"><input id="accountPageAniInput" type="text" maxlength="50" placeholder="Your AniList username"><button type="submit" class="hub-primary">Sync</button></div></form><div id="accountPageWatchSettings" class="account-watch-settings" hidden>
@@ -1953,8 +1954,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=282"></script>
-  <script defer src="saku-features.js?v=282"></script>
+  <script defer src="saku-local-account.js?v=283"></script>
+  <script defer src="saku-features.js?v=283"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -1963,7 +1964,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=282', 'charanimes.js?v=282', 'animes.js?v=282', 'nsfwdata.js?v=282', 'snappics.js?v=282'];
+        var files = ['characters.js?v=283', 'charanimes.js?v=283', 'animes.js?v=283', 'nsfwdata.js?v=283', 'snappics.js?v=283'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1982,43 +1983,44 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=282"></script>
-  <script defer src="card-extra.js?v=282"></script>
-  <script defer src="strongest-data.js?v=282"></script>
-  <script defer src="strongest-render.js?v=282"></script>
-  <script defer src="basic-render.js?v=282"></script>
-  <script defer src="cardgame.js?v=282"></script>
-  <script defer src="encyclopedia.js?v=282"></script>
-  <script defer src="character-localization.js?v=282"></script>
-  <script defer src="enc.js?v=282"></script>
-  <script defer src="card-tilt.js?v=282"></script>
-  <script defer src="card-levels.js?v=282"></script>
-  <script defer src="card-controls.js?v=282"></script>
-  <script defer src="library-tools.js?v=282"></script>
-  <script defer src="rarity-sync.js?v=282"></script>
-  <script defer src="strongest-sync.js?v=282"></script>
-  <script defer src="hoshi-data.js?v=282"></script>
-  <script defer src="pic-sync.js?v=282"></script>
-  <script defer src="undercover.js?v=282"></script>
-  <script defer src="music.js?v=282"></script>
-  <script defer src="lang.js?v=282"></script>
-  <script defer src="game-guides.js?v=282"></script>
-  <script defer src="app.js?v=282"></script>
-  <script defer src="supabase-client.js?v=282"></script>
-  <script defer src="saku-session.js?v=282"></script>
-  <script defer src="saku-sfx.js?v=282"></script>
-  <script defer src="retro-index.js?v=282"></script>
-  <script defer src="cinema-index.js?v=282"></script>
-  <script defer src="portal-rates.js?v=282"></script>
-  <script defer src="portal-info.js?v=282"></script>
-  <script defer src="portal-showcase.js?v=282"></script>
-  <script defer src="card-backs.js?v=282"></script>
-  <script defer src="portal-summon.js?v=282"></script>
-  <script defer src="progression.js?v=282"></script>
-  <script defer src="player-popover.js?v=282"></script>
-  <script defer src="friends.js?v=282"></script>
-  <script defer src="showcase.js?v=282"></script>
-  <script defer src="market.js?v=282"></script>
+  <script defer src="card-rarity.js?v=283"></script>
+  <script defer src="card-extra.js?v=283"></script>
+  <script defer src="strongest-data.js?v=283"></script>
+  <script defer src="strongest-render.js?v=283"></script>
+  <script defer src="basic-render.js?v=283"></script>
+  <script defer src="cardgame.js?v=283"></script>
+  <script defer src="encyclopedia.js?v=283"></script>
+  <script defer src="character-localization.js?v=283"></script>
+  <script defer src="enc.js?v=283"></script>
+  <script defer src="card-tilt.js?v=283"></script>
+  <script defer src="card-levels.js?v=283"></script>
+  <script defer src="card-controls.js?v=283"></script>
+  <script defer src="library-tools.js?v=283"></script>
+  <script defer src="rarity-sync.js?v=283"></script>
+  <script defer src="strongest-sync.js?v=283"></script>
+  <script defer src="hoshi-data.js?v=283"></script>
+  <script defer src="pic-sync.js?v=283"></script>
+  <script defer src="undercover.js?v=283"></script>
+  <script defer src="music.js?v=283"></script>
+  <script defer src="lang.js?v=283"></script>
+  <script defer src="game-guides.js?v=283"></script>
+  <script defer src="app.js?v=283"></script>
+  <script defer src="supabase-client.js?v=283"></script>
+  <script defer src="saku-session.js?v=283"></script>
+  <script defer src="saku-sfx.js?v=283"></script>
+  <script defer src="retro-index.js?v=283"></script>
+  <script defer src="cinema-index.js?v=283"></script>
+  <script defer src="portal-rates.js?v=283"></script>
+  <script defer src="portal-info.js?v=283"></script>
+  <script defer src="portal-showcase.js?v=283"></script>
+  <script defer src="card-backs.js?v=283"></script>
+  <script defer src="portal-summon.js?v=283"></script>
+  <script defer src="progression.js?v=283"></script>
+  <script defer src="player-popover.js?v=283"></script>
+  <script defer src="friends.js?v=283"></script>
+  <script defer src="showcase.js?v=283"></script>
+  <script defer src="market.js?v=283"></script>
+  <script defer src="referral.js?v=283"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->

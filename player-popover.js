@@ -17,7 +17,8 @@
       if(owner!==getUid())return;
       const available=Math.max(0,Math.min(MAX,Math.floor(Number(status.available)||0)));
       const seconds=Math.max(0,Math.ceil(Number(status.next_seconds)||0));
-      state={available,nextAt:available>=MAX?0:Date.now()+seconds*1000};
+      const bonus=Math.max(0,Math.floor(Number(status.bonus)||0));
+      state={available,bonus,nextAt:available>=MAX?0:Date.now()+seconds*1000};
       retryAfter=0;
       render();
     } catch(e) {
@@ -30,7 +31,7 @@
     const box=document.getElementById('topBalances'); if(!box)return;
     const on=!!currentAccount; box.hidden=!on; if(!on)return;
     const p=window.sakuProgressSnapshot&&window.sakuProgressSnapshot();
-    const draws=state?state.available+'/'+MAX:'—', coins=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
+    const draws=state?state.available+'/'+MAX+(state.bonus?' +'+state.bonus:''):'—', coins=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
     const d=document.getElementById('topBalDrawsVal'), c=document.getElementById('topBalCoinsVal');
     if(d.textContent!==draws)d.textContent=draws; if(c.textContent!==coins)c.textContent=coins;
     const db=document.getElementById('topBalDraws'), cb=document.getElementById('topBalCoins');
@@ -57,7 +58,7 @@
     const bar=document.getElementById('playerPopBar'),pc=p?Math.min(100,Math.floor(p.xp/p.needed*100)):0;
     bar.firstElementChild.style.width=pc+'%';bar.setAttribute('aria-valuenow',String(pc));
     document.getElementById('playerPopCoins').textContent=p?p.coins.toLocaleString()+' '+tr('coins'):'—';
-    document.getElementById('playerPopDraws').textContent=state?state.available+' / '+MAX:'—';
+    document.getElementById('playerPopDraws').textContent=state?state.available+' / '+MAX+(state.bonus?' + '+state.bonus+' '+tr('bonus'):''):'—';
     let text=tr('Loading…');
     if(state){
       if(state.available>=MAX)text=tr('Reserve full')+' · '+tr('One draw every 12 min');
