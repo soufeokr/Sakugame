@@ -1420,7 +1420,7 @@
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
-    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', support: 'supportScreen' };
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', referral: 'referralScreen', support: 'supportScreen' };
     const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
@@ -1508,6 +1508,7 @@
         else if (route === 'support') showScreen('supportScreen');
         else if (route === 'settings') showPreferencesPage();
         else if (route === 'account') showAccountPage();
+        else if (route === 'referral') { if (window.sakuReferralOpen) window.sakuReferralOpen(); else showScreen('referralScreen'); }
         else if (route === 'encyclopedia') encOpen();
         else showScreen('homepageScreen');
       } catch (e) {}
@@ -9429,6 +9430,7 @@ function sakuNavGo(destination) {
   else if (destination === 'encyclopedia') encOpen();
   else if (destination === 'support') showScreen('supportScreen');
   else if (destination === 'account') showAccountPage();
+  else if (destination === 'referral') { if (window.sakuReferralOpen) window.sakuReferralOpen(); else showScreen('referralScreen'); }
   else if (destination === 'settings') showPreferencesPage();
   else if (destination === 'summon') { showScreen('summonScreen'); window.scrollTo(0, 0); if(window.portalDashboardRefresh) window.portalDashboardRefresh(); if(window.sakuPortalShowcaseRefresh) window.sakuPortalShowcaseRefresh(); if(window.sakuPortalSummonEnter) window.sakuPortalSummonEnter(); requestAnimationFrame(summonUpdateAtmosphere); }
   else if (destination === 'cardhome') showCardHome();

@@ -3,8 +3,7 @@
 --   • le compte Discord du filleul doit avoir au moins 15 jours (date tirée de l'identifiant Discord) ;
 --   • le code se saisit dans les 7 jours suivant l'inscription sur Sakugame, une seule fois ;
 --   • un compte Discord ne peut être parrainé qu'une fois, même après suppression et recréation du compte ;
---   • pas de parrainage croisé (A parraine B puis B parraine A) ;
---   • 5 nouveaux filleuls maximum par parrain et par jour.
+--   • pas de parrainage croisé (A parraine B puis B parraine A).
 
 alter table public.player_free_draws add column if not exists bonus integer not null default 0;
 do $$ begin
@@ -123,7 +122,7 @@ begin
     'discord_ready_at', case when dc is null then null else dc + interval '15 days' end,
     'bonus_draws', coalesce(bonus, 0),
     'special_tickets', coalesce(tickets, 0),
-    'rules', jsonb_build_object('reward_draws', 2, 'min_discord_days', 15, 'window_days', 7, 'daily_limit', 5));
+    'rules', jsonb_build_object('reward_draws', 2, 'min_discord_days', 15, 'window_days', 7));
 end $$;
 
 create or replace function public.referral_apply(p_code text)
@@ -146,10 +145,6 @@ begin
   dc := public.referral_discord_created(who);
   if dc is null or dc > now() - interval '15 days' then raise exception 'discord_too_recent'; end if;
   if exists (select 1 from public.referrals where referred = sponsor and referrer = who) then raise exception 'referral_loop'; end if;
-  perform 1 from public.player_accounts where user_id = sponsor for update;
-  if (select count(*) from public.referrals where referrer = sponsor and created_at > now() - interval '1 day') >= 5 then
-    raise exception 'referrer_daily_limit';
-  end if;
   insert into public.referrals(referred_discord, referred, referrer) values (my_discord, who, sponsor);
   perform public.refresh_player_free_draws(who);
   perform public.refresh_player_free_draws(sponsor);
