@@ -4440,8 +4440,8 @@ body.anime-modal-open{overflow:hidden}
 .gm-shake{position:absolute;inset:0}
 .gm.is-playing.r-mythic .gm-shake,.gm.is-playing.r-special .gm-shake{animation:gm-shake var(--T) linear both}
 @keyframes gm-shake{0%,15%{transform:none}16%{transform:translate(-0.3em,0.1em) rotate(-1deg)}17%{transform:translate(0.3em,-0.1em) rotate(1deg)}18%{transform:translate(-0.3em,0) rotate(-.8deg)}19%{transform:translate(0.2em,0.1em) rotate(.6deg)}20%,100%{transform:none}}
-.gm-book{position:absolute;left:50%;top:50%;width:16em;height:22.2em;margin:-11.1em 0 0 -8em;transform-style:preserve-3d;transform:rotateX(10deg) rotateZ(-2deg);animation:gm-idle 4.5s ease-in-out infinite}
-@keyframes gm-idle{50%{transform:rotateX(10deg) rotateZ(-2deg) translateY(-0.6em)}}
+.gm-book{position:absolute;left:50%;top:50%;width:16em;height:22.2em;margin:-11.1em 0 0 -8em;transform-style:preserve-3d;transform:rotateX(10deg) rotateZ(-2deg)}
+@keyframes gm-idle{50%{transform:translateY(-0.6em)}}
 .gm.is-playing .gm-book{animation:gm-book var(--T) cubic-bezier(.3,.8,.3,1) both}
 @keyframes gm-book{0%{transform:rotateX(10deg) rotateZ(-2deg)}5%,7%,9%,11%,13%,15%{transform:rotateX(10deg) rotateZ(-2deg) translateY(-0.3em)}6%,8%,10%,12%,14%,16%{transform:rotateX(10deg) rotateZ(-2deg)}22%{transform:rotateX(14deg) rotateZ(-1deg) translateY(-0.4em)}42%,100%{transform:translateX(8em) translateY(3.6em) rotateX(40deg)}}
 .gm-back{position:absolute;inset:0;border-radius:0.4em 1em 1em 0.4em;background:var(--leather);box-shadow:0 0 0 0.1em var(--metal2),0 1.8em 3.2em rgba(0,0,0,.55)}
@@ -4543,3 +4543,44 @@ body.anime-modal-open{overflow:hidden}
 .summon-v2 .summon-machine-button:hover{transform:none}
 .summon-v2 .summon-stage{overflow:hidden}
 .summon-v2 .summon-slide{top:50%!important;clip-path:none!important}
+
+/* b288 — Feuilletage du grimoire : au repos il s'ouvre et tourne ses pages sur les personnages en vedette. */
+.gm:not(.is-playing) .gm-stage{animation:gm-idle 4.5s ease-in-out infinite}
+.gm:not(.is-playing) .gm-book{transition:transform 1.1s cubic-bezier(.55,.05,.3,1)}
+.gm:not(.is-playing) .gm-cover{transition:transform 1.1s cubic-bezier(.55,.05,.3,1)}
+.gm:not(.is-playing) .gm-clasp{transition:opacity .35s ease,transform .5s ease}
+.gm:not(.is-playing) .gm-floor{transition:transform 1.1s ease}
+.gm:not(.is-playing) .gm-flip{visibility:hidden}
+.gm.is-open .gm-book{transform:translateX(8em) translateY(1.4em) rotateX(18deg) scale(1.32)}
+.gm.is-open .gm-cover{transform:translateZ(0.1em) rotateY(-178deg)}
+.gm.is-open .gm-clasp{opacity:0;transform:translateX(1.6em) scale(.85)}
+.gm.is-open .gm-floor{transform:translateY(-1em)}
+.gm.is-fast .gm-book,.gm.is-fast .gm-cover,.gm.is-fast .gm-floor{transition-duration:.55s!important}
+.gm.is-still *{transition:none!important}
+.gm-br{position:absolute;inset:0;display:none!important}
+.gm-br:not(:empty){display:block!important}
+.gm-br-r{background:linear-gradient(90deg,#d6c399,#f4e9cf 12%,#efe2c3 88%,#e4d4ae);box-shadow:inset 1em 0 1.4em -0.6em rgba(110,80,30,.35)}
+.gm-br-l{background:linear-gradient(270deg,#d6c399,#f4e9cf 12%,#efe2c3 88%,#e4d4ae);box-shadow:inset -1em 0 1.4em -0.6em rgba(110,80,30,.35)}
+.gm-leaf{position:absolute;inset:0.6em 0.7em 0.6em 0.3em;transform-origin:left center;transform-style:preserve-3d;transform:translateZ(0.25em) rotateY(0);display:none!important}
+.gm-leaf.on{display:block!important}
+.gm-leaf.turn{transform:translateZ(0.25em) rotateY(-177deg);transition:transform 1.15s cubic-bezier(.45,.05,.35,1)}
+.gm-leaf-f,.gm-leaf-b{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.gm-leaf-f{border-radius:0.1em 0.5em 0.5em 0.1em;box-shadow:inset 1em 0 1.4em -0.6em rgba(110,80,30,.35)}
+.gm-leaf-b{transform:rotateY(180deg);border-radius:0.5em 0.1em 0.1em 0.5em;background:linear-gradient(270deg,#d6c399,#f4e9cf 12%,#efe2c3 88%,#e4d4ae);box-shadow:inset -1em 0 1.4em -0.6em rgba(110,80,30,.35)}
+.gm-leaf-f::after,.gm-leaf-b::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0}
+.gm-leaf-f::after{background:linear-gradient(90deg,rgba(60,40,15,.45),rgba(60,40,15,0) 70%)}
+.gm-leaf-b::after{background:linear-gradient(270deg,rgba(60,40,15,.4),rgba(255,250,235,.25) 60%,rgba(60,40,15,0))}
+.gm-leaf.turn .gm-leaf-f::after{animation:gm-leaf-f 1.15s ease-in both}
+.gm-leaf.turn .gm-leaf-b::after{animation:gm-leaf-b 1.15s ease-out both}
+@keyframes gm-leaf-f{0%{opacity:0}100%{opacity:1}}
+@keyframes gm-leaf-b{0%{opacity:1}100%{opacity:0}}
+.gm-pp{position:absolute;inset:0;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:0.55em;padding:0.9em 1em}
+.gm-pp-k{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:0.62em;letter-spacing:.28em;color:#7a5a2a;white-space:nowrap}
+.gm-pp-card{width:10.6em;height:15.17em;transform:rotate(-1.4deg);filter:drop-shadow(0 0.35em 0.5em rgba(70,45,15,.35))}
+.gm-br-l .gm-pp-card,.gm-leaf-b .gm-pp-card{transform:rotate(1.2deg)}
+.gm-pp-card svg{display:block;width:100%;height:100%}
+.gm-pp-r{display:flex!important;align-items:center;gap:.45em;font-family:Cinzel,Georgia,serif;font-weight:800;font-size:0.68em;letter-spacing:.14em;text-transform:uppercase;color:#4a3216;white-space:nowrap}
+.gm-pp-r i{width:0.75em;height:0.75em;border-radius:50%}
+.gm-pp-seal{width:7.4em;height:7.4em;opacity:.8}
+.gm-pp-n{font-family:Cinzel,Georgia,serif;font-weight:800;font-size:1.9em;color:#4a3216;letter-spacing:.04em}
+.gm-pp-t{max-width:10em;text-align:center;font-family:Cinzel,Georgia,serif;font-size:0.72em;letter-spacing:.1em;line-height:1.5;color:#7a5a2a}
