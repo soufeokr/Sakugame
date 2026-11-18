@@ -67,14 +67,14 @@ async function enter(){
   
   const request=await window.sakuBackend.pendingSummon();if(!request||who!==uid()){pending=null;refreshDashboard();return;}
   const result=await window.sakuBackend.summon(request.portal,request.count);if(who!==uid())return;
-  setServerResult(result);await refreshCollection();openModal();
+  setServerResult(result);await refreshCollection();resumeOpening();
  }catch(e){console.warn('Reprise invocation',e);notice('error')}
 }
 window.sakuPortalSummonEnter=enter;
 async function buy(i,n){
  if(![0,1,2,3].includes(i)||![1,5].includes(n)){notice('invalid');return}
  if(!window.sakuBackend||!uid()){notice('sign');if(typeof openAuthModal==='function')openAuthModal();return}
- if(busy)return;busy=true;const who=uid();
+ if(busy||(window.sakuGrimoirePlaying&&window.sakuGrimoirePlaying()))return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
   await refreshFreeStatus();
@@ -84,7 +84,9 @@ async function buy(i,n){
   if(window.sakuPlayerRefreshDraws)window.sakuPlayerRefreshDraws();
   setServerResult(result);await refreshCollection();
   if(window.sakuProgressSetCoins&&Number.isFinite(Number(result.coins)))window.sakuProgressSetCoins(result.coins);if(window.sakuPlayerRefreshDraws)setTimeout(window.sakuPlayerRefreshDraws,700);if(window.sakuProgressRefresh)setTimeout(window.sakuProgressRefresh,600);
-  animateDrop(i,result.packs.length,()=>{if(uid()===who&&pending&&pending.id===result.request_id)openModal()});
+  // Le grimoire s'ouvre sur place (couleur de la meilleure carte), puis on passe directement à la révélation des cartes.
+  const after=()=>{if(uid()===who&&pending&&pending.id===result.request_id){pending.phase='reveal';openModal()}};
+  if(window.sakuGrimoirePlay)window.sakuGrimoirePlay(i,bestRarity(result.packs),after);else animateDrop(i,result.packs.length,after);
  }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}}
 window.sakuPortalBuy=buy;
 function animateDrop(i,n,done){let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide){done();return}let tray=document.createElement('div');tray.className='portal-falling';tray.setAttribute('aria-hidden','true');for(let x=0;x<n;x++){let img=document.createElement('img');img.src='summon-machines/pack-'+keys[i]+'.png';img.style.setProperty('--pack-n',x);img.style.setProperty('--pack-total',n);tray.appendChild(img)}slide.appendChild(tray);clearTimeout(fallTimer);let ms=matchMedia('(prefers-reduced-motion: reduce)').matches?120:1250;fallTimer=setTimeout(()=>{if(window.SakuSfx)SakuSfx.play('drop');tray.remove();done()},ms)}
@@ -177,6 +179,7 @@ async function finish(){
   try{localStorage.removeItem(viewKey())}catch(e){}pending=null;refreshDashboard();closeModal();
  }catch(e){console.warn('Fin invocation',e);notice('error')}finally{busy=false}
 }
-window.sakuPortalResume=()=>{if(pending)openModal();else enter()};
+function resumeOpening(){if(!pending)return;if(pending.phase==='pack'&&window.sakuGrimoirePlay){const id=pending.id;window.sakuGrimoirePlay(pending.portal,bestRarity(pending.packs),()=>{if(pending&&pending.id===id){pending.phase='reveal';openModal()}})}else openModal()}
+window.sakuPortalResume=()=>{if(pending)resumeOpening();else enter()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden){e.preventDefault();closeModal()}});
 })();

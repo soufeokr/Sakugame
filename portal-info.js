@@ -145,8 +145,6 @@
     // Les anciennes surcouches dessinées dans les machines ne sont plus utilisées : on les retire si elles existent.
     document.querySelectorAll('.portal-machine-layer').forEach(el=>el.remove());
     const note=document.getElementById('summonFreeNote');if(note)note.remove();
-    const fc=signed()?freeCount():0,ledText=get().led.replace('{n}',fc);
-    document.querySelectorAll('.pm-led').forEach(led=>{led.hidden=!fc;led.textContent=ledText;});
     const scr=document.getElementById('summonScreen');
     const cur=document.querySelector('.summon-slide.is-active'),i=cur?Number(cur.dataset.index):(active>=0?active:0);
     if(scr&&(scr.classList.contains('active')||active<0)){active=i;renderPanel(i);}

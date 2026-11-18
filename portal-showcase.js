@@ -5,6 +5,7 @@
   const special=['Son Goku','Satoru Gojo','Zaraki Kenpachi','Frieren'];
   function render(){
     if(!window.sakuPortalPool||!window.sakuBasicCard)return;
+    if(document.querySelector('#summonScreen .summon-v2'))return; // le grimoire remplace la vitrine des machines
     const basic=window.sakuPortalPool(0)||[],strong=window.sakuPortalPool(1)||[],retro=window.sakuPortalPool(2)||[],cinema=window.sakuPortalPool(3)||[];
     [basic,strong,retro,cinema].forEach(function(pool,i){
       let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide)return;
