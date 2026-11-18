@@ -42,7 +42,7 @@ var I18N = {
   "Manually added character": {fr: "Personnage ajouté manuellement",es:"Personaje añadido manualmente"},
   "including special cards": {fr: "dont cartes spéciales", es:"incluidas cartas especiales"},
   "Discover the portals": {fr: "Découvre les portails",es:"Descubre los portales"},
-  "Explore the machines and their card showcases.": {fr: "Explore les distributeurs et leurs vitrines de cartes.",es:"Explora las máquinas y sus vitrinas de cartas."},
+  "Explore the grimoires and the cards they hold.": {fr: "Explore les grimoires et les cartes qu’ils renferment.",es:"Explora los grimorios y las cartas que guardan."},
   "Explore summoning": {fr: "Explorer les invocations",es:"Explorar invocaciones"},
   "Open boosters and discover your cards.": {fr: "Ouvre des boosters et découvre tes cartes.",es:"Abre sobres y descubre tus cartas."},
   "Cinema is coming later.": {fr: "Le portail Cinéma arrive plus tard.",es:"El portal Cine llegará más adelante."},

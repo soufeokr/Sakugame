@@ -133,7 +133,6 @@
         '<div><b>'+(signed()?num(ownedN):'—')+'</b><span>'+esc(w.owned)+'</span></div>'+
         '<div><b>'+(signed()?num(wishN):'—')+'</b><span>'+esc(w.wish)+'</span></div></div>'+
       gauge()+
-      (pending?'<div class="pp-pending">'+ic('i-restore')+'<span>'+esc(w.pending)+'</span><button type="button" onclick="sakuPortalResume()">'+esc(w.resume)+'</button></div>':'')+
       '<div class="pp-buy">'+buyButton(i,1)+buyButton(i,5)+'</div>'+
       freeLine()+
       (signed()?'':'<p class="pp-free">'+ic('i-discord')+'<span>'+esc(w.signBuy)+'</span></p>')+

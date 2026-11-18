@@ -94,7 +94,7 @@ function modalEl(){if(modal)return modal;modal=document.createElement('div');mod
 function closeModal(){if(!modal)return;if(typeof dropPackSkip==='function')dropPackSkip();if(pending&&pending.phase==='reveal'&&uid()===session){finish();return}clearTimeout(autoTimer);clearTimeout(revealTimer);modal.hidden=true;document.body.classList.remove('portal-modal-open');}
 function openModal(){if(!pending||!uid())return;session=uid();let m=modalEl();m.hidden=false;document.body.classList.add('portal-modal-open');$('portalOpenTitle').textContent=names[pending.portal]+' · '+pending.count+' '+(pending.count===1?(lang()==='es'?'sobre':'booster'):tr('packs'));m.querySelector('.portal-open-panel').classList.toggle('portal-results-mode',pending.phase==='reveal');let body=$('portalOpenBody');body.innerHTML='';body.classList.remove('portal-automatic');if(pending.phase==='reveal'){renderResults(body);m.querySelector('.portal-open-panel').scrollTop=0;return}
  let text=document.createElement('p');text.className='portal-open-instruction';text.textContent=tr('click');body.appendChild(text);let button=document.createElement('button');button.className='portal-open-pack';button.type='button';button.setAttribute('aria-label',tr('click'));let src='summon-machines/pack-'+keys[pending.portal]+'.png';button.innerHTML='<span class="portal-pack-art"><img class="portal-pack-base" alt="" src="'+src+'"><img class="portal-pack-lid" alt="" src="'+src+'"><i class="portal-pack-flash"></i></span><span class="portal-pack-count">×'+pending.count+'</span>';button.onclick=()=>openPack(button);body.appendChild(button);
- let later=document.createElement('button');later.type='button';later.className='portal-later';later.textContent=tr('later');later.onclick=closeModal;body.appendChild(later);button.focus();}
+ button.focus();}
 /* Ouverture du booster : la mise en scène dépend de la meilleure carte obtenue.
    burst = moment où le booster s'ouvre, total = moment où les cartes apparaissent (ms). */
 let packSkip=null;
@@ -133,7 +133,7 @@ async function openPack(btn){
   if(!fast&&fx.total>1000&&modal){
    setTimeout(()=>{if(modal&&modal.dataset.packTier===tier&&!packSkip){packSkip=skip;modal.addEventListener('click',skip,true)}},250);
    const text=modal.querySelector('.portal-open-instruction');if(text)text.textContent=tr('skip');
-   const q=modal.querySelector('.portal-quick'),l=modal.querySelector('.portal-later');if(q)q.style.visibility='hidden';if(l)l.style.visibility='hidden';
+   const q=modal.querySelector('.portal-quick');if(q)q.style.visibility='hidden';
   }
  }finally{busy=false}
 }
@@ -180,6 +180,5 @@ async function finish(){
  }catch(e){console.warn('Fin invocation',e);notice('error')}finally{busy=false}
 }
 function resumeOpening(){if(!pending)return;if(pending.phase==='pack'&&window.sakuGrimoirePlay){const id=pending.id;window.sakuGrimoirePlay(pending.portal,bestRarity(pending.packs),()=>{if(pending&&pending.id===id){pending.phase='reveal';openModal()}})}else openModal()}
-window.sakuPortalResume=()=>{if(pending)resumeOpening();else enter()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal&&!modal.hidden){e.preventDefault();closeModal()}});
 })();

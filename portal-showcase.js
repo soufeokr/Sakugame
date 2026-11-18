@@ -3,14 +3,6 @@
 (function(){'use strict';
   const selected=[['127691','40882','80243','40'],[],['17','246','27','14'],['2727','121514','80243','384']];
   const special=['Son Goku','Satoru Gojo','Zaraki Kenpachi','Frieren'];
-  // Personnages en vedette d'un portail (repris par les pages du grimoire).
-  function featured(i){
-    const pool=window.sakuPortalPool?window.sakuPortalPool(i)||[]:[];if(!pool.length)return [];
-    let cards=i===3?['hoshi_reze','hoshi_yuta_okkotsu','hoshi_miles_morales','hoshi_san'].map(id=>pool.find(c=>c.id===id)):i===1?special.map(n=>pool.find(c=>c.rarity==='special'&&c.name.toLowerCase()===n.toLowerCase())):selected[i].map(id=>pool.find(c=>String(c.id)===id));
-    if(cards.some(c=>!c)) cards=cards.map((c,k)=>c||pool[k]).filter(Boolean);
-    return cards;
-  }
-  window.sakuPortalFeatured=featured;
   function render(){
     if(!window.sakuPortalPool||!window.sakuBasicCard)return;
     if(document.querySelector('#summonScreen .summon-v2'))return; // le grimoire remplace la vitrine des machines
