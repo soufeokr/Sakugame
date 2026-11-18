@@ -8,7 +8,8 @@ let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTi
 function updateFreeArtwork(){const stems=['basic','strongest','retro','cinema'];document.querySelectorAll('.summon-slide[data-index]').forEach(slide=>{const i=Number(slide.dataset.index),stem=stems[i];if(!stem)return;const freeSuffix=freeDraws>=5?'-free5':freeDraws>0?'-free':'';slide.querySelectorAll('.summon-machine-button img').forEach(img=>{const isStill=img.classList.contains('summon-still');const suffix=isStill&&i!==1?'-static':'';const src='summon-machines/'+stem+suffix+freeSuffix+'.svg';if(!img.src.endsWith('/'+src))img.src=src;});});}
 function applyFreeStatus(s){if(!s)return;const n=Number(s.available);if(Number.isInteger(n))freeDraws=Math.max(0,Math.min(5,n));updateFreeArtwork();refreshDashboard();}
 window.sakuPortalFreeCount=()=>uid()?freeDraws:0;
-async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s=await window.sakuBackend.freeDrawStatus();applyFreeStatus(s);return s}
+let freeNextAt=0;window.sakuPortalFreeNext=()=>freeNextAt;
+async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s=await window.sakuBackend.freeDrawStatus();const sec=Number(s&&s.next_seconds);freeNextAt=Number.isFinite(sec)&&sec>0?Date.now()+sec*1000:0;applyFreeStatus(s);return s}
 window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0));updateFreeArtwork();refreshDashboard()};
 window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws);if(n>0){freeDraws-=n;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
 const lang=()=>((window.SAKU_I18N||{}).lang||'en');

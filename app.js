@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '282';
+    const SAKU_BUILD = '284';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -9469,7 +9469,9 @@ function summonUpdateAtmosphere() {
   const stage = screen.querySelector('.summon-stage');
   if (slides.length !== 4 || !stage) return;
   const width = stage.clientWidth;
-  const step = window.innerWidth <= 700 ? Math.min(width * .39, 220) : Math.min(Math.max(width * .31, 220), 365);
+  // Mise en page « hall » : un seul portail visible, les voisins glissent hors de la scène.
+  const hall = !!stage.closest('.summon-v2');
+  const step = hall ? width * .92 : window.innerWidth <= 700 ? Math.min(width * .39, 220) : Math.min(Math.max(width * .31, 220), 365);
   const nearest = summonNormalize(Math.round(summonPosition));
   slides.forEach((slide, i) => {
     const distance = ((i - summonPosition + 2) % 4 + 4) % 4 - 2;
@@ -9489,6 +9491,8 @@ function summonUpdateAtmosphere() {
     captions[i].hidden = i !== nearest;
     dots[i].setAttribute('aria-current', String(i === nearest));
   });
+  screen.querySelectorAll('.portal-tab').forEach((tab, i) => tab.setAttribute('aria-current', String(i === nearest)));
+  if (window.sakuPortalActive) window.sakuPortalActive(nearest);
   const left = Math.floor(summonPosition), t = summonPosition - left;
   const a = summonNormalize(left), b = summonNormalize(left + 1);
   backgrounds.forEach(bg => { bg.style.opacity = '0'; });
@@ -9555,7 +9559,7 @@ function summonStep(step) { summonAnimateTo(Math.round(summonPosition) + step); 
       if (!summonTouchMoved && (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy) * 1.2)) return;
       summonTouchMoved = true;
       const stage = document.querySelector('.summon-stage');
-      const step = window.innerWidth <= 700 ? Math.min(stage.clientWidth * .39, 220) : Math.min(Math.max(stage.clientWidth * .31, 220), 365);
+      const step = stage.closest('.summon-v2') ? stage.clientWidth * .92 : window.innerWidth <= 700 ? Math.min(stage.clientWidth * .39, 220) : Math.min(Math.max(stage.clientWidth * .31, 220), 365);
       summonPosition = summonTouchPosition - dx / step; summonUpdateAtmosphere();
     }, {passive:true});
     carousel.addEventListener('touchend', event => {
