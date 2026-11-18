@@ -3,7 +3,7 @@
 (function(){
   'use strict';
   const words={
-    en:{close:'Close',chars:'Characters',wish:'In your wishlist',owned:'Owned',gauge:'Guarantee gauge',shared:'Shared by all portals',
+    en:{close:'Close',led:'FREE ×{n}',chars:'Characters',wish:'In your wishlist',owned:'Owned',gauge:'Guarantee gauge',shared:'Shared by all portals',
       nextLeg:'Legendary or better in',nextMyth:'Mythic in',boosters:'boosters',booster:'booster',signGauge:'Sign in to track your gauge.',
       one:'1 booster',five:'5 boosters',cards10:'10 cards',cards50:'50 cards',free:'Free',freeIncl:'{n} free included',freeIncl1:'1 free included',
       freeNote:'{n} free draws available, used first.',freeNote1:'1 free draw available, used first.',noFree:'No free draws left.',refill:'Next one in {t}',
@@ -18,7 +18,7 @@
       basic:'The classic portal brings together the eligible Basic collection.',strong:'The Strongest brings together its special cards and the characters from their universes.',retro:'Retro brings together characters from anime and manga released before 2000.',cinema:'Cinema celebrates films and anime with a film.',
       tags:['Classic','Special edition','Before 2000','Cinema'],
       names:['Common','Uncommon','Rare','Epic','Legendary','Mythic','Special']},
-    fr:{close:'Fermer',chars:'Personnages',wish:'Dans ta wishlist',owned:'Possédés',gauge:'Jauge de garantie',shared:'Commune à tous les portails',
+    fr:{close:'Fermer',led:'GRATUIT ×{n}',chars:'Personnages',wish:'Dans ta wishlist',owned:'Possédés',gauge:'Jauge de garantie',shared:'Commune à tous les portails',
       nextLeg:'Légendaire ou mieux dans',nextMyth:'Mythique dans',boosters:'boosters',booster:'booster',signGauge:'Connecte-toi pour suivre ta jauge.',
       one:'1 booster',five:'5 boosters',cards10:'10 cartes',cards50:'50 cartes',free:'Gratuit',freeIncl:'{n} gratuits inclus',freeIncl1:'1 gratuit inclus',
       freeNote:'{n} tirages gratuits disponibles, utilisés en premier.',freeNote1:'1 tirage gratuit disponible, utilisé en premier.',noFree:'Plus de tirage gratuit.',refill:'Prochain dans {t}',
@@ -33,7 +33,7 @@
       basic:'Le portail classique rassemble les cartes Basic éligibles.',strong:'The Strongest réunit les cartes spéciales et tous les personnages de leurs univers.',retro:'Retro réunit les personnages des animés et mangas parus avant 2000.',cinema:'Cinéma réunit les films et les animés ayant une partie film.',
       tags:['Classique','Édition spéciale','Avant 2000','Cinéma'],
       names:['Commune','Peu commune','Rare','Épique','Légendaire','Mythique','Spéciale']},
-    es:{close:'Cerrar',chars:'Personajes',wish:'En tu wishlist',owned:'Obtenidos',gauge:'Medidor de garantía',shared:'Compartido por todos los portales',
+    es:{close:'Cerrar',led:'GRATIS ×{n}',chars:'Personajes',wish:'En tu wishlist',owned:'Obtenidos',gauge:'Medidor de garantía',shared:'Compartido por todos los portales',
       nextLeg:'Legendaria o mejor en',nextMyth:'Mítica en',boosters:'sobres',booster:'sobre',signGauge:'Inicia sesión para seguir tu medidor.',
       one:'1 sobre',five:'5 sobres',cards10:'10 cartas',cards50:'50 cartas',free:'Gratis',freeIncl:'{n} gratis incluidos',freeIncl1:'1 gratis incluido',
       freeNote:'{n} tiradas gratis disponibles, se usan primero.',freeNote1:'1 tirada gratis disponible, se usa primero.',noFree:'No quedan tiradas gratis.',refill:'Siguiente en {t}',
@@ -145,6 +145,8 @@
     // Les anciennes surcouches dessinées dans les machines ne sont plus utilisées : on les retire si elles existent.
     document.querySelectorAll('.portal-machine-layer').forEach(el=>el.remove());
     const note=document.getElementById('summonFreeNote');if(note)note.remove();
+    const fc=signed()?freeCount():0,ledText=get().led.replace('{n}',fc);
+    document.querySelectorAll('.pm-led').forEach(led=>{led.hidden=!fc;led.textContent=ledText;});
     const scr=document.getElementById('summonScreen');
     const cur=document.querySelector('.summon-slide.is-active'),i=cur?Number(cur.dataset.index):(active>=0?active:0);
     if(scr&&(scr.classList.contains('active')||active<0)){active=i;renderPanel(i);}
