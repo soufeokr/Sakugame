@@ -11,8 +11,8 @@
       signBuy:'Sign in with Discord to summon.',
       tabRates:'Rates and guarantees',tabCards:'Cards',perCard:'Per card',perBooster:'Per booster',rarity:'Rarity',
       ratesNote:'Base rates, before guarantees. 10 cards per booster.',guarantees:'Guarantees',
-      g50:'At least one Legendary every 50 boosters',g400:'A Mythic at the 400th booster',g1000:'A Special at the 1000th booster on this portal',
-      gRule:'The gauge is shared by all portals. Any Mythic resets it; a Special alone does not.',yourGauge:'Your gauge: {n} / 400',
+      g50:'At least one Legendary every 50 boosters',g400:'A Mythic at the 400th booster',
+      gRule:'The gauge is shared by all portals. Any Mythic resets it.',yourGauge:'Your gauge: {n} / 400',
       search:'Search by character or series',all:'All',ownedF:'Owned',missing:'Missing',wishF:'Wishlist',more:'Show more',none:'No matching characters.',
       loading:'Character data is loading.',shownOf:'{a} of {b}',
       basic:'The classic portal brings together the eligible Basic collection.',strong:'The Strongest brings together its special cards and the characters from their universes.',retro:'Retro brings together characters from anime and manga released before 2000.',cinema:'Cinema celebrates films and anime with a film.',
@@ -26,8 +26,8 @@
       signBuy:'Connecte-toi avec Discord pour invoquer.',
       tabRates:'Taux et garanties',tabCards:'Cartes',perCard:'Par carte',perBooster:'Par booster',rarity:'Rareté',
       ratesNote:'Taux de base, avant garanties. 10 cartes par booster.',guarantees:'Garanties',
-      g50:'Au moins une Légendaire tous les 50 boosters',g400:'Une Mythique au 400e booster',g1000:'Une Spéciale au 1000e booster de ce portail',
-      gRule:'La jauge est commune à tous les portails. Toute Mythique la remet à zéro ; une Spéciale seule, non.',yourGauge:'Ta jauge : {n} / 400',
+      g50:'Au moins une Légendaire tous les 50 boosters',g400:'Une Mythique au 400e booster',
+      gRule:'La jauge est commune à tous les portails. Toute Mythique la remet à zéro.',yourGauge:'Ta jauge : {n} / 400',
       search:'Rechercher un personnage ou un univers',all:'Toutes',ownedF:'Possédées',missing:'Manquantes',wishF:'Wishlist',more:'Afficher plus',none:'Aucun personnage trouvé.',
       loading:'Chargement des personnages.',shownOf:'{a} sur {b}',
       basic:'Le portail classique rassemble les cartes Basic éligibles.',strong:'The Strongest réunit les cartes spéciales et tous les personnages de leurs univers.',retro:'Retro réunit les personnages des animés et mangas parus avant 2000.',cinema:'Cinéma réunit les films et les animés ayant une partie film.',
@@ -41,8 +41,8 @@
       signBuy:'Inicia sesión con Discord para invocar.',
       tabRates:'Probabilidades y garantías',tabCards:'Cartas',perCard:'Por carta',perBooster:'Por sobre',rarity:'Rareza',
       ratesNote:'Probabilidades base, antes de garantías. 10 cartas por sobre.',guarantees:'Garantías',
-      g50:'Al menos una Legendaria cada 50 sobres',g400:'Una Mítica en el sobre 400',g1000:'Una Especial en el sobre 1000 de este portal',
-      gRule:'El medidor es compartido por todos los portales. Cualquier Mítica lo reinicia; una Especial sola, no.',yourGauge:'Tu medidor: {n} / 400',
+      g50:'Al menos una Legendaria cada 50 sobres',g400:'Una Mítica en el sobre 400',
+      gRule:'El medidor es compartido por todos los portales. Cualquier Mítica lo reinicia.',yourGauge:'Tu medidor: {n} / 400',
       search:'Buscar personaje o serie',all:'Todas',ownedF:'Obtenidas',missing:'Faltan',wishF:'Wishlist',more:'Mostrar más',none:'No hay personajes coincidentes.',
       loading:'Cargando personajes.',shownOf:'{a} de {b}',
       basic:'El portal clásico reúne las cartas Basic elegibles.',strong:'The Strongest reúne sus cartas especiales y los personajes de sus universos.',retro:'Retro reúne personajes de animes y mangas anteriores al año 2000.',cinema:'Cine reúne películas y animes con una parte cinematográfica.',
@@ -158,14 +158,13 @@
     rates.forEach((r,j)=>{if(!r)return;const card=r/1000,booster=(1-Math.pow(1-r/100000,10))*100;
       rows+='<tr data-rarity="'+RARITIES[j]+'"><th scope="row"><i class="pi-dot"></i>'+esc(w.names[j])+'</th><td>'+pct(card)+'</td><td>'+pct(booster,booster<1?3:1)+'</td>'+
         '<td class="pi-bar-cell"><span class="pi-bar"><span style="width:'+Math.max(1.5,Math.log10(1+r)/Math.log10(1+max)*100)+'%"></span></span></td></tr>';});
-    const special=i===1||i===3;
     const g=(n,text,icon,cls,progress)=>'<li class="'+cls+'"><span class="pi-g-n">'+n+'</span><span class="pi-g-ico">'+ic(icon)+'</span><div><b>'+esc(text)+'</b>'+(progress||'')+'</div></li>';
     const prog=p!==null&&signed()?'<small>'+esc(w.yourGauge.replace('{n}',p))+'</small>':'';
     return '<section class="pi-pane" data-pane="rates"'+(tab==='rates'?'':' hidden')+'>'+
       '<table class="pi-rates"><thead><tr><th>'+esc(w.rarity)+'</th><th>'+esc(w.perCard)+'</th><th>'+esc(w.perBooster)+'</th><th aria-hidden="true"></th></tr></thead><tbody>'+rows+'</tbody></table>'+
       '<p class="pi-note">'+esc(w.ratesNote)+'</p>'+
       '<h3>'+esc(w.guarantees)+'</h3><ul class="pi-guarantees">'+
-        g(50,w.g50,'i-star','is-leg',prog)+g(400,w.g400,'i-crown','is-myth',prog)+(special?g(1000,w.g1000,'i-sparkle','is-special',''):'')+'</ul>'+
+        g(50,w.g50,'i-star','is-leg',prog)+g(400,w.g400,'i-crown','is-myth',prog)+'</ul>'+
       '<p class="pi-note">'+esc(w.gRule)+'</p></section>';
   }
   function cardsShell(i,items){
