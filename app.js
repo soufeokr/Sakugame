@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '289';
+    const SAKU_BUILD = '290';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -4327,12 +4327,14 @@
         upd['found/' + playerId] = { stage: bg.stage || 1, rank: prior + 1, base: base, bonus: bonus, pts: pts };
         upd['scores/' + playerId] = ((bg.scores || {})[playerId] || 0) + pts;
         database.ref('rooms/' + roomCode + '/bg').update(upd);
+        if (window.SakuSfx) window.SakuSfx.play('correct');
         inp.value = '';
         hideBgSuggest();
         showNotification('Correct! +' + pts + ' pts (' + base + ' base' + (bonus ? ' + ' + bonus + ' speed bonus' : '') + ')', 4000);
         touchActivity();
       } else {
         showNotification('Nope! Keep trying — it gets clearer every few seconds…', 2500);
+        if (window.SakuSfx) window.SakuSfx.play('wrong');
         bgMaybeFocusGuess(); // ⌨️ keep typing on PC (e.g. after picking a suggestion with the mouse)
       }
     }
@@ -4803,11 +4805,13 @@
         upd['found/' + playerId] = { stage: sn.stage || 1, rank: prior + 1, base: base, bonus: bonus, pts: pts };
         upd['scores/' + playerId] = ((sn.scores || {})[playerId] || 0) + pts;
         database.ref('rooms/' + roomCode + '/sn').update(upd);
+        if (window.SakuSfx) window.SakuSfx.play('correct');
         inp.value = '';
         showNotification((window.t ? t('Correct!') : 'Correct!') + ' +' + pts + ' pts (' + base + ' base' + (bonus ? ' + ' + bonus + ' 🏅' : '') + ')', 4000);
         touchActivity();
       } else {
         showNotification(window.t ? t('Nope! Keep trying — a bigger crop is coming…') : 'Nope! Keep trying — a bigger crop is coming…', 2500);
+        if (window.SakuSfx) window.SakuSfx.play('wrong');
       }
     }
 
@@ -5804,6 +5808,7 @@
       const sid = activeScreen ? activeScreen.id : '';
       if (sid !== 'battleScreen' && sid !== 'raceScreen' && sid !== 'blurScreen' && sid !== 'codenamesScreen' && sid !== 'snapshotScreen') { screen.classList.remove('show'); return; }
       const players = currentRoom.players || {};
+      let sfxWon = null; // 🔊 victoire / défaite du joueur local
       if (window.sakuProgressMulti) window.sakuProgressMulti(kind, currentRoom);
       const title = document.getElementById('meTitle');
       const sub = document.getElementById('meSub');
@@ -5819,7 +5824,7 @@
           return aF - bF; // unfound ranks above on tie
         });
         const winner = ranking[0];
-        const meWin = winner === playerId;
+        const meWin = winner === playerId; sfxWon = meWin;
         title.textContent = meWin ? 'You win the Battle Royale!' : 'Battle Royale over!';
         sub.textContent = meWin ? 'Champion hunter!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5838,7 +5843,7 @@
         const scores = sn.scores || {};
         const ranking = snParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
         const winner = ranking[0];
-        const meWin = winner === playerId;
+        const meWin = winner === playerId; sfxWon = meWin;
         title.textContent = meWin ? 'You win Snapshot!' : 'Snapshot! over!';
         sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5853,7 +5858,7 @@
         const scores = bg.scores || {};
         const ranking = bgParticipants().sort((a, b) => ((scores[b] || 0) - (scores[a] || 0)));
         const winner = ranking[0];
-        const meWin = winner === playerId;
+        const meWin = winner === playerId; sfxWon = meWin;
         title.textContent = meWin ? 'You win Blur Guess!' : 'Blur Guess over!';
         sub.textContent = meWin ? 'Sharpest eyes in the room!' : ((players[winner] || {}).name || '?') + ' takes it!';
         ranking.forEach((pid, i) => {
@@ -5874,6 +5879,7 @@
         const cn = currentRoom.cn || {};
         const winTeam = cn.winner ? cn.winner.team : null;
         const myTeam = cnTeamOf(playerId, cn);
+        if (winTeam && myTeam) sfxWon = myTeam === winTeam;
         title.innerHTML = winTeam ? cnEmoji(winTeam) + ' ' + escapeHtml((winTeam === 'red' ? (window.t ? t('RED') : 'RED') : (window.t ? t('BLUE') : 'BLUE'))) + ' ' + (window.t ? t('team wins!') : 'team wins!') : (window.t ? t('Ninja over') : 'Ninja over');
         sub.innerHTML = (!cn.winner || !cn.winner.reason) ? ''
           : cn.winner.reason === 'assassin' ? (myTeam === winTeam ? (window.t ? t('The other team hit the 💀 assassin — lucky break!') : 'The other team hit the 💀 assassin — lucky break!') : (window.t ? t('Your team hit the 💀 assassin card…') : 'Your team hit the 💀 assassin card…'))
@@ -5906,6 +5912,7 @@
         const winner = rc.winner;
         const secretChar = (currentRoom.characters || []).find(c => c.id === rc.secretId);
         const targetWon = rc.endReason === 'hunters-out' || (winner && winner === rc.targetPid);
+        sfxWon = targetWon ? rc.targetPid === playerId : (winner ? winner === playerId : null);
         if (targetWon) {
           title.textContent = winner === playerId ? 'You WIN, target!' : 'Race over — TARGET wins!';
           sub.textContent = 'All the hunters ran out of lives — the secret stays safe with ' + ((players[rc.targetPid] || {}).name || '?') + '!';
@@ -5930,6 +5937,10 @@
           row.innerHTML = `${avatarCircle(p.avatar, 'ava-chat')}<span>${escapeHtml(String(p.name || '?'))}${pid === playerId ? sakuYouTag() : ''}</span><span class="me-pts">${label}</span>`;
           list.appendChild(row);
         });
+      }
+      if (sfxWon !== null && players[playerId] && window.SakuSfx) {
+        const g = currentRoom[{ battle: 'br', snapshot: 'sn', blur: 'bg', codenames: 'cn', race: 'rc' }[kind]] || {};
+        window.SakuSfx.result(sfxWon, roomCode + ':' + kind + ':' + (g.gameId || currentRoom.createdAt || ''));
       }
       // Replay counting (same pattern as Undercover)
       const restarts = currentRoom.restarts || {};
@@ -7621,6 +7632,7 @@
       const end = document.getElementById('hcEndScreen');
       if (!end) return;
       const winner = hc.winner; // pid | 'draw'
+      if (window.SakuSfx && hc.gameId && hcOrderOf().includes(playerId)) window.SakuSfx.result(winner === playerId, roomCode + ':hotcold:' + hc.gameId);
       if (window.sakuProgressGame && hc.gameId && hcOrderOf().includes(playerId) && players[playerId] && players[playerId].outInGame !== hc.gameId) window.sakuProgressGame('hotcold', hc.gameId, winner === playerId);
       const totals = hc.totals || {};
       const ptsMode = hcGuessMode() !== 'individual'; // 🎯 shared guesses score POINTS
@@ -8139,6 +8151,7 @@
         const nextPlayer = players.find(id => id !== playerId);
         await database.ref('rooms/' + roomCode + '/currentTurn').set(nextPlayer);
         if (guessingCharacter) showNotification('Wrong guess! ' + (guessingCharacter ? guessingCharacter.name : '') + ' has been eliminated.');
+        if (window.SakuSfx) window.SakuSfx.play('wrong');
       }
       cancelGuessingMode(); guessingCharacter = null;
     }
@@ -8160,7 +8173,7 @@
       }
       if (currentRoom.state === 'finished') {
         // Count the result once per finished game (logged-in players only)
-        if (!gameResultCounted && currentRoom.winner) { gameResultCounted = true; recordGameResult(currentRoom.winner === playerId); }
+        if (!gameResultCounted && currentRoom.winner) { gameResultCounted = true; if (window.SakuSfx && currentRoom.players && currentRoom.players[playerId]) window.SakuSfx.result(currentRoom.winner === playerId, roomCode + ':classic:' + (currentRoom.progressGameId || currentRoom.createdAt || '')); recordGameResult(currentRoom.winner === playerId); }
         // Ensure characters loaded for winning screen
         if (!characters || characters.length === 0) {
           characters = currentRoom.characters || [];
@@ -9071,6 +9084,7 @@
         if (ucStatCountedFor !== gid) {
           ucStatCountedFor = gid;
           const wpids = Array.isArray(uc.winnerPids) ? uc.winnerPids : Object.values(uc.winnerPids || {});
+          if (window.SakuSfx) window.SakuSfx.result(wpids.indexOf(playerId) !== -1, roomCode + ':undercover:' + ((currentRoom.uc || {}).gameId || ''));
           recordUndercoverResult(wpids.indexOf(playerId) !== -1);
         }
         renderUcEndScreen();

@@ -82,9 +82,9 @@
     gm.querySelector('.gm-tiers').innerHTML='';gm.querySelector('.gm-sparks').innerHTML='';gm.querySelector('.gm-card').innerHTML='';
     gm.querySelectorAll('.gm-legend i').forEach(d=>d.classList.remove('on'));
   }
-  function stop(){
+  function stop(skipped){
     if(!playing)return;const p=playing;playing=null;
-    clearTimeout(p.timer);clearTimeout(p.sfx);document.removeEventListener('pointerdown',p.skip,true);document.removeEventListener('keydown',p.key,true);
+    clearTimeout(p.timer);if(skipped&&p.snd)try{p.snd.stop();}catch(e){}document.removeEventListener('pointerdown',p.skip,true);document.removeEventListener('keydown',p.key,true);
     try{p.done&&p.done();}finally{setTimeout(()=>reset(p.gm),450);}
   }
   /* i : portail (0-3), tier : meilleure rareté du tirage, done : appelé à la fin (ou au clic pour passer). */
@@ -108,10 +108,10 @@
     void gm.offsetWidth;
     gm.classList.add('is-playing');
     const p={gm,done,timer:0,sfx:0};
-    p.skip=e=>{if(e.target.closest&&e.target.closest('.portal-tabs,.top-bar,header,nav'))return;e.preventDefault();e.stopPropagation();stop();};
-    p.key=e=>{if(e.key==='Escape'||e.key===' '||e.key==='Enter'){e.preventDefault();stop();}};
-    p.timer=setTimeout(stop,DONE);
-    if(window.SakuSfx)p.sfx=setTimeout(()=>{try{SakuSfx.play('pack',ORDER[k],0)}catch(e){}},T*.2);
+    p.skip=e=>{if(e.target.closest&&e.target.closest('.portal-tabs,.top-bar,header,nav'))return;e.preventDefault();e.stopPropagation();stop(true);};
+    p.key=e=>{if(e.key==='Escape'||e.key===' '||e.key==='Enter'){e.preventDefault();stop(true);}};
+    p.timer=setTimeout(()=>stop(false),DONE);
+    if(window.SakuSfx)try{p.snd=SakuSfx.play('grimoire',ORDER[k]);}catch(e){}
     playing=p;
     setTimeout(()=>{if(playing===p){document.addEventListener('pointerdown',p.skip,true);document.addEventListener('keydown',p.key,true);}},250);
   }

@@ -264,7 +264,6 @@
     return [roomCode, currentRoom.createdAt || 0, kind, gid].join('_').replace(/[^A-Za-z0-9_:-]/g, '_').slice(0, 190);
   }
   function game(kind, gid, won) {
-    if (won && window.SakuSfx && gid && roomCode) window.SakuSfx.winOnce(roomCode + ':' + kind + ':' + gid);
     if (!currentAccount || !boundUid || !gid || !roomCode || !currentRoom || kind === 'blur' || kind === 'snapshot') return;
     const id = matchPrefix(kind, gid);
     if (pending.has(id)) return;
@@ -313,6 +312,7 @@
       const r = await rpc(fn, args);
       if (uid !== boundUid) return;
       if (r) { delete r.claimed; apply(r); }
+      if (window.SakuSfx) window.SakuSfx.play('reward');
       notify(okText);
     } catch (e) {
       if (uid === boundUid) { notify('Progress could not be saved.'); fetchState(); }
@@ -336,6 +336,7 @@
       if (r) { delete r.claimed_total; delete r.coins_gained; delete r.levels_gained; }
       claimingAll = false;
       if (r) apply(r);
+      if (n && window.SakuSfx) window.SakuSfx.play('reward');
       if (typeof showNotification === 'function') showNotification(n
         ? fmt(n > 1 ? '{n} rewards collected!' : '{n} reward collected!', n) + (coins ? ' +' + num(coins) + ' ' + tr('coins') : '')
         : tr('Nothing to claim'));
