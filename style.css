@@ -4612,3 +4612,111 @@ body.anime-modal-open{overflow:hidden}
 @media(max-width:480px){.guest-name-content{padding:24px 20px 18px}#authModal.auth-signin-mode .modal-content{padding:26px 18px 18px}}
 .auth-signin .as-perks,.auth-signin .as-privacy{text-align:left}
 .auth-signin .as-discord{margin:4px 0 0}
+
+/* b294 — Page de vente : barre d'outils, filtres de rareté, tuiles, fenêtre avec graphique des prix */
+#marketSell .market-section-title{align-items:flex-end}
+.msell-count{color:#9fc0da;font-size:.82rem;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.msell-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;margin:4px 0 14px}
+.msell-toolbar input[type=search]{min-height:42px}
+.msell-toolbar select{min-height:42px;padding:0 12px;border-radius:10px}
+.msell-rarities{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:7px}
+.msell-rarities button{--r:#8ec6ed;display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:6px 12px;border:1px solid #9bc1dd33;border-radius:999px;background:#0b1a30;color:#cfe3f2;font-size:.8rem;font-weight:700;box-shadow:none}
+.msell-rarities button i{width:9px;height:9px;border-radius:50%;background:var(--r);box-shadow:0 0 8px var(--r)}
+.msell-rarities button b{color:#7f9bb3;font-weight:800;font-variant-numeric:tabular-nums}
+.msell-rarities button[aria-pressed=true]{border-color:var(--r);background:color-mix(in srgb,var(--r) 18%,#0b1a30);color:#fff}
+.msell-rarities button:hover{transform:none;border-color:var(--r)}
+#marketSell .market-sell-visual{max-height:none;overflow:visible;padding:0;border:0;background:none}
+#marketSell .market-sell-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px}
+#marketSell .market-sell-tile{--r:#cfd6df;display:flex;flex-direction:column;gap:6px;padding:6px 6px 8px;border:1px solid #9bc1dd26;border-radius:14px;background:linear-gradient(180deg,#10213a,#0b172b);box-shadow:none}
+#marketSell .market-sell-tile:hover,#marketSell .market-sell-tile:focus-visible{transform:translateY(-2px);border-color:var(--r);box-shadow:0 10px 24px -14px var(--r)}
+.msell-tile-art{position:relative;display:block}
+.msell-tile-foot{display:flex;align-items:center;gap:6px;padding:0 2px;color:#a9c3d6;font-size:.72rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msell-tile-foot i{flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:var(--r);box-shadow:0 0 6px var(--r)}
+.msell-empty{padding:30px 10px;text-align:center}
+.msell-more{display:block;margin:16px auto 0}
+
+.market-sell-dialog{--r:#7dcaf4;width:min(900px,calc(100vw - 24px));max-height:min(92vh,860px);padding:0;border:1px solid #93b9d74d;border-radius:20px;background:radial-gradient(520px 260px at 0% 0%,color-mix(in srgb,var(--r) 16%,transparent),transparent 70%),linear-gradient(165deg,#13243f,#0a1528);color:#eaf4fc}
+.market-sell-dialog .market-sell-dialog-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px 12px;background:linear-gradient(180deg,#13243ff2,#13243fcc);backdrop-filter:blur(6px)}
+.market-sell-dialog .market-sell-dialog-head h2{margin:2px 0 0;font-size:1.35rem;line-height:1.2}
+.msell-body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:22px;padding:6px 22px 22px}
+.msell-card{display:flex;flex-direction:column;gap:12px;min-width:0}
+.msell-card .market-sell-preview{filter:drop-shadow(0 14px 26px rgba(0,0,0,.45))}
+.msell-meta{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.msell-series{flex:1 0 100%;color:#a9c3d6;font-size:.82rem;font-weight:700}
+.msell-pill,.msell-lvl{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;background:#0b1a30;border:1px solid #9bc1dd33;font-size:.74rem;font-weight:800}
+.msell-pill{--r:#cfd6df;border-color:color-mix(in srgb,var(--r) 55%,transparent);color:var(--r)}
+.msell-pill i{width:7px;height:7px;border-radius:50%;background:var(--r)}
+.msell-owned{flex:1 0 100%;color:#7f9bb3;font-size:.76rem}
+.msell-main{display:flex;flex-direction:column;gap:18px;min-width:0}
+.msell-label{display:block;color:#9fc0da;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.msell-chart{padding:14px 14px 10px;border:1px solid #9bc1dd2b;border-radius:16px;background:#08142799}
+.msell-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.msell-median{display:flex;align-items:center;gap:8px;margin-top:4px}
+.msell-median img{width:22px;height:22px}
+.msell-median strong{font-size:1.7rem;line-height:1;font-variant-numeric:tabular-nums}
+.msell-trend{padding:3px 8px;border-radius:999px;font-size:.75rem;font-weight:800;background:#ffffff12;color:#a9c3d6}
+.msell-trend:empty{display:none}
+.msell-trend.up{background:#3fd69a22;color:#5fe3ad}.msell-trend.down{background:#ff7a8a22;color:#ff98a5}
+.msell-periods{display:flex;gap:4px;padding:3px;border-radius:10px;background:#0b1a30;border:1px solid #9bc1dd26}
+.msell-periods button{min-height:30px;padding:4px 10px;border:0;border-radius:8px;background:none;color:#a9c3d6;font-size:.76rem;font-weight:800;box-shadow:none}
+.msell-periods button[aria-pressed=true]{background:#1f9fe333;color:#fff}
+.msell-periods button:hover{transform:none;color:#fff}
+.msell-chart-plot{position:relative;height:160px;margin-top:10px}
+.msell-chart-plot svg{display:block;width:100%;height:100%;overflow:visible;touch-action:none}
+.msell-chart-plot text{fill:#7f9bb3;font-size:9.5px;font-weight:600;font-family:inherit}
+.msell-chart-plot .g{stroke:#9bc1dd1f;stroke-width:1;vector-effect:non-scaling-stroke}
+.msell-chart-plot .min{stroke:#ffb36b99;stroke-width:1;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.msell-chart-plot .min-t{fill:#ffb36bcc}
+.msell-chart-plot .band{opacity:.14}
+.msell-chart-plot .area{opacity:.12}
+.msell-chart-plot .line{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.msell-chart-plot .flat{stroke-width:2.4;stroke-dasharray:6 5;vector-effect:non-scaling-stroke;opacity:.9}
+.msell-chart-plot circle{stroke:#0a1528;stroke-width:2;vector-effect:non-scaling-stroke}
+.msell-chart-plot circle.last{filter:drop-shadow(0 0 5px currentColor)}
+.msell-chart-plot .cursor{stroke:#ffffff55;stroke-width:1;vector-effect:non-scaling-stroke}
+.msell-chart-loading{height:100%;border-radius:10px;background:linear-gradient(90deg,#ffffff08,#ffffff14,#ffffff08);background-size:200% 100%;animation:msell-load 1.2s linear infinite}
+@keyframes msell-load{to{background-position:-200% 0}}
+.msell-chart-note{margin:8px 0 0;min-height:1.3em;color:#a9c3d6;font-size:.78rem;line-height:1.4;font-variant-numeric:tabular-nums}
+.msell-form{display:flex;flex-direction:column;gap:14px}
+.msell-field{display:flex;flex-direction:column;gap:7px;min-width:0;margin:0}
+.msell-field small{color:#7f9bb3;font-size:.74rem}
+.msell-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:#0b1a30;border:1px solid #9bc1dd2b}
+.msell-seg button{min-height:40px;border:0;border-radius:9px;background:none;color:#a9c3d6;font-weight:800;box-shadow:none}
+.msell-seg button[aria-checked=true]{background:linear-gradient(110deg,#138bce,#2c9fd3);color:#fff;box-shadow:0 8px 18px -12px #1f9fe3}
+.msell-seg button:hover{transform:none}
+.msell-row{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:12px}
+.msell-price{display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #9cc9ea45;border-radius:11px;background:#0c1c32}
+.msell-price:focus-within{outline:2px solid #6fc5f3;outline-offset:2px}
+.msell-price img{width:20px;height:20px}
+.msell-price input{flex:1;min-width:0;min-height:46px;border:0!important;background:none!important;box-shadow:none!important;outline:none!important;font-size:1.15rem;font-weight:800;color:#fff;padding:0}
+.msell-stepper{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;border:1px solid #9cc9ea45;border-radius:11px;background:#0c1c32;overflow:hidden}
+.msell-stepper button{min-height:46px;border:0;border-radius:0;background:#ffffff0a;color:#cfe3f2;font-size:1.2rem;font-weight:800;box-shadow:none}
+.msell-stepper button:hover:not(:disabled){background:#ffffff16;transform:none}
+.msell-stepper button:disabled{opacity:.35}
+.msell-stepper input{min-height:46px;border:0!important;background:none!important;box-shadow:none!important;text-align:center;font-weight:800;font-size:1.05rem;color:#fff;padding:0;-moz-appearance:textfield}
+.msell-stepper input::-webkit-outer-spin-button,.msell-stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.msell-quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:-4px}
+.msell-quick:empty{display:none}
+.msell-quick button{min-height:32px;padding:5px 11px;border:1px solid #9bc1dd33;border-radius:999px;background:#0b1a30;color:#cfe3f2;font-size:.78rem;font-weight:700;box-shadow:none}
+.msell-quick button b{color:#fff;font-variant-numeric:tabular-nums}
+.msell-quick button[aria-pressed=true]{border-color:#6fc5f3;background:#1f9fe326}
+.msell-quick button:hover{transform:none;border-color:#6fc5f3}
+.msell-summary{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:14px;border:1px solid #9bc1dd2b;background:#08142780}
+.msell-summary div{display:flex;justify-content:space-between;gap:12px;color:#a9c3d6;font-size:.84rem;font-variant-numeric:tabular-nums}
+.msell-summary div b{color:#e3eef8}
+.msell-summary .msell-total{margin-top:4px;padding-top:9px;border-top:1px solid #9bc1dd24;align-items:center;color:#eaf4fc;font-weight:800}
+.msell-summary .msell-total strong{display:inline-flex;align-items:center;gap:7px;font-size:1.3rem;color:#fff}
+.msell-summary .msell-total img{width:20px;height:20px}
+.msell-cmp{margin:2px 0 0;color:#8fb3cd;font-size:.76rem}
+.msell-cmp.bad{color:#ff9aa8;margin:0}
+.market-sell-dialog .market-sell-explanation{margin:0;color:#8fa9bf;font-size:.76rem;line-height:1.45}
+.msell-submit{min-height:50px;font-size:1rem}
+@media(max-width:720px){
+  .msell-body{grid-template-columns:1fr;gap:16px;padding:4px 16px 18px}
+  .msell-card{display:grid;grid-template-columns:104px minmax(0,1fr);gap:12px;align-items:start}
+  .msell-row{grid-template-columns:1fr}
+  .market-sell-dialog .market-sell-dialog-head{padding:14px 16px 10px}
+  #marketSell .market-sell-grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px}
+  .msell-toolbar{grid-template-columns:1fr}
+}
+.msell-toolbar select{font-size:.86rem;font-weight:700;color:#e3eef8;background:#0b1a30;border:1px solid #9bc1dd33}

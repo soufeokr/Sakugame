@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="293">
+<meta name="saku-build" content="294">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=293">
+<link rel="manifest" href="manifest.json?v=294">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=293" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=293">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=293">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=293">
+<link rel="icon" href="favicon.ico?v=294" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=294">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=294">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=294">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=293">
+  <link rel="stylesheet" href="style.css?v=294">
 </head>
 <body>
 
@@ -339,7 +339,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=293" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=294" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" title="Sakugame is in public beta — thanks for your patience!"><span data-noi18n>Beta</span></span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <div id="topBalances" class="top-balances" hidden><button type="button" class="top-bal" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button><button type="button" class="top-bal" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button></div>
@@ -397,7 +397,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=293" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=294" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -511,19 +511,43 @@
         <div id="marketMessage" class="market-message" role="status" aria-live="polite"></div>
         <section class="market-tab" id="marketBuy"><div class="market-section-title"><div><span class="market-kicker">MARKETPLACE</span><h2>Cards on the market</h2><p>Fixed-price offers and 24-hour auctions.</p></div><button type="button" class="market-subtle" id="marketRefresh">Refresh</button></div><input type="search" id="marketSearch" placeholder="Search a card or series…"><div id="marketListings" class="market-listings"></div><dialog id="marketOffersDialog" class="market-offers-dialog" aria-labelledby="marketOffersTitle"><div class="market-offers-dialog-head"><h2 id="marketOffersTitle"></h2><button type="button" id="marketOffersClose" aria-label="Close">×</button></div><div class="market-offers-layout"><div id="marketOffersCard" class="market-offers-card"></div><div class="market-offers-right"><div id="marketOffersMeta"></div><p id="marketOffersMessage" role="status"></p><div id="marketOffersList" class="market-offers-scroll"></div></div></div></dialog></section>
         <section class="market-tab" id="marketSell" hidden>
-          <input type="hidden" id="marketSellSearch" value=""><select id="marketSellCard" hidden aria-label="Card to sell"></select>
+          <div class="market-section-title"><div><span class="market-kicker">SELL</span><h2>Put a card up for sale</h2><p>Pick a card from your collection. Locked cards are not shown.</p></div><span class="msell-count" id="marketSellCount" data-noi18n></span></div>
+          <div class="msell-toolbar">
+            <input type="search" id="marketSellSearch" placeholder="Search a card or series…" aria-label="Search your cards">
+            <select id="marketSellSort" aria-label="Sort"><option value="rarity">Rarest first</option><option value="count">Most copies</option><option value="name">Name</option></select>
+            <div class="msell-rarities" id="marketSellRarities" role="group" aria-label="Rarity"></div>
+          </div>
+          <select id="marketSellCard" hidden aria-label="Card to sell"></select>
           <div class="market-sell-visual" id="marketSellVisual" aria-label="Cards available to sell"></div>
           <dialog id="marketSellDialog" class="market-sell-dialog" aria-labelledby="marketSellTitle">
-            <div class="market-sell-dialog-head"><h2 id="marketSellTitle"></h2><button type="button" id="marketSellClose" aria-label="Close">×</button></div>
-            <div class="market-sell-dialog-content"><div id="marketSellPreview" class="market-sell-preview"></div>
-              <form id="marketSellForm" class="market-form">
-                <select id="marketSellLevel" hidden aria-label="Card level"></select>
-                <label>Number of copies<input id="marketSellQuantity" type="number" min="1" max="1" step="1" value="1" required><small id="marketSellAvailable"></small></label>
-                <label>Sale type<select id="marketSaleType"><option value="fixed">Fixed price</option><option value="auction">Auction · 24 hours</option></select></label>
-                <label>Price per card<input id="marketPrice" type="number" min="1" max="100000000" step="1" required value="100"><small id="marketSellPricing"></small></label>
-                <p id="marketSellExplanation" class="market-sell-explanation"></p><p id="marketSellError" role="alert"></p>
-                <button class="market-button" type="submit">Create listing</button>
-              </form>
+            <div class="market-sell-dialog-head"><div><span class="market-kicker">SELL</span><h2 id="marketSellTitle"></h2></div><button type="button" id="marketSellClose" aria-label="Close">×</button></div>
+            <div class="msell-body">
+              <aside class="msell-card"><div id="marketSellPreview" class="market-sell-preview"></div><div class="msell-meta" id="marketSellMeta"></div></aside>
+              <div class="msell-main">
+                <section class="msell-chart" aria-labelledby="marketSellChartTitle">
+                  <div class="msell-chart-head">
+                    <div class="msell-chart-figure"><span class="msell-label" id="marketSellChartTitle">Median sale price</span><div class="msell-median"><img src="summon-machines/coin.svg" alt=""><strong id="marketSellMedian" data-noi18n>—</strong><span id="marketSellTrend" class="msell-trend" data-noi18n></span></div></div>
+                    <div class="msell-periods" role="group" aria-label="Period"><button type="button" data-days="7" aria-pressed="false" data-noi18n>7 j</button><button type="button" data-days="30" aria-pressed="true" data-noi18n>30 j</button><button type="button" data-days="90" aria-pressed="false" data-noi18n>90 j</button></div>
+                  </div>
+                  <div id="marketSellChart" class="msell-chart-plot" role="img" aria-label="Median sale price over time"></div>
+                  <p id="marketSellChartNote" class="msell-chart-note" data-noi18n></p>
+                </section>
+                <form id="marketSellForm" class="market-form msell-form">
+                  <select id="marketSellLevel" hidden aria-label="Card level"></select>
+                  <div class="msell-field"><span class="msell-label">Sale type</span>
+                    <div class="msell-seg" role="radiogroup" aria-label="Sale type"><button type="button" role="radio" data-kind="fixed" aria-checked="true">Fixed price</button><button type="button" role="radio" data-kind="auction" aria-checked="false">Auction · 24 hours</button></div>
+                    <select id="marketSaleType" hidden><option value="fixed">Fixed price</option><option value="auction">Auction · 24 hours</option></select>
+                  </div>
+                  <div class="msell-row">
+                    <label class="msell-field" for="marketPrice"><span class="msell-label">Price per card</span><span class="msell-price"><img src="summon-machines/coin.svg" alt=""><input id="marketPrice" type="number" min="1" max="100000000" step="1" required value="100"></span><small id="marketSellPricing" data-noi18n></small></label>
+                    <label class="msell-field msell-qty" for="marketSellQuantity"><span class="msell-label">Number of copies</span><span class="msell-stepper"><button type="button" data-step="-1" aria-label="One less">−</button><input id="marketSellQuantity" type="number" min="1" max="1" step="1" value="1" required><button type="button" data-step="1" aria-label="One more">+</button></span><small id="marketSellAvailable" data-noi18n></small></label>
+                  </div>
+                  <div class="msell-quick" id="marketSellQuick"></div>
+                  <div class="msell-summary" id="marketSellSummary" aria-live="polite"></div>
+                  <p id="marketSellExplanation" class="market-sell-explanation" data-noi18n></p><p id="marketSellError" role="alert"></p>
+                  <button class="market-button msell-submit" type="submit">Create listing</button>
+                </form>
+              </div>
             </div>
           </dialog>
         </section>
@@ -1785,7 +1809,7 @@
       <!-- Discord is the only way in -->
       <div id="authFormView" class="auth-signin">
         <div class="as-hero">
-          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=293" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
+          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=294" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
           <h2>Sign in or create your account</h2>
           <p>Already a player? Pick up right where you left off. New here? Your account is created in one click with Discord — no email, no password.</p>
         </div>
@@ -1976,8 +2000,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=293"></script>
-  <script defer src="saku-features.js?v=293"></script>
+  <script defer src="saku-local-account.js?v=294"></script>
+  <script defer src="saku-features.js?v=294"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -1986,7 +2010,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=293', 'charanimes.js?v=293', 'animes.js?v=293', 'nsfwdata.js?v=293', 'snappics.js?v=293'];
+        var files = ['characters.js?v=294', 'charanimes.js?v=294', 'animes.js?v=294', 'nsfwdata.js?v=294', 'snappics.js?v=294'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -2005,44 +2029,44 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=293"></script>
-  <script defer src="card-extra.js?v=293"></script>
-  <script defer src="strongest-data.js?v=293"></script>
-  <script defer src="strongest-render.js?v=293"></script>
-  <script defer src="basic-render.js?v=293"></script>
-  <script defer src="cardgame.js?v=293"></script>
-  <script defer src="encyclopedia.js?v=293"></script>
-  <script defer src="character-localization.js?v=293"></script>
-  <script defer src="enc.js?v=293"></script>
-  <script defer src="card-tilt.js?v=293"></script>
-  <script defer src="card-levels.js?v=293"></script>
-  <script defer src="card-controls.js?v=293"></script>
-  <script defer src="library-tools.js?v=293"></script>
-  <script defer src="rarity-sync.js?v=293"></script>
-  <script defer src="strongest-sync.js?v=293"></script>
-  <script defer src="hoshi-data.js?v=293"></script>
-  <script defer src="pic-sync.js?v=293"></script>
-  <script defer src="undercover.js?v=293"></script>
-  <script defer src="music.js?v=293"></script>
-  <script defer src="lang.js?v=293"></script>
-  <script defer src="game-guides.js?v=293"></script>
-  <script defer src="app.js?v=293"></script>
-  <script defer src="supabase-client.js?v=293"></script>
-  <script defer src="saku-session.js?v=293"></script>
-  <script defer src="saku-sfx.js?v=293"></script>
-  <script defer src="retro-index.js?v=293"></script>
-  <script defer src="cinema-index.js?v=293"></script>
-  <script defer src="portal-rates.js?v=293"></script>
-  <script defer src="portal-info.js?v=293"></script>
-  <script defer src="portal-showcase.js?v=293"></script>
-  <script defer src="card-backs.js?v=293"></script>
-  <script defer src="portal-grimoire.js?v=293"></script>
-  <script defer src="portal-summon.js?v=293"></script>
-  <script defer src="progression.js?v=293"></script>
-  <script defer src="player-popover.js?v=293"></script>
-  <script defer src="friends.js?v=293"></script>
-  <script defer src="showcase.js?v=293"></script>
-  <script defer src="market.js?v=293"></script>
+  <script defer src="card-rarity.js?v=294"></script>
+  <script defer src="card-extra.js?v=294"></script>
+  <script defer src="strongest-data.js?v=294"></script>
+  <script defer src="strongest-render.js?v=294"></script>
+  <script defer src="basic-render.js?v=294"></script>
+  <script defer src="cardgame.js?v=294"></script>
+  <script defer src="encyclopedia.js?v=294"></script>
+  <script defer src="character-localization.js?v=294"></script>
+  <script defer src="enc.js?v=294"></script>
+  <script defer src="card-tilt.js?v=294"></script>
+  <script defer src="card-levels.js?v=294"></script>
+  <script defer src="card-controls.js?v=294"></script>
+  <script defer src="library-tools.js?v=294"></script>
+  <script defer src="rarity-sync.js?v=294"></script>
+  <script defer src="strongest-sync.js?v=294"></script>
+  <script defer src="hoshi-data.js?v=294"></script>
+  <script defer src="pic-sync.js?v=294"></script>
+  <script defer src="undercover.js?v=294"></script>
+  <script defer src="music.js?v=294"></script>
+  <script defer src="lang.js?v=294"></script>
+  <script defer src="game-guides.js?v=294"></script>
+  <script defer src="app.js?v=294"></script>
+  <script defer src="supabase-client.js?v=294"></script>
+  <script defer src="saku-session.js?v=294"></script>
+  <script defer src="saku-sfx.js?v=294"></script>
+  <script defer src="retro-index.js?v=294"></script>
+  <script defer src="cinema-index.js?v=294"></script>
+  <script defer src="portal-rates.js?v=294"></script>
+  <script defer src="portal-info.js?v=294"></script>
+  <script defer src="portal-showcase.js?v=294"></script>
+  <script defer src="card-backs.js?v=294"></script>
+  <script defer src="portal-grimoire.js?v=294"></script>
+  <script defer src="portal-summon.js?v=294"></script>
+  <script defer src="progression.js?v=294"></script>
+  <script defer src="player-popover.js?v=294"></script>
+  <script defer src="friends.js?v=294"></script>
+  <script defer src="showcase.js?v=294"></script>
+  <script defer src="market.js?v=294"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
