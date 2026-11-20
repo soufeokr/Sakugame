@@ -1,6 +1,6 @@
 /* Sakugame — module branché sur Supabase (V1). Aucune écriture économique depuis le navigateur : tout passe par des fonctions serveur. */
 (function(){'use strict';
-const keys=['basic','strongest','retro','cinema'], names=['Basic','The Strongest','Retro','Cinéma'], $=id=>document.getElementById(id);
+const keys=['basic','strongest','retro','cinema','gem'], names=['Basic','The Strongest','Retro','Cinéma','Grimoire spécial'], $=id=>document.getElementById(id);
 window.sakuInfiniteCoins=()=>false;
 // Prix par défaut côté client (Basic et Retro : 200 x1 / 1000 x5)
 const PORTAL_PRICE={[0]:{1:200,5:1000},[2]:{1:200,5:1000}};
@@ -8,12 +8,18 @@ let busy=false,pity={},pending=null,modal=null,session=null,fallTimer=0,revealTi
 function updateFreeArtwork(){const stems=['basic','strongest','retro','cinema'];document.querySelectorAll('.summon-slide[data-index]').forEach(slide=>{const i=Number(slide.dataset.index),stem=stems[i];if(!stem)return;const freeSuffix=freeDraws>=5?'-free5':freeDraws>0?'-free':'';slide.querySelectorAll('.summon-machine-button img').forEach(img=>{const isStill=img.classList.contains('summon-still');const suffix=isStill&&i!==1?'-static':'';const src='summon-machines/'+stem+suffix+freeSuffix+'.svg';if(!img.src.endsWith('/'+src))img.src=src;});});}
 function applyFreeStatus(s){if(!s)return;const n=Number(s.available);if(Number.isInteger(n))freeDraws=Math.max(0,Math.min(5,n));updateFreeArtwork();refreshDashboard();}
 window.sakuPortalFreeCount=()=>uid()?freeDraws:0;
+// Gemmes d'invocation (grimoire spécial) : lues sur le serveur, jamais calculées côté client.
+let gems=0,gemsUser=null;
+function setGems(n){gems=Math.max(0,Number(n)||0);const pill=document.getElementById('topBalGems'),val=document.getElementById('topBalGemsVal');if(val)val.textContent=String(gems);if(pill)pill.hidden=!uid()||gems<1;refreshDashboard();}
+async function refreshGems(){if(!window.sakuBackend||!window.sakuBackend.inventory||!uid()){gemsUser=null;setGems(0);return gems}const who=uid();const inv=await window.sakuBackend.inventory();if(who!==uid())return gems;gemsUser=who;setGems(inv&&inv.summon_gem);return gems}
+window.sakuPortalGems=()=>uid()?gems:null;window.sakuPortalRefreshGems=()=>refreshGems().catch(()=>{});
+setInterval(()=>{if((uid()||null)!==gemsUser)refreshGems().catch(()=>{});},4000);
 let freeNextAt=0;window.sakuPortalFreeNext=()=>freeNextAt;
 async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s=await window.sakuBackend.freeDrawStatus();const sec=Number(s&&s.next_seconds);freeNextAt=Number.isFinite(sec)&&sec>0?Date.now()+sec*1000:0;applyFreeStatus(s);return s}
 window.sakuPortalFreeDraws=n=>{freeDraws=Math.max(0,Math.min(5,n||0));updateFreeArtwork();refreshDashboard()};
 window.sakuPortalBuyFree=i=>{const n=Math.min(5,freeDraws);if(n>0){freeDraws-=n;window.sakuPortalFreeDraws(freeDraws);return n}return 0};
 const lang=()=>((window.SAKU_I18N||{}).lang||'en');
-const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes',skip:'Clique pour passer',skipAll:'Passer tout'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards',skip:'Tap to skip',skipAll:'Skip all'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas',skip:'Pulsa para saltar',skipAll:'Saltar todo'}};
+const dict={fr:{buy:'Acheter',coins:'pièces',sign:'Connecte-toi pour invoquer.',funds:'Tu n’as pas assez de pièces.',error:'Impossible de terminer l’opération. Réessaie.',wait:'Une ouverture est déjà en attente.',resume:'Reprendre l’ouverture',click:'Clique sur le booster pour l’ouvrir',quick:'Ouverture rapide',later:'Plus tard',close:'Terminer',reveal:'Tout révéler',flip:'Clique sur les cartes pour les retourner',new:'NOUVEAU',packs:'boosters',cards:'cartes',invalid:'Ce portail n’est pas encore disponible.',nogem:'Il te faut une gemme d’invocation pour ouvrir le grimoire spécial.',loading:'Chargement des cartes…',earned:'Cartes ajoutées à ta collection',confirm:'Voir mes cartes',skip:'Clique pour passer',skipAll:'Passer tout'},en:{buy:'Buy',coins:'coins',sign:'Sign in to summon.',funds:'Not enough coins.',error:'Could not complete this action. Please try again.',wait:'An opening is already pending.',resume:'Resume opening',click:'Tap the booster to open it',quick:'Quick opening',later:'Later',close:'Done',reveal:'Reveal all',flip:'Tap cards to turn them over',new:'NEW',packs:'boosters',cards:'cards',invalid:'This portal is not available yet.',nogem:'You need a summoning gem to open the special grimoire.',loading:'Loading cards…',earned:'Cards added to your collection',confirm:'See my cards',skip:'Tap to skip',skipAll:'Skip all'},es:{buy:'Comprar',coins:'monedas',sign:'Inicia sesión para invocar.',funds:'No tienes suficientes monedas.',error:'No se pudo completar la acción. Inténtalo de nuevo.',wait:'Ya hay una apertura pendiente.',resume:'Continuar la apertura',click:'Pulsa el sobre para abrirlo',quick:'Apertura rápida',later:'Más tarde',close:'Terminar',reveal:'Revelar todo',flip:'Pulsa las cartas para voltearlas',new:'NUEVO',packs:'sobres',cards:'cartas',invalid:'Este portal aún no está disponible.',nogem:'Necesitas una gema de invocación para abrir el grimorio especial.',loading:'Cargando cartas…',earned:'Cartas añadidas a tu colección',confirm:'Ver mis cartas',skip:'Pulsa para saltar',skipAll:'Saltar todo'}};
 const tr=k=>(dict[lang()]||dict.en)[k]||k,uid=()=>window.sakuSecureUserId||null;
 function notice(k){if(typeof showNotification==='function')showNotification(tr(k));}
 function safe(n){return Number.isSafeInteger(Number(n))&&Number(n)>=0?Number(n):0;}
@@ -52,7 +58,7 @@ function generate(i,count,start,specialStart,bins,randoms){
 // ne crédite jamais de cartes et une reprise rejoue le même identifiant.
 function setServerResult(result){
  const i=keys.indexOf(result.portal);if(i<0||!Array.isArray(result.packs))throw Error('Réponse invalide');
- pity={shared:result.pity};pending={id:result.request_id,portal:i,count:result.packs.length,packs:result.packs,phase:'pack'};
+ if(result.portal!=='gem')pity={shared:result.pity};pending={id:result.request_id,portal:i,count:result.packs.length,packs:result.packs,phase:'pack'};
  refreshDashboard();
 }
 async function refreshCollection(){
@@ -63,6 +69,7 @@ async function refreshCollection(){
 async function enter(){
  if(!window.sakuBackend||!uid()){pity={};pending=null;refreshDashboard();return;}
  const who=uid();try{
+  refreshGems().catch(()=>{});
   await refreshFreeStatus();
   
   const request=await window.sakuBackend.pendingSummon();if(!request||who!==uid()){pending=null;refreshDashboard();return;}
@@ -72,13 +79,15 @@ async function enter(){
 }
 window.sakuPortalSummonEnter=enter;
 async function buy(i,n){
- if(![0,1,2,3].includes(i)||![1,5].includes(n)){notice('invalid');return}
+ if(![0,1,2,3,4].includes(i)||![1,5].includes(n)||(i===4&&n!==1)){notice('invalid');return}
  if(!window.sakuBackend||!uid()){notice('sign');if(typeof openAuthModal==='function')openAuthModal();return}
  if(busy||(window.sakuGrimoirePlaying&&window.sakuGrimoirePlaying()))return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
-  await refreshFreeStatus();
+  if(i===4){await refreshGems();if(gems<1){notice('nogem');return}}
+  else await refreshFreeStatus();
   const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
+  if(result.portal==='gem'&&Number.isInteger(Number(result.gems)))setGems(Number(result.gems));
   if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
   await refreshFreeStatus();
   if(window.sakuPlayerRefreshDraws)window.sakuPlayerRefreshDraws();
@@ -87,7 +96,7 @@ async function buy(i,n){
   // Le grimoire s'ouvre sur place (couleur de la meilleure carte), puis on passe directement à la révélation des cartes.
   const after=()=>{if(uid()===who&&pending&&pending.id===result.request_id){pending.phase='reveal';openModal()}};
   if(window.sakuGrimoirePlay)window.sakuGrimoirePlay(i,bestRarity(result.packs),after);else animateDrop(i,result.packs.length,after);
- }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':'error')}finally{busy=false}}
+ }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':e&&e.message==='no_gem'?'nogem':'error');if(i===4)refreshGems().catch(()=>{})}finally{busy=false}}
 window.sakuPortalBuy=buy;
 function animateDrop(i,n,done){let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide){done();return}let tray=document.createElement('div');tray.className='portal-falling';tray.setAttribute('aria-hidden','true');for(let x=0;x<n;x++){let img=document.createElement('img');img.src='summon-machines/pack-'+keys[i]+'.png';img.style.setProperty('--pack-n',x);img.style.setProperty('--pack-total',n);tray.appendChild(img)}slide.appendChild(tray);clearTimeout(fallTimer);let ms=matchMedia('(prefers-reduced-motion: reduce)').matches?120:1250;fallTimer=setTimeout(()=>{if(window.SakuSfx)SakuSfx.play('drop');tray.remove();done()},ms)}
 function modalEl(){if(modal)return modal;modal=document.createElement('div');modal.id='portalOpenModal';modal.className='portal-open-modal';modal.hidden=true;modal.innerHTML='<div class="portal-open-panel" role="dialog" aria-modal="true" aria-labelledby="portalOpenTitle"><header><div><span>SAKUGAME / PORTALS</span><h2 id="portalOpenTitle"></h2></div><button type="button" class="portal-open-dismiss" aria-label="Close">×</button></header><div id="portalOpenBody"></div></div>';document.body.appendChild(modal);modal.querySelector('.portal-open-dismiss').onclick=closeModal;return modal;}

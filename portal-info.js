@@ -16,7 +16,8 @@
       search:'Search by character or series',all:'All',ownedF:'Owned',missing:'Missing',wishF:'Wishlist',more:'Show more',none:'No matching characters.',
       loading:'Character data is loading.',shownOf:'{a} of {b}',
       basic:'The classic portal brings together the eligible Basic collection.',strong:'The Strongest brings together its special cards and the characters from their universes.',retro:'Retro brings together characters from anime and manga released before 2000.',cinema:'Cinema celebrates films and anime with a film.',
-      tags:['Classic','Special edition','Before 2000','Cinema'],
+      tags:['Classic','Special edition','Before 2000','Cinema','Summoning gem'],
+      gem:'The special grimoire only holds epic, legendary, mythic and special cards, from every portal.',gems:'Summoning gems',gemOne:'Summon · 1 gem',gemSub:'10 cards, epic or better',gemNone:'No gem yet',gemHave:'1 gem = 1 booster of 10 cards',gemHow:'How to get gems: reach 20 referrals (referral program coming soon).',gemNoGauge:'Fixed rates: this portal does not use the guarantee gauge.',gemRatesNote:'Fixed rates, no guarantee. 10 cards per gem.',
       names:['Common','Uncommon','Rare','Epic','Legendary','Mythic','Special']},
     fr:{close:'Fermer',led:'GRATUIT ×{n}',chars:'Personnages',wish:'Dans ta wishlist',owned:'Possédés',gauge:'Jauge de garantie',shared:'Commune à tous les portails',
       nextLeg:'Légendaire ou mieux dans',nextMyth:'Mythique dans',boosters:'boosters',booster:'booster',signGauge:'Connecte-toi pour suivre ta jauge.',
@@ -31,7 +32,8 @@
       search:'Rechercher un personnage ou un univers',all:'Toutes',ownedF:'Possédées',missing:'Manquantes',wishF:'Wishlist',more:'Afficher plus',none:'Aucun personnage trouvé.',
       loading:'Chargement des personnages.',shownOf:'{a} sur {b}',
       basic:'Le portail classique rassemble les cartes Basic éligibles.',strong:'The Strongest réunit les cartes spéciales et tous les personnages de leurs univers.',retro:'Retro réunit les personnages des animés et mangas parus avant 2000.',cinema:'Cinéma réunit les films et les animés ayant une partie film.',
-      tags:['Classique','Édition spéciale','Avant 2000','Cinéma'],
+      tags:['Classique','Édition spéciale','Avant 2000','Cinéma','Gemme d’invocation'],
+      gem:'Le grimoire spécial ne contient que des cartes épiques, légendaires, mythiques et spéciales, de tous les portails.',gems:'Gemmes d’invocation',gemOne:'Invoquer · 1 gemme',gemSub:'10 cartes, épiques ou mieux',gemNone:'Aucune gemme pour l’instant',gemHave:'1 gemme = 1 booster de 10 cartes',gemHow:'Comment obtenir des gemmes : atteindre 20 parrainages (le parrainage arrive bientôt).',gemNoGauge:'Taux fixes : ce portail n’utilise pas la jauge de garantie.',gemRatesNote:'Taux fixes, sans garantie. 10 cartes par gemme.',
       names:['Commune','Peu commune','Rare','Épique','Légendaire','Mythique','Spéciale']},
     es:{close:'Cerrar',led:'GRATIS ×{n}',chars:'Personajes',wish:'En tu wishlist',owned:'Obtenidos',gauge:'Medidor de garantía',shared:'Compartido por todos los portales',
       nextLeg:'Legendaria o mejor en',nextMyth:'Mítica en',boosters:'sobres',booster:'sobre',signGauge:'Inicia sesión para seguir tu medidor.',
@@ -46,10 +48,13 @@
       search:'Buscar personaje o serie',all:'Todas',ownedF:'Obtenidas',missing:'Faltan',wishF:'Wishlist',more:'Mostrar más',none:'No hay personajes coincidentes.',
       loading:'Cargando personajes.',shownOf:'{a} de {b}',
       basic:'El portal clásico reúne las cartas Basic elegibles.',strong:'The Strongest reúne sus cartas especiales y los personajes de sus universos.',retro:'Retro reúne personajes de animes y mangas anteriores al año 2000.',cinema:'Cine reúne películas y animes con una parte cinematográfica.',
-      tags:['Clásico','Edición especial','Antes de 2000','Cine'],
+      tags:['Clásico','Edición especial','Antes de 2000','Cine','Gema de invocación'],
+      gem:'El grimorio especial solo contiene cartas épicas, legendarias, míticas y especiales, de todos los portales.',gems:'Gemas de invocación',gemOne:'Invocar · 1 gema',gemSub:'10 cartas, épicas o mejores',gemNone:'Aún no tienes gemas',gemHave:'1 gema = 1 sobre de 10 cartas',gemHow:'Cómo conseguir gemas: llegar a 20 invitados (el programa de invitación llega pronto).',gemNoGauge:'Probabilidades fijas: este portal no usa el medidor de garantía.',gemRatesNote:'Probabilidades fijas, sin garantía. 10 cartas por gema.',
       names:['Común','Poco común','Rara','Épica','Legendaria','Mítica','Especial']}};
   const L=()=>(window.SAKU_I18N||{}).lang||'en', get=()=>words[L()]||words.en;
-  const names=['Basic','The Strongest','Retro','Cinéma'], keys=['basic','strongest','retro','cinema'], desc=['basic','strong','retro','cinema'];
+  const names=['Basic','The Strongest','Retro','Cinéma','Grimoire spécial'], keys=['basic','strongest','retro','cinema','gem'], desc=['basic','strong','retro','cinema','gem'];
+  const TOTAL=names.length,GEM=4;
+  const GEM_SVG='<svg viewBox="-50 -50 100 100" aria-hidden="true"><polygon points="0,-44 38,-22 17,-10 0,-20" fill="#e6ccff"/><polygon points="38,-22 38,22 17,10 17,-10" fill="#b17cf0"/><polygon points="38,22 0,44 0,20 17,10" fill="#7a3fd0"/><polygon points="0,44 -38,22 -17,10 0,20" fill="#3e1a7a"/><polygon points="-38,22 -38,-22 -17,-10 -17,10" fill="#7a3fd0"/><polygon points="-38,-22 0,-44 0,-20 -17,-10" fill="#b17cf0"/><polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="#d9b8ff"/><polygon points="-11,-8 -4,-15 3,-12 -7,-2" fill="#fff" opacity=".7"/></svg>';
   const RARITIES=['common','uncommon','rare','epic','legendary','mythic','special'];
   const PRIORITY={special:0,mythic:1,legendary:2,epic:3,rare:4,uncommon:5,common:6};
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -62,6 +67,7 @@
 
   function pool(i){
     if(typeof ENCYCLOPEDIA==='undefined'||!ENCYCLOPEDIA.list)return null;
+    if(i===GEM){const seen=new Set(),out=[];[0,1,2,3].forEach(k=>(pool(k)||[]).forEach(c=>{if(['epic','legendary','mythic','special'].includes(c.rarity)&&!seen.has(c.id)){seen.add(c.id);out.push(c);}}));return out;}
     const groups=ENCYCLOPEDIA.list, specials=groups.filter(g=>g.edition==='strongest');
     const norm=x=>String(x||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
     let strongNames=new Set();
@@ -121,6 +127,13 @@
     const next=window.sakuPortalFreeNext?window.sakuPortalFreeNext():0,refill=next&&next>Date.now()&&fc<5?' · <span class="pp-refill" data-next="'+next+'">'+esc(w.refill.replace('{t}',timeLeft(next-Date.now())))+'</span>':'';
     return '<p class="pp-free'+(fc?' has-free':'')+'">'+ic('i-sparkle')+'<span>'+esc(fc?(fc===1?w.freeNote1:w.freeNote.replace('{n}',fc)):w.noFree)+refill+'</span></p>';
   }
+  function gemCount(){return window.sakuPortalGems?window.sakuPortalGems():null;}
+  function gemBlock(){
+    const w=get(),n=gemCount(),have=signed()&&n>0;
+    return '<div class="pp-gems">'+GEM_SVG+'<div><small>'+esc(w.gems)+'</small><b>'+(signed()&&n!==null?num(n):'—')+'</b><span>'+esc(have?w.gemHave:w.gemNone)+'</span></div></div>'+
+      '<button type="button" class="pp-buy-btn pp-gem-buy"'+(have?'':' disabled')+' onclick="sakuPortalBuy('+GEM+',1)"><span class="pp-buy-n">×1</span><span class="pp-buy-main"><b>'+esc(w.gemOne)+'</b><small>'+esc(w.gemSub)+'</small></span></button>'+
+      '<p class="pp-gem-how">'+ic('i-sparkle')+'<span>'+esc(w.gemHow)+'</span></p>';
+  }
   function renderPanel(i){
     const box=document.getElementById('portalPanel');if(!box)return;
     const w=get(),items=cachedPool(i),total=items?items.length:null;
@@ -128,13 +141,13 @@
     const pending=window.sakuPortalPending&&window.sakuPortalPending(i),bal=balance();
     box.dataset.portal=keys[i];
     box.innerHTML=
-      '<header class="pp-head"><span class="pp-kicker">'+String(i+1).padStart(2,'0')+' / 04 · '+esc(w.tags[i])+'</span><h2 data-noi18n>'+esc(names[i])+'</h2><p>'+esc(w[desc[i]])+'</p></header>'+
+      '<header class="pp-head"><span class="pp-kicker">'+String(i+1).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0')+' · '+esc(w.tags[i])+'</span><h2 data-noi18n>'+esc(names[i])+'</h2><p>'+esc(w[desc[i]])+'</p></header>'+
       '<div class="pp-stats"><div><b>'+(total===null?'—':num(total))+'</b><span>'+esc(w.chars)+'</span></div>'+
         '<div><b>'+(signed()?num(ownedN):'—')+'</b><span>'+esc(w.owned)+'</span></div>'+
         '<div><b>'+(signed()?num(wishN):'—')+'</b><span>'+esc(w.wish)+'</span></div></div>'+
-      gauge()+
+      (i===GEM?gemBlock()+'<p class="pp-free">'+ic('i-hourglass')+'<span>'+esc(w.gemNoGauge)+'</span></p>':gauge()+
       '<div class="pp-buy">'+buyButton(i,1)+buyButton(i,5)+'</div>'+
-      freeLine()+
+      freeLine())+
       (signed()?'':'<p class="pp-free">'+ic('i-discord')+'<span>'+esc(w.signBuy)+'</span></p>')+
       '<div class="pp-foot"><button type="button" class="pp-details" onclick="portalInfoOpen('+i+')">'+ic('i-info')+'<span>'+esc(w.details)+'</span></button>'+
         (signed()&&bal!==null?'<span class="pp-balance">'+esc(w.balance)+' '+coin+'<b>'+(bal===Infinity?'∞':num(bal))+'</b></span>':'')+
@@ -159,6 +172,7 @@
         '<td class="pi-bar-cell"><span class="pi-bar"><span style="width:'+Math.max(1.5,Math.log10(1+r)/Math.log10(1+max)*100)+'%"></span></span></td></tr>';});
     const g=(n,text,icon,cls,progress)=>'<li class="'+cls+'"><span class="pi-g-n">'+n+'</span><span class="pi-g-ico">'+ic(icon)+'</span><div><b>'+esc(text)+'</b>'+(progress||'')+'</div></li>';
     const prog=p!==null&&signed()?'<small>'+esc(w.yourGauge.replace('{n}',p))+'</small>':'';
+    if(i===GEM)return '<section class="pi-pane" data-pane="rates"'+(tab==='rates'?'':' hidden')+'><table class="pi-rates"><thead><tr><th>'+esc(w.rarity)+'</th><th>'+esc(w.perCard)+'</th><th>'+esc(w.perBooster)+'</th><th aria-hidden="true"></th></tr></thead><tbody>'+rows+'</tbody></table><p class="pi-note">'+esc(w.gemRatesNote)+'</p><p class="pi-note">'+esc(w.gemHow)+'</p></section>';
     return '<section class="pi-pane" data-pane="rates"'+(tab==='rates'?'':' hidden')+'>'+
       '<table class="pi-rates"><thead><tr><th>'+esc(w.rarity)+'</th><th>'+esc(w.perCard)+'</th><th>'+esc(w.perBooster)+'</th><th aria-hidden="true"></th></tr></thead><tbody>'+rows+'</tbody></table>'+
       '<p class="pi-note">'+esc(w.ratesNote)+'</p>'+
@@ -210,9 +224,9 @@
     all=(items||[]).slice().sort((a,b)=>(PRIORITY[a.rarity]??99)-(PRIORITY[b.rarity]??99)||a.name.localeCompare(b.name)||String(a.id).localeCompare(String(b.id)));
     const keepQ=document.getElementById('portalInfoSearch')?document.getElementById('portalInfoSearch').value:'';
     card.dataset.portal=keys[i];
-    card.innerHTML='<header class="pi-hero"><div class="pi-hero-text"><span class="pi-kicker">'+String(i+1).padStart(2,'0')+' / 04 · '+esc(w.tags[i])+'</span>'+
+    card.innerHTML='<header class="pi-hero"><div class="pi-hero-text"><span class="pi-kicker">'+String(i+1).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0')+' · '+esc(w.tags[i])+'</span>'+
         '<h2 id="portalInfoTitle" data-noi18n>'+esc(names[i])+'</h2><p>'+esc(w[desc[i]])+'</p></div>'+
-        '<img class="pi-pack" src="summon-machines/pack-'+keys[i]+'.png" alt="" loading="lazy">'+
+        (i===GEM?GEM_SVG.replace('<svg ','<svg class="pi-pack pi-gem-hero" '):'<img class="pi-pack" src="summon-machines/pack-'+keys[i]+'.png" alt="" loading="lazy">')+
         '<button type="button" class="portal-info-close" aria-label="'+esc(w.close)+'" onclick="portalInfoClose()">'+ic('i-x')+'</button></header>'+
       '<nav class="pi-tabs" role="tablist">'+
         '<button type="button" role="tab" class="pi-tab'+(tab==='rates'?' is-on':'')+'" aria-selected="'+(tab==='rates')+'" onclick="portalInfoTab(\'rates\')">'+esc(w.tabRates)+'</button>'+

@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '299';
+    const SAKU_BUILD = '300';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -9482,7 +9482,9 @@ let summonPosition = 0;
 let summonFrame = 0, summonSettleTimer = 0, summonWheelOrigin = null;
 let summonTouchX = null, summonTouchY = null, summonTouchPosition = 0;
 let summonTouchMoved = false, summonIgnoreClickUntil = 0;
-function summonNormalize(n) { return ((n % 4) + 4) % 4; }
+const SUMMON_N = 5; // nombre de portails dans le carrousel (Basic, The Strongest, Retro, Cinéma, Spécial)
+function summonNormalize(n) { return ((n % SUMMON_N) + SUMMON_N) % SUMMON_N; }
+function summonDistance(i, pos) { const h = SUMMON_N / 2; return ((i - pos + h) % SUMMON_N + SUMMON_N) % SUMMON_N - h; }
 function summonUpdateAtmosphere() {
   const screen = document.getElementById('summonScreen');
   if (!screen || !screen.classList.contains('active')) return;
@@ -9491,14 +9493,14 @@ function summonUpdateAtmosphere() {
   const captions = Array.from(screen.querySelectorAll('.summon-caption'));
   const dots = Array.from(screen.querySelectorAll('.summon-pagination button'));
   const stage = screen.querySelector('.summon-stage');
-  if (slides.length !== 4 || !stage) return;
+  if (slides.length !== SUMMON_N || !stage) return;
   const width = stage.clientWidth;
   // Mise en page « hall » : un seul portail visible, les voisins glissent hors de la scène.
   const hall = !!stage.closest('.summon-v2');
   const step = hall ? width * .92 : window.innerWidth <= 700 ? Math.min(width * .39, 220) : Math.min(Math.max(width * .31, 220), 365);
   const nearest = summonNormalize(Math.round(summonPosition));
   slides.forEach((slide, i) => {
-    const distance = ((i - summonPosition + 2) % 4 + 4) % 4 - 2;
+    const distance = summonDistance(i, summonPosition);
     const away = Math.abs(distance), near = Math.min(away, 1);
     const scale = 1 - .30 * near - .10 * Math.max(0, away - 1);
     const opacity = away <= 1 ? 1 - .48 * away : Math.max(0, .52 * (2 - away));
@@ -9545,7 +9547,7 @@ function summonAnimateTo(target) {
 function summonSelect(index) {
   if (Date.now() < summonIgnoreClickUntil) return;
   // Shortest circular path: Cinema and Basic are adjacent, not opposite ends.
-  const distance = ((index - summonPosition + 2) % 4 + 4) % 4 - 2;
+  const distance = summonDistance(index, summonPosition);
   summonAnimateTo(summonPosition + distance);
 }
 function summonStep(step) { summonAnimateTo(Math.round(summonPosition) + step); }

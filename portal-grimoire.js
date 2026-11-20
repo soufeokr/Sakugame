@@ -6,9 +6,9 @@
   const ORDER=['common','uncommon','rare','epic','legendary','mythic','special'];
   const COL=['#cfd6df','#3fd69a','#3fb8f0','#a07cf5','#f2a93b','#f28ab0','#e8c469'];
   const RGB=['207,214,223','63,214,154','63,184,240','160,124,245','242,169,59','242,138,176','232,196,105'];
-  const THEMES=['basic','strongest','retro','cinema'];
-  const NAMES={basic:'Basic',strongest:'The Strongest',retro:'Retro',cinema:'Cinéma'};
-  const TITLES={basic:'BASIC',strongest:'STRONGEST',retro:'RETRO',cinema:'CINÉMA'};
+  const THEMES=['basic','strongest','retro','cinema','gem'];
+  const NAMES={basic:'Basic',strongest:'The Strongest',retro:'Retro',cinema:'Cinéma',gem:'Grimoire spécial'};
+  const TITLES={basic:'BASIC',strongest:'STRONGEST',retro:'RETRO',cinema:'CINÉMA',gem:'SPÉCIAL'};
   const T=7000, DONE=6150;
   const PETAL='M0 -6 C-15 -14 -16 -32 -6 -42 L0 -36 L6 -42 C16 -32 15 -14 0 -6 Z';
   const BIG='M0 -27 C-67.5 -63 -72 -144 -27 -189 L0 -162 L27 -189 C72 -144 67.5 -63 0 -27 Z';
@@ -20,6 +20,16 @@
 
   function medal(theme){
     if(theme==='strongest')return '<b class="gm-kanji">最強</b>';
+    // Grimoire spécial : monture hexagonale vide ; la gemme d'invocation s'y enchâsse à l'ouverture.
+    if(theme==='gem'){const HEX='0,-44 38,-22 38,22 0,44 -38,22 -38,-22',HEX2='0,-52 45,-26 45,26 0,52 -45,26 -45,-26';
+      const prongs=[[0,-52],[45,-26],[45,26],[0,52],[-45,26],[-45,-26]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5"/>').join('');
+      return '<svg class="gm-hexset" viewBox="-60 -60 120 120"><polygon points="'+HEX+'" fill="#06030d" stroke="rgba(0,0,0,.6)" stroke-width="5"/>'+
+        '<polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="none" stroke="var(--metal)" stroke-opacity=".35" stroke-dasharray="3 4"/>'+
+        '<polygon points="'+HEX2+'" fill="none" stroke="var(--metal)" stroke-width="5" stroke-linejoin="round"/><g fill="var(--metal)">'+prongs+'</g></svg>'+
+        '<svg class="gm-hexgem" viewBox="-60 -60 120 120"><polygon points="0,-44 38,-22 17,-10 0,-20" fill="#e6ccff"/><polygon points="38,-22 38,22 17,10 17,-10" fill="#b17cf0"/>'+
+        '<polygon points="38,22 0,44 0,20 17,10" fill="#7a3fd0"/><polygon points="0,44 -38,22 -17,10 0,20" fill="#3e1a7a"/><polygon points="-38,22 -38,-22 -17,-10 -17,10" fill="#7a3fd0"/>'+
+        '<polygon points="-38,-22 0,-44 0,-20 -17,-10" fill="#b17cf0"/><polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="#d9b8ff"/>'+
+        '<polygon points="-11,-8 -4,-15 3,-12 -7,-2" fill="#fff" opacity=".7"/><polygon points="'+HEX2+'" fill="none" stroke="var(--metal)" stroke-width="5" stroke-linejoin="round"/></svg>';}
     if(theme==='retro')return '<svg viewBox="-50 -50 100 100" fill="none" stroke="var(--metal)" stroke-width="5" stroke-linejoin="round"><path d="M0 -40 L11 -12 L40 -12 L17 6 L26 36 L0 18 L-26 36 L-17 6 L-40 -12 L-11 -12 Z"/></svg>';
     return '<svg viewBox="-50 -50 100 100" fill="var(--metal)">'+rot(PETAL)+'<circle r="7" fill="#1a1206"/></svg>';
   }
