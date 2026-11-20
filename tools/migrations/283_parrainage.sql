@@ -1,4 +1,5 @@
--- Parrainage : codes, filleuls, tirages bonus, paliers, inventaire (ticket spécial).
+-- Parrainage : codes, filleuls, tirages bonus, paliers, inventaire (gemme d'invocation, palier 20).
+-- (Mise à jour b300 : le palier 20 donne une gemme d'invocation ; player_items existe déjà depuis la migration 300.)
 -- Règles anti-comptes secondaires :
 --   • le compte Discord du filleul doit avoir au moins 15 jours (date tirée de l'identifiant Discord) ;
 --   • le code se saisit dans les 7 jours suivant l'inscription sur Sakugame, une seule fois ;
@@ -47,7 +48,7 @@ returns jsonb language sql immutable set search_path to '' as $$
     jsonb_build_object('goal', 3,  'reward', 'bonus_draws',    'amount', 5),
     jsonb_build_object('goal', 5,  'reward', 'coins',          'amount', 1500),
     jsonb_build_object('goal', 10, 'reward', 'coins',          'amount', 5000),
-    jsonb_build_object('goal', 20, 'reward', 'special_ticket', 'amount', 1))
+    jsonb_build_object('goal', 20, 'reward', 'summon_gem', 'amount', 1))
 $$;
 
 -- Date de création d'un compte Discord, lue dans son identifiant (snowflake).
@@ -107,7 +108,7 @@ begin
       'ready', n >= (t->>'goal')::integer));
   end loop;
   select coalesce(f.bonus, 0) into bonus from public.player_free_draws f where f.user_id = who;
-  select coalesce(i.quantity, 0) into tickets from public.player_items i where i.user_id = who and i.item = 'special_ticket';
+  select coalesce(i.quantity, 0) into tickets from public.player_items i where i.user_id = who and i.item = 'summon_gem';
   window_end := coalesce(acc, now()) + interval '7 days';
   return jsonb_build_object(
     'code', public.referral_ensure_code(who),
@@ -121,7 +122,7 @@ begin
     'discord_ok', dc is not null and dc <= now() - interval '15 days',
     'discord_ready_at', case when dc is null then null else dc + interval '15 days' end,
     'bonus_draws', coalesce(bonus, 0),
-    'special_tickets', coalesce(tickets, 0),
+    'summon_gems', coalesce(tickets, 0),
     'rules', jsonb_build_object('reward_draws', 2, 'min_discord_days', 15, 'window_days', 7));
 end $$;
 
@@ -228,8 +229,8 @@ BEGIN
 
     special_portal := p_portal IN ('strongest','cinema');
     weights := CASE WHEN special_portal
-        THEN ARRAY[44065,29000,18000,7000,1800,125,10]
-        ELSE ARRAY[44075,29000,18000,7000,1800,125,0]
+        THEN ARRAY[44565,29800,18000,7000,500,125,10]
+        ELSE ARRAY[44575,29800,18000,7000,500,125,0]
     END;
 
     SELECT coins INTO wallet FROM public.player_wallets WHERE user_id=who FOR UPDATE;
