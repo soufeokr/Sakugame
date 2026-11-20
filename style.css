@@ -4966,13 +4966,13 @@ body.anime-modal-open{overflow:hidden}
  #bottomBar .room-window-button{order:-4}
  body.has-room-window #bottomBar .desktop-brand{display:none}
  body #bottomBar .room-window-button{max-width:min(130px,32vw)}
- #bottomBar .username-change-btn{order:1;flex:0 1 auto!important;width:auto!important;max-width:min(40vw,190px)!important;min-width:0;margin-left:0!important}
+ #bottomBar #musicNowPlaying{order:0}
+ body #bottomBar .top-balances:not([hidden]){display:flex!important;order:1;margin-left:auto;gap:4px;flex:none}
+ #bottomBar .username-change-btn{order:3;flex:0 1 auto!important;width:auto!important;max-width:min(40vw,190px)!important;min-width:0;margin-left:auto!important}
+ body #bottomBar .top-balances:not([hidden])~.username-change-btn{margin-left:0!important}
  #bottomBar .username-change-btn .ava{flex:none}
- #bottomBar #musicNowPlaying{order:2}
- body #bottomBar .top-balances:not([hidden]){display:flex!important;order:3;margin-left:auto;gap:4px;flex:none}
  #bottomBar .top-bal{min-height:34px;padding:4px 9px 4px 7px;gap:5px;font-size:.74rem}
  #bottomBar .top-bal .ic,#bottomBar .top-bal img,#bottomBar .top-bal-gem svg{width:16px;height:16px}
- #bottomBar .nav-menu-toggle{order:4;margin-left:auto}
- body #bottomBar .top-balances:not([hidden])~.nav-menu-toggle{margin-left:0}
+ #bottomBar .nav-menu-toggle{order:4;margin-left:0}
 }
 @media(max-width:360px){#bottomBar .top-bal{padding:4px 7px 4px 5px;gap:4px;font-size:.7rem}#bottomBar .username-change-btn{max-width:34vw!important}}
