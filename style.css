@@ -4546,3 +4546,16 @@ body.anime-modal-open{overflow:hidden}
 /* b289 — Aperçu de l'accueil : grimoire fermé à la place du distributeur. */
 .card-home-portal .chp-gm{position:relative;z-index:1;display:block;width:min(78%,230px);aspect-ratio:16/21;container-type:inline-size;filter:drop-shadow(0 18px 30px #05071488)}
 .card-home-portal .chp-gm .gm{font-size:calc(100cqw / 17.5);left:50%;top:50%;transform:translate(-50%,-50%)}
+
+/* b291 — Bouton « Soutenir » du menu (lien Leetchi), au-dessus des paramètres */
+.side-nav-donate{position:relative;display:flex;align-items:center;gap:13px;margin:16px 0 2px;padding:12px 13px;border-radius:12px;border:1px solid rgba(255,138,176,.42);background:linear-gradient(120deg,rgba(255,110,160,.2),rgba(242,169,59,.14));color:#fff;text-decoration:none;overflow:hidden;box-shadow:0 8px 22px -14px rgba(255,110,160,.9);transition:border-color .2s,background .2s,transform .15s}
+.side-nav-donate::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.14) 50%,transparent 70%);transform:translateX(-120%);animation:saku-donate-shine 5s ease-in-out 1.2s infinite;pointer-events:none}
+.side-nav-donate .ic{width:21px;height:21px;flex:0 0 21px;color:#ff8ab4;filter:drop-shadow(0 0 6px rgba(255,110,160,.7))}
+.side-nav-donate-text{display:flex;flex-direction:column;gap:1px;min-width:0}
+.side-nav-donate-text b{font-weight:900;font-size:.95rem}
+.side-nav-donate-text small{color:#f3c9d9;font-size:.7rem;font-weight:600}
+.side-nav-donate .side-nav-arrow{margin-left:auto;width:16px;height:16px;fill:none;stroke:#ffc2d6;stroke-width:2}
+.side-nav-donate:hover{border-color:rgba(255,160,195,.75);background:linear-gradient(120deg,rgba(255,110,160,.3),rgba(242,169,59,.2))}
+.side-nav-donate:focus-visible{outline:2px solid #ff8ab4;outline-offset:2px}
+@keyframes saku-donate-shine{0%,70%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@media (prefers-reduced-motion:reduce){.side-nav-donate::after{animation:none;display:none}}

@@ -1619,6 +1619,8 @@ var I18N = {
   "Opponent Secret": { fr: "Secret de l'adversaire", es: "Secreto del rival" },
   // ---- v27 additions (account menu tabs + support) ----
   "Support": { fr: "Support", es: "Soporte" },
+  "Back Sakugame": { fr: "Soutenir", es: "Apoyar" },
+  "Help fund the site's development": { fr: "Aide au développement du site", es: "Ayuda a financiar el sitio" },
   "Contact & Support": { fr: "Contact & Support", es: "Contacto y soporte" },
   "A question, a bug to report, or an idea to improve the games? Message me on Discord — I read everything!": { fr: "Une question, un bug à signaler ou une idée pour améliorer les jeux ? Écrivez-moi sur Discord — je lis tout !", es: "¿Una pregunta, un bug que reportar o una idea para mejorar los juegos? ¡Escríbeme por Discord — lo leo todo!" },
   "Discord → Add Friend → paste my username — I usually answer within a day.": { fr: "Discord → Ajouter un ami → colle mon pseudo — je réponds généralement sous 24 h.", es: "Discord → Añadir amigo → pega mi usuario — normalmente respondo en un día." },
