@@ -4870,3 +4870,6 @@ body.anime-modal-open{overflow:hidden}
 .deal-side h4{display:flex;align-items:center;gap:8px}
 .deal-balance .trade-balance-row{padding:8px 10px}
 @media(max-width:620px){.trade-balance-row{grid-template-columns:1fr;grid-template-areas:"label" "bar" "legend"}.trade-balance-label{white-space:normal}}
+.trade-limit-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;flex-basis:100%}
+.trade-limit-who{min-width:104px;color:#9fb6c9;font-weight:700;font-size:.72rem}
+.trade-limits-label{flex-basis:100%}

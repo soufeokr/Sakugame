@@ -21,7 +21,8 @@ const CODES={
  trade_want_locked:()=>L3("Une des cartes demandées est verrouillée dans ta collection : déverrouille-la pour accepter.","One of the requested cards is locked in your collection: unlock it to accept.","Una de las cartas pedidas está bloqueada en tu colección: desbloquéala para aceptar."),
  trade_want_missing:()=>L3("Tu ne possèdes plus toutes les cartes demandées.","You no longer own all the requested cards.","Ya no tienes todas las cartas pedidas."),
  unavailable:()=>L3("Échange impossible avec ce joueur.","Exchange unavailable with this player.","Intercambio imposible con este jugador."),
- pair_limit:()=>L3("Limite atteinte avec ce joueur : sur 14 jours, deux comptes peuvent s'échanger au plus 1 spéciale, 3 mythiques et 15 légendaires (ventes du marché comprises).","Limit reached with this player: over 14 days, two accounts can exchange at most 1 special, 3 mythic and 15 legendary cards (market sales included).","Límite alcanzado con este jugador: en 14 días, dos cuentas pueden intercambiar como máximo 1 especial, 3 míticas y 15 legendarias (ventas del mercado incluidas)."),
+ pair_limit:()=>L3("Ta limite de don envers ce joueur est atteinte : sur 14 jours, tu peux lui donner au plus 1 spéciale, 3 mythiques et 15 légendaires (ventes du marché comprises).","Your giving limit towards this player is reached: over 14 days, you can give them at most 1 special, 3 mythic and 15 legendary cards (market sales included).","Has alcanzado tu límite de cesión con este jugador: en 14 días, puedes darle como máximo 1 especial, 3 míticas y 15 legendarias (ventas del mercado incluidas)."),
+ pair_limit_in:()=>L3("Ce joueur a atteint sa limite de don envers toi : sur 14 jours, il peut te donner au plus 1 spéciale, 3 mythiques et 15 légendaires.","This player has reached their giving limit towards you: over 14 days, they can give you at most 1 special, 3 mythic and 15 legendary cards.","Este jugador ha alcanzado su límite de cesión contigo: en 14 días, puede darte como máximo 1 especial, 3 míticas y 15 legendarias."),
  card_locked:()=>L3("Cette carte est verrouillée.","This card is locked.","Esta carta está bloqueada."),
  card_unavailable:()=>L3("Tu ne possèdes plus cette carte.","You no longer own this card.","Ya no tienes esta carta."),
  not_found:()=>L3("Proposition introuvable.","Proposal not found.","Propuesta no encontrada."),
@@ -67,7 +68,7 @@ function balanceHtml(give,get){
 const VALUE_NOTE=()=>L3("Estimation : médiane des ventes du marché sur 30 jours, ou prix minimum de la rareté quand la carte ne s'est pas vendue.","Estimate: median market sale price over 30 days, or the rarity's minimum price when the card hasn't sold.","Estimación: mediana de las ventas del mercado en 30 días, o el precio mínimo de la rareza si la carta no se ha vendido.");
 
 /* ---------- Composer ---------- */
-let target=null,give=[],want=[],pick='theirs',rar='all',query='',sending=false,theirCol=null,theirErr='';
+let target=null,give=[],want=[],pick='theirs',rar='all',query='',sending=false,theirCol=null,theirErr='',usage=null;
 function owned(){const s=typeof cardState!=='undefined'&&cardState?cardState:null;return s;}
 function isLocked(s,id){return !!(s&&s.flags&&s.flags[id]&&s.flags[id].locked);}
 function giveQty(id,level){const g=give.find(x=>x.id===id&&x.level===level);return g?g.qty:0;}
@@ -75,8 +76,9 @@ function wantQty(id){const w=want.find(x=>x.id===id);return w?w.qty:0;}
 function theirLevel(id){const x=theirCol&&theirCol.find(c=>String(c.id)===id);return x?Number(x.level)||0:null;}
 function mineItems(){const s=owned();if(!s||!s.cards)return [];const out=[];Object.keys(s.cards).forEach(id=>{if(!(Number(s.cards[id])>0)||isLocked(s,id))return;const c=card(id);if(!c)return;window.sakuCardLevelCounts(s,id).forEach((n,level)=>{if(n>0)out.push({c,level,count:n});});});return out;}
 function theirItems(){const shown=new Set((target&&target.cards||[]).map(x=>String(x.id)));return (theirCol||[]).map(x=>{const c=card(x.id);return c?{c:Object.assign({},c,{rarity:c.rarity||x.rarity}),level:Number(x.level)||0,count:Number(x.qty)||1,shown:shown.has(String(x.id))}:null;}).filter(Boolean);}
-function rarityCounts(){const n={};give.forEach(g=>{const c=card(g.id);if(c)n[c.rarity]=(n[c.rarity]||0)+g.qty;});want.forEach(w=>{const c=card(w.id);if(c)n[c.rarity]=(n[c.rarity]||0)+w.qty;});return n;}
-function overLimit(){const n=rarityCounts();return Object.keys(LIMITS).some(r=>(n[r]||0)>LIMITS[r]);}
+function rarityCounts(list){const n={};list.forEach(g=>{const c=card(g.id);if(c)n[c.rarity]=(n[c.rarity]||0)+g.qty;});return n;}
+function limitState(){const out=rarityCounts(give),inn=rarityCounts(want),u=usage||{out:{},in:{}},res={out:{},in:{}};Object.keys(LIMITS).forEach(r=>{res.out[r]={used:Number(u.out&&u.out[r])||0,now:out[r]||0};res.in[r]={used:Number(u.in&&u.in[r])||0,now:inn[r]||0};});return res;}
+function overLimit(){const st=limitState();return Object.keys(LIMITS).some(r=>st.out[r].used+st.out[r].now>LIMITS[r]||st.in[r].used+st.in[r].now>LIMITS[r]);}
 function slotHtml(side,item,i){
  const c=card(item.id);if(!c)return '';
  const lv=side==='give'?item.level:(theirLevel(item.id)||0),label=side==='give'?(item.level?stars(item.level):L3('Niv. 0','Lv. 0','Niv. 0')):L3('Plus bas niveau','Lowest level','Nivel más bajo');
@@ -93,8 +95,8 @@ function renderSlots(){
  const gS=giveSum(),wS=wantSum(),qty=a=>a.reduce((n,x)=>n+x.qty,0);
  const nc=n=>n+' '+(n>1?L3('cartes','cards','cartas'):L3('carte','card','carta'));$('tradeGiveTotal').innerHTML=give.length?'<em>'+nc(qty(give))+'</em>'+totalHtml(gS):'';$('tradeWantTotal').innerHTML=want.length?'<em>'+nc(qty(want))+'</em>'+totalHtml(wS):'';
  $('tradeBalance').innerHTML=give.length&&want.length?balanceHtml(gS,wS)+'<small>'+esc(VALUE_NOTE())+'</small>':'';
- const n=rarityCounts();
- $('tradeLimits').innerHTML='<span class="trade-limits-label">'+esc(L3('Limites entre vous deux sur 14 jours','Limits between you two over 14 days','Límites entre vosotros en 14 días'))+'</span>'+Object.keys(LIMITS).map(r=>{const v=n[r]||0;return '<span class="trade-limit'+(v>LIMITS[r]?' over':v?' used':'')+'" style="--r:'+RAR_COL[r]+'"><i></i>'+esc(rarName(r))+' <b>'+v+' / '+LIMITS[r]+'</b></span>';}).join('')+'<small>'+esc(L3('Ventes du marché et échanges déjà faits avec ce joueur comptent aussi.','Market sales and past exchanges with this player count too.','Las ventas del mercado y los intercambios ya hechos con este jugador también cuentan.'))+'</small>';
+ const st=limitState(),row=(dir,label)=>'<div class="trade-limit-row"><span class="trade-limit-who">'+esc(label)+'</span>'+Object.keys(LIMITS).map(r=>{const x=st[dir][r],v=x.used+x.now;return '<span class="trade-limit'+(v>LIMITS[r]?' over':x.now?' used':'')+'" style="--r:'+RAR_COL[r]+'" title="'+esc(x.used?L3('Déjà donné sur 14 jours : ','Already given over 14 days: ','Ya dado en 14 días: ')+x.used:'')+'"><i></i>'+esc(rarName(r))+' <b>'+v+' / '+LIMITS[r]+'</b></span>';}).join('')+'</div>';
+ $('tradeLimits').innerHTML='<span class="trade-limits-label">'+esc(L3('Limites de don sur 14 jours','Giving limits over 14 days','Límites de cesión en 14 días'))+'</span>'+row('out',L3('Tu lui donnes','You give them','Le das'))+row('in',L3('Il te donne','They give you','Te da'))+'<small>'+esc(L3('Chaque joueur a sa propre limite envers l\'autre. Les ventes du marché et les échanges des 14 derniers jours (ou en attente) sont comptés.','Each player has their own limit towards the other. Market sales and exchanges from the last 14 days (or pending) count.','Cada jugador tiene su propio límite con el otro. Cuentan las ventas del mercado y los intercambios de los últimos 14 días (o pendientes).'))+'</small>';
  const ok=give.length>0&&want.length>0&&!overLimit();$('tradeSend').disabled=!ok||sending;
  if(window.sakuBasicObserve){window.sakuBasicObserve(gs);window.sakuBasicObserve(ws);}
 }
@@ -118,9 +120,10 @@ async function openComposer(data){
  if(!data||!data.id)return;
  if(!uid()){toast(L3('Connecte-toi pour proposer un échange.','Sign in to propose an exchange.','Inicia sesión para proponer un intercambio.'),true);return;}
  target={id:String(data.id),name:String(data.name||tr('Player')).slice(0,60),cards:Array.isArray(data.cards)?data.cards.slice(0,10):[]};
- give=[];want=[];pick='theirs';rar='all';query='';sending=false;theirCol=null;theirErr='';gridVisible=120;
+ give=[];want=[];pick='theirs';rar='all';query='';sending=false;theirCol=null;theirErr='';usage=null;gridVisible=120;
  $('tradeWith').textContent=L3('Avec ','With ','Con ')+target.name;$('tradeSearch').value='';$('tradeMessage').value='';$('tradeError').textContent='';
  const d=$('tradeDialog'),tok=target;if(!d.open)d.showModal();renderAll();
+ if(window.sakuBackend.tradePairUsage)window.sakuBackend.tradePairUsage(target.id).then(u=>{if(target!==tok)return;usage=u;renderSlots();}).catch(()=>{});
  window.sakuBackend.tradeCollection(target.id).then(list=>{if(target!==tok)return;theirCol=Array.isArray(list)?list:[];renderAll();}).catch(e=>{if(target!==tok)return;theirErr=errText(e);renderGrid();});
  // Collection fraîche (les réservations du marché ont pu changer les quantités).
  try{if(window.sakuBackend&&typeof cardNormalize==='function'){const cards=await window.sakuBackend.gameCollection();if(d.open&&uid()){cardState=cardNormalize(cards);if(typeof currentAccount!=='undefined'&&currentAccount)currentAccount.cards=cardState;renderAll();}}}catch(e){}
@@ -128,7 +131,7 @@ async function openComposer(data){
 async function send(){
  if(sending||!target)return;
  if(!give.length||!want.length){$('tradeError').textContent=CODES.trade_size();return;}
- if(overLimit()){$('tradeError').textContent=CODES.pair_limit();return;}
+ if(overLimit()){const st=limitState(),outOver=Object.keys(LIMITS).some(r=>st.out[r].used+st.out[r].now>LIMITS[r]);$('tradeError').textContent=outOver?CODES.pair_limit():CODES.pair_limit_in();return;}
  sending=true;$('tradeSend').disabled=true;$('tradeError').textContent='';$('tradeSend').textContent=L3('Envoi…','Sending…','Enviando…');
  try{
   await window.sakuBackend.tradePropose(target.id,give.map(g=>({card:g.id,level:g.level,qty:g.qty})),want.map(w=>({card:w.id,qty:w.qty})),$('tradeMessage').value.trim().slice(0,200));
