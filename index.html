@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="298">
+<meta name="saku-build" content="299">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=298">
+<link rel="manifest" href="manifest.json?v=299">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=298" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=298">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=298">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=298">
+<link rel="icon" href="favicon.ico?v=299" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=299">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=299">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=299">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=298">
+  <link rel="stylesheet" href="style.css?v=299">
 </head>
 <body>
 
@@ -339,7 +339,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=298" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=299" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" title="Sakugame is in public beta — thanks for your patience!"><span data-noi18n>Beta</span></span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <div id="topBalances" class="top-balances" hidden><button type="button" class="top-bal" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button><button type="button" class="top-bal" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button></div>
@@ -397,7 +397,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=298" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=299" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -507,7 +507,7 @@
       <header class="market-header"><button type="button" class="page-back" onclick="showCardHome()" aria-label="Back to cards"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg></button><div><span class="market-kicker" data-noi18n>SAKUGAME / MARKET</span><h1>Market</h1><p>Buy, bid and sell cards with other players.</p></div><div class="market-wallet"><img src="summon-machines/coin.svg" alt=""><div><small>Available balance</small><strong id="marketBalance">—</strong></div></div></header>
       
       <div id="marketGuest" class="market-panel" hidden><h2>Sign in to use the market</h2><p>Sign in with Discord to buy, bid and sell cards.</p><button class="market-button" type="button" onclick="openAuthModal()">Continue with Discord</button></div>
-      <div id="marketApp" hidden><div class="market-tabs" role="tablist" aria-label="Market"><button type="button" role="tab" data-market-tab="buy" aria-selected="true">Buy &amp; auctions</button><button type="button" role="tab" data-market-tab="sell" aria-selected="false">Sell a card</button><button type="button" role="tab" data-market-tab="deals" aria-selected="false">My deals <span class="friend-badge market-deals-badge" id="marketDealsBadge" hidden></span></button></div>
+      <div id="marketApp" hidden><div class="market-tabs" role="tablist" aria-label="Market"><button type="button" role="tab" data-market-tab="buy" aria-selected="true">Buy &amp; auctions</button><button type="button" role="tab" data-market-tab="sell" aria-selected="false">Sell a card</button><button type="button" role="tab" data-market-tab="exchange" aria-selected="false">Exchanges</button><button type="button" role="tab" data-market-tab="deals" aria-selected="false">My deals <span class="friend-badge market-deals-badge" id="marketDealsBadge" hidden></span></button></div>
         <div id="marketMessage" class="market-message" role="status" aria-live="polite"></div>
         <section class="market-tab" id="marketBuy"><div class="market-section-title"><div><span class="market-kicker">MARKETPLACE</span><h2>Cards on the market</h2><p>Fixed-price offers and 24-hour auctions.</p></div><button type="button" class="market-subtle" id="marketRefresh">Refresh</button></div><input type="search" id="marketSearch" placeholder="Search a card or series…"><div id="marketListings" class="market-listings"></div><dialog id="marketOffersDialog" class="market-offers-dialog" aria-labelledby="marketOffersTitle"><div class="market-offers-dialog-head"><h2 id="marketOffersTitle"></h2><button type="button" id="marketOffersClose" aria-label="Close">×</button></div><div class="market-offers-layout"><div id="marketOffersCard" class="market-offers-card"></div><div class="market-offers-right"><div id="marketOffersMeta"></div><p id="marketOffersMessage" role="status"></p><div id="marketOffersList" class="market-offers-scroll"></div></div></div></dialog></section>
         <section class="market-tab" id="marketSell" hidden>
@@ -551,10 +551,18 @@
             </div>
           </dialog>
         </section>
+        <section class="market-tab" id="marketExchange" hidden>
+          <div class="xb-head"><div><span class="market-kicker">EXCHANGE BOARD</span><h2>Exchanges</h2><p>Put a card up for exchange, or look for one you're missing. The author of the post always validates the final offer.</p></div>
+            <div class="xb-seg" role="tablist"><button type="button" role="tab" data-xb="offer" aria-selected="true"><b>Propose</b><small>Cards up for exchange</small></button><button type="button" role="tab" data-xb="seek" aria-selected="false"><b>Search</b><small>Cards players are looking for</small></button></div></div>
+          <div class="xb-bar"><p class="xb-explain" id="xbExplain"></p><button type="button" class="market-button xb-create" id="xbCreate"></button></div>
+          <div class="xb-tools"><input type="search" id="xbSearch" placeholder="Search a card or series…" aria-label="Search a card or series…"><div class="trade-rar" id="xbRarities"></div><label class="xb-only"><input type="checkbox" id="xbOnly"><span id="xbOnlyLabel"></span></label></div>
+          <div class="xb-grid" id="xbGrid"></div>
+        </section>
         <section class="market-tab" id="marketDeals" hidden>
           <div class="deals-head"><div><span class="market-kicker">MY DEALS</span><h2>Exchanges and sales</h2><p>Proposals received from other players, the ones you sent and your listings in progress.</p></div><div class="deals-stats" id="dealsStats"></div></div>
           <div class="deals-howto"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg><p>To propose an exchange, open a player's showcase and press “Propose a trade”.</p></div>
           <div class="deals-block"><h3>Proposals received <span id="dealsInCount"></span></h3><div id="dealsIncoming" class="deals-list"></div></div>
+          <div class="deals-block"><h3>My posts <span id="dealsPostCount"></span></h3><div id="dealsPosts" class="deals-listings"></div></div>
           <div class="deals-block"><h3>Proposals sent <span id="dealsOutCount"></span></h3><div id="dealsOutgoing" class="deals-list"></div></div>
           <div class="deals-block"><h3>My listings <span id="dealsListCount"></span></h3><div id="dealsListings" class="deals-listings"></div></div>
           <details class="deals-block deals-history"><summary><h3>History <span id="dealsHistCount"></span></h3><small>Last 30 days</small></summary><div id="dealsHistory" class="deals-list"></div></details>
@@ -1816,7 +1824,7 @@
       <!-- Discord is the only way in -->
       <div id="authFormView" class="auth-signin">
         <div class="as-hero">
-          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=298" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
+          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=299" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
           <h2>Sign in or create your account</h2>
           <p>Already a player? Pick up right where you left off. New here? Your account is created in one click with Discord — no email, no password.</p>
         </div>
@@ -2007,8 +2015,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=298"></script>
-  <script defer src="saku-features.js?v=298"></script>
+  <script defer src="saku-local-account.js?v=299"></script>
+  <script defer src="saku-features.js?v=299"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -2017,7 +2025,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=298', 'charanimes.js?v=298', 'animes.js?v=298', 'nsfwdata.js?v=298', 'snappics.js?v=298'];
+        var files = ['characters.js?v=299', 'charanimes.js?v=299', 'animes.js?v=299', 'nsfwdata.js?v=299', 'snappics.js?v=299'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -2036,45 +2044,46 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=298"></script>
-  <script defer src="card-extra.js?v=298"></script>
-  <script defer src="strongest-data.js?v=298"></script>
-  <script defer src="strongest-render.js?v=298"></script>
-  <script defer src="basic-render.js?v=298"></script>
-  <script defer src="cardgame.js?v=298"></script>
-  <script defer src="encyclopedia.js?v=298"></script>
-  <script defer src="character-localization.js?v=298"></script>
-  <script defer src="enc.js?v=298"></script>
-  <script defer src="card-tilt.js?v=298"></script>
-  <script defer src="card-levels.js?v=298"></script>
-  <script defer src="card-controls.js?v=298"></script>
-  <script defer src="library-tools.js?v=298"></script>
-  <script defer src="rarity-sync.js?v=298"></script>
-  <script defer src="strongest-sync.js?v=298"></script>
-  <script defer src="hoshi-data.js?v=298"></script>
-  <script defer src="pic-sync.js?v=298"></script>
-  <script defer src="undercover.js?v=298"></script>
-  <script defer src="music.js?v=298"></script>
-  <script defer src="lang.js?v=298"></script>
-  <script defer src="game-guides.js?v=298"></script>
-  <script defer src="app.js?v=298"></script>
-  <script defer src="supabase-client.js?v=298"></script>
-  <script defer src="saku-session.js?v=298"></script>
-  <script defer src="saku-sfx.js?v=298"></script>
-  <script defer src="retro-index.js?v=298"></script>
-  <script defer src="cinema-index.js?v=298"></script>
-  <script defer src="portal-rates.js?v=298"></script>
-  <script defer src="portal-info.js?v=298"></script>
-  <script defer src="portal-showcase.js?v=298"></script>
-  <script defer src="card-backs.js?v=298"></script>
-  <script defer src="portal-grimoire.js?v=298"></script>
-  <script defer src="portal-summon.js?v=298"></script>
-  <script defer src="progression.js?v=298"></script>
-  <script defer src="player-popover.js?v=298"></script>
-  <script defer src="friends.js?v=298"></script>
-  <script defer src="showcase.js?v=298"></script>
-  <script defer src="market.js?v=298"></script>
-  <script defer src="trade.js?v=298"></script>
+  <script defer src="card-rarity.js?v=299"></script>
+  <script defer src="card-extra.js?v=299"></script>
+  <script defer src="strongest-data.js?v=299"></script>
+  <script defer src="strongest-render.js?v=299"></script>
+  <script defer src="basic-render.js?v=299"></script>
+  <script defer src="cardgame.js?v=299"></script>
+  <script defer src="encyclopedia.js?v=299"></script>
+  <script defer src="character-localization.js?v=299"></script>
+  <script defer src="enc.js?v=299"></script>
+  <script defer src="card-tilt.js?v=299"></script>
+  <script defer src="card-levels.js?v=299"></script>
+  <script defer src="card-controls.js?v=299"></script>
+  <script defer src="library-tools.js?v=299"></script>
+  <script defer src="rarity-sync.js?v=299"></script>
+  <script defer src="strongest-sync.js?v=299"></script>
+  <script defer src="hoshi-data.js?v=299"></script>
+  <script defer src="pic-sync.js?v=299"></script>
+  <script defer src="undercover.js?v=299"></script>
+  <script defer src="music.js?v=299"></script>
+  <script defer src="lang.js?v=299"></script>
+  <script defer src="game-guides.js?v=299"></script>
+  <script defer src="app.js?v=299"></script>
+  <script defer src="supabase-client.js?v=299"></script>
+  <script defer src="saku-session.js?v=299"></script>
+  <script defer src="saku-sfx.js?v=299"></script>
+  <script defer src="retro-index.js?v=299"></script>
+  <script defer src="cinema-index.js?v=299"></script>
+  <script defer src="portal-rates.js?v=299"></script>
+  <script defer src="portal-info.js?v=299"></script>
+  <script defer src="portal-showcase.js?v=299"></script>
+  <script defer src="card-backs.js?v=299"></script>
+  <script defer src="portal-grimoire.js?v=299"></script>
+  <script defer src="portal-summon.js?v=299"></script>
+  <script defer src="progression.js?v=299"></script>
+  <script defer src="player-popover.js?v=299"></script>
+  <script defer src="friends.js?v=299"></script>
+  <script defer src="showcase.js?v=299"></script>
+  <script defer src="market.js?v=299"></script>
+  <script defer src="trade.js?v=299"></script>
+  <script defer src="exchange.js?v=299"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -2082,6 +2091,16 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings in your browser; when you sign in, your collection and progress are saved on our servers. No tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
+  <dialog id="xbPostDialog" class="trade-dialog xb-post-dialog" aria-labelledby="xbPostTitle">
+    <form class="trade-shell" id="xbPostForm" novalidate>
+      <header class="trade-top"><div><span class="market-kicker" id="xbPostKicker"></span><h2 id="xbPostTitle"></h2><p class="trade-with" id="xbPostHelp"></p></div><button type="button" class="trade-x" id="xbPostClose" aria-label="Close">×</button></header>
+      <div class="xb-post-pick"><div class="trade-picker-tools"><input type="search" id="xbPostSearch" placeholder="Search a card or series…" aria-label="Search a card or series…"><div class="trade-rar" id="xbPostRarities"></div><label class="xb-only" id="xbPostMissingWrap"><input type="checkbox" id="xbPostMissing" checked><span id="xbPostMissingLabel"></span></label></div>
+      <div class="trade-grid" id="xbPostGrid"></div></div>
+      <div class="xb-post-chosen" id="xbPostChosen"></div>
+      <label class="trade-msg"><span>Note (optional)</span><input type="text" id="xbPostNote" maxlength="140" placeholder="E.g. looking for mythic cards, open to offers…"></label>
+      <footer class="trade-foot"><p class="trade-note" id="xbPostNoteHelp"></p><p class="trade-error" id="xbPostError" role="alert"></p><button type="submit" class="market-button" id="xbPostSubmit">Publish the post</button></footer>
+    </form>
+  </dialog>
   <dialog id="tradeDialog" class="trade-dialog" aria-labelledby="tradeTitle">
     <form class="trade-shell" id="tradeForm" novalidate>
       <header class="trade-top"><div><span class="market-kicker">EXCHANGE</span><h2 id="tradeTitle">Propose a trade</h2><p id="tradeWith" class="trade-with"></p></div><button type="button" class="trade-x" id="tradeClose" aria-label="Close">×</button></header>

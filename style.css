@@ -4768,7 +4768,7 @@ body.anime-modal-open{overflow:hidden}
 .trade-picker-tabs button{padding:8px 14px;border:0;border-radius:9px;background:transparent;color:#aac0d6;font:800 .78rem Outfit,system-ui,sans-serif;cursor:pointer}
 .trade-picker-tabs button[aria-selected=true]{background:#a7dbf7;color:#10213b}
 .trade-picker-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.trade-picker-tools input{flex:1 1 220px;min-width:0;min-height:38px;padding:8px 12px;border-radius:10px;border:1px solid #9bc1dd38;background:#09182a;color:#fff;font:600 .85rem Outfit,system-ui,sans-serif}
+.trade-picker-tools input[type=search]{flex:1 1 220px;min-width:0;min-height:38px;padding:8px 12px;border-radius:10px;border:1px solid #9bc1dd38;background:#09182a;color:#fff;font:600 .85rem Outfit,system-ui,sans-serif}
 .trade-rar{display:flex;flex-wrap:wrap;gap:6px}
 .trade-rar button{--r:#8ec6ed;display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 10px;border:1px solid #9bc1dd33;border-radius:999px;background:#0b1a30;color:#cfe3f2;font:700 .72rem Outfit,system-ui,sans-serif;cursor:pointer}
 .trade-rar button i{width:8px;height:8px;border-radius:50%;background:var(--r)}
@@ -4873,3 +4873,55 @@ body.anime-modal-open{overflow:hidden}
 .trade-limit-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;flex-basis:100%}
 .trade-limit-who{min-width:104px;color:#9fb6c9;font-weight:700;font-size:.72rem}
 .trade-limits-label{flex-basis:100%}
+
+/* ===== b299 — Marché › Échanges (annonces Proposer / Chercher) ===== */
+#marketExchange{display:flex;flex-direction:column;gap:14px}#marketExchange[hidden]{display:none}
+.xb-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.xb-head h2{margin:4px 0;font-size:1.4rem}.xb-head p{margin:0;max-width:560px;color:#aac0d6;font-size:.8rem;line-height:1.5}
+.xb-seg{display:flex;gap:6px;padding:5px;border-radius:15px;background:#0d1c33;border:1px solid #9bc1dd22}
+.xb-seg button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:150px;padding:9px 14px;border:1px solid transparent;border-radius:11px;background:transparent;color:#aac0d6;text-align:left;cursor:pointer;font-family:Outfit,system-ui,sans-serif}
+.xb-seg button b{font-size:.95rem;color:#dcecff}.xb-seg button small{font-size:.68rem}
+.xb-seg button[aria-selected=true]{background:linear-gradient(135deg,#a7dbf7,#7fc6ee);color:#10213b}.xb-seg button[aria-selected=true] b{color:#0a1730}
+.xb-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding:12px 14px;border-radius:14px;background:#10243c;border:1px dashed #7fc6ee55}
+.xb-explain{flex:1 1 320px;margin:0;color:#cfe3f2;font-size:.8rem;line-height:1.45}
+.xb-create{min-height:42px;padding:10px 18px;font-size:.82rem}
+.xb-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.xb-tools input[type=search]{flex:1 1 240px;min-width:0;min-height:40px;padding:8px 12px;border-radius:10px;border:1px solid #9bc1dd38;background:#09182a;color:#fff;font:600 .85rem Outfit,system-ui,sans-serif}
+.xb-only{display:inline-flex;align-items:center;gap:7px;color:#cfe3f2;font-size:.76rem;font-weight:700;cursor:pointer;user-select:none}
+.xb-only[hidden]{display:none}.xb-only input{width:16px;height:16px;accent-color:#a7dbf7}
+.xb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.xb-post{--r:#cfd6df;display:grid;grid-template-columns:96px 1fr;gap:12px;padding:12px;border-radius:16px;border:1px solid #9bc1dd2a;background:linear-gradient(180deg,#10213a,#0c182c);transition:border-color .2s,transform .2s}
+.xb-post:hover{border-color:color-mix(in srgb,var(--r) 60%,transparent)}
+.xb-post.is-mine{border-style:dashed;border-color:#a7dbf766}
+.xb-art{position:relative;align-self:start}.xb-art svg{display:block;width:100%;height:auto}
+.xb-flag{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);padding:2px 8px;border-radius:999px;font:800 .6rem Outfit,system-ui,sans-serif;white-space:nowrap;box-shadow:0 3px 8px #0009}
+.xb-flag.have{background:#7fe6bd;color:#0b2b20}.xb-flag.new{background:#ffb3d9;color:#3a1030}
+.xb-info{display:flex;flex-direction:column;gap:7px;min-width:0}
+.xb-title b{display:block;font-size:.98rem;line-height:1.2;overflow-wrap:anywhere}.xb-title small{color:#8fa9bf;font-size:.72rem}
+.xb-tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.xb-rar,.xb-lvl{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;border:1px solid color-mix(in srgb,var(--r) 50%,transparent);color:#dcecff;font-size:.68rem;font-weight:700}
+.xb-rar i{width:7px;height:7px;border-radius:50%;background:var(--r)}
+.xb-lvl{border-color:#f2ce8955;color:#f6d79a}
+.xb-note{margin:0;padding:6px 9px;border-radius:9px;background:#0a1629;color:#d9e8f5;font-size:.76rem;font-style:italic;overflow-wrap:anywhere}
+.xb-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.xb-owner{display:inline-flex;align-items:center;gap:7px;padding:0;border:0;background:none;color:#dcecff;cursor:pointer;font:700 .78rem Outfit,system-ui,sans-serif}
+.xb-owner span{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#1c3352;color:#a7dbf7;font-size:.7rem}
+.xb-owner:hover b{text-decoration:underline}
+.xb-meta small{color:#7f9bb3;font-size:.68rem}
+.xb-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:7px;margin-top:auto}
+.xb-actions button{min-height:36px;padding:8px 12px}.xb-actions button:disabled{opacity:.5;cursor:not-allowed}
+.xb-mine{margin-right:auto;padding:3px 9px;border-radius:999px;background:#1c3352;color:#a7dbf7;font-size:.68rem;font-weight:800}
+.xb-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:34px 16px;border:1.5px dashed #9bc1dd30;border-radius:16px;color:#cfe3f2;text-align:center}
+.xb-empty small{color:#8fa9bf;font-size:.78rem}
+.xb-kind{display:inline-block;width:max-content;padding:1px 7px;border-radius:999px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.xb-kind.offer{background:#f2a93b2e;color:#f6c681}.xb-kind.seek{background:#3fd69a2e;color:#7fe6bd}
+.xb-post-pick{display:flex;flex-direction:column;gap:10px}
+.xb-chosen{--r:#cfd6df;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:13px;border:1px solid color-mix(in srgb,var(--r) 55%,transparent);background:#10213a}
+.xb-chosen .deal-card-art{flex:none;width:58px}.xb-chosen div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.xb-chosen small{color:#8fa9bf;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700}.xb-chosen b{font-size:.95rem}
+.trade-msg input{min-height:40px;padding:8px 12px;border-radius:10px;border:1px solid #9bc1dd38;background:#09182a;color:#fff;font:500 .85rem Outfit,system-ui,sans-serif}
+.trade-slot-lock{position:absolute;top:-6px;right:-4px;font-size:.8rem;filter:drop-shadow(0 2px 3px #000a)}
+.trade-picker-tabs button[hidden]{display:none}
+.deal-post .xb-kind{margin-bottom:2px}
+@media(max-width:720px){.xb-seg{width:100%}.xb-seg button{flex:1;min-width:0}.xb-grid{grid-template-columns:1fr}.xb-post{grid-template-columns:82px 1fr}.xb-create{width:100%}}
+@media(max-width:620px){#marketApp .market-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}#marketApp .market-tabs button{width:100%;margin:0}}

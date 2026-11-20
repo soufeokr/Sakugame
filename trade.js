@@ -25,6 +25,9 @@ const CODES={
  pair_limit_in:()=>L3("Ce joueur a atteint sa limite de don envers toi : sur 14 jours, il peut te donner au plus 1 spéciale, 3 mythiques et 15 légendaires.","This player has reached their giving limit towards you: over 14 days, they can give you at most 1 special, 3 mythic and 15 legendary cards.","Este jugador ha alcanzado su límite de cesión contigo: en 14 días, puede darte como máximo 1 especial, 3 míticas y 15 legendarias."),
  card_locked:()=>L3("Cette carte est verrouillée.","This card is locked.","Esta carta está bloqueada."),
  card_unavailable:()=>L3("Tu ne possèdes plus cette carte.","You no longer own this card.","Ya no tienes esta carta."),
+ post_closed:()=>L3("Cette annonce n'est plus disponible.","This post is no longer available.","Este anuncio ya no está disponible."),
+ post_too_many:()=>L3("Tu as déjà 10 annonces ouvertes de ce type : retires-en une d'abord.","You already have 10 open posts of this type: remove one first.","Ya tienes 10 anuncios abiertos de este tipo: retira uno primero."),
+ post_duplicate:()=>L3("Tu as déjà une annonce ouverte pour cette carte.","You already have an open post for this card.","Ya tienes un anuncio abierto para esta carta."),
  not_found:()=>L3("Proposition introuvable.","Proposal not found.","Propuesta no encontrada."),
  catalog_invalid:()=>L3("Carte inconnue.","Unknown card.","Carta desconocida.")
 };
@@ -68,7 +71,7 @@ function balanceHtml(give,get){
 const VALUE_NOTE=()=>L3("Estimation : médiane des ventes du marché sur 30 jours, ou prix minimum de la rareté quand la carte ne s'est pas vendue.","Estimate: median market sale price over 30 days, or the rarity's minimum price when the card hasn't sold.","Estimación: mediana de las ventas del mercado en 30 días, o el precio mínimo de la rareza si la carta no se ha vendido.");
 
 /* ---------- Composer ---------- */
-let target=null,give=[],want=[],pick='theirs',rar='all',query='',sending=false,theirCol=null,theirErr='',usage=null;
+let target=null,give=[],want=[],pick='theirs',rar='all',query='',sending=false,theirCol=null,theirErr='',usage=null,post=null;
 function owned(){const s=typeof cardState!=='undefined'&&cardState?cardState:null;return s;}
 function isLocked(s,id){return !!(s&&s.flags&&s.flags[id]&&s.flags[id].locked);}
 function giveQty(id,level){const g=give.find(x=>x.id===id&&x.level===level);return g?g.qty:0;}
@@ -79,19 +82,20 @@ function theirItems(){const shown=new Set((target&&target.cards||[]).map(x=>Stri
 function rarityCounts(list){const n={};list.forEach(g=>{const c=card(g.id);if(c)n[c.rarity]=(n[c.rarity]||0)+g.qty;});return n;}
 function limitState(){const out=rarityCounts(give),inn=rarityCounts(want),u=usage||{out:{},in:{}},res={out:{},in:{}};Object.keys(LIMITS).forEach(r=>{res.out[r]={used:Number(u.out&&u.out[r])||0,now:out[r]||0};res.in[r]={used:Number(u.in&&u.in[r])||0,now:inn[r]||0};});return res;}
 function overLimit(){const st=limitState();return Object.keys(LIMITS).some(r=>st.out[r].used+st.out[r].now>LIMITS[r]||st.in[r].used+st.in[r].now>LIMITS[r]);}
+const wantLevel=w=>w.level!=null?w.level:theirLevel(w.id);
 function slotHtml(side,item,i){
  const c=card(item.id);if(!c)return '';
- const lv=side==='give'?item.level:(theirLevel(item.id)||0),label=side==='give'?(item.level?stars(item.level):L3('Niv. 0','Lv. 0','Niv. 0')):L3('Plus bas niveau','Lowest level','Nivel más bajo');
- const v=valueOf(item.id,side==='give'?item.level:theirLevel(item.id));
- return '<div class="trade-slot" style="--r:'+(RAR_COL[c.rarity]||'#cfd6df')+'"><span class="trade-slot-art">'+art(c,lv)+(item.qty>1?'<b class="trade-qty">× '+item.qty+'</b>':'')+'</span><span class="trade-slot-name" data-noi18n>'+esc(c.name)+'</span><small>'+esc(label)+'</small><small class="trade-slot-val">≈ '+nfmt(v.value*item.qty)+'</small><button type="button" class="trade-slot-x" data-remove="'+side+'" data-i="'+i+'" aria-label="'+esc(L3('Retirer','Remove','Quitar'))+'">−</button></div>';
+ const exact=side==='give'||item.level!=null,lvl=side==='give'?item.level:wantLevel(item),lv=lvl||0,label=exact?(lvl?stars(lvl):L3('Niv. 0','Lv. 0','Niv. 0')):L3('Plus bas niveau','Lowest level','Nivel más bajo');
+ const v=valueOf(item.id,lvl);
+ return '<div class="trade-slot" style="--r:'+(RAR_COL[c.rarity]||'#cfd6df')+'"><span class="trade-slot-art">'+art(c,lv)+(item.qty>1?'<b class="trade-qty">× '+item.qty+'</b>':'')+'</span><span class="trade-slot-name" data-noi18n>'+esc(c.name)+'</span><small>'+esc(label)+'</small><small class="trade-slot-val">≈ '+nfmt(v.value*item.qty)+'</small>'+(item.fixed?'<span class="trade-slot-lock" title="'+esc(L3("Carte de l'annonce",'Card from the post','Carta del anuncio'))+'">📌</span>':'<button type="button" class="trade-slot-x" data-remove="'+side+'" data-i="'+i+'" aria-label="'+esc(L3('Retirer','Remove','Quitar'))+'">−</button>')+'</div>';
 }
 const giveSum=()=>sumSide(give.map(g=>({card:g.id,level:g.level,qty:g.qty})),it=>it.level);
-const wantSum=()=>sumSide(want.map(w=>({card:w.id,qty:w.qty})),it=>theirLevel(it.card));
+const wantSum=()=>sumSide(want.map(w=>({card:w.id,qty:w.qty,level:wantLevel(w)})),it=>it.level);
 function renderSlots(){
  const gs=$('tradeGiveSlots'),ws=$('tradeWantSlots'),hint=t=>'<p class="trade-slots-empty">'+esc(t)+'</p>';
  gs.innerHTML=give.length?give.map((g,i)=>slotHtml('give',g,i)).join(''):hint(L3('Choisis tes cartes dans « Ma collection ».','Pick your cards in “My collection”.','Elige tus cartas en «Mi colección».'));
  ws.innerHTML=want.length?want.map((w,i)=>slotHtml('want',w,i)).join(''):hint(L3('Choisis ses cartes dans « Sa collection ».','Pick their cards in “Their collection”.','Elige sus cartas en «Su colección».'));
- needValues(give.map(g=>({card:g.id,level:g.level})).concat(want.map(w=>({card:w.id,level:theirLevel(w.id)}))),()=>{if($('tradeDialog').open)renderSlots();});
+ needValues(give.map(g=>({card:g.id,level:g.level})).concat(want.map(w=>({card:w.id,level:wantLevel(w)}))),()=>{if($('tradeDialog').open)renderSlots();});
  const gS=giveSum(),wS=wantSum(),qty=a=>a.reduce((n,x)=>n+x.qty,0);
  const nc=n=>n+' '+(n>1?L3('cartes','cards','cartas'):L3('carte','card','carta'));$('tradeGiveTotal').innerHTML=give.length?'<em>'+nc(qty(give))+'</em>'+totalHtml(gS):'';$('tradeWantTotal').innerHTML=want.length?'<em>'+nc(qty(want))+'</em>'+totalHtml(wS):'';
  $('tradeBalance').innerHTML=give.length&&want.length?balanceHtml(gS,wS)+'<small>'+esc(VALUE_NOTE())+'</small>':'';
@@ -116,17 +120,25 @@ function renderGrid(){
  if(window.sakuBasicObserve)window.sakuBasicObserve(grid);
 }
 function renderAll(){renderSlots();renderGrid();}
-async function openComposer(data){
+function setPickTabs(){document.querySelectorAll('#tradeDialog [data-pick]').forEach(b=>{b.hidden=!!post&&((post.kind==='offer'&&b.dataset.pick==='theirs')||(post.kind==='seek'&&b.dataset.pick==='mine'));});}
+async function openComposer(data,opts){
  if(!data||!data.id)return;
  if(!uid()){toast(L3('Connecte-toi pour proposer un échange.','Sign in to propose an exchange.','Inicia sesión para proponer un intercambio.'),true);return;}
+ post=opts&&opts.post?opts.post:null;
  target={id:String(data.id),name:String(data.name||tr('Player')).slice(0,60),cards:Array.isArray(data.cards)?data.cards.slice(0,10):[]};
- give=[];want=[];pick='theirs';rar='all';query='';sending=false;theirCol=null;theirErr='';usage=null;gridVisible=120;
- $('tradeWith').textContent=L3('Avec ','With ','Con ')+target.name;$('tradeSearch').value='';$('tradeMessage').value='';$('tradeError').textContent='';
+ give=[];want=[];pick=post&&post.kind==='offer'?'mine':'theirs';rar='all';query='';sending=false;theirCol=null;theirErr='';usage=null;gridVisible=120;
+ if(post&&post.kind==='offer')want=[{id:String(post.card),qty:1,level:Number(post.level)||0,fixed:true}];
+ $('tradeTitle').textContent=post?(post.kind==='offer'?L3('Faire une offre','Make an offer','Hacer una oferta'):L3('Proposer sa carte','Offer the card','Ofrecer la carta')):L3('Proposer un échange','Propose a trade','Proponer un intercambio');
+ $('tradeWith').textContent=(post?L3('Annonce de ','Post by ','Anuncio de '):L3('Avec ','With ','Con '))+target.name;$('tradeSearch').value='';$('tradeMessage').value='';$('tradeError').textContent='';
+ setPickTabs();
  const d=$('tradeDialog'),tok=target;if(!d.open)d.showModal();renderAll();
  if(window.sakuBackend.tradePairUsage)window.sakuBackend.tradePairUsage(target.id).then(u=>{if(target!==tok)return;usage=u;renderSlots();}).catch(()=>{});
- window.sakuBackend.tradeCollection(target.id).then(list=>{if(target!==tok)return;theirCol=Array.isArray(list)?list:[];renderAll();}).catch(e=>{if(target!==tok)return;theirErr=errText(e);renderGrid();});
+ if(!post||post.kind==='seek')window.sakuBackend.tradeCollection(target.id).then(list=>{if(target!==tok)return;theirCol=Array.isArray(list)?list:[];renderAll();}).catch(e=>{if(target!==tok)return;theirErr=errText(e);renderGrid();});
  // Collection fraîche (les réservations du marché ont pu changer les quantités).
- try{if(window.sakuBackend&&typeof cardNormalize==='function'){const cards=await window.sakuBackend.gameCollection();if(d.open&&uid()){cardState=cardNormalize(cards);if(typeof currentAccount!=='undefined'&&currentAccount)currentAccount.cards=cardState;renderAll();}}}catch(e){}
+ try{if(window.sakuBackend&&typeof cardNormalize==='function'){const cards=await window.sakuBackend.gameCollection();if(d.open&&uid()&&target===tok){cardState=cardNormalize(cards);if(typeof currentAccount!=='undefined'&&currentAccount)currentAccount.cards=cardState;}}}catch(e){}
+ if(target!==tok)return;
+ if(post&&post.kind==='seek'){const mine=mineItems().filter(it=>String(it.c.id)===String(post.card)).sort((x,y)=>x.level-y.level)[0];if(!mine){$('tradeError').textContent=L3("Tu ne possèdes pas (ou plus) cette carte, ou elle est verrouillée.","You don't own this card (anymore), or it is locked.","No tienes (o ya no tienes) esta carta, o está bloqueada.");}else give=[{id:String(post.card),level:mine.level,qty:1,fixed:true}];}
+ renderAll();
 }
 async function send(){
  if(sending||!target)return;
@@ -134,7 +146,9 @@ async function send(){
  if(overLimit()){const st=limitState(),outOver=Object.keys(LIMITS).some(r=>st.out[r].used+st.out[r].now>LIMITS[r]);$('tradeError').textContent=outOver?CODES.pair_limit():CODES.pair_limit_in();return;}
  sending=true;$('tradeSend').disabled=true;$('tradeError').textContent='';$('tradeSend').textContent=L3('Envoi…','Sending…','Enviando…');
  try{
-  await window.sakuBackend.tradePropose(target.id,give.map(g=>({card:g.id,level:g.level,qty:g.qty})),want.map(w=>({card:w.id,qty:w.qty})),$('tradeMessage').value.trim().slice(0,200));
+  const msgTxt=$('tradeMessage').value.trim().slice(0,200);
+  if(post){if(post.kind==='offer')await window.sakuBackend.tradePostOffer(post.id,give.map(g=>({card:g.id,level:g.level,qty:g.qty})),null,msgTxt);else await window.sakuBackend.tradePostOffer(post.id,want.map(w=>({card:w.id,qty:w.qty})),give[0].level,msgTxt);if(window.sakuExchangeRefresh)window.sakuExchangeRefresh();}
+  else await window.sakuBackend.tradePropose(target.id,give.map(g=>({card:g.id,level:g.level,qty:g.qty})),want.map(w=>({card:w.id,qty:w.qty})),msgTxt);
   $('tradeDialog').close();sfx('coin');toast(L3('Proposition envoyée à ','Proposal sent to ','Propuesta enviada a ')+target.name+L3(' — suis-la dans Marché › Mes affaires.',' — follow it in Market › My deals.',' — síguela en Mercado › Mis negocios.'));
   try{if(typeof cardNormalize==='function'){const cards=await window.sakuBackend.gameCollection();cardState=cardNormalize(cards);if(typeof currentAccount!=='undefined'&&currentAccount)currentAccount.cards=cardState;}}catch(e){}
  }catch(e){$('tradeError').textContent=errText(e);sfx('wrong');}
@@ -142,7 +156,7 @@ async function send(){
 }
 
 /* ---------- Mes affaires ---------- */
-let deals=[],dealsListings=[],dealsToken=0,confirmId=null,dealBusy=false;
+let myPosts=[],deals=[],dealsListings=[],dealsToken=0,confirmId=null,dealBusy=false;
 function relTime(iso){const ms=Date.parse(iso)-Date.now();if(!(ms>0))return L3('expire bientôt','expiring','caduca pronto');const h=Math.ceil(ms/3600000);return h>=48?L3('expire dans '+Math.ceil(h/24)+' j','expires in '+Math.ceil(h/24)+' d','caduca en '+Math.ceil(h/24)+' d'):L3('expire dans '+h+' h','expires in '+h+' h','caduca en '+h+' h');}
 function ago(iso){const d=new Date(iso);if(isNaN(d))return '';try{return d.toLocaleDateString((window.SAKU_I18N||{}).lang||'en',{day:'numeric',month:'short'});}catch(e){return d.toISOString().slice(0,10);}}
 function thumbs(items,side){return '<div class="deal-cards">'+(items||[]).map(it=>{const c=card(it.card);const nm=c?c.name:it.card;const lvl=it.level==null?null:Number(it.level);return '<span class="deal-card" style="--r:'+(RAR_COL[(c&&c.rarity)||it.rarity]||'#cfd6df')+'" title="'+esc(nm+(lvl?' '+stars(lvl):''))+'"><span class="deal-card-art">'+(c?art(c,lvl||0):'')+(Number(it.qty)>1?'<b class="trade-qty">× '+Number(it.qty)+'</b>':'')+'</span><span class="deal-card-name" data-noi18n>'+esc(nm)+'</span>'+(side==='want'&&lvl==null?'':'<small>'+esc(lvl?stars(lvl):L3('Niv. 0','Lv. 0','Niv. 0'))+'</small>')+'</span>';}).join('')+'</div>';}
@@ -157,13 +171,14 @@ function dealHtml(x){
  }
  const meta=x.state==='pending'?relTime(x.expires_at):(STATE_LABEL[x.state]?STATE_LABEL[x.state]():x.state)+' · '+ago(x.closed_at||x.created_at);
  return '<article class="deal deal-'+esc(x.state)+(inc?' deal-in':' deal-out')+'">'
-  +'<header class="deal-head"><button type="button" class="deal-who" data-deal="profile" data-id="'+esc(x.other)+'"><span class="deal-avatar" aria-hidden="true">'+esc(String(x.other_name||'?').trim().charAt(0).toUpperCase()||'?')+'</span><span><b data-noi18n>'+esc(x.other_name||tr('Player'))+'</b><small>'+esc(inc?L3('te propose un échange','offers you an exchange','te propone un intercambio'):L3('ta proposition','your proposal','tu propuesta'))+'</small></span></button><span class="deal-state">'+esc(meta)+'</span></header>'
+  +'<header class="deal-head"><button type="button" class="deal-who" data-deal="profile" data-id="'+esc(x.other)+'"><span class="deal-avatar" aria-hidden="true">'+esc(String(x.other_name||'?').trim().charAt(0).toUpperCase()||'?')+'</span><span><b data-noi18n>'+esc(x.other_name||tr('Player'))+'</b><small>'+esc(x.post_id?(inc?(x.post_kind==='seek'?L3('a la carte que tu cherches','has the card you are looking for','tiene la carta que buscas'):L3('fait une offre sur ton annonce','makes an offer on your post','hace una oferta a tu anuncio')):(x.post_kind==='seek'?L3('ta réponse à son annonce « Chercher »','your answer to their “Search” post','tu respuesta a su anuncio «Buscar»'):L3('ton offre sur son annonce','your offer on their post','tu oferta a su anuncio'))):(inc?L3('te propose un échange','offers you an exchange','te propone un intercambio'):L3('ta proposition','your proposal','tu propuesta')))+'</small></span></button><span class="deal-state">'+esc(meta)+'</span></header>'
   +(x.message?'<p class="deal-msg" data-noi18n>« '+esc(x.message)+' »</p>':'')
   +'<div class="deal-body"><div class="deal-side deal-get"><h4>'+esc(L3('Tu reçois','You receive','Recibes'))+totalHtml(getS)+'</h4>'+thumbs(theirSide,inc?'give':'want')+'</div><div class="deal-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4 4m-4-4 4-4"/></svg></div><div class="deal-side deal-give"><h4>'+esc(L3('Tu donnes','You give','Das'))+totalHtml(giveS)+'</h4>'+thumbs(mineSide,inc?'want':'give')+'</div></div>'+'<div class="trade-balance deal-balance">'+balanceHtml(giveS,getS)+'</div>'
   +(x.state==='pending'&&inc?'<p class="deal-hint">'+esc(confirmId===x.id?L3("Les cartes seront échangées immédiatement. Pour chaque carte demandée, ton exemplaire de plus bas niveau est donné.","The cards will be exchanged immediately. For each requested card, your lowest-level copy is given.","Las cartas se intercambiarán de inmediato. Por cada carta pedida, se da tu ejemplar de nivel más bajo."):L3('Ton exemplaire de plus bas niveau sera donné pour chaque carte demandée.','Your lowest-level copy is given for each requested card.','Se da tu ejemplar de nivel más bajo por cada carta pedida.'))+'</p>':'')
   +(actions?'<footer class="deal-actions">'+actions+'</footer>':'')+'</article>';
 }
 function listingHtml(l){const c=card(l.cardId),m=M();if(!c)return '';const auction=l.type==='auction';return '<article class="deal-listing" style="--r:'+(RAR_COL[c.rarity]||'#cfd6df')+'"><span class="deal-card-art">'+art(c,l.cardLevel||0)+'</span><div><b data-noi18n>'+esc(c.name)+'</b><small>'+esc(auction?(l.bid?L3('Enchère : ','Auction: ','Subasta: ')+m.nf(l.price):L3('Enchère sans offre · ','Auction, no bid · ','Subasta sin oferta · ')+m.nf(l.price)):L3('Prix fixe : ','Fixed price: ','Precio fijo: ')+m.nf(l.price))+'</small></div>'+(auction&&l.bid?'':'<button type="button" class="market-subtle" data-deal="unlist" data-id="'+esc(l.id)+'">'+esc(L3('Retirer','Withdraw','Retirar'))+'</button>')+'</article>';}
+function postMiniHtml(p){const c=card(p.card);if(!c)return '';const lvl=p.level==null?null:Number(p.level);return '<article class="deal-listing deal-post" style="--r:'+(RAR_COL[c.rarity]||'#cfd6df')+'"><span class="deal-card-art">'+art(c,lvl||0)+'</span><div><span class="xb-kind '+esc(p.kind)+'">'+esc(p.kind==='offer'?L3('Je propose','Offering','Ofrezco'):L3('Je cherche','Looking for','Busco'))+'</span><b data-noi18n>'+esc(c.name)+(lvl?' '+stars(lvl):'')+'</b><small>'+esc(Number(p.offers)?(Number(p.offers)+' '+(Number(p.offers)>1?L3('offres en attente','pending offers','ofertas pendientes'):L3('offre en attente','pending offer','oferta pendiente'))):L3('Aucune offre pour le moment','No offer yet','Aún sin ofertas'))+'</small></div><button type="button" class="market-subtle" data-deal="unpost" data-id="'+esc(p.id)+'">'+esc(L3('Retirer','Withdraw','Retirar'))+'</button></article>';}
 function empty(text){return '<p class="deals-empty">'+esc(text)+'</p>';}
 function renderDeals(){
  if(!$('marketDeals'))return;
@@ -171,9 +186,10 @@ function renderDeals(){
  const inc=deals.filter(x=>x.state==='pending'&&x.incoming),out=deals.filter(x=>x.state==='pending'&&!x.incoming),hist=deals.filter(x=>x.state!=='pending');
  $('dealsIncoming').innerHTML=inc.length?inc.map(dealHtml).join(''):empty(L3('Aucune proposition reçue pour le moment.','No proposal received yet.','Aún no has recibido propuestas.'));
  $('dealsOutgoing').innerHTML=out.length?out.map(dealHtml).join(''):empty(L3("Tu n'as envoyé aucune proposition en attente.","You have no pending proposal sent.","No tienes propuestas enviadas pendientes."));
+ if($('dealsPosts'))$('dealsPosts').innerHTML=myPosts.length?myPosts.map(postMiniHtml).join(''):empty(L3("Aucune annonce ouverte. Publie-en une dans l'onglet Échanges.","No open post. Publish one in the Exchanges tab.","Ningún anuncio abierto. Publica uno en la pestaña Intercambios."));
  $('dealsListings').innerHTML=dealsListings.length?dealsListings.map(listingHtml).join(''):empty(L3("Aucune carte en vente.","No card for sale.","Ninguna carta en venta."));
  $('dealsHistory').innerHTML=hist.length?hist.map(dealHtml).join(''):empty(L3('Rien sur les 30 derniers jours.','Nothing in the last 30 days.','Nada en los últimos 30 días.'));
- const cnt=(id,n)=>{const el=$(id);if(el)el.textContent=n?String(n):'';};cnt('dealsInCount',inc.length);cnt('dealsOutCount',out.length);cnt('dealsListCount',dealsListings.length);cnt('dealsHistCount',hist.length);
+ const cnt=(id,n)=>{const el=$(id);if(el)el.textContent=n?String(n):'';};cnt('dealsInCount',inc.length);cnt('dealsOutCount',out.length);cnt('dealsListCount',dealsListings.length);cnt('dealsPostCount',myPosts.length);cnt('dealsHistCount',hist.length);
  $('dealsStats').innerHTML=[[inc.length,L3('reçues','received','recibidas')],[out.length,L3('envoyées','sent','enviadas')],[dealsListings.length,L3('en vente','for sale','en venta')]].map(([n,l])=>'<span><b>'+n+'</b>'+esc(l)+'</span>').join('');
  setBadge(inc.length);
  if(window.sakuBasicObserve)window.sakuBasicObserve($('marketDeals'));
@@ -182,7 +198,7 @@ async function refreshDeals(listings){
  if(Array.isArray(listings))dealsListings=listings;
  if(!uid()||!window.sakuBackend||!window.sakuBackend.tradeList)return;
  const token=++dealsToken;if(!deals.length)$('dealsIncoming').innerHTML=empty(L3('Chargement…','Loading…','Cargando…'));
- try{const list=await window.sakuBackend.tradeList();if(token!==dealsToken)return;deals=Array.isArray(list)?list:[];renderDeals();}
+ try{const [list,posts]=await Promise.all([window.sakuBackend.tradeList(),window.sakuBackend.tradePostMine?window.sakuBackend.tradePostMine().catch(()=>[]):[]]);if(token!==dealsToken)return;deals=Array.isArray(list)?list:[];myPosts=Array.isArray(posts)?posts:[];renderDeals();}
  catch(e){if(token===dealsToken){renderDeals();if(M())M().msg(errText(e),true);}}
 }
 async function dealAction(kind,id){
@@ -191,6 +207,7 @@ async function dealAction(kind,id){
  if(kind==='ask'){confirmId=id;renderDeals();return;}
  if(kind==='back'){confirmId=null;renderDeals();return;}
  if(kind==='unlist'){if(M())await M().cancelListing(id);return;}
+ if(kind==='unpost'){try{await window.sakuBackend.tradePostClose(id);sfx('tap');if(M())M().msg(L3('Annonce retirée. Les offres en attente ont été refusées et leurs cartes rendues.','Post withdrawn. Pending offers were declined and their cards returned.','Anuncio retirado. Las ofertas pendientes se rechazaron y sus cartas se devolvieron.'),false);}catch(e){if(M())M().msg(errText(e),true);}await refreshDeals();if(window.sakuExchangeRefresh)window.sakuExchangeRefresh();return;}
  dealBusy=true;document.querySelectorAll('#marketDeals [data-deal]').forEach(b=>{if(b.dataset.id===id)b.disabled=true;});
  try{
   let res;
@@ -202,7 +219,7 @@ async function dealAction(kind,id){
   const text=st==='accepted'?L3('Échange conclu ! Les cartes sont dans ta collection.','Exchange done! The cards are in your collection.','¡Intercambio hecho! Las cartas están en tu colección.'):st==='expired'?L3('Cette proposition avait expiré : les cartes ont été rendues.','This proposal had expired: the cards were returned.','Esta propuesta había caducado: se devolvieron las cartas.'):kind==='decline'?L3('Proposition refusée.','Proposal declined.','Propuesta rechazada.'):L3('Proposition annulée : tes cartes sont revenues dans ta collection.','Proposal cancelled: your cards are back in your collection.','Propuesta cancelada: tus cartas han vuelto a tu colección.');
   sfx(st==='accepted'?'reward':'tap');
   dealBusy=false;
-  if(M())await M().refresh();await refreshDeals();if(M())M().msg(text,false);
+  if(M())await M().refresh();await refreshDeals();if(M())M().msg(text,false);if(window.sakuExchangeRefresh)window.sakuExchangeRefresh();
   if(window.sakuProgressRefresh)window.sakuProgressRefresh();
  }catch(e){dealBusy=false;if(M())M().msg(errText(e),true);sfx('wrong');await refreshDeals();}
  finally{dealBusy=false;}
@@ -220,6 +237,7 @@ async function pollBadge(force){
 }
 
 window.sakuTradeOpen=openComposer;
+window.sakuTradeKit={needValues,valueOf,totalHtml,nfmt,errText,art,toast,relTime,stars,mineItems:()=>mineItems(),sfx};
 window.sakuDealsRefresh=refreshDeals;
 window.sakuDealsRender=listings=>{if(Array.isArray(listings))dealsListings=listings;renderDeals();};
 
@@ -230,7 +248,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const p=e.target.closest('[data-pick]');if(p){pick=p.dataset.pick;rar='all';renderGrid();return;}
   const r=e.target.closest('[data-rar]');if(r){rar=r.dataset.rar;renderGrid();return;}
   const more=e.target.closest('[data-more]');if(more){gridVisible+=120;renderGrid();return;}
-  const x=e.target.closest('[data-remove]');if(x){const i=Number(x.dataset.i),arr=x.dataset.remove==='give'?give:want,g=arr[i];if(g){g.qty--;if(g.qty<1)arr.splice(i,1);}sfx('tap');renderAll();return;}
+  const x=e.target.closest('[data-remove]');if(x){const i=Number(x.dataset.i),arr=x.dataset.remove==='give'?give:want,g=arr[i];if(g&&!g.fixed){g.qty--;if(g.qty<1)arr.splice(i,1);}sfx('tap');renderAll();return;}
   const tile=e.target.closest('.trade-tile');if(tile){const id=tile.dataset.id;if(tile.dataset.full){$('tradeError').textContent=(L3('Tous les exemplaires sont déjà dans l\'échange.','All copies are already in the exchange.','Todos los ejemplares ya están en el intercambio.'));return;}
    if(pick==='mine'){const level=Number(tile.dataset.level)||0,item=mineItems().find(it=>String(it.c.id)===id&&it.level===level);if(!item)return;const g=give.find(x=>x.id===id&&x.level===level);if(g){if(g.qty<item.count)g.qty++;}else give.push({id,level,qty:1});}
    else{const item=theirItems().find(it=>String(it.c.id)===id);if(!item)return;const w=want.find(x=>x.id===id);if(w){if(w.qty<item.count)w.qty++;}else want.push({id,qty:1});}
