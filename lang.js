@@ -149,7 +149,7 @@ var I18N = {
   "You give": {fr: "Tu donnes",es:"Das"},
   "You receive": {fr: "Tu reçois",es:"Recibes"},
   "My collection": {fr: "Ma collection",es:"Mi colección"},
-  "Their showcase": {fr: "Sa vitrine",es:"Su vitrina"},
+  "Their collection": {fr: "Sa collection",es:"Su colección"},
   "Message (optional)": {fr: "Message (facultatif)",es:"Mensaje (opcional)"},
   "A word for the other player…": {fr: "Un mot pour l'autre joueur…",es:"Unas palabras para el otro jugador…"},
   "Your cards are reserved until the other player answers (7 days at most). Locked cards can't be traded.": {fr: "Tes cartes sont réservées jusqu'à la réponse de l'autre joueur (7 jours maximum). Les cartes verrouillées ne peuvent pas être échangées.",es:"Tus cartas quedan reservadas hasta que el otro jugador responda (7 días como máximo). Las cartas bloqueadas no se pueden intercambiar."},

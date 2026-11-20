@@ -4741,10 +4741,10 @@ body.anime-modal-open{overflow:hidden}
 .trade-x{flex:none;width:38px;height:38px;border-radius:11px;border:1px solid #49617d;background:#14243e;color:#dcecff;font-size:1.3rem;line-height:1;cursor:pointer}
 .trade-board{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
 .trade-side{min-width:0;padding:12px;border-radius:15px;border:1px solid #9bc1dd2a;background:linear-gradient(180deg,#10213a,#0b172b)}
-.trade-side h3{margin:0 0 10px;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#9bc6e5}
+.trade-side h3{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 10px;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#9bc6e5}
 .trade-give{border-color:#f2a93b44}.trade-give h3{color:#f6c681}
 .trade-want{border-color:#3fd69a44}.trade-want h3{color:#7fe6bd}
-.trade-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.trade-slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:9px 7px;max-height:290px;overflow:auto;padding:6px 6px 2px 0;align-content:start}
 .trade-slot{--r:#cfd6df;position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
 .trade-slot.empty{aspect-ratio:5/7;display:grid;place-items:center;border:1.5px dashed #9bc1dd38;border-radius:9px;color:#5f7d97;font:700 .8rem Outfit,system-ui,sans-serif}
 .trade-slot-art,.trade-tile-art,.deal-card-art{position:relative;display:block}
@@ -4792,7 +4792,7 @@ body.anime-modal-open{overflow:hidden}
 .trade-error{flex-basis:100%;order:-1;margin:0;color:#ff9aaa;font-size:.8rem;font-weight:700}.trade-error:empty{display:none}
 .trade-foot .market-button{min-height:44px;padding:11px 20px;font-size:.84rem}
 .trade-foot .market-button:disabled{opacity:.45;cursor:not-allowed}
-@media(max-width:720px){.trade-dialog{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border-radius:0;border:0}.trade-shell{max-height:100dvh;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}.trade-board{grid-template-columns:1fr}.trade-swap svg{transform:rotate(90deg)}.trade-slots{gap:5px}.trade-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));max-height:260px}}
+@media(max-width:720px){.trade-slots{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));max-height:230px}.trade-dialog{width:100vw;max-width:100vw;max-height:100dvh;height:100dvh;border-radius:0;border:0}.trade-shell{max-height:100dvh;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}.trade-board{grid-template-columns:1fr}.trade-swap svg{transform:rotate(90deg)}.trade-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));max-height:260px}}
 .trade-toast{position:fixed;left:50%;bottom:22px;z-index:9999;max-width:min(520px,calc(100vw - 32px));padding:12px 16px;border-radius:12px;background:#12324d;border:1px solid #7fc6ee66;color:#eaf6ff;font:700 .84rem/1.4 Outfit,system-ui,sans-serif;box-shadow:0 14px 34px -12px #000c;transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
 .trade-toast.show{opacity:1;transform:translate(-50%,0)}.trade-toast.bad{background:#4a1c28;border-color:#ff8a9c66}
 
@@ -4843,3 +4843,30 @@ body.anime-modal-open{overflow:hidden}
 .deal-listing .market-subtle{padding:7px 10px}
 @media(max-width:620px){.deal-body{gap:10px 14px}.deals-stats{width:100%}.deals-stats span{flex:1}.deal-actions button{flex:1}}
 @media(max-width:720px){.trade-toast{bottom:92px}}
+
+/* b296 — valeur estimée des échanges */
+.trade-slots-empty{grid-column:1/-1;margin:0;padding:22px 10px;border:1.5px dashed #9bc1dd38;border-radius:11px;color:#7f9bb3;font-size:.76rem;text-align:center}
+.trade-slot-val{color:#9fb6c9!important;font-variant-numeric:tabular-nums}
+.trade-side-total{display:inline-flex;align-items:center;gap:8px;letter-spacing:0;text-transform:none}
+.trade-side-total em{font-style:normal;color:#8fa9bf;font-size:.66rem;font-weight:700}
+
+.trade-total{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:#081522;border:1px solid #9bc1dd30;color:#fff;font:800 .78rem Outfit,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:0;text-transform:none;white-space:nowrap}
+.trade-total.pending{opacity:.6}
+.trade-coin{width:14px;height:14px;vertical-align:-2px}
+.trade-balance:empty{display:none}
+.trade-balance{display:flex;flex-direction:column;gap:6px}
+.trade-balance>small{color:#7f9bb3;font-size:.68rem;line-height:1.4}
+.trade-balance-row{--c:#7fe6bd;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"label bar" "legend legend";align-items:center;gap:6px 14px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--c) 9%,#0d1c33);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.trade-balance-row.up{--c:#7fd0ff}.trade-balance-row.down{--c:#f6c681}.trade-balance-row.big.down{--c:#ff8a9c}
+.trade-balance-label{grid-area:label;display:inline-flex;align-items:center;gap:7px;color:#fff;font-weight:800;font-size:.82rem;white-space:nowrap}
+.trade-balance-label i{width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.trade-balance-bar{grid-area:bar;display:flex;height:8px;border-radius:99px;overflow:hidden;background:#081522;gap:2px}
+.trade-balance-bar b:first-child{background:#f2a93b}.trade-balance-bar b:last-child{background:#3fd69a}
+.trade-balance-legend{grid-area:legend;display:flex;justify-content:space-between;gap:10px;color:#9fb6c9;font-size:.7rem;font-weight:700;font-variant-numeric:tabular-nums}
+.trade-balance-legend span:first-child{color:#f6c681}.trade-balance-legend span:last-child{color:#7fe6bd}
+.trade-tile[data-full]{opacity:.55}
+.trade-tile-shown{position:absolute;top:4px;right:4px;width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#ffb3d9;color:#3a1030;font-size:.62rem;font-weight:900}
+.trade-more{grid-column:1/-1;justify-self:center}
+.deal-side h4{display:flex;align-items:center;gap:8px}
+.deal-balance .trade-balance-row{padding:8px 10px}
+@media(max-width:620px){.trade-balance-row{grid-template-columns:1fr;grid-template-areas:"label" "bar" "legend"}.trade-balance-label{white-space:normal}}
