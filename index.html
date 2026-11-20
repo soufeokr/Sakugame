@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="294">
+<meta name="saku-build" content="295">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=294">
+<link rel="manifest" href="manifest.json?v=295">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=294" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=294">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=294">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=294">
+<link rel="icon" href="favicon.ico?v=295" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=295">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=295">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=295">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=294">
+  <link rel="stylesheet" href="style.css?v=295">
 </head>
 <body>
 
@@ -339,7 +339,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=294" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=295" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" title="Sakugame is in public beta — thanks for your patience!"><span data-noi18n>Beta</span></span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <div id="topBalances" class="top-balances" hidden><button type="button" class="top-bal" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button><button type="button" class="top-bal" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button></div>
@@ -377,7 +377,7 @@
       <details class="side-nav-section" open><summary><span>Cards</span><svg class="nav-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></summary>
         <button type="button" onclick="sakuNavGo('showcase')"><svg class="ic"><use href="#i-user"/></svg><span>Showcase</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('summon')"><svg class="ic"><use href="#i-vending"/></svg><span>Summon</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
-        <button type="button" onclick="sakuNavGo('market')"><svg class="ic"><use href="#i-market"/></svg><span>Market</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
+        <button type="button" onclick="sakuNavGo('market')"><svg class="ic"><use href="#i-market"/></svg><span>Market</span><span class="friend-badge" id="tradeNavBadge" hidden></span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('collection')"><svg class="ic"><use href="#i-cards"/></svg><span>Collection</span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" onclick="sakuNavGo('quests')"><span class="side-nav-symbol" aria-hidden="true">✦</span><span>Quests</span><span class="friend-badge quest-ready-badge" hidden></span><svg class="side-nav-arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 6 4 4-4 4"/></svg></button>
         <button type="button" disabled><span class="side-nav-symbol" aria-hidden="true">⚔</span><span>Arena</span><small>Coming soon</small></button>
@@ -397,7 +397,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=294" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=295" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -442,7 +442,7 @@
         <button type="button" class="page-back" onclick="showCardHome()" aria-label="Back to cards"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg></button>
         <div class="showcase-avatar" id="showcaseAvatar">✦</div>
         <div class="showcase-hero-id"><span class="showcase-kicker" data-noi18n>SAKUGAME / SHOWCASE</span><h1 id="showcaseName">Showcase</h1><div id="showcaseStatus" class="showcase-status" role="status"></div><div id="showcaseConnections" class="showcase-connections" hidden><span id="showcaseDiscordWrap" hidden><svg class="ic"><use href="#i-discord"/></svg><b>Discord</b><span id="showcaseDiscord"></span></span><span id="showcaseAniWrap" hidden><svg class="ic"><use href="#i-andlist"/></svg><b>AniList</b><span id="showcaseAni"></span></span></div></div>
-        <div class="showcase-hero-stats"><div class="showcase-rank showcase-level"><small>Level</small><strong id="showcaseLevel">—</strong></div><div class="showcase-rank showcase-arena"><small>Arena rank</small><strong>Coming soon</strong></div><div class="showcase-rank showcase-hero-collection"><div class="showcase-ring" id="showcaseProgress" role="progressbar" aria-label="Collection progress" aria-valuemin="0" aria-valuemax="100"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="showcase-ring-track" cx="60" cy="60" r="51"/><circle class="showcase-ring-value" cx="60" cy="60" r="51" pathLength="100"/></svg><b id="showcasePercent">—</b></div><div><small>Collection</small><div class="showcase-collection-count"><strong id="showcaseOwned">—</strong><span id="showcaseTotal"></span></div></div></div></div>
+        <div class="showcase-hero-stats"><button type="button" class="showcase-trade-btn" id="showcaseTradeBtn" hidden><span class="showcase-trade-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4 4m-4-4 4-4"/></svg></span><span><b>Propose a trade</b><small>Exchange cards</small></span></button><div class="showcase-rank showcase-level"><small>Level</small><strong id="showcaseLevel">—</strong></div><div class="showcase-rank showcase-arena"><small>Arena rank</small><strong>Coming soon</strong></div><div class="showcase-rank showcase-hero-collection"><div class="showcase-ring" id="showcaseProgress" role="progressbar" aria-label="Collection progress" aria-valuemin="0" aria-valuemax="100"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="showcase-ring-track" cx="60" cy="60" r="51"/><circle class="showcase-ring-value" cx="60" cy="60" r="51" pathLength="100"/></svg><b id="showcasePercent">—</b></div><div><small>Collection</small><div class="showcase-collection-count"><strong id="showcaseOwned">—</strong><span id="showcaseTotal"></span></div></div></div></div>
         <button type="button" id="showcaseEdit" class="showcase-edit-btn" aria-expanded="false" aria-controls="showcaseEditor" hidden>✎ <span>Edit showcase</span></button>
       </header>
       <section id="showcasePreview" class="showcase-preview" hidden>
@@ -507,7 +507,7 @@
       <header class="market-header"><button type="button" class="page-back" onclick="showCardHome()" aria-label="Back to cards"><svg class="saku-arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m0 0 6-6m-6 6 6 6"/></svg></button><div><span class="market-kicker" data-noi18n>SAKUGAME / MARKET</span><h1>Market</h1><p>Buy, bid and sell cards with other players.</p></div><div class="market-wallet"><img src="summon-machines/coin.svg" alt=""><div><small>Available balance</small><strong id="marketBalance">—</strong></div></div></header>
       
       <div id="marketGuest" class="market-panel" hidden><h2>Sign in to use the market</h2><p>Sign in with Discord to buy, bid and sell cards.</p><button class="market-button" type="button" onclick="openAuthModal()">Continue with Discord</button></div>
-      <div id="marketApp" hidden><div class="market-tabs" role="tablist" aria-label="Market"><button type="button" role="tab" data-market-tab="buy" aria-selected="true">Buy &amp; auctions</button><button type="button" role="tab" data-market-tab="sell" aria-selected="false">Sell a card</button><button type="button" role="tab" data-market-tab="trades" aria-selected="false">Exchanges</button></div>
+      <div id="marketApp" hidden><div class="market-tabs" role="tablist" aria-label="Market"><button type="button" role="tab" data-market-tab="buy" aria-selected="true">Buy &amp; auctions</button><button type="button" role="tab" data-market-tab="sell" aria-selected="false">Sell a card</button><button type="button" role="tab" data-market-tab="deals" aria-selected="false">My deals <span class="friend-badge market-deals-badge" id="marketDealsBadge" hidden></span></button></div>
         <div id="marketMessage" class="market-message" role="status" aria-live="polite"></div>
         <section class="market-tab" id="marketBuy"><div class="market-section-title"><div><span class="market-kicker">MARKETPLACE</span><h2>Cards on the market</h2><p>Fixed-price offers and 24-hour auctions.</p></div><button type="button" class="market-subtle" id="marketRefresh">Refresh</button></div><input type="search" id="marketSearch" placeholder="Search a card or series…"><div id="marketListings" class="market-listings"></div><dialog id="marketOffersDialog" class="market-offers-dialog" aria-labelledby="marketOffersTitle"><div class="market-offers-dialog-head"><h2 id="marketOffersTitle"></h2><button type="button" id="marketOffersClose" aria-label="Close">×</button></div><div class="market-offers-layout"><div id="marketOffersCard" class="market-offers-card"></div><div class="market-offers-right"><div id="marketOffersMeta"></div><p id="marketOffersMessage" role="status"></p><div id="marketOffersList" class="market-offers-scroll"></div></div></div></dialog></section>
         <section class="market-tab" id="marketSell" hidden>
@@ -551,7 +551,14 @@
             </div>
           </dialog>
         </section>
-        <section class="market-tab" id="marketTrades" hidden><div class="market-trade-paused" role="status"><strong>Exchanges suspended</strong><p>New exchanges and acceptances are temporarily unavailable. You can cancel or decline an existing proposal to return the reserved card.</p></div><div class="market-trade-layout"><div class="market-panel" hidden><div class="market-section-title"><div><span class="market-kicker">DIRECT TRADE</span><h2>Propose an exchange</h2><p>Offer one card and request one in return.</p></div></div><form id="marketTradeForm" class="market-form"><label>Player<select id="marketTradePlayer" required></select></label><label>Search your collection<input id="marketGiveSearch" type="search" placeholder="Search a card or series…"></label><label>Your offered card<select id="marketGiveCard" required></select></label><label>Offered level<select id="marketGiveLevel"></select></label><label>Search the catalogue<input id="marketWantSearch" type="search" placeholder="Search a card or series…"></label><label>Requested card<select id="marketWantCard" required></select></label><label>Requested level<select id="marketWantLevel"><option value="0">Level 0</option><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option></select></label><button class="market-button" type="submit">Send proposal</button></form><p class="market-help">Your offered card is reserved. The other player must own the requested card to accept.</p></div><div class="market-panel"><div class="market-section-title"><div><span class="market-kicker">YOUR EXCHANGES</span><h2>Proposals</h2><p>Cancel or decline pending exchanges.</p></div></div><div id="marketTradeList" class="market-trade-list"></div></div></div></section>
+        <section class="market-tab" id="marketDeals" hidden>
+          <div class="deals-head"><div><span class="market-kicker">MY DEALS</span><h2>Exchanges and sales</h2><p>Proposals received from other players, the ones you sent and your listings in progress.</p></div><div class="deals-stats" id="dealsStats"></div></div>
+          <div class="deals-howto"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg><p>To propose an exchange, open a player's showcase and press “Propose a trade”.</p></div>
+          <div class="deals-block"><h3>Proposals received <span id="dealsInCount"></span></h3><div id="dealsIncoming" class="deals-list"></div></div>
+          <div class="deals-block"><h3>Proposals sent <span id="dealsOutCount"></span></h3><div id="dealsOutgoing" class="deals-list"></div></div>
+          <div class="deals-block"><h3>My listings <span id="dealsListCount"></span></h3><div id="dealsListings" class="deals-listings"></div></div>
+          <details class="deals-block deals-history"><summary><h3>History <span id="dealsHistCount"></span></h3><small>Last 30 days</small></summary><div id="dealsHistory" class="deals-list"></div></details>
+        </section>
       </div>
     </main>
   </div>
@@ -1809,7 +1816,7 @@
       <!-- Discord is the only way in -->
       <div id="authFormView" class="auth-signin">
         <div class="as-hero">
-          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=294" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
+          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=295" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
           <h2>Sign in or create your account</h2>
           <p>Already a player? Pick up right where you left off. New here? Your account is created in one click with Discord — no email, no password.</p>
         </div>
@@ -2000,8 +2007,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=294"></script>
-  <script defer src="saku-features.js?v=294"></script>
+  <script defer src="saku-local-account.js?v=295"></script>
+  <script defer src="saku-features.js?v=295"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -2010,7 +2017,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=294', 'charanimes.js?v=294', 'animes.js?v=294', 'nsfwdata.js?v=294', 'snappics.js?v=294'];
+        var files = ['characters.js?v=295', 'charanimes.js?v=295', 'animes.js?v=295', 'nsfwdata.js?v=295', 'snappics.js?v=295'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -2029,44 +2036,45 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=294"></script>
-  <script defer src="card-extra.js?v=294"></script>
-  <script defer src="strongest-data.js?v=294"></script>
-  <script defer src="strongest-render.js?v=294"></script>
-  <script defer src="basic-render.js?v=294"></script>
-  <script defer src="cardgame.js?v=294"></script>
-  <script defer src="encyclopedia.js?v=294"></script>
-  <script defer src="character-localization.js?v=294"></script>
-  <script defer src="enc.js?v=294"></script>
-  <script defer src="card-tilt.js?v=294"></script>
-  <script defer src="card-levels.js?v=294"></script>
-  <script defer src="card-controls.js?v=294"></script>
-  <script defer src="library-tools.js?v=294"></script>
-  <script defer src="rarity-sync.js?v=294"></script>
-  <script defer src="strongest-sync.js?v=294"></script>
-  <script defer src="hoshi-data.js?v=294"></script>
-  <script defer src="pic-sync.js?v=294"></script>
-  <script defer src="undercover.js?v=294"></script>
-  <script defer src="music.js?v=294"></script>
-  <script defer src="lang.js?v=294"></script>
-  <script defer src="game-guides.js?v=294"></script>
-  <script defer src="app.js?v=294"></script>
-  <script defer src="supabase-client.js?v=294"></script>
-  <script defer src="saku-session.js?v=294"></script>
-  <script defer src="saku-sfx.js?v=294"></script>
-  <script defer src="retro-index.js?v=294"></script>
-  <script defer src="cinema-index.js?v=294"></script>
-  <script defer src="portal-rates.js?v=294"></script>
-  <script defer src="portal-info.js?v=294"></script>
-  <script defer src="portal-showcase.js?v=294"></script>
-  <script defer src="card-backs.js?v=294"></script>
-  <script defer src="portal-grimoire.js?v=294"></script>
-  <script defer src="portal-summon.js?v=294"></script>
-  <script defer src="progression.js?v=294"></script>
-  <script defer src="player-popover.js?v=294"></script>
-  <script defer src="friends.js?v=294"></script>
-  <script defer src="showcase.js?v=294"></script>
-  <script defer src="market.js?v=294"></script>
+  <script defer src="card-rarity.js?v=295"></script>
+  <script defer src="card-extra.js?v=295"></script>
+  <script defer src="strongest-data.js?v=295"></script>
+  <script defer src="strongest-render.js?v=295"></script>
+  <script defer src="basic-render.js?v=295"></script>
+  <script defer src="cardgame.js?v=295"></script>
+  <script defer src="encyclopedia.js?v=295"></script>
+  <script defer src="character-localization.js?v=295"></script>
+  <script defer src="enc.js?v=295"></script>
+  <script defer src="card-tilt.js?v=295"></script>
+  <script defer src="card-levels.js?v=295"></script>
+  <script defer src="card-controls.js?v=295"></script>
+  <script defer src="library-tools.js?v=295"></script>
+  <script defer src="rarity-sync.js?v=295"></script>
+  <script defer src="strongest-sync.js?v=295"></script>
+  <script defer src="hoshi-data.js?v=295"></script>
+  <script defer src="pic-sync.js?v=295"></script>
+  <script defer src="undercover.js?v=295"></script>
+  <script defer src="music.js?v=295"></script>
+  <script defer src="lang.js?v=295"></script>
+  <script defer src="game-guides.js?v=295"></script>
+  <script defer src="app.js?v=295"></script>
+  <script defer src="supabase-client.js?v=295"></script>
+  <script defer src="saku-session.js?v=295"></script>
+  <script defer src="saku-sfx.js?v=295"></script>
+  <script defer src="retro-index.js?v=295"></script>
+  <script defer src="cinema-index.js?v=295"></script>
+  <script defer src="portal-rates.js?v=295"></script>
+  <script defer src="portal-info.js?v=295"></script>
+  <script defer src="portal-showcase.js?v=295"></script>
+  <script defer src="card-backs.js?v=295"></script>
+  <script defer src="portal-grimoire.js?v=295"></script>
+  <script defer src="portal-summon.js?v=295"></script>
+  <script defer src="progression.js?v=295"></script>
+  <script defer src="player-popover.js?v=295"></script>
+  <script defer src="friends.js?v=295"></script>
+  <script defer src="showcase.js?v=295"></script>
+  <script defer src="market.js?v=295"></script>
+  <script defer src="trade.js?v=295"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->
@@ -2074,5 +2082,23 @@
     <div class="saku-consent-txt">🍪 <b>Heads-up:</b> Sakugame saves your settings in your browser; when you sign in, your collection and progress are saved on our servers. No tracking, no third-party cookies.</div>
     <button class="success" onclick="dismissSakuConsent()">Got it</button>
   </div>
+  <dialog id="tradeDialog" class="trade-dialog" aria-labelledby="tradeTitle">
+    <form class="trade-shell" id="tradeForm" novalidate>
+      <header class="trade-top"><div><span class="market-kicker">EXCHANGE</span><h2 id="tradeTitle">Propose a trade</h2><p id="tradeWith" class="trade-with"></p></div><button type="button" class="trade-x" id="tradeClose" aria-label="Close">×</button></header>
+      <div class="trade-board">
+        <section class="trade-side trade-give"><h3>You give</h3><div class="trade-slots" id="tradeGiveSlots"></div></section>
+        <div class="trade-swap" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 7h12m0 0-4-4m4 4-4 4M17 17H5m0 0 4 4m-4-4 4-4"/></svg></div>
+        <section class="trade-side trade-want"><h3>You receive</h3><div class="trade-slots" id="tradeWantSlots"></div></section>
+      </div>
+      <div class="trade-limits" id="tradeLimits"></div>
+      <div class="trade-picker">
+        <div class="trade-picker-tabs" role="tablist"><button type="button" role="tab" data-pick="mine" aria-selected="true">My collection</button><button type="button" role="tab" data-pick="theirs" aria-selected="false">Their showcase</button></div>
+        <div class="trade-picker-tools"><input type="search" id="tradeSearch" placeholder="Search a card or series…" aria-label="Search a card or series…"><div class="trade-rar" id="tradeRarities"></div></div>
+        <div class="trade-grid" id="tradeGrid"></div>
+      </div>
+      <label class="trade-msg"><span>Message (optional)</span><textarea id="tradeMessage" maxlength="200" rows="2" placeholder="A word for the other player…"></textarea></label>
+      <footer class="trade-foot"><p class="trade-note">Your cards are reserved until the other player answers (7 days at most). Locked cards can't be traded.</p><p class="trade-error" id="tradeError" role="alert"></p><button type="submit" class="market-button" id="tradeSend">Send proposal</button></footer>
+    </form>
+  </dialog>
 </body>
 </html>
