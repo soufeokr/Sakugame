@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '300';
+    const SAKU_BUILD = '301';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -458,7 +458,7 @@
       const btn = document.getElementById('usernameBtn');
       if (!btn) return;
       const av = myAvatar();
-      btn.innerHTML = (av ? '<span class="ava ava-btn"><img src="' + escapeHtml(String(av)) + '" alt="" onerror="this.parentNode.classList.add(\'ava-empty\'); this.remove();"></span> ' : '<span class="ava ava-btn ava-empty"></span> ') + escapeHtml(String(playerName));
+      btn.innerHTML = (av ? '<span class="ava ava-btn"><img src="' + escapeHtml(String(av)) + '" alt="" onerror="this.parentNode.classList.add(\'ava-empty\'); this.remove();"></span> ' : '<span class="ava ava-btn ava-empty"></span> ') + '<span class="user-btn-name">' + escapeHtml(String(playerName)) + '</span>';
       if (window.sakuFriendsPublish && currentAccount) window.sakuFriendsPublish();
       if (window.sakuShowcaseProgressChanged && currentAccount) window.sakuShowcaseProgressChanged();
       if (document.getElementById('accountScreen') && document.getElementById('accountScreen').classList.contains('active')) sakuAccountRender();
