@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="291">
+<meta name="saku-build" content="292">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=291">
+<link rel="manifest" href="manifest.json?v=292">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -75,16 +75,16 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=291" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=291">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=291">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=291">
+<link rel="icon" href="favicon.ico?v=292" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=292">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=292">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=292">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=291">
+  <link rel="stylesheet" href="style.css?v=292">
 </head>
 <body>
 
@@ -339,7 +339,7 @@
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=291" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=292" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" title="Sakugame is in public beta — thanks for your patience!"><span data-noi18n>Beta</span></span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
     <div id="topBalances" class="top-balances" hidden><button type="button" class="top-bal" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button><button type="button" class="top-bal" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button></div>
@@ -397,7 +397,7 @@
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=291" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=292" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -1762,14 +1762,20 @@
   <div class="modal guest-name-modal" id="usernameModal" role="dialog" aria-modal="true" aria-labelledby="guestNameTitle" onclick="if (event.target === this) closeUsernameModal()">
     <div class="modal-content guest-name-content">
       <button type="button" class="guest-name-close" onclick="closeUsernameModal()" aria-label="Close">×</button>
-      <div class="guest-name-icon"><svg class="ic"><use href="#i-user"/></svg></div>
-      <h2 id="guestNameTitle">Your username</h2>
+      <div class="gn-head">
+        <span class="gn-avatar" id="guestNameAvatar" aria-hidden="true">?</span>
+        <div class="gn-head-text"><span class="gn-eyebrow">Guest player</span><h2 id="guestNameTitle">Your username</h2></div>
+      </div>
+      <p class="gn-lead">This is the name other players see in rooms and in the chat.</p>
       <form onsubmit="event.preventDefault(); confirmUsernameChange()">
-        <label for="newUsernameInput">Username</label>
-        <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20" minlength="2" required autocomplete="nickname">
+        <div class="gn-label-row"><label for="newUsernameInput">Username</label><span class="gn-count" id="guestNameCount" data-noi18n>0/20</span></div>
+        <input type="text" id="newUsernameInput" placeholder="Enter username" maxlength="20" minlength="2" required autocomplete="nickname" oninput="sakuGuestNamePreview()">
         <button type="submit" class="guest-name-save">Save</button>
       </form>
-      <button type="button" class="guest-name-signup" onclick="closeUsernameModal(); openAuthModal()">Create an account</button>
+      <div class="gn-account" id="guestNameAccount">
+        <div class="gn-account-text"><b>Keep your progress</b><span>With a Discord account, your cards, quests and stats follow you on every device.</span></div>
+        <button type="button" class="gn-discord" onclick="closeUsernameModal(); openAuthModal()"><svg class="ic" aria-hidden="true"><use href="#i-discord"/></svg><span>Create my account</span></button>
+      </div>
     </div>
   </div>
 
@@ -1777,12 +1783,20 @@
     <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
       <div class="modal-close" onclick="closeAuthModal()">×</div>
       <!-- Discord is the only way in -->
-      <div id="authFormView">
-        <h2><svg class="ic"><use href="#i-key"/></svg> Account</h2>
-        <p style="color: var(--muted); margin-bottom: 20px;">Sign in with Discord — no email, no password. Your Discord account is your identity here.</p>
-        <button class="full dc-big" onclick="loginWithDiscord()"><svg class="ic"><use href="#i-discord"/></svg> <span class="btn-label">Continue with Discord</span></button>
-        <p class="dc-signup-note" style="margin-top: 14px;"><svg class="ic"><use href="#i-users"/></svg> An account keeps your username, avatar, AniList sync and stats across devices. You can still play as a guest with any nickname.</p>
-        <p class="dc-signup-note" style="margin-top: 8px;"><svg class="ic"><use href="#i-note"/></svg> The official Discord popup only shares your username and avatar — Sakugame never sees your password.</p>
+      <div id="authFormView" class="auth-signin">
+        <div class="as-hero">
+          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=292" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
+          <h2>Sign in to Sakugame</h2>
+          <p>One click with Discord — no email, no password.</p>
+        </div>
+        <button type="button" class="as-discord" onclick="loginWithDiscord()"><svg class="ic" aria-hidden="true"><use href="#i-discord"/></svg><span class="btn-label">Continue with Discord</span></button>
+        <ul class="as-perks">
+          <li><span class="as-perk-ic"><svg class="ic"><use href="#i-cards"/></svg></span><div><b>Cards and summons</b><span>Free draws, your collection and the market</span></div></li>
+          <li><span class="as-perk-ic"><svg class="ic"><use href="#i-trophy"/></svg></span><div><b>Quests and levels</b><span>Your progress and rewards are saved</span></div></li>
+          <li><span class="as-perk-ic"><svg class="ic"><use href="#i-users"/></svg></span><div><b>Friends and showcase</b><span>Your profile, avatar and AniList sync on every device</span></div></li>
+        </ul>
+        <p class="as-privacy"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg><span>Discord only shares your username and avatar. Sakugame never sees your password.</span></p>
+        <button type="button" class="as-guest" onclick="closeAuthModal()">Keep playing as a guest</button>
       </div>
       <!-- Logged-in profile menu -->
       <div id="authProfileView" style="display: none;">
@@ -1962,8 +1976,8 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=291"></script>
-  <script defer src="saku-features.js?v=291"></script>
+  <script defer src="saku-local-account.js?v=292"></script>
+  <script defer src="saku-features.js?v=292"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -1972,7 +1986,7 @@
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=291', 'charanimes.js?v=291', 'animes.js?v=291', 'nsfwdata.js?v=291', 'snappics.js?v=291'];
+        var files = ['characters.js?v=292', 'charanimes.js?v=292', 'animes.js?v=292', 'nsfwdata.js?v=292', 'snappics.js?v=292'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -1991,44 +2005,44 @@
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=291"></script>
-  <script defer src="card-extra.js?v=291"></script>
-  <script defer src="strongest-data.js?v=291"></script>
-  <script defer src="strongest-render.js?v=291"></script>
-  <script defer src="basic-render.js?v=291"></script>
-  <script defer src="cardgame.js?v=291"></script>
-  <script defer src="encyclopedia.js?v=291"></script>
-  <script defer src="character-localization.js?v=291"></script>
-  <script defer src="enc.js?v=291"></script>
-  <script defer src="card-tilt.js?v=291"></script>
-  <script defer src="card-levels.js?v=291"></script>
-  <script defer src="card-controls.js?v=291"></script>
-  <script defer src="library-tools.js?v=291"></script>
-  <script defer src="rarity-sync.js?v=291"></script>
-  <script defer src="strongest-sync.js?v=291"></script>
-  <script defer src="hoshi-data.js?v=291"></script>
-  <script defer src="pic-sync.js?v=291"></script>
-  <script defer src="undercover.js?v=291"></script>
-  <script defer src="music.js?v=291"></script>
-  <script defer src="lang.js?v=291"></script>
-  <script defer src="game-guides.js?v=291"></script>
-  <script defer src="app.js?v=291"></script>
-  <script defer src="supabase-client.js?v=291"></script>
-  <script defer src="saku-session.js?v=291"></script>
-  <script defer src="saku-sfx.js?v=291"></script>
-  <script defer src="retro-index.js?v=291"></script>
-  <script defer src="cinema-index.js?v=291"></script>
-  <script defer src="portal-rates.js?v=291"></script>
-  <script defer src="portal-info.js?v=291"></script>
-  <script defer src="portal-showcase.js?v=291"></script>
-  <script defer src="card-backs.js?v=291"></script>
-  <script defer src="portal-grimoire.js?v=291"></script>
-  <script defer src="portal-summon.js?v=291"></script>
-  <script defer src="progression.js?v=291"></script>
-  <script defer src="player-popover.js?v=291"></script>
-  <script defer src="friends.js?v=291"></script>
-  <script defer src="showcase.js?v=291"></script>
-  <script defer src="market.js?v=291"></script>
+  <script defer src="card-rarity.js?v=292"></script>
+  <script defer src="card-extra.js?v=292"></script>
+  <script defer src="strongest-data.js?v=292"></script>
+  <script defer src="strongest-render.js?v=292"></script>
+  <script defer src="basic-render.js?v=292"></script>
+  <script defer src="cardgame.js?v=292"></script>
+  <script defer src="encyclopedia.js?v=292"></script>
+  <script defer src="character-localization.js?v=292"></script>
+  <script defer src="enc.js?v=292"></script>
+  <script defer src="card-tilt.js?v=292"></script>
+  <script defer src="card-levels.js?v=292"></script>
+  <script defer src="card-controls.js?v=292"></script>
+  <script defer src="library-tools.js?v=292"></script>
+  <script defer src="rarity-sync.js?v=292"></script>
+  <script defer src="strongest-sync.js?v=292"></script>
+  <script defer src="hoshi-data.js?v=292"></script>
+  <script defer src="pic-sync.js?v=292"></script>
+  <script defer src="undercover.js?v=292"></script>
+  <script defer src="music.js?v=292"></script>
+  <script defer src="lang.js?v=292"></script>
+  <script defer src="game-guides.js?v=292"></script>
+  <script defer src="app.js?v=292"></script>
+  <script defer src="supabase-client.js?v=292"></script>
+  <script defer src="saku-session.js?v=292"></script>
+  <script defer src="saku-sfx.js?v=292"></script>
+  <script defer src="retro-index.js?v=292"></script>
+  <script defer src="cinema-index.js?v=292"></script>
+  <script defer src="portal-rates.js?v=292"></script>
+  <script defer src="portal-info.js?v=292"></script>
+  <script defer src="portal-showcase.js?v=292"></script>
+  <script defer src="card-backs.js?v=292"></script>
+  <script defer src="portal-grimoire.js?v=292"></script>
+  <script defer src="portal-summon.js?v=292"></script>
+  <script defer src="progression.js?v=292"></script>
+  <script defer src="player-popover.js?v=292"></script>
+  <script defer src="friends.js?v=292"></script>
+  <script defer src="showcase.js?v=292"></script>
+  <script defer src="market.js?v=292"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->

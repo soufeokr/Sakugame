@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '291';
+    const SAKU_BUILD = '292';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -647,7 +647,8 @@
 
     async function openAuthModal() {
       const signedIn = !!currentAccount;
-      document.getElementById('authFormView').style.display = signedIn ? 'none' : 'block';
+      document.getElementById('authFormView').style.display = signedIn ? 'none' : 'flex';
+      document.getElementById('authModal').classList.toggle('auth-signin-mode', !signedIn);
       document.getElementById('authProfileView').style.display = signedIn ? 'block' : 'none';
       paintAdminBtn();
       if (signedIn) {
@@ -1111,9 +1112,18 @@
     let queuePromoting = false;    // host-side promote guard
     let publicRoomsRef = null;     // live 🌐 list listener (join screen only)
 
+    // Aperçu en direct dans la fenêtre du pseudo : initiale de l'avatar + compteur de caractères.
+    function sakuGuestNamePreview() {
+      const input = document.getElementById('newUsernameInput'); if (!input) return;
+      const v = input.value.trim(), ava = document.getElementById('guestNameAvatar'), cnt = document.getElementById('guestNameCount');
+      if (ava) ava.textContent = v ? Array.from(v)[0].toUpperCase() : '?';
+      if (cnt) { cnt.textContent = input.value.length + '/20'; cnt.classList.toggle('bad', v.length > 0 && v.length < 2); }
+    }
     function changeUsername() {
       const input = document.getElementById('newUsernameInput');
       input.value = playerName;
+      const acc = document.getElementById('guestNameAccount'); if (acc) acc.hidden = !!currentAccount;
+      sakuGuestNamePreview();
       document.getElementById('usernameModal').classList.add('show');
       input.focus();
       input.select();
