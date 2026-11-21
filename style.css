@@ -5051,3 +5051,20 @@ body.anime-modal-open{overflow:hidden}
 .ua-stat.xp b{color:#8fe3b0}
 .card-level-xp{display:inline-block;margin-left:4px;padding:1px 7px;border-radius:999px;background:#8fe3b01f;color:#8fe3b0;font:800 .66rem system-ui}
 @media(max-width:560px){.ua-levels{gap:6px}.ua-level{min-height:76px;padding:8px 4px}.ua-level b{font-size:.76rem}.ua-sum{grid-template-columns:repeat(2,minmax(0,1fr))}.ua-rars{grid-template-columns:repeat(2,minmax(0,1fr))}.ua-btn{min-height:40px}}
+/* b304 — « Tout hypothéquer » */
+.ua-btns{display:flex;flex-wrap:wrap;gap:8px}
+.ua-btn-coin{width:18px;height:18px}
+.mg-coin{width:1em;height:1em;vertical-align:-.14em}
+.mg-keeps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mg-keep{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;padding:8px 6px;border:1px solid #9bc1dd2e;border-radius:13px;background:#0b1a30;color:#cfe3f2;font-family:Outfit,system-ui,sans-serif;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.mg-keep b{font-size:.92rem;color:#f2f8ff}.mg-keep small{font-size:.68rem;font-weight:700;color:#86a2b9}
+.mg-keep[aria-checked=true]{border-color:#f1d79d;background:linear-gradient(180deg,#d5b56b26,#0b1a30);box-shadow:0 0 0 1px #f1d79d55 inset}
+.mg-keep:focus-visible{outline:2px solid #a7dbf7;outline-offset:2px}
+.mg-rar-coins{min-height:1em;font-size:.74rem;font-weight:800;color:#f6d88e}
+.mg-tile-coins{color:#f6d88e}
+.mg-sum{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ua-stat.coins b{color:#f6d88e}
+.mg-wait{animation:mgPulse 1.2s ease-in-out infinite}
+@keyframes mgPulse{50%{opacity:.5}}
+@media(prefers-reduced-motion:reduce){.mg-wait{animation:none}}
+@media(max-width:560px){.mg-keeps{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.mg-sum{grid-template-columns:repeat(3,minmax(0,1fr))}.mg-sum .ua-stat b{font-size:1rem}.ua-btns{width:100%}.ua-btns .ua-btn{flex:1 1 0;justify-content:center;padding-inline:10px}}
