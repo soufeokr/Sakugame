@@ -80,7 +80,9 @@ function finish(level){
       '<linearGradient id="fhz'+u+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset=".5" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>'+
       '<filter id="fbl'+u+'" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>'+
       '<radialGradient id="fgm'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#999"/><stop offset="1" stop-color="#000"/></radialGradient>'+
-      '<mask id="fem'+u+'" maskUnits="userSpaceOnUse" x="-10" y="-10" width="280" height="392"><g class="fin-glare"><ellipse cx="-60" cy="-50" rx="150" ry="150" fill="url(#fgm'+u+')"/></g></mask>';
+      '<mask id="fem'+u+'" maskUnits="userSpaceOnUse" x="-10" y="-10" width="280" height="392"><g class="fin-glare"><ellipse cx="0" cy="0" rx="150" ry="150" fill="url(#fgm'+u+')"/></g></mask>'+
+      '<radialGradient id="fgr'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".72"/><stop offset=".45" stop-color="#fff" stop-opacity=".24"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'+
+      '<linearGradient id="fpv'+u+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".66"/><stop offset=".6" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>';
     b='<g clip-path="url(#fsl'+u+')" pointer-events="none">'+
         // film voilé + soudure du blister en haut
         '<path d="'+SL+'" fill="url(#fhz'+u+')" style="mix-blend-mode:screen"/>'+
@@ -88,13 +90,14 @@ function finish(level){
         '<path d="M8 9.5 H252" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/>'+
         '<path d="M0 0 H90 L0 120 Z" fill="#fff" opacity=".07" style="mix-blend-mode:screen" filter="url(#fbl'+u+')"/>'+
         '<path d="M260 372 H170 L260 250 Z" fill="#fff" opacity=".06" style="mix-blend-mode:screen" filter="url(#fbl'+u+')"/>'+
-        // grands reflets courbes du plastique, qui glissent avec la lumière
-        '<g style="mix-blend-mode:screen"><g class="fin-glare"><g transform="translate(-190 -236) rotate(-28 130 186)">'+
-          '<path d="M-40 120 Q130 60 300 140 L300 230 Q130 150 -40 210 Z" fill="url(#fpl'+u+')" filter="url(#fbl'+u+')"/>'+
-          '<path d="M-40 250 Q130 205 300 262" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" filter="url(#fbl'+u+')"/>'+
-          '<path d="M-40 250 Q130 205 300 262" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".7"/>'+
-          '<path d="M-40 40 Q130 0 300 52 L300 78 Q130 28 -40 70 Z" fill="url(#fpl'+u+')" opacity=".55" filter="url(#fbl'+u+')"/>'+
-          '<path d="M-40 290 Q130 250 300 300" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1.2" filter="url(#fbl'+u+')"/>'+
+        // Reflet du plastique au point de lumière (comme le reflet du niveau 0, en plus riche) : une tache douce,
+        // une nappe courbe qui passe par ce point et un fin trait brillant ; le tout suit l'inclinaison.
+        '<g style="mix-blend-mode:screen"><g class="fin-glare"><g transform="rotate(-28)">'+
+          '<ellipse cx="0" cy="0" rx="120" ry="82" fill="url(#fgr'+u+')"/>'+
+          '<path d="M-280 -34 Q0 -80 280 -34 L280 26 Q0 -22 -280 26 Z" fill="url(#fpv'+u+')" filter="url(#fbl'+u+')"/>'+
+          '<path d="M-280 44 Q0 -2 280 44" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.4" filter="url(#fbl'+u+')"/>'+
+          '<path d="M-280 44 Q0 -2 280 44" fill="none" stroke="#fff" stroke-opacity=".65" stroke-width=".7"/>'+
+          '<path d="M-280 -104 Q0 -146 280 -104" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="1.3" filter="url(#fbl'+u+')"/>'+
         '</g></g></g>'+
         // plis du plastique, plus visibles là où passe la lumière
         '<g mask="url(#fem'+u+')" fill="none" stroke="#fff" stroke-linecap="round" style="mix-blend-mode:screen">'+

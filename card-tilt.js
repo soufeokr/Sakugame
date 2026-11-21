@@ -22,7 +22,7 @@
       active.style.setProperty('--glare-y',((y+1)*50).toFixed(1)+'%');
       active.classList.add('card-tilting');
       // Effets de niveau (card-finish.js) : la lumière suit l'inclinaison de la carte.
-      const fin=active.querySelector('svg.card-finish');if(fin){fin.classList.add('fin-tracking');fin.style.setProperty('--fin-p',(.22+((x+1)/2*.7+(y+1)/2*.3)*.56).toFixed(3));fin.style.setProperty('--fin-x',((1-x)/2).toFixed(3));fin.style.setProperty('--fin-y',((1-y)/2).toFixed(3));}
+      const fin=active.querySelector('svg.card-finish');if(fin){fin.classList.add('fin-tracking');fin.style.setProperty('--fin-p',(.22+((x+1)/2*.7+(y+1)/2*.3)*.56).toFixed(3));fin.style.setProperty('--fin-x',((x+1)/2).toFixed(3));fin.style.setProperty('--fin-y',((y+1)/2).toFixed(3));}
     });
   },{passive:true});
   document.addEventListener('pointerout',function(e){if(active&&active.contains(e.target)&&!active.contains(e.relatedTarget))stop();},{passive:true});
