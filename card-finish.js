@@ -9,6 +9,7 @@
 var OUT='M16 3 H244 L257 16 V356 L244 369 H16 L3 356 V16 Z';
 var serial=0;
 var RAINBOW=['#ff4d6d','#ff9f45','#ffe45e','#5ee08a','#4dd8ff','#5b8cff','#b48cff','#ff6fd8'];
+var VIVID=['#ff2d55','#ff8a00','#ffe100','#22e06b','#00c8ff','#3d6bff','#a64dff','#ff3fc4'];
 function stops(list){var n=list.length;return list.map(function(c,i){var col=Array.isArray(c)?c[0]:c,op=Array.isArray(c)?c[1]:null;return '<stop offset="'+(i/(n-1)).toFixed(3)+'" stop-color="'+col+'"'+(op!=null?' stop-opacity="'+op+'"':'')+'/>';}).join('');}
 function band(colors,peak){var out=[['#fff',0],['#fff',0]];colors.forEach(function(c){out.push([c,peak]);});out.push(['#fff',0],['#fff',0]);return out;}
 
@@ -21,20 +22,18 @@ var facets=[],edges='';
     if(c>0&&c<C-1)x+=(rnd()-.5)*sx*.8;if(r>0&&r<R-1)y+=(rnd()-.5)*sy*.8;P[r].push([+x.toFixed(1),+y.toFixed(1)]);}}
   for(r=0;r<R-1;r++)for(c=0;c<C-1;c++){var a=P[r][c],b=P[r][c+1],d=P[r+1][c],e=P[r+1][c+1],flip=(r+c)%2===0;
     var t1=flip?[a,b,e]:[a,b,d],t2=flip?[a,e,d]:[b,e,d];
-    [t1,t2].forEach(function(t){var cx=(t[0][0]+t[1][0]+t[2][0])/3,cy=(t[0][1]+t[1][1]+t[2][1])/3;facets.push({pts:t.map(function(p){return p.join(',');}).join(' '),cx:cx,cy:cy,o:.1+rnd()*.6});});}
+    [t1,t2].forEach(function(t){var cx=(t[0][0]+t[1][0]+t[2][0])/3,cy=(t[0][1]+t[1][1]+t[2][1])/3;facets.push({pts:t.map(function(p){return p.join(',');}).join(' '),cx:cx,cy:cy,o:.1+rnd()*.6,s:rnd()});});}
   facets.forEach(function(f){edges+='M'+f.pts.split(' ').join(' L')+' Z ';});
 })();
-function rainbowAt(x,y){var t=((x/260)*.55+(y/372)*.45)*RAINBOW.length;return RAINBOW[Math.floor(t)%RAINBOW.length];}
+function rainbowAt(x,y,pal){pal=pal||RAINBOW;var t=((x/260)*.55+(y/372)*.45)*pal.length;return pal[Math.floor(t)%pal.length];}
 function ensureDefs(){
   if(typeof document==='undefined'||document.getElementById('sakuFinishDefs'))return;
-  // Facettes claires (renvoient la lumière) et sombres (en retrait) : c'est le contraste qui donne l'aspect taillé.
-  var white=facets.map(function(f,i){return i%2?'':'<polygon points="'+f.pts+'" fill="#ffffff" fill-opacity="'+(.25+f.o*.75).toFixed(2)+'"/>';}).join('');
-  var dark=facets.map(function(f,i){return i%2?'<polygon points="'+f.pts+'" fill="#0a1430" fill-opacity="'+(.12+f.o*.35).toFixed(2)+'"/>':'';}).join('');
-  var ice=facets.map(function(f,i){return '<polygon points="'+f.pts+'" fill="'+(i%3===0?'#d9f6ff':i%3===1?'#ffffff':'#e9e4ff')+'" fill-opacity="'+f.o.toFixed(2)+'"/>';}).join('');
-  var rain=facets.map(function(f){return '<polygon points="'+f.pts+'" fill="'+rainbowAt(f.cx,f.cy)+'" fill-opacity="'+(.25+f.o).toFixed(2)+'"/>';}).join('');
+  // Quelques facettes seulement (≈ 1 sur 6) s'allument sous la lumière : la carte d'origine reste lisible.
+  var few=facets.map(function(f){return f.s<.16?'<polygon points="'+f.pts+'" fill="'+(f.s<.06?'#dff7ff':'#ffffff')+'" fill-opacity="'+(.5+f.o*.6).toFixed(2)+'"/>':'';}).join('');
+  var fewRain=facets.map(function(f){return f.s<.2?'<polygon points="'+f.pts+'" fill="'+rainbowAt(f.cx+f.s*600,f.cy,VIVID)+'" fill-opacity="'+Math.min(1,.7+f.o*.4).toFixed(2)+'"/>':'';}).join('');
   var s='<svg id="sakuFinishDefs" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false"><defs>'+
     '<linearGradient id="sfPrismEdge" x1="0" y1="0" x2="1" y2="1">'+stops(['#7ff4ff','#ffffff','#ff9cf0','#ffffff','#fff59a','#ffffff','#7ff4ff'])+'</linearGradient>'+
-    '<g id="sfIce">'+ice+'</g><g id="sfWhite">'+white+'</g><g id="sfDark">'+dark+'</g><g id="sfRain">'+rain+'</g>'+
+    '<g id="sfFew">'+few+'</g><g id="sfFewRain">'+fewRain+'</g>'+
     '<path id="sfEdges" d="'+edges.trim()+'" fill="none"/></defs></svg>';
   var host=document.createElement('div');host.innerHTML=s;document.body.appendChild(host.firstChild);
 }
@@ -48,8 +47,8 @@ function lightMask(u,width,cls){return '<mask id="fmk'+u+'" maskUnits="userSpace
 function sparkle(x,y,r,delay,fill){var k=r*.16;return '<polygon class="fin-spark fin-anim" style="animation-delay:'+delay+'s;transform-origin:'+x+'px '+y+'px" fill="'+fill+'" points="'+
   [x+','+(y-r),(x+k)+','+(y-k),(x+r)+','+y,(x+k)+','+(y+k),x+','+(y+r),(x-k)+','+(y+k),(x-r)+','+y,(x-k)+','+(y-k)].join(' ')+'"/>';}
 // Éclats de facettes : quelques facettes isolées qui « accrochent » la lumière à tour de rôle.
-var GLINTS=[9,31,47,66,82,101,123,140,158,177];
-function glints(color){return GLINTS.map(function(i,k){var f=facets[i];if(!f)return '';var c=typeof color==='function'?color(f):color;
+var GLINTS=[9,31,47,66,82,101,123,140,158,177],GLINTS3=GLINTS.concat([3,22,58,94,115,133,150,170,186]);
+function glints(color,list){list=list||GLINTS;return list.map(function(i,k){var f=facets[i];if(!f)return '';var c=typeof color==='function'?color(f):color;
   return '<polygon class="fin-glint fin-anim" style="animation-delay:'+(k*.47).toFixed(2)+'s" points="'+f.pts+'" fill="'+c+'"/>';}).join('');}
 function starPts(cx,cy,R,r){var p=[];for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,rad=i%2?r:R;p.push((cx+Math.cos(a)*rad).toFixed(2)+','+(cy+Math.sin(a)*rad).toFixed(2));}return p.join(' ');}
 
@@ -80,10 +79,9 @@ function finish(level){
     // Prismatique (cristal) : la lumière traverse des facettes taillées ; leurs arêtes se teintent de reflets
     // de prisme, des facettes isolées scintillent et des éclats de diamant apparaissent.
     d+=lightMask(u,330,'fin-sweep')+'<linearGradient id="fwb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(['#ffffff'],.7))+'</linearGradient>';
-    b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:multiply" pointer-events="none"><g mask="url(#fmk'+u+')"><use href="#sfDark"/></g></g>'+
-      '<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g mask="url(#fmk'+u+')">'+
-        '<use href="#sfWhite" opacity=".6"/><use href="#sfIce" opacity=".35"/><use href="#sfEdges" stroke="url(#sfPrismEdge)" stroke-width="1" opacity=".85"/></g>'+
-        '<g opacity=".4">'+glints('#ffffff')+'</g>'+
+    b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g mask="url(#fmk'+u+')">'+
+        '<use href="#sfFew" opacity=".85"/><use href="#sfEdges" stroke="url(#sfPrismEdge)" stroke-width=".7" opacity=".22"/></g>'+
+        '<g opacity=".55">'+glints('#ffffff')+'</g>'+
         '<use href="#sfEdges" stroke="#ffffff" stroke-width=".5" opacity=".07"/></g>'+
       sweep(u,'fwb',50,.75,'fin-sweep fin-sweep-late')+
       '<g pointer-events="none">'+sparkle(48,66,7,0,'#ffffff')+sparkle(212,100,5.5,1.1,'#e9fdff')+sparkle(64,224,5,2,'#ffffff')+sparkle(202,214,6.5,.6,'#f1ecff')+sparkle(132,50,4.5,1.7,'#ffffff')+sparkle(228,320,4,2.6,'#e9fdff')+'</g>';
@@ -91,13 +89,14 @@ function finish(level){
     // Prismatique arc-en-ciel : le même cristal, mais chaque facette renvoie une couleur de l'arc-en-ciel ;
     // la lumière qui passe est plus large, paillettes et éclats colorés.
     d+=lightMask(u,360,'fin-sweep')+'<linearGradient id="fwb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(['#ffffff'],.75))+'</linearGradient>'+
+      '<linearGradient id="fvb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(VIVID,.85))+'</linearGradient>'+
       '<pattern id="fgt'+u+'" width="23" height="19" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" fill="#fff"/><circle cx="15" cy="9" r=".7" fill="#fff"/><circle cx="9" cy="16" r="1.1" fill="#fff"/><circle cx="20" cy="2" r=".6" fill="#fff"/></pattern>';
-    b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:multiply" pointer-events="none"><g mask="url(#fmk'+u+')"><use href="#sfDark"/></g></g>'+
-      '<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g mask="url(#fmk'+u+')">'+
-        '<use href="#sfRain" opacity=".85"/><use href="#sfWhite" opacity=".25"/><use href="#sfEdges" stroke="#ffffff" stroke-width="1" opacity=".8"/></g>'+
-        '<g opacity=".45">'+glints(function(f){return rainbowAt(f.cx,f.cy);})+'</g>'+
+    b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g mask="url(#fmk'+u+')">'+
+        '<use href="#sfFewRain"/><use href="#sfEdges" stroke="url(#sfPrismEdge)" stroke-width=".7" opacity=".28"/></g>'+
+        '<g opacity=".9">'+glints(function(f){return rainbowAt(f.cx+f.s*600,f.cy,VIVID);},GLINTS3)+'</g>'+
         '<use href="#sfEdges" stroke="#ffffff" stroke-width=".5" opacity=".08"/>'+
         '<g opacity=".5"><g class="fin-glitter fin-anim"><rect x="0" y="0" width="260" height="372" fill="url(#fgt'+u+')"/></g></g></g>'+
+      sweep(u,'fvb',110,.55,'fin-sweep')+
       sweep(u,'fwb',50,.8,'fin-sweep fin-sweep-late')+
       '<g pointer-events="none">'+sparkle(46,62,7,0,'#fff')+sparkle(216,92,5.5,.9,'#fff')+sparkle(58,228,5,1.8,'#fff')+sparkle(206,220,7,.4,'#fff')+sparkle(130,46,4.5,1.4,'#fff')+sparkle(232,300,4,2.2,'#fff')+sparkle(30,316,4,2.8,'#fff')+'</g>';
   }
