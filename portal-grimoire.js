@@ -102,7 +102,7 @@
     build();
     const slide=document.querySelector('#summonScreen .summon-slide[data-index="'+i+'"]'),gm=slide&&slide.querySelector('.gm');
     const screen=document.getElementById('summonScreen');
-    if(!gm||!screen||!screen.classList.contains('active')||matchMedia('(prefers-reduced-motion: reduce)').matches){done&&done();return;}
+    if(!gm||!screen||!screen.classList.contains('active')||(window.sakuReducedMotion?window.sakuReducedMotion():false)){done&&done();return;}
     if(playing)stop();
     reset(gm);
     const k=Math.max(0,ORDER.indexOf(tier));

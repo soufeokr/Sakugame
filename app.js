@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '306';
+    const SAKU_BUILD = '307';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -9532,7 +9532,7 @@ function summonCancelMotion() {
 function summonAnimateTo(target) {
   summonCancelMotion();
   const from = summonPosition;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduced = window.sakuReducedMotion ? window.sakuReducedMotion() : false;
   if (reduced || Math.abs(target - from) < .001) { summonPosition = target; summonUpdateAtmosphere(); return; }
   const duration = 380 + Math.min(220, Math.abs(target - from) * 100), start = performance.now();
   const frame = now => {
@@ -9663,12 +9663,14 @@ async function sakuAccountSyncAniList(event) {
 }
 
 /* Settings page shares the same preferences as the compact side menu. */
+function sakuSetMotion(v){if(!['on','auto','reduce'].includes(v))return;try{localStorage.setItem('saku-motion',v);}catch(e){}if(window.sakuSyncMotion)window.sakuSyncMotion();}
 function sakuPreferencesSync() {
   const lang=(window.SAKU_I18N && window.SAKU_I18N.lang)||'en';
   let gfx='high',bar='bottom';
   try { gfx=localStorage.getItem('saku-graphics')||'high'; bar=localStorage.getItem('saku-barpos')||'bottom'; } catch(e) {}
   document.querySelectorAll('[data-pref-lang]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefLang===lang)));
   document.querySelectorAll('[data-pref-gfx]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefGfx===gfx)));
+  const motion=window.sakuMotionMode?window.sakuMotionMode():'on';document.querySelectorAll('[data-pref-motion]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefMotion===motion)));const nm=document.getElementById('navMotion');if(nm)nm.value=motion;
   document.querySelectorAll('[data-pref-bar]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.prefBar===bar)));
 }
 function showPreferencesPage() { showScreen('preferencesScreen'); sakuPreferencesSync(); }
