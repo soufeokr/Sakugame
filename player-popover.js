@@ -2,6 +2,7 @@
 (function () {
   'use strict';
   const MAX=5;
+  const narrow=window.matchMedia('(max-width: 600px)');
   const tr=s=>typeof t==='function'?t(s):s;
   let uid=null, state=null, busy=false, retryAfter=0;
   function getUid(){return window.sakuSecureUserId||null;}
@@ -30,13 +31,20 @@
     const box=document.getElementById('topBalances'); if(!box)return;
     const on=!!currentAccount; box.hidden=!on; if(!on)return;
     const p=window.sakuProgressSnapshot&&window.sakuProgressSnapshot();
-    const draws=state?state.available+'/'+MAX:'—', coins=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
+    const draws=state?state.available+'/'+MAX:'—', full=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
+    // Sur téléphone, un gros solde s'écrit en abrégé (1,2 M) pour laisser de la place au pseudo ; le montant exact reste dans l'infobulle.
+    let coins=full;if(p&&Number.isFinite(Number(p.coins))&&Number(p.coins)>=100000&&narrow.matches){try{coins=new Intl.NumberFormat((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined,{notation:'compact',maximumFractionDigits:Number(p.coins)<1e6?0:1}).format(Number(p.coins));}catch(e){}}
     const d=document.getElementById('topBalDrawsVal'), c=document.getElementById('topBalCoinsVal');
     if(d.textContent!==draws)d.textContent=draws; if(c.textContent!==coins)c.textContent=coins;
     const db=document.getElementById('topBalDraws'), cb=document.getElementById('topBalCoins');
-    const dl=tr('Free packs')+' · '+draws, cl=tr('Coins')+' · '+coins;
+    const dl=tr('Free packs')+' · '+draws, cl=tr('Coins')+' · '+full;
     if(db.title!==dl){db.title=dl;db.setAttribute('aria-label',dl);} if(cb.title!==cl){cb.title=cl;cb.setAttribute('aria-label',cl);}
   }
+  if(narrow.addEventListener)narrow.addEventListener('change',()=>{renderBar();fitName();});
+  // Pseudo de la barre du haut : s'il ne reste presque plus de place (téléphone étroit, salon ouvert…), on n'affiche que l'avatar.
+  function fitName(){const btn=document.getElementById('usernameBtn'),n=btn&&btn.querySelector('.user-btn-name');if(!n)return;btn.classList.remove('name-squeezed');if(!narrow.matches)return;if(n.scrollWidth>n.clientWidth+1&&n.clientWidth<34)btn.classList.add('name-squeezed');}
+  window.sakuFitTopName=fitName;
+  try{const ro=new ResizeObserver(()=>fitName());const watch=()=>{['bottomBar','topBalances','usernameBtn'].forEach(id=>{const el=document.getElementById(id);if(el)ro.observe(el);});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();}catch(e){}
   function detach() { uid=null;state=null;busy=false;retryAfter=0;close(false);renderBar(); }
   function attach() { if(!currentAccount){detach();return;} refresh(true); }
   function position() {

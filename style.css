@@ -5075,3 +5075,43 @@ body.anime-modal-open{overflow:hidden}
  #showcaseScreen .showcase-card.card-tilting::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,.14),transparent 55%);mix-blend-mode:screen}
 }
 @media(max-width:700px){#showcaseScreen .showcase-cards{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 6px}}
+/* b306 — tailles : plus de défilement horizontal, éléments qui restent dans leur cadre */
+/* Filet de sécurité : rien ne peut faire glisser toute la page sur le côté (barres fixes comprises). */
+html,body{overflow-x:clip}
+/* Grilles des écrans de jeu : une colonne qui ne s'élargit jamais au-delà de l'écran. */
+:is(#codenamesScreen,#battleScreen,#raceScreen,#undercoverScreen,#hotcoldScreen,#blurScreen,#snapshotScreen) .uc-main{grid-template-columns:minmax(0,1fr)}
+:is(#codenamesScreen,#battleScreen,#raceScreen,#undercoverScreen,#hotcoldScreen,#blurScreen,#snapshotScreen) .uc-main>*{min-width:0}
+/* Barre du haut : pseudo réduit à l'avatar quand la place manque. */
+#bottomBar .username-change-btn.name-squeezed .user-btn-name{display:none}
+#bottomBar .username-change-btn.name-squeezed{padding-right:4px!important;gap:0}
+#bottomBar .top-bal{white-space:nowrap}
+/* Champs : le texte d'exemple trop long finit par « … » au lieu d'être coupé net. */
+input::placeholder{text-overflow:ellipsis}
+/* Salon : badge HÔTE sur une ligne, couronne à côté du texte. */
+.host-badge{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;vertical-align:middle;line-height:1.2}
+.host-badge .ic,.host-badge svg{width:13px;height:13px;flex:none}
+.player-card .player-info,.player-card .name{min-width:0}
+.player-card .name{overflow-wrap:anywhere}
+/* Ninja : les pseudos longs se raccourcissent au lieu de pousser la croix hors du cadre. */
+.cn-member{min-width:0;max-width:100%;box-sizing:border-box}
+.cn-member-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Bourse d'échanges : pseudo de l'annonceur raccourci. */
+.xb-owner{min-width:0;max-width:100%}.xb-owner b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.xb-meta{min-width:0}
+/* Panneau de niveau d'une carte : le gain d'XP passe à la ligne au lieu de déborder. */
+.card-level-next p{flex-wrap:wrap;row-gap:4px}
+/* Quêtes et parties : les nombres ne se coupent pas en deux lignes. */
+.qx-level-line b,.chip-pts,.qx-xp{white-space:nowrap}
+@media(max-width:700px){
+ /* Liste des joueurs du salon : pas de petite zone qui défile dans la page, elle prend sa hauteur. */
+ #lobbyScreen #playersList{max-height:none;overflow:visible}
+ /* Boutons Historique / Discussion des parties : le contenu reste dans le bouton. */
+ .game-controls button{min-width:0;overflow:hidden}
+ .game-controls button .btn-label-phone{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+.cn-spect-strip{flex:1 1 100%;min-width:0;max-width:100%}
+.cn-spect-strip .cn-member{max-width:100%}
+.player-card .ready-badge,.player-card-right{white-space:nowrap;flex:none}
+/* Fenêtres qui défilent sur petit écran d'ordinateur : barre fine et discrète. */
+.trade-shell,.card-detail-panel,.trade-grid,#hcRank{scrollbar-width:thin;scrollbar-color:#3d5876 transparent}
+@media(max-height:720px) and (min-width:701px){.ua-dialog .trade-shell{gap:10px;padding-top:14px;padding-bottom:14px}.ua-level{min-height:66px;padding:8px}.mg-keep{min-height:52px}}

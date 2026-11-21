@@ -31,7 +31,7 @@ window.sakuBasicCard=function(card,mini,settings){
   tpl=tpl.replace(/(<text x="28" y="[^"]+" class="cname" style="font-size:)[^"]+/, '$1'+name.size+'px')
     .replace(/(<text x="28" y="[^"]+" class="cseries" style="font-size:)[^;]+/, '$1'+showSeries.size+'px');
   var out=tpl.split('SCOPE').join(uid).split('ZZNAMEZZ').join(esc(name.text)).split('ZZSERIESZZ').join(esc(showSeries.text)).split('ZZIMAGEZZ').join(esc(url)).split('ZZHUDZZ').join(esc(hud)).split('#ZZNUMBERZZ').join(number?'#'+esc(num):'—');
-  return window.sakuCardFinish&&settings.finish!==false?window.sakuCardFinish(out,lev,mini):out;
+  return window.sakuCardFinish&&settings.finish===true?window.sakuCardFinish(out,lev,mini):out;
 };
 window.sakuBasicBack=function(){return back.split('SCOPE').join('basicback'+(++serial));};
 var observer=typeof IntersectionObserver==='function' ? new IntersectionObserver(function(entries){entries.forEach(function(e){if(!e.isIntersecting)return; var im=e.target, src=im.getAttribute('data-saku-src'); if(src){im.setAttribute('href',src);im.removeAttribute('data-saku-src');} observer.unobserve(im);});},{rootMargin:'350px 0px'}) : null;

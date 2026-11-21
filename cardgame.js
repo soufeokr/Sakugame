@@ -417,7 +417,7 @@ function cardThumb(url) {
   if (u.indexOf('/character/large/') < 0) return u;
   return cardGfxLow() ? u.replace('/character/large/', '/character/medium/') : u;
 }
-function cardsCardFace(char, count, big) {
+function cardsCardFace(char, count, big, finish) {
   if ((char.edition === 'strongest' || char.edition === 'hoshi') && typeof window.sakuStrongestCard === 'function') {
     return '<span class="strongest-art">' + window.sakuStrongestCard(char) + '</span>';
   }
@@ -426,7 +426,7 @@ function cardsCardFace(char, count, big) {
     ? '<span class="ac-count">×' + count + '</span>'
     : '<span class="ac-new">' + ((typeof t === 'function') ? t('NEW') : 'NEW') + '</span>';
   return '' +
-    (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(char, false) + '</span>' : '') +
+    (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(char, false, {finish: !!finish}) + '</span>' : '') +
     '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
     '<span class="ac-art"><img src="' + escapeHtml(String(char.image)) + '" alt="' + escapeHtml(String(char.name)) + '" ' +
       'loading="lazy" decoding="async" fetchpriority="high" onerror="this.style.opacity=0"></span>' +
@@ -732,7 +732,7 @@ function cardsTileHtml(r) {
     return '<div class="ac-tile' + (typeof window.sakuBasicCard === 'function' ? ' basic-rendered' : '') + (r.p.rarity === 'mythic' ? ' mythic' : '') + (r.count ? '' : ' missing') + '" style="--ac-edge:' + meta.edge + ';--ac-color:' + meta.color + '" ' +
       'data-card-id="' + escapeHtml(String(r.p.id)) + '" onclick="cardsOpenDetail(' + idArg + ')" role="button" tabindex="0" ' +
       'onkeydown="if(event.key===String.fromCharCode(13))cardsOpenDetail(' + idArg + ')">' +
-      (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(r.p, true, {image:cardThumb(r.p.image)}) + '</span>' : '') +
+      (typeof window.sakuBasicCard === 'function' ? '<span class="basic-card-art">' + window.sakuBasicCard(r.p, true, {image:cardThumb(r.p.image), finish:true}) + '</span>' : '') +
       cardsBadges(r.p.id, r.count) +
       '<span class="ac-rar" style="background:' + meta.color + '"></span>' +
       (r.count > 1 ? '<span class="ac-count">×' + r.count + '</span>' : '') +
@@ -759,7 +759,7 @@ function cardsOpenDetail(id) {
   const lang=(window.SAKU_I18N||{}).lang||'en',words={fr:{label:'CARTE / COLLECTION',universe:'Univers',rarity:'Rareté',edition:'Édition',number:'Numéro',copies:'Dans ta collection',owned:'Possédée',missing:'Pas encore obtenue',close:'Fermer',rank:'Classement AniList',ordinary:'Classique',view:'Voir sur AniList'},en:{label:'CARD / COLLECTION',universe:'Universe',rarity:'Rarity',edition:'Edition',number:'Number',copies:'In your collection',owned:'Owned',missing:'Not yet owned',close:'Close',rank:'AniList rank',ordinary:'Basic',view:'View on AniList'},es:{label:'CARTA / COLECCIÓN',universe:'Universo',rarity:'Rareza',edition:'Edición',number:'Número',copies:'En tu colección',owned:'En posesión',missing:'Aún no conseguida',close:'Cerrar',rank:'Clasificación AniList',ordinary:'Básica',view:'Ver en AniList'}}[lang]||{};
   let record=null;if(typeof ENCYCLOPEDIA!=='undefined')for(const g of ENCYCLOPEDIA.list){record=(g.cards||[]).find(c=>String(c.i)===String(id));if(record)break;}
   const number=special?(window.sakuSpecialNumber(entry)||'—'):(record&&record.n?'#'+String(record.n).padStart(4,'0'):'—');
-  const art=special?'<div class="ac-detail-card strongest-detail"><span class="strongest-art">'+window.sakuStrongestCard(entry)+'</span></div>':'<div class="ac-detail-card basic-rendered'+(entry.rarity==='mythic'?' mythic':'')+'" style="--ac-edge:'+meta.edge+';--ac-color:'+meta.color+'">'+cardsCardFace(entry,count,false)+'</div>';
+  const art=special?'<div class="ac-detail-card strongest-detail"><span class="strongest-art">'+window.sakuStrongestCard(entry)+'</span></div>':'<div class="ac-detail-card basic-rendered'+(entry.rarity==='mythic'?' mythic':'')+'" style="--ac-edge:'+meta.edge+';--ac-color:'+meta.color+'">'+cardsCardFace(entry,count,false,true)+'</div>';
   const item=(name,value)=>'<div class="card-detail-row"><dt>'+escapeHtml(name)+'</dt><dd>'+value+'</dd></div>';
   let link=/^\d+$/.test(String(entry.id))?'<a class="card-detail-link" href="https://anilist.co/character/'+encodeURIComponent(String(entry.id))+'" target="_blank" rel="noopener">'+escapeHtml(words.view)+' <span aria-hidden="true">↗</span></a>':'';
   let label=entry.edition==='hoshi'?'Hoshi':entry.edition==='strongest'?'The Strongest':words.ordinary;
