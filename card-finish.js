@@ -71,33 +71,42 @@ function finish(level){
   ensureDefs();
   var u='f'+(++serial),d='<defs><clipPath id="fcl'+u+'"><path d="'+OUT+'"/></clipPath>',b='';
   if(level===1){
-    // Brillante : un éclat blanc balaie la carte, quelques étincelles.
-    d+='<linearGradient id="fwb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(['#ffffff','#ffffff'],.8))+'</linearGradient>';
-    b=sweep(u,'fwb',120,1,'fin-sweep')+
-      '<g pointer-events="none">'+sparkle(52,72,6.5,0,'#fff')+sparkle(206,116,5,1.4,'#fff')+sparkle(72,214,4.5,2.5,'#fff')+sparkle(198,228,5.5,.8,'#fff')+'</g>';
+    // Brillante : un reflet doux (tache de lumière) glisse sur la carte comme sur une surface vernie ;
+    // là où il passe, les filets du cadre s'illuminent, et des étincelles naissent autour.
+    var IN='M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z',PT='M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z';
+    d+='<radialGradient id="fgr'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".22" stop-color="#fffaf0" stop-opacity=".55"/><stop offset=".55" stop-color="#fff3d6" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'+
+      '<radialGradient id="fgm'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#bbb"/><stop offset="1" stop-color="#000"/></radialGradient>'+
+      '<filter id="fgb'+u+'" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter>'+
+      '<mask id="fem'+u+'" maskUnits="userSpaceOnUse" x="0" y="0" width="260" height="372"><g class="fin-glare"><ellipse cx="-60" cy="-50" rx="140" ry="140" fill="url(#fgm'+u+')"/></g></mask>';
+    b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g class="fin-glare"><ellipse cx="-60" cy="-50" rx="150" ry="110" transform="rotate(-35 -60 -50)" fill="url(#fgr'+u+')"/><circle cx="-38" cy="-70" r="16" fill="#fff" opacity=".55" filter="url(#fgb'+u+')"/></g></g>'+
+      // Éclat en étoile (reflet de lentille) au cœur de la lumière.
+      '<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g class="fin-glare"><g class="fin-flare" style="transform-origin:-60px -50px">'+
+        '<ellipse cx="-60" cy="-50" rx="70" ry="1.6" fill="#fff" opacity=".85"/><ellipse cx="-60" cy="-50" rx="1.6" ry="52" fill="#fff" opacity=".8"/>'+
+        '<ellipse cx="-60" cy="-50" rx="34" ry="1.1" fill="#fff" opacity=".55" transform="rotate(45 -60 -50)"/><ellipse cx="-60" cy="-50" rx="34" ry="1.1" fill="#fff" opacity=".55" transform="rotate(-45 -60 -50)"/>'+
+        '<circle cx="-60" cy="-50" r="7" fill="#fff" filter="url(#fgb'+u+')"/><circle cx="-60" cy="-50" r="2.6" fill="#fff"/></g></g></g>'+
+      '<g mask="url(#fem'+u+')" style="mix-blend-mode:screen" pointer-events="none" fill="none" stroke="#fff" stroke-linejoin="round">'+
+        '<path d="'+OUT+'" stroke-width="3.6"/><path d="'+IN+'" stroke-width="1.6"/><path d="'+PT+'" stroke-width="1.6"/></g>'+
+      '<g pointer-events="none">'+sparkle(52,72,6.5,0,'#fff')+sparkle(206,116,5,1.4,'#fff')+sparkle(72,214,4.5,2.5,'#fff')+sparkle(198,228,5.5,.8,'#fff')+
+        sparkle(148,92,3,1.9,'#fff8e6')+sparkle(110,300,3.2,.3,'#fff')+sparkle(236,286,3,2.9,'#fff8e6')+'</g>';
   }else if(level===2){
     // Prismatique (cristal) : la lumière traverse des facettes taillées ; leurs arêtes se teintent de reflets
     // de prisme, des facettes isolées scintillent et des éclats de diamant apparaissent.
-    d+=lightMask(u,330,'fin-sweep')+'<linearGradient id="fwb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(['#ffffff'],.7))+'</linearGradient>';
+    d+=lightMask(u,330,'fin-sweep');
     b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g mask="url(#fmk'+u+')">'+
         '<use href="#sfFew" opacity=".85"/><use href="#sfEdges" stroke="url(#sfPrismEdge)" stroke-width=".7" opacity=".22"/></g>'+
         '<g opacity=".55">'+glints('#ffffff')+'</g>'+
         '<use href="#sfEdges" stroke="#ffffff" stroke-width=".5" opacity=".07"/></g>'+
-      sweep(u,'fwb',50,.75,'fin-sweep fin-sweep-late')+
       '<g pointer-events="none">'+sparkle(48,66,7,0,'#ffffff')+sparkle(212,100,5.5,1.1,'#e9fdff')+sparkle(64,224,5,2,'#ffffff')+sparkle(202,214,6.5,.6,'#f1ecff')+sparkle(132,50,4.5,1.7,'#ffffff')+sparkle(228,320,4,2.6,'#e9fdff')+'</g>';
   }else{
     // Prismatique arc-en-ciel : le même cristal, mais chaque facette renvoie une couleur de l'arc-en-ciel ;
     // la lumière qui passe est plus large, paillettes et éclats colorés.
-    d+=lightMask(u,360,'fin-sweep')+'<linearGradient id="fwb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(['#ffffff'],.75))+'</linearGradient>'+
-      '<linearGradient id="fvb'+u+'" x1="0" y1="0" x2="1" y2="0">'+stops(band(VIVID,.85))+'</linearGradient>'+
+    d+=lightMask(u,360,'fin-sweep')+
       '<pattern id="fgt'+u+'" width="23" height="19" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".9" fill="#fff"/><circle cx="15" cy="9" r=".7" fill="#fff"/><circle cx="9" cy="16" r="1.1" fill="#fff"/><circle cx="20" cy="2" r=".6" fill="#fff"/></pattern>';
     b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g mask="url(#fmk'+u+')">'+
         '<use href="#sfFewRain"/><use href="#sfEdges" stroke="url(#sfPrismEdge)" stroke-width=".7" opacity=".28"/></g>'+
         '<g opacity=".9">'+glints(function(f){return rainbowAt(f.cx+f.s*600,f.cy,VIVID);},GLINTS3)+'</g>'+
         '<use href="#sfEdges" stroke="#ffffff" stroke-width=".5" opacity=".08"/>'+
         '<g opacity=".5"><g class="fin-glitter fin-anim"><rect x="0" y="0" width="260" height="372" fill="url(#fgt'+u+')"/></g></g></g>'+
-      sweep(u,'fvb',110,.55,'fin-sweep')+
-      sweep(u,'fwb',50,.8,'fin-sweep fin-sweep-late')+
       '<g pointer-events="none">'+sparkle(46,62,7,0,'#fff')+sparkle(216,92,5.5,.9,'#fff')+sparkle(58,228,5,1.8,'#fff')+sparkle(206,220,7,.4,'#fff')+sparkle(130,46,4.5,1.4,'#fff')+sparkle(232,300,4,2.2,'#fff')+sparkle(30,316,4,2.8,'#fff')+'</g>';
   }
   var st=levelStars(u,level);
