@@ -5068,3 +5068,10 @@ body.anime-modal-open{overflow:hidden}
 @keyframes mgPulse{50%{opacity:.5}}
 @media(prefers-reduced-motion:reduce){.mg-wait{animation:none}}
 @media(max-width:560px){.mg-keeps{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.mg-sum{grid-template-columns:repeat(3,minmax(0,1fr))}.mg-sum .ua-stat b{font-size:1rem}.ua-btns{width:100%}.ua-btns .ua-btn{flex:1 1 0;justify-content:center;padding-inline:10px}}
+/* b305 — vitrine : inclinaison des cartes au survol, 2 rangées de 5 cartes sur téléphone */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+ #showcaseScreen .showcase-card{position:relative;border-radius:9px;transform:perspective(700px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) scale(1);transform-origin:center;transition:transform .2s ease,filter .2s ease;will-change:transform}
+ #showcaseScreen .showcase-card.card-tilting{transform:perspective(700px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)) scale(1.06);transition:transform .11s ease-out,filter .2s ease;filter:drop-shadow(0 14px 18px #02071488);z-index:2}
+ #showcaseScreen .showcase-card.card-tilting::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(circle at var(--glare-x,50%) var(--glare-y,50%),rgba(255,255,255,.14),transparent 55%);mix-blend-mode:screen}
+}
+@media(max-width:700px){#showcaseScreen .showcase-cards{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px 6px}}

@@ -1,6 +1,6 @@
-/* Subtle pointer-driven depth on enlarged cards only. No motion on touch or when reduced motion is requested. */
+/* Subtle pointer-driven depth on enlarged cards and showcase cards. No motion on touch or when reduced motion is requested. */
 (function(){'use strict';
-  const selector='#cardsDetail.show .ac-detail-card, #encDetail.show .enc-detail-card';
+  const selector='#cardsDetail.show .ac-detail-card, #encDetail.show .enc-detail-card, #showcaseScreen .showcase-card';
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   let active=null, frame=0, point=null;
   function reset(card){if(!card)return;const fin=card.querySelector('svg.card-finish');if(fin){fin.classList.remove('fin-tracking');['--fin-p','--fin-x','--fin-y'].forEach(function(k){fin.style.removeProperty(k);});}card.classList.remove('card-tilting');card.style.removeProperty('--tilt-x');card.style.removeProperty('--tilt-y');card.style.removeProperty('--glare-x');card.style.removeProperty('--glare-y');}
