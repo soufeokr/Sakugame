@@ -71,23 +71,40 @@ function finish(level){
   ensureDefs();
   var u='f'+(++serial),d='<defs><clipPath id="fcl'+u+'"><path d="'+OUT+'"/></clipPath>',b='';
   if(level===1){
-    // Brillante : un reflet doux (tache de lumière) glisse sur la carte comme sur une surface vernie ;
-    // là où il passe, les filets du cadre s'illuminent, et des étincelles naissent autour.
-    var IN='M23 10 H237 L250 23 V349 L237 362 H23 L10 349 V23 Z',PT='M26 32 H234 L244 42 V242 L234 252 H26 L16 242 V42 Z';
-    d+='<radialGradient id="fgr'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".22" stop-color="#fffaf0" stop-opacity=".55"/><stop offset=".55" stop-color="#fff3d6" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>'+
-      '<radialGradient id="fgm'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#bbb"/><stop offset="1" stop-color="#000"/></radialGradient>'+
-      '<filter id="fgb'+u+'" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="6"/></filter>'+
-      '<mask id="fem'+u+'" maskUnits="userSpaceOnUse" x="0" y="0" width="260" height="372"><g class="fin-glare"><ellipse cx="-60" cy="-50" rx="140" ry="140" fill="url(#fgm'+u+')"/></g></mask>';
-    b='<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g class="fin-glare"><ellipse cx="-60" cy="-50" rx="150" ry="110" transform="rotate(-35 -60 -50)" fill="url(#fgr'+u+')"/><circle cx="-38" cy="-70" r="16" fill="#fff" opacity=".55" filter="url(#fgb'+u+')"/></g></g>'+
-      // Éclat en étoile (reflet de lentille) au cœur de la lumière.
-      '<g clip-path="url(#fcl'+u+')" style="mix-blend-mode:screen" pointer-events="none"><g class="fin-glare"><g class="fin-flare" style="transform-origin:-60px -50px">'+
-        '<ellipse cx="-60" cy="-50" rx="70" ry="1.6" fill="#fff" opacity=".85"/><ellipse cx="-60" cy="-50" rx="1.6" ry="52" fill="#fff" opacity=".8"/>'+
-        '<ellipse cx="-60" cy="-50" rx="34" ry="1.1" fill="#fff" opacity=".55" transform="rotate(45 -60 -50)"/><ellipse cx="-60" cy="-50" rx="34" ry="1.1" fill="#fff" opacity=".55" transform="rotate(-45 -60 -50)"/>'+
-        '<circle cx="-60" cy="-50" r="7" fill="#fff" filter="url(#fgb'+u+')"/><circle cx="-60" cy="-50" r="2.6" fill="#fff"/></g></g></g>'+
-      '<g mask="url(#fem'+u+')" style="mix-blend-mode:screen" pointer-events="none" fill="none" stroke="#fff" stroke-linejoin="round">'+
-        '<path d="'+OUT+'" stroke-width="3.6"/><path d="'+IN+'" stroke-width="1.6"/><path d="'+PT+'" stroke-width="1.6"/></g>'+
-      '<g pointer-events="none">'+sparkle(52,72,6.5,0,'#fff')+sparkle(206,116,5,1.4,'#fff')+sparkle(72,214,4.5,2.5,'#fff')+sparkle(198,228,5.5,.8,'#fff')+
-        sparkle(148,92,3,1.9,'#fff8e6')+sparkle(110,300,3.2,.3,'#fff')+sparkle(236,286,3,2.9,'#fff8e6')+'</g>';
+    // Brillante : la carte semble glissée sous un blister en plastique. Un film légèrement voilé, un bord de
+    // protection aux coins arrondis avec sa soudure en haut, quelques plis du plastique, et de larges reflets
+    // doux et courbes qui glissent dessus (ils suivent l'inclinaison).
+    var SL='M10 0 H250 Q260 0 260 10 V362 Q260 372 250 372 H10 Q0 372 0 362 V10 Q0 0 10 0 Z';
+    d+='<clipPath id="fsl'+u+'"><path d="'+SL+'"/></clipPath>'+
+      '<linearGradient id="fpl'+u+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".28" stop-color="#fff" stop-opacity=".14"/><stop offset=".5" stop-color="#fff" stop-opacity=".62"/><stop offset=".64" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+      '<linearGradient id="fhz'+u+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset=".5" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#fff" stop-opacity=".08"/></linearGradient>'+
+      '<filter id="fbl'+u+'" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>'+
+      '<radialGradient id="fgm'+u+'" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#999"/><stop offset="1" stop-color="#000"/></radialGradient>'+
+      '<mask id="fem'+u+'" maskUnits="userSpaceOnUse" x="-10" y="-10" width="280" height="392"><g class="fin-glare"><ellipse cx="-60" cy="-50" rx="150" ry="150" fill="url(#fgm'+u+')"/></g></mask>';
+    b='<g clip-path="url(#fsl'+u+')" pointer-events="none">'+
+        // film voilé + soudure du blister en haut
+        '<path d="'+SL+'" fill="url(#fhz'+u+')" style="mix-blend-mode:screen"/>'+
+        '<rect x="0" y="0" width="260" height="9" fill="#fff" opacity=".1" style="mix-blend-mode:screen"/>'+
+        '<path d="M8 9.5 H252" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/>'+
+        '<path d="M0 0 H90 L0 120 Z" fill="#fff" opacity=".07" style="mix-blend-mode:screen" filter="url(#fbl'+u+')"/>'+
+        '<path d="M260 372 H170 L260 250 Z" fill="#fff" opacity=".06" style="mix-blend-mode:screen" filter="url(#fbl'+u+')"/>'+
+        // grands reflets courbes du plastique, qui glissent avec la lumière
+        '<g style="mix-blend-mode:screen"><g class="fin-glare"><g transform="translate(-190 -236) rotate(-28 130 186)">'+
+          '<path d="M-40 120 Q130 60 300 140 L300 230 Q130 150 -40 210 Z" fill="url(#fpl'+u+')" filter="url(#fbl'+u+')"/>'+
+          '<path d="M-40 250 Q130 205 300 262" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" filter="url(#fbl'+u+')"/>'+
+          '<path d="M-40 250 Q130 205 300 262" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width=".7"/>'+
+          '<path d="M-40 40 Q130 0 300 52 L300 78 Q130 28 -40 70 Z" fill="url(#fpl'+u+')" opacity=".55" filter="url(#fbl'+u+')"/>'+
+          '<path d="M-40 290 Q130 250 300 300" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="1.2" filter="url(#fbl'+u+')"/>'+
+        '</g></g></g>'+
+        // plis du plastique, plus visibles là où passe la lumière
+        '<g mask="url(#fem'+u+')" fill="none" stroke="#fff" stroke-linecap="round" style="mix-blend-mode:screen">'+
+          '<path d="M18 44 Q60 70 96 58" stroke-opacity=".5" stroke-width=".8"/><path d="M200 300 Q226 284 248 306" stroke-opacity=".45" stroke-width=".8"/>'+
+          '<path d="M150 18 Q170 40 214 34" stroke-opacity=".35" stroke-width=".7"/><path d="M14 320 Q40 300 52 340" stroke-opacity=".4" stroke-width=".7"/>'+
+          '<path d="M'+SL.slice(1)+'" stroke-opacity=".9" stroke-width="2.4"/></g>'+
+      '</g>'+
+      // bord du blister (plastique transparent, coins arrondis) par-dessus les coins coupés de la carte
+      '<path d="'+SL+'" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="1.4" pointer-events="none"/>'+
+      '<path d="M12 2.5 H248 Q257.5 2.5 257.5 12 V360 Q257.5 369.5 248 369.5 H12 Q2.5 369.5 2.5 360 V12 Q2.5 2.5 12 2.5 Z" fill="none" stroke="#fff" stroke-opacity=".14" stroke-width=".8" pointer-events="none"/>';
   }else if(level===2){
     // Prismatique (cristal) : la lumière traverse des facettes taillées ; leurs arêtes se teintent de reflets
     // de prisme, des facettes isolées scintillent et des éclats de diamant apparaissent.
