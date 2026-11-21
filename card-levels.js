@@ -1,7 +1,9 @@
 /* Sakugame — module branché sur Supabase (V1). Aucune écriture économique depuis le navigateur : tout passe par des fonctions serveur. */
 (function(){'use strict';
-const labels={fr:{title:'Niveau de carte',level:'Niveau',copies:'ex.',dup:'doublons disponibles',cost:'doublon',costs:'doublons',upgrade:'Améliorer',max:'Niveau maximum',missing:'Carte non possédée',error:'Impossible de réaliser cette amélioration.',progress:'Amélioration en cours…',next:'Prochain niveau',others:'Autres exemplaires :',short:'Il manque {n} doublon.',shortN:'Il manque {n} doublons.'},en:{title:'Card level',level:'Level',copies:'copies',dup:'duplicates available',cost:'duplicate',costs:'duplicates',upgrade:'Upgrade',max:'Maximum level',missing:'Card not owned',error:'Could not upgrade this card.',progress:'Upgrading…',next:'Next level',others:'Other copies:',short:'{n} more duplicate needed.',shortN:'{n} more duplicates needed.'},es:{title:'Nivel de carta',level:'Nivel',copies:'copias',dup:'duplicados disponibles',cost:'duplicado',costs:'duplicados',upgrade:'Mejorar',max:'Nivel máximo',missing:'Carta no obtenida',error:'No se pudo mejorar la carta.',progress:'Mejorando…',next:'Siguiente nivel',others:'Otras copias:',short:'Falta {n} duplicado.',shortN:'Faltan {n} duplicados.'}};
+const labels={fr:{title:'Niveau de carte',level:'Niveau',copies:'ex.',dup:'doublons disponibles',cost:'doublon',costs:'doublons',upgrade:'Améliorer',max:'Niveau maximum',missing:'Carte non possédée',error:'Impossible de réaliser cette amélioration.',progress:'Amélioration en cours…',next:'Prochain niveau',others:'Autres exemplaires :',short:'Il manque {n} doublon.',shortN:'Il manque {n} doublons.',names:['Normale','Brillante','Prismatique','Prismatique arc-en-ciel'],gain:'Gagné : +{n} XP'},en:{title:'Card level',level:'Level',copies:'copies',dup:'duplicates available',cost:'duplicate',costs:'duplicates',upgrade:'Upgrade',max:'Maximum level',missing:'Card not owned',error:'Could not upgrade this card.',progress:'Upgrading…',next:'Next level',others:'Other copies:',short:'{n} more duplicate needed.',shortN:'{n} more duplicates needed.',names:['Normal','Shiny','Prismatic','Rainbow prismatic'],gain:'Earned: +{n} XP'},es:{title:'Nivel de carta',level:'Nivel',copies:'copias',dup:'duplicados disponibles',cost:'duplicado',costs:'duplicados',upgrade:'Mejorar',max:'Nivel máximo',missing:'Carta no obtenida',error:'No se pudo mejorar la carta.',progress:'Mejorando…',next:'Siguiente nivel',others:'Otras copias:',short:'Falta {n} duplicado.',shortN:'Faltan {n} duplicados.',names:['Normal','Brillante','Prismática','Prismática arcoíris'],gain:'Ganado: +{n} XP'}};
 const lang=()=>labels[(window.SAKU_I18N||{}).lang]||labels.en, cost=[1,2,4];let working=false;
+const XP={common:1,uncommon:2,rare:4,epic:6,legendary:10,mythic:25,special:50};
+function xpFor(id){let c=window.sakuMarket&&window.sakuMarket.card(id),r=c&&c.rarity;if(!r&&typeof cardPoolById!=='undefined'&&cardPoolById&&cardPoolById[String(id)])r=cardPoolById[String(id)].rarity;return XP[r]||1;}
 function buckets(state,id){state=state||{};id=String(id);let total=Math.max(0,Number((state.cards||{})[id])||0),v=(state.levels||{})[id]||{},out=[0,0,0,0],left=total;[3,2,1].forEach(l=>{let n=Math.max(0,Number(v[l])||0);n=Math.min(left,Math.floor(n));out[l]=n;left-=n;});out[0]=left;return out;}
 window.sakuCardLevelCounts=buckets;
 function safeText(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -14,9 +16,9 @@ function starBadge(level,opts){level=Math.max(0,Math.min(3,Number(level)||0));op
 window.sakuStarBadge=starBadge;
 function render(container,id){if(!container)return;const old=container.querySelector('.card-levels');if(old)old.remove();const w=lang(),info=levelInfo(cardState,id);let el=document.createElement('section');el.className='card-levels';el.innerHTML='<h3>'+safeText(w.title)+'</h3>';if(!info.total){el.insertAdjacentHTML('beforeend','<p class="card-level-muted">'+safeText(w.missing)+'</p>');container.appendChild(el);return;}
  const L=info.level,next=L+1;
- let head='<div class="card-level-current">'+starBadge(L,{always:true,cls:'saku-stars-lg'})+'<div><strong>'+safeText(w.level+' '+L)+'</strong><small>'+info.spare+' '+safeText(w.dup)+'</small></div></div>';
+ let head='<div class="card-level-current">'+starBadge(L,{always:true,cls:'saku-stars-lg'})+'<div><strong>'+safeText(w.level+' '+L+' · '+w.names[L])+'</strong><small>'+info.spare+' '+safeText(w.dup)+'</small></div></div>';
  el.insertAdjacentHTML('beforeend',head);
- if(L<3){const row=document.createElement('div');row.className='card-level-next';row.innerHTML='<p>'+safeText(w.next)+' '+starBadge(next,{always:true})+' <span>'+info.need+' '+safeText(info.need===1?w.cost:w.costs)+'</span></p>';
+ if(L<3){const row=document.createElement('div');row.className='card-level-next';row.innerHTML='<p>'+safeText(w.next)+' '+starBadge(next,{always:true})+' <span>'+info.need+' '+safeText(info.need===1?w.cost:w.costs)+'</span> <span class="card-level-xp">+'+xpFor(id)+' XP</span></p>';
   const btn=document.createElement('button');btn.type='button';btn.className='card-level-up';btn.textContent=working?w.progress:(w.upgrade+' → '+w.level+' '+next);btn.disabled=working||!info.canUpgrade;btn.addEventListener('click',e=>{e.stopPropagation();upgrade(id,L,container)});row.appendChild(btn);
   if(!info.canUpgrade&&!working)row.insertAdjacentHTML('beforeend','<small class="card-level-missing">'+safeText((info.need-info.spare===1?w.short:w.shortN).replace('{n}',String(info.need-info.spare)))+'</small>');el.appendChild(row);}
  else el.insertAdjacentHTML('beforeend','<p class="card-level-max">'+safeText(w.max)+'</p>');
@@ -30,7 +32,9 @@ async function upgrade(id,level,container){
  if(!actor||!window.sakuBackend){if(typeof showNotification==='function')showNotification('Connecte-toi pour améliorer cette carte.');return;}
  working=true;render(container,id);
  try{
-  await window.sakuBackend.upgradeCard(String(id),level);
+  const res=await window.sakuBackend.upgradeCard(String(id),level);
+  const gained=Number(res&&res.xp)||0;if(gained&&typeof showNotification==='function')showNotification(lang().gain.replace('{n}',String(gained)));
+  if(gained&&typeof window.sakuProgressRefresh==='function')window.sakuProgressRefresh();
   const state=await window.sakuBackend.gameCollection();if(window.sakuSecureUserId!==actor)return;
   cardState=cardNormalize(state);if(currentAccount)currentAccount.cards=cardNormalize(state);
   if(typeof cardsRenderStats==='function')cardsRenderStats();if(typeof cardsRenderAlbum==='function'&&document.getElementById('collectionScreen')?.classList.contains('active'))cardsRenderAlbum();
