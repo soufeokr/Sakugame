@@ -3,7 +3,7 @@
   const selector='#cardsDetail.show .ac-detail-card, #encDetail.show .enc-detail-card';
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   let active=null, frame=0, point=null;
-  function reset(card){if(!card)return;card.classList.remove('card-tilting');card.style.removeProperty('--tilt-x');card.style.removeProperty('--tilt-y');card.style.removeProperty('--glare-x');card.style.removeProperty('--glare-y');}
+  function reset(card){if(!card)return;const fin=card.querySelector('svg.card-finish');if(fin){fin.classList.remove('fin-tracking');fin.style.removeProperty('--fin-p');}card.classList.remove('card-tilting');card.style.removeProperty('--tilt-x');card.style.removeProperty('--tilt-y');card.style.removeProperty('--glare-x');card.style.removeProperty('--glare-y');}
   function stop(){if(frame)cancelAnimationFrame(frame);frame=0;point=null;reset(active);active=null;}
   document.addEventListener('pointermove',function(e){
     if(e.pointerType==='touch'||reduced.matches||document.documentElement.classList.contains('gfx-low')){if(active)stop();return;}
@@ -21,6 +21,8 @@
       active.style.setProperty('--glare-x',((x+1)*50).toFixed(1)+'%');
       active.style.setProperty('--glare-y',((y+1)*50).toFixed(1)+'%');
       active.classList.add('card-tilting');
+      // Effets de niveau (card-finish.js) : la lumière suit l'inclinaison de la carte.
+      const fin=active.querySelector('svg.card-finish');if(fin){fin.classList.add('fin-tracking');fin.style.setProperty('--fin-p',(.22+((x+1)/2*.7+(y+1)/2*.3)*.56).toFixed(3));}
     });
   },{passive:true});
   document.addEventListener('pointerout',function(e){if(active&&active.contains(e.target)&&!active.contains(e.relatedTarget))stop();},{passive:true});

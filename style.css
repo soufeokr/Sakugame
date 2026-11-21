@@ -4977,16 +4977,18 @@ body.anime-modal-open{overflow:hidden}
 }
 @media(max-width:360px){#bottomBar .top-bal{padding:4px 7px 4px 5px;gap:4px;font-size:.7rem}#bottomBar .username-change-btn{max-width:34vw!important}}
 
-/* Effets de carte par niveau (card-finish.js) : 1 Brillante, 2 Prismatique, 3 Prismatique arc-en-ciel — la carte ne change pas */
-.card-finish .fin-sheen{animation:fin-sweep 5.2s cubic-bezier(.45,.05,.35,1) infinite}
-.card-finish .fin-sheen-late{animation-delay:.55s}
-.card-finish .fin-holo{animation:fin-sweep 5.6s cubic-bezier(.45,.05,.35,1) infinite}
-.card-finish.finish-lv3 .fin-holo{animation-duration:4.8s}
-@keyframes fin-sweep{0%{transform:translateX(0)}60%,100%{transform:translateX(620px)}}
+/* Effets de carte par niveau (card-finish.js) : 1 Brillante, 2 Prismatique (cristal), 3 Prismatique arc-en-ciel — la carte ne change pas */
+@property --fin-p{syntax:'<number>';inherits:true;initial-value:0}
+.card-finish{animation:fin-cycle 5.6s cubic-bezier(.45,.05,.35,1) infinite}
+.card-finish.finish-lv1{animation-duration:5.2s}.card-finish.finish-lv3{animation-duration:4.8s}
+@keyframes fin-cycle{0%{--fin-p:0}60%,100%{--fin-p:1}}
+.card-finish .fin-sweep{transform:translateX(calc(var(--fin-p) * 640px))}
+.card-finish .fin-sweep-late{transform:translateX(calc((var(--fin-p) - .1) * 640px))}
+.card-finish.fin-tracking{animation:none}
 .card-finish .fin-spark{animation:fin-spark 3.2s ease-in-out infinite;opacity:0}
+.card-finish .fin-glint{animation:fin-glint 4.7s ease-in-out infinite;opacity:0}
+@keyframes fin-glint{0%,100%{opacity:0}6%{opacity:.9}14%{opacity:0}}
 @keyframes fin-spark{0%,100%{opacity:0;transform:scale(.2) rotate(0)}12%{opacity:1;transform:scale(1.15) rotate(25deg)}26%{opacity:0;transform:scale(.3) rotate(50deg)}}
-.card-finish .fin-flow{animation:fin-flow 8s ease-in-out infinite alternate}
-@keyframes fin-flow{from{transform:translate(0,0)}to{transform:translate(170px,240px)}}
 .card-finish .fin-glitter{animation:fin-glitter 1.6s steps(2) infinite}
 @keyframes fin-glitter{50%{opacity:.25}}
 .card-finish .fin-stars-2 .fin-star,.card-finish .fin-stars-3 .fin-star{animation:fin-star 2.8s ease-in-out infinite}
@@ -4994,6 +4996,6 @@ body.anime-modal-open{overflow:hidden}
 .card-finish .fin-stars-3{animation:fin-hue 4s linear infinite}
 @keyframes fin-hue{to{filter:hue-rotate(360deg)}}
 /* Vignettes : effets en pause, animés au survol ; mouvement réduit : tout figé */
-.card-finish.finish-mini .fin-anim,.card-finish.finish-mini .fin-stars-3{animation-play-state:paused}
-.card-finish.finish-mini:hover .fin-anim,:hover>.card-finish.finish-mini .fin-anim,:hover>*>.card-finish.finish-mini .fin-anim{animation-play-state:running}
-@media(prefers-reduced-motion:reduce){.card-finish .fin-anim,.card-finish .fin-stars-3{animation:none!important}}
+.card-finish.finish-mini,.card-finish.finish-mini .fin-anim,.card-finish.finish-mini .fin-stars-3{animation-play-state:paused}
+.card-finish.finish-mini:hover,:hover>.card-finish.finish-mini,:hover>*>.card-finish.finish-mini,.card-finish.finish-mini:hover .fin-anim,:hover>.card-finish.finish-mini .fin-anim,:hover>*>.card-finish.finish-mini .fin-anim{animation-play-state:running}
+@media(prefers-reduced-motion:reduce){.card-finish,.card-finish .fin-anim,.card-finish .fin-stars-3{animation:none!important}}
