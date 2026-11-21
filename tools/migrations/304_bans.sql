@@ -1,5 +1,5 @@
 -- 304 — Bannissement de comptes.
--- État : PAS ENCORE APPLIQUÉE sur la base (en attente de la confirmation du propriétaire).
+-- État : appliquée le 21/11/2026.
 -- • player_bans : liste des comptes bannis (motif, date).
 -- • Un compte banni ne peut plus se connecter (auth.users.banned_until), ses sessions sont fermées,
 --   et il disparaît de la recherche de joueurs et des vitrines publiques.
