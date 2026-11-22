@@ -34,7 +34,15 @@ window.sakuBasicCard=function(card,mini,settings){
   return window.sakuCardFinish&&settings.finish===true?window.sakuCardFinish(out,lev,mini):out;
 };
 window.sakuBasicBack=function(){return back.split('SCOPE').join('basicback'+(++serial));};
-var observer=typeof IntersectionObserver==='function' ? new IntersectionObserver(function(entries){entries.forEach(function(e){if(!e.isIntersecting)return; var im=e.target, src=im.getAttribute('data-saku-src'); if(src){im.setAttribute('href',src);im.removeAttribute('data-saku-src');} observer.unobserve(im);});},{rootMargin:'350px 0px'}) : null;
+/* Chargement différé des images des miniatures.
+   Safari (iOS) ne signale pas toujours l'entrée à l'écran d'un élément SVG : on observe donc l'élément HTML
+   qui contient la carte, puis on charge toutes ses images. L'adresse est aussi posée en xlink:href pour les
+   anciens Safari. */
+var XLINK='http://www.w3.org/1999/xlink', SVGNS='http://www.w3.org/2000/svg';
+function loadImg(im){var src=im.getAttribute('data-saku-src');if(!src)return;im.setAttribute('href',src);try{im.setAttributeNS(XLINK,'xlink:href',src);}catch(e){}im.removeAttribute('data-saku-src');}
+function hostOf(im){var e=im;while(e&&e.namespaceURI===SVGNS)e=e.parentNode;return e&&e.nodeType===1?e:null;}
+var observer=typeof IntersectionObserver==='function' ? new IntersectionObserver(function(entries){entries.forEach(function(e){if(!e.isIntersecting)return; var h=e.target; observer.unobserve(h); if(h.querySelectorAll)h.querySelectorAll('image[data-saku-src]').forEach(loadImg);});},{rootMargin:'350px 0px'}) : null;
+window.sakuLoadCardImage=loadImg;
 function fitVisibleNames(root){if(!root || !root.isConnected)return;
   root.querySelectorAll('.ac-tile.basic-rendered .basic-card-art .cname, .enc-slot.basic-rendered .basic-card-art .cname').forEach(function(text){
     try { var actual=text.getComputedTextLength(), size=parseFloat(text.style.fontSize)||30;
@@ -42,9 +50,9 @@ function fitVisibleNames(root){if(!root || !root.isConnected)return;
     } catch(e) {} // Hidden screens are fitted when their cards are shown.
   });
 }
-window.sakuBasicObserve=function(root){if(!root)return;root.querySelectorAll('image[data-saku-src]').forEach(function(im){if(observer)observer.observe(im);else{im.setAttribute('href',im.getAttribute('data-saku-src'));im.removeAttribute('data-saku-src');}});
+window.sakuBasicObserve=function(root){if(!root)return;root.querySelectorAll('image[data-saku-src]').forEach(function(im){var h=observer&&hostOf(im);if(h)observer.observe(h);else loadImg(im);});
   if(typeof requestAnimationFrame==='function') requestAnimationFrame(function(){fitVisibleNames(root);});
 };
 if(typeof document!=='undefined' && document.fonts && document.fonts.ready) document.fonts.ready.then(function(){fitVisibleNames(document.body);});
-window.sakuBasicRelease=function(root){if(observer&&root)root.querySelectorAll('image[data-saku-src]').forEach(function(im){observer.unobserve(im);});};
+window.sakuBasicRelease=function(root){if(observer&&root)root.querySelectorAll('image[data-saku-src]').forEach(function(im){var h=hostOf(im);if(h)observer.unobserve(h);});};
 })();

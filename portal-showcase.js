@@ -15,7 +15,7 @@
       box.innerHTML='';cards.forEach(function(c){
         let el=document.createElement('div');el.className='machine-showcase-card';el.dataset.cardId=String(c.id);el.dataset.rarity=c.rarity;
         el.innerHTML=c.rarity==='special'&&window.sakuStrongestCard?window.sakuStrongestCard(c.card,true):window.sakuBasicCard(c.card,true,{series:c.series,image:c.image});
-        el.querySelectorAll('image[data-saku-src]').forEach(im=>{im.setAttribute('href',im.getAttribute('data-saku-src'));im.removeAttribute('data-saku-src');});
+        el.querySelectorAll('image[data-saku-src]').forEach(im=>{if(window.sakuLoadCardImage)window.sakuLoadCardImage(im);else{im.setAttribute('href',im.getAttribute('data-saku-src'));im.removeAttribute('data-saku-src');}});
         box.appendChild(el);
       });
     });

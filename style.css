@@ -5378,3 +5378,6 @@ html.motion-reduce .showcase-order-item.is-swap-target{transition:none}
 /* b316 : photos de profil dans le classement */
 .lb-avatar{position:relative;overflow:hidden}
 .lb-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+/* b320 — iOS : plus de zoom quand on touche deux fois vite (invocations, boutons…). Le zoom à deux doigts reste
+   possible ; les zones qui ont leur propre touch-action (carrousels, glisser-déposer) la gardent. */
+:where(*){touch-action:manipulation}
