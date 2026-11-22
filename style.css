@@ -5263,9 +5263,12 @@ html.motion-reduce .showcase-order-item.is-swap-target{transition:none}
 .portal-tab.is-closed{opacity:.6}
 /* b311: accueil — plus de grand titre « Jeu de cartes », le contenu remonte */
 /* b312 : on garde seulement le petit « SAKUGAME / CARDS » entre les jeux et les cartes */
-body:not(.mobile-cards-home) #homepageScreen .card-home{margin-top:22px}
-body:not(.mobile-cards-home) #homepageScreen .card-home-head{margin-bottom:12px}
-body:not(.mobile-cards-home) #homepageScreen .card-home-head :is(h1,p){display:none}
+/* b318 : réglé par la largeur d'écran (la classe mobile-cards-home peut rester posée sur ordinateur après une visite d'un menu des cartes) */
+@media(min-width:901px){
+#homepageScreen .card-home{margin-top:22px}
+#homepageScreen .card-home-head{margin-bottom:12px}
+#homepageScreen .card-home-head :is(h1,p){display:none}
+}
 /* b283 — Parrainage : page Paramètres › Parrainage */
 .ref-content{display:grid;gap:16px}
 .ref-icon{background:rgba(240,181,77,.14)!important;color:#f3c66b!important}
