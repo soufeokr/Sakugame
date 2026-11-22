@@ -18,7 +18,7 @@
 
   /* Synchronisation avec le serveur (profile_data_get / profile_data_set) : ces réglages suivent le compte
      sur tous les appareils. Le reste (session, cache Discord) reste propre à ce navigateur. */
-  var SYNC_KEYS = ['name', 'anilist', 'avatar', 'watchStatuses', 'wins', 'losses', 'uWins', 'uLosses', 'createdAt'];
+  var SYNC_KEYS = ['name', 'anilist', 'avatar', 'watchStatuses', 'wins', 'losses', 'uWins', 'uLosses', 'createdAt', 'epoch'];
   var COUNTERS = ['wins', 'losses', 'uWins', 'uLosses'];
   var syncId = null, lastSent = '', pushTimer = 0;
   function pick(v) {
@@ -30,7 +30,7 @@
   function merge(local, server) {
     var out = pick(local), s = pick(server);
     Object.keys(s).forEach(function (k) {
-      if (COUNTERS.indexOf(k) >= 0) out[k] = Math.max(Number(out[k]) || 0, Number(s[k]) || 0);
+      if (COUNTERS.indexOf(k) >= 0 || k === 'epoch') out[k] = Math.max(Number(out[k]) || 0, Number(s[k]) || 0);
       else if (k === 'createdAt') out[k] = out[k] ? Math.min(Number(out[k]) || s[k], Number(s[k]) || out[k]) : s[k];
       else out[k] = s[k];
     });
@@ -53,7 +53,11 @@
   window.sakuProfileSync = function (id, server) {
     id = String(id || '');
     if (!id) return {};
-    var local = load(id), merged = merge(local, server || {});
+    var local = load(id);
+    // Remise à zéro côté serveur (lancement de la 1.0, époque 1) : les compteurs locaux plus anciens sont effacés.
+    var se = Number((server || {}).epoch) || 0;
+    if (se > (Number(local.epoch) || 0)) { COUNTERS.forEach(function (k) { delete local[k]; }); local.epoch = se; }
+    var merged = merge(local, server || {});
     var next = Object.assign({}, local, merged);
     try { localStorage.setItem(PREFIX + id, JSON.stringify(next)); } catch (e) {}
     syncId = id;
