@@ -38,6 +38,7 @@
   }
 
   function clear() {
+    if (window.sakuProfileSyncStop) window.sakuProfileSyncStop();
     window.sakuSecureUserId = null;
     window.sakuSecureCoins = null;
     currentAccount = null;
@@ -87,6 +88,10 @@
     var res = await Promise.all([window.sakuBackend.gameCollection(), window.sakuBackend.wallet()]);
     if (run !== sequence) return;
     var store = window.sakuLocalAccountRef(user.id);
+    var server = null;
+    try { server = await rpc('profile_data_get'); } catch (e) { warn(e); }
+    if (run !== sequence) return;
+    if (window.sakuProfileSync) window.sakuProfileSync(user.id, server && typeof server === 'object' ? server : {});
     var local = (await store.once('value')).val() || {};
     var name = metaName(user), avatar = metaAvatar(user);
     var dc = { id: user.id, username: name, globalName: name, avatar: avatar, linkedAt: Date.now() };

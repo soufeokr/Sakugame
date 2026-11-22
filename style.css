@@ -5223,3 +5223,9 @@ input::placeholder{text-overflow:ellipsis}
  .showcase-modal-body .showcase-choices{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 }
 @media(max-width:360px){.showcase-modal-body .showcase-choices{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* b309 — vitrine : échange de deux cartes par glisser-déposer */
+.showcase-order-item.is-swap-target{box-shadow:0 0 0 3px var(--show-accent,#9fd8ff),0 0 22px color-mix(in srgb,var(--show-accent,#9fd8ff) 45%,transparent);transform:scale(.94);transition:transform .12s ease,box-shadow .12s ease}
+.showcase-order-item.is-swap-target::after{content:'⇄';position:absolute;inset:0;display:grid;place-items:center;border-radius:11px;background:#050b1866;color:#fff;font:900 1.6rem/1 system-ui,sans-serif;pointer-events:none}
+body.showcase-dragging,body.showcase-dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
+.showcase-order-ghost{transition:none}
+html.motion-reduce .showcase-order-item.is-swap-target{transition:none}

@@ -629,6 +629,8 @@ var I18N = {
   "Cinema summoning machine": { fr: "Distributeur d’invocation Cinéma", es: "Máquina de invocación Cine" },
   "Friends": { fr: "Amis", es: "Amigos" },
   "Graphics": { fr: "Graphisme", es: "Gráficos" },
+  "Drag a card onto another one to swap them.": { fr: "Fais glisser une carte sur une autre pour les échanger.", es: "Arrastra una carta sobre otra para intercambiarlas." },
+  "Tap a card to move or remove it, or press it briefly and drag it onto another to swap them.": { fr: "Touche une carte pour la déplacer ou la retirer, ou appuie dessus puis fais-la glisser sur une autre pour les échanger.", es: "Toca una carta para moverla o quitarla, o mantenla pulsada y arrástrala sobre otra para intercambiarlas." },
   "Tap a card to move or remove it, or press and hold to drag it.": { fr: "Touche une carte pour la déplacer ou la retirer, ou reste appuyé pour la faire glisser.", es: "Toca una carta para moverla o quitarla, o mantenla pulsada para arrastrarla." },
   "Leaderboard": { fr: "Classement", es: "Clasificación" },
   "The best Sakugame players.": { fr: "Les meilleurs joueurs de Sakugame.", es: "Los mejores jugadores de Sakugame." },

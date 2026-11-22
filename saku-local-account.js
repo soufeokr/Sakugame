@@ -14,7 +14,54 @@
       return v && typeof v === 'object' && !Array.isArray(v) ? v : {};
     } catch (e) { return {}; }
   }
-  function save(id, v) { try { localStorage.setItem(PREFIX + id, JSON.stringify(v)); } catch (e) {} }
+  function save(id, v) { try { localStorage.setItem(PREFIX + id, JSON.stringify(v)); } catch (e) {} schedulePush(id, v); }
+
+  /* Synchronisation avec le serveur (profile_data_get / profile_data_set) : ces réglages suivent le compte
+     sur tous les appareils. Le reste (session, cache Discord) reste propre à ce navigateur. */
+  var SYNC_KEYS = ['name', 'anilist', 'avatar', 'watchStatuses', 'wins', 'losses', 'uWins', 'uLosses', 'createdAt'];
+  var COUNTERS = ['wins', 'losses', 'uWins', 'uLosses'];
+  var syncId = null, lastSent = '', pushTimer = 0;
+  function pick(v) {
+    var o = {};
+    if (!v || typeof v !== 'object') return o;
+    SYNC_KEYS.forEach(function (k) { if (v[k] !== undefined && v[k] !== null && v[k] !== '') o[k] = v[k]; });
+    return o;
+  }
+  function merge(local, server) {
+    var out = pick(local), s = pick(server);
+    Object.keys(s).forEach(function (k) {
+      if (COUNTERS.indexOf(k) >= 0) out[k] = Math.max(Number(out[k]) || 0, Number(s[k]) || 0);
+      else if (k === 'createdAt') out[k] = out[k] ? Math.min(Number(out[k]) || s[k], Number(s[k]) || out[k]) : s[k];
+      else out[k] = s[k];
+    });
+    return out;
+  }
+  function push(id) {
+    if (!syncId || id !== syncId || id !== window.sakuSecureUserId || !window.sakuRpc) return;
+    var data = pick(load(id)), body = JSON.stringify(data);
+    if (body === lastSent) return;
+    lastSent = body;
+    window.sakuRpc('profile_data_set', { p_data: data }).catch(function () { lastSent = ''; });
+  }
+  function schedulePush(id, v) {
+    if (!syncId || String(id) !== syncId) return;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () { push(String(id)); }, 600);
+  }
+  // À la connexion : fusionne le profil du serveur avec celui du navigateur, garde le résultat ici
+  // et le renvoie au serveur s'il apporte quelque chose de nouveau. Renvoie le profil fusionné.
+  window.sakuProfileSync = function (id, server) {
+    id = String(id || '');
+    if (!id) return {};
+    var local = load(id), merged = merge(local, server || {});
+    var next = Object.assign({}, local, merged);
+    try { localStorage.setItem(PREFIX + id, JSON.stringify(next)); } catch (e) {}
+    syncId = id;
+    lastSent = JSON.stringify(pick(server || {}));
+    push(id);
+    return next;
+  };
+  window.sakuProfileSyncStop = function () { syncId = null; lastSent = ''; clearTimeout(pushTimer); };
   function clone(v) { return v === undefined ? undefined : JSON.parse(JSON.stringify(v)); }
   function snap(v) {
     var c = clone(v);
