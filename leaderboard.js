@@ -24,13 +24,15 @@ function unit(n){if(section==='games')return L3(n>1?'victoires':'victoire',n===1
  return coll==='cards'?L3(n>1?'cartes':'carte',n===1?'card':'cards',n===1?'carta':'cartas'):coll==='mythic'?L3(n>1?'mythiques':'mythique',n===1?'mythic':'mythics',n===1?'mítica':'míticas'):L3(n>1?'spéciales':'spéciale',n===1?'special':'specials',n===1?'especial':'especiales');}
 function sub(r){return section==='games'&&r.games!=null?nf(r.games)+' '+L3(r.games>1?'parties':'partie',r.games===1?'game':'games',r.games===1?'partida':'partidas'):'';}
 function initial(n){const s=String(n||'?').trim();return esc((s[0]||'?').toUpperCase());}
+// Photo de profil (https uniquement) par-dessus l'initiale ; si l'image ne charge pas, l'initiale reste visible.
+function face(r){const u=String(r&&r.avatar||'');return initial(r&&r.name)+(/^https:\/\/[^\s"'<>]+$/i.test(u)?'<img src="'+esc(u)+'" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">':'');}
 function nameBtn(r,cls){return '<button type="button" class="lb-name '+(cls||'')+'" data-id="'+esc(r.id)+'" title="'+esc(L3('Voir la vitrine','View showcase','Ver la vitrina'))+'" data-noi18n>'+esc(r.name)+'</button>';}
 function podium(top){
  const order=[top[1],top[0],top[2]];
  return '<div class="lb-podium">'+order.map((r,i)=>{if(!r)return '<div class="lb-pod lb-pod-empty" aria-hidden="true"></div>';const place=[2,1,3][i];
-  return '<div class="lb-pod lb-pod-'+place+(r.me?' is-me':'')+'"><span class="lb-medal">'+r.rank+'</span><span class="lb-avatar">'+initial(r.name)+'</span>'+nameBtn(r)+'<b class="lb-val">'+nf(r.value)+'</b><small>'+esc(unit(r.value))+'</small></div>';}).join('')+'</div>';
+  return '<div class="lb-pod lb-pod-'+place+(r.me?' is-me':'')+'"><span class="lb-medal">'+r.rank+'</span><span class="lb-avatar">'+face(r)+'</span>'+nameBtn(r)+'<b class="lb-val">'+nf(r.value)+'</b><small>'+esc(unit(r.value))+'</small></div>';}).join('')+'</div>';
 }
-function row(r){return '<li class="lb-row'+(r.me?' is-me':'')+'"><span class="lb-rank">'+r.rank+'</span><span class="lb-avatar sm">'+initial(r.name)+'</span>'+nameBtn(r)+'<span class="lb-score"><span><b>'+nf(r.value)+'</b> '+esc(unit(r.value))+'</span>'+(sub(r)?'<small>'+esc(sub(r))+'</small>':'')+'</span></li>';}
+function row(r){return '<li class="lb-row'+(r.me?' is-me':'')+'"><span class="lb-rank">'+r.rank+'</span><span class="lb-avatar sm">'+face(r)+'</span>'+nameBtn(r)+'<span class="lb-score"><span><b>'+nf(r.value)+'</b> '+esc(unit(r.value))+'</span>'+(sub(r)?'<small>'+esc(sub(r))+'</small>':'')+'</span></li>';}
 function board(){
  const c=cache[key()];
  if(!c||c.loading&&!c.data)return '<div class="lb-state">'+esc(L3('Chargement du classement…','Loading leaderboard…','Cargando clasificación…'))+'</div>';

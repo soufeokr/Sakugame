@@ -5372,3 +5372,6 @@ body:not(.mobile-cards-home) #homepageScreen .card-home-head :is(h1,p){display:n
 /* b315 : la vitrine ne défile plus quand une carte s'agrandit au survol */
 #showcaseScreen .showcase-cards-wrap{overflow:visible}
 #showcaseScreen .showcase-cards{min-width:0}
+/* b316 : photos de profil dans le classement */
+.lb-avatar{position:relative;overflow:hidden}
+.lb-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
