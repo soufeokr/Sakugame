@@ -29,9 +29,12 @@
   const REWARDS = {
     bonus_draws: n => fmt('{n} bonus free draws', n),
     coins: n => num(n) + ' ' + tr('coins'),
+    mythic_pack: () => tr('Guaranteed mythic'),
     summon_gem: () => tr('Summoning gem')
   };
-  const REWARD_ICONS = {bonus_draws: 'i-cards', coins: 'i-market', summon_gem: 'i-crown'};
+  const REWARD_NOTES = {mythic_pack: 'In your next booster', summon_gem: 'Opens the special grimoire'};
+  const REWARD_ICONS = {bonus_draws: 'i-cards', coins: 'i-market', mythic_pack: 'i-crown'};
+  const GEM_SVG = '<svg class="ref-gem" viewBox="-50 -50 100 100" aria-hidden="true"><polygon points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="#7a3fd0"/><polygon points="0,-44 38,-22 17,-10 0,-20 -17,-10 -38,-22" fill="#e6ccff"/><polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="#b17cf0"/></svg>';
   let status = null, uid = null, busy = false, loading = false, failed = false;
 
   function errCode(e) { const m = String((e && e.message) || ''); return Object.keys(ERRORS).find(k => m.indexOf(k) >= 0) || ''; }
@@ -56,6 +59,7 @@
     if (!s) return;
     if (window.sakuPortalBonusDraws) window.sakuPortalBonusDraws(s.bonus_draws);
     if (window.sakuPlayerRefreshDraws) window.sakuPlayerRefreshDraws();
+    if (window.sakuPortalRefreshGems) window.sakuPortalRefreshGems();
   }
 
   async function load() {
@@ -160,9 +164,9 @@
         const st = x.claimed ? 'claimed' : x.ready ? 'ready' : 'locked';
         return '<li class="ref-tier is-' + st + '">' +
           '<span class="ref-tier-goal">' + esc(fmt(x.goal === 1 ? '{n} referral' : '{n} referrals', x.goal)) + '</span>' +
-          '<span class="ref-tier-ico">' + (x.reward === 'coins' ? '<img src="summon-machines/coin.svg" alt="">' : ic(REWARD_ICONS[x.reward] || 'i-star')) + '</span>' +
+          '<span class="ref-tier-ico">' + (x.reward === 'coins' ? '<img src="summon-machines/coin.svg" alt="">' : x.reward === 'summon_gem' ? GEM_SVG : ic(REWARD_ICONS[x.reward] || 'i-star')) + '</span>' +
           '<span class="ref-tier-reward">' + esc(REWARDS[x.reward] ? REWARDS[x.reward](x.amount) : x.reward) +
-            (x.reward === 'summon_gem' ? '<small>' + tr('Opens the special grimoire') + '</small>' : '') + '</span>' +
+            (REWARD_NOTES[x.reward] ? '<small>' + tr(REWARD_NOTES[x.reward]) + '</small>' : '') + '</span>' +
           (st === 'ready' ? '<button type="button" class="ref-claim" ' + (busy ? 'disabled' : '') + ' onclick="sakuReferralClaim(' + Number(x.goal) + ')">' + tr('Claim') + '</button>'
             : st === 'claimed' ? '<span class="ref-tier-state">' + ic('i-check') + tr('Claimed') + '</span>'
             : '<span class="ref-tier-state">' + esc(fmt('{n} more', x.goal - n)) + '</span>') +

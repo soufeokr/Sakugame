@@ -125,7 +125,13 @@
   function freeLine(){
     const w=get(),fc=freeCount();if(!signed())return '';
     const next=window.sakuPortalFreeNext?window.sakuPortalFreeNext():0,refill=next&&next>Date.now()?' · <span class="pp-refill" data-next="'+next+'">'+esc(w.refill.replace('{t}',timeLeft(next-Date.now())))+'</span>':'';
-    return '<p class="pp-free'+(fc?' has-free':'')+'">'+ic('i-sparkle')+'<span>'+esc(fc?(fc===1?w.freeNote1:w.freeNote.replace('{n}',fc)):w.noFree)+refill+'</span></p>';
+    return '<p class="pp-free'+(fc?' has-free':'')+'">'+ic('i-sparkle')+'<span>'+esc(fc?(fc===1?w.freeNote1:w.freeNote.replace('{n}',fc)):w.noFree)+refill+'</span></p>'+mythicLine();
+  }
+  // Mythique garanti (récompense de parrainage) : rappel tant qu'il n'a pas été utilisé.
+  function mythicLine(){
+    const n=window.sakuPortalMythicPacks?window.sakuPortalMythicPacks():0;if(!signed()||!(n>0))return '';
+    const T=typeof t==='function'?t:x=>x;
+    return '<p class="pp-free pp-mythic">'+ic('i-crown')+'<span>'+esc(T('Your next booster contains a guaranteed mythic.'))+'</span></p>';
   }
   function gemCount(){return window.sakuPortalGems?window.sakuPortalGems():null;}
   function gemBlock(){

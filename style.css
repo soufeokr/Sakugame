@@ -5331,3 +5331,9 @@ body:not(.mobile-cards-home) #homepageScreen .card-home-head :is(h1,p){display:n
   .ref-link-row button{flex:1;justify-content:center}
   .ref-stat b{font-size:1.3rem}
 }
+/* b313 : parrainage à 5 paliers, icône de gemme, rappel du mythique garanti */
+.ref-tiers{grid-template-columns:repeat(5,minmax(0,1fr))}
+.ref-tier-ico .ref-gem{width:26px;height:26px}
+@media(max-width:900px){.ref-tiers{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.ref-tiers{grid-template-columns:repeat(2,minmax(0,1fr))}.ref-tiers>li:last-child:nth-child(odd){grid-column:1/-1}}
+.pp-free.pp-mythic{color:#f3d9ff}.pp-free.pp-mythic .ic{color:#e7baff}

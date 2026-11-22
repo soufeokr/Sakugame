@@ -11,10 +11,10 @@ function applyFreeStatus(s){if(!s)return;const n=Number(s.available),b=Number(s.
 window.sakuPortalFreeCount=()=>uid()?freeDraws+bonusDraws:0;
 window.sakuPortalBonusDraws=n=>{n=Number(n);if(Number.isFinite(n)){bonusDraws=Math.max(0,Math.floor(n));updateFreeArtwork();refreshDashboard();}};
 // Gemmes d'invocation (grimoire spécial) : lues sur le serveur, jamais calculées côté client.
-let gems=0,gemsUser=null;
+let gems=0,gemsUser=null,mythicPacks=0;
 function setGems(n){gems=Math.max(0,Number(n)||0);const pill=document.getElementById('topBalGems'),val=document.getElementById('topBalGemsVal');if(val)val.textContent=String(gems);if(pill)pill.hidden=!uid()||gems<1;refreshDashboard();}
-async function refreshGems(){if(!window.sakuBackend||!window.sakuBackend.inventory||!uid()){gemsUser=null;setGems(0);return gems}const who=uid();const inv=await window.sakuBackend.inventory();if(who!==uid())return gems;gemsUser=who;setGems(inv&&inv.summon_gem);return gems}
-window.sakuPortalGems=()=>uid()?gems:null;window.sakuPortalRefreshGems=()=>refreshGems().catch(()=>{});
+async function refreshGems(){if(!window.sakuBackend||!window.sakuBackend.inventory||!uid()){gemsUser=null;setGems(0);return gems}const who=uid();const inv=await window.sakuBackend.inventory();if(who!==uid())return gems;gemsUser=who;mythicPacks=Math.max(0,Number(inv&&inv.mythic_pack)||0);setGems(inv&&inv.summon_gem);return gems}
+window.sakuPortalGems=()=>uid()?gems:null;window.sakuPortalMythicPacks=()=>uid()?mythicPacks:0;window.sakuPortalRefreshGems=()=>refreshGems().catch(()=>{});
 setInterval(()=>{if((uid()||null)!==gemsUser)refreshGems().catch(()=>{});},4000);
 let freeNextAt=0;window.sakuPortalFreeNext=()=>freeNextAt;
 async function refreshFreeStatus(){if(!window.sakuBackend||!uid())return;const s=await window.sakuBackend.freeDrawStatus();const sec=Number(s&&s.next_seconds);freeNextAt=Number.isFinite(sec)&&sec>0?Date.now()+sec*1000:0;applyFreeStatus(s);return s}
@@ -128,6 +128,7 @@ async function buy(i,n){
   if(!(await confirmBuy(i,n)))return;if(who!==uid())return;
   const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
   if(result.portal==='gem'&&Number.isInteger(Number(result.gems)))setGems(Number(result.gems));
+  if(result.mythic_guaranteed===true){mythicPacks=Math.max(0,mythicPacks-1);refreshDashboard();}
   if(Number.isInteger(result.bonus_remaining))bonusDraws=Math.max(0,result.bonus_remaining);if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
   await refreshFreeStatus();
   if(window.sakuPlayerRefreshDraws)window.sakuPlayerRefreshDraws();
