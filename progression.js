@@ -111,14 +111,14 @@
   function sortTracks(list) {
     return list.sort((a, b) => (b.ready - a.ready) || (a.done - b.done) || (b.score - a.score)).map(track).join('');
   }
-  function milestoneTrack(q, cs) {
+  function milestoneTrack(q, cs, noPips) {
     const name = COLLECTION_NAMES[q.id] || q.id, tier = safe(q.tier), len = Math.max(1, safe(q.tiers)), pct = !!q.percent,
       n = Number(q.value) || 0, goal = Math.max(1, safe(q.goal));
     const body = pct
       ? '<div class="qx-meter-line"><div class="quest-meter"><span style="width:' + Math.min(100, Math.floor(n / goal * 100)) + '%"></span></div><span class="qx-count">' +
         (Math.floor(Math.min(n, goal) * 10) / 10) + '% / ' + goal + '%</span></div><small class="qx-sub">' + num(cs.owned) + ' / ' + num(cs.total) + ' ' + tr('cards') + '</small>'
       : meter(Math.floor(n), goal);
-    return {title: esc(tr(name)), ico: icon(QUEST_ICONS[q.id] || 'i-cards'), pips: pips(tier, len), body, done: !!q.done, ready: !!q.ready,
+    return {title: esc(tr(name)), ico: icon(QUEST_ICONS[q.id] || 'i-cards'), pips: noPips ? '' : pips(tier, len), body, done: !!q.done, ready: !!q.ready,
       coins: q.reward, score: q.done ? 0 : Math.min(1, n / goal), onclick: "sakuClaimCollectionQuest('" + q.id + "'," + tier + ")"};
   }
   function panelDaily(s) {
@@ -145,7 +145,7 @@
   }
   function panelCollection(s) {
     const cs = s.collection || {};
-    return sortTracks((s.collection_quests || []).concat((s.milestone_quests || []).filter(q => q.id !== 'explorer')).map(q => milestoneTrack(q, cs)));
+    return sortTracks((s.collection_quests || []).concat((s.milestone_quests || []).filter(q => q.id !== 'explorer')).map(q => milestoneTrack(q, cs, true)));
   }
   const TAB_INFO = {
     daily: ['Four quick quests, renewed every day.', false,

@@ -5369,3 +5369,6 @@ body:not(.mobile-cards-home) #homepageScreen .card-home-head :is(h1,p){display:n
 .ln-actions button:hover{filter:brightness(1.06);transform:none}
 .ln-actions button:focus-visible,.ln-x:focus-visible{outline:2px solid #a7dbf7;outline-offset:2px}
 @media(max-width:560px){.ln-dialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0;border:0}.ln-shell{max-height:100dvh;padding:22px 16px calc(18px + env(safe-area-inset-bottom))}.ln-actions{grid-template-columns:1fr}.ln-actions .ln-ok{order:-1}}
+/* b315 : la vitrine ne défile plus quand une carte s'agrandit au survol */
+#showcaseScreen .showcase-cards-wrap{overflow:visible}
+#showcaseScreen .showcase-cards{min-width:0}
