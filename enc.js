@@ -340,19 +340,41 @@ function encGroupCover(g) {
 }
 function encGroupBody(sec, v) {
   const body = sec.querySelector('.enc-anime-body');
-  if (window.sakuBasicRelease) window.sakuBasicRelease(body);
+  if (window.sakuBasicRelease) window.sakuBasicRelease(body); encReleaseSlots(body);
   const main = v.g.cards.filter(c => !encIsSpecial(c));
   const head = { label: v.g.label, from: main.length ? Math.min.apply(null, main.map(c => c.n)) : 0, to: main.length ? Math.max.apply(null, main.map(c => c.n)) : 0 };
   const rar = {}; v.cards.forEach(c => { rar[c.r] = (rar[c.r] || 0) + 1; });
   body.innerHTML = encBlockHeadHtml(head, { rar: rar, from: head.from, to: head.to }) + '<div class="enc-grid"></div>';
-  const holder = body.querySelector('.enc-grid'), tmp = document.createElement('div');
+  const holder = body.querySelector('.enc-grid'), frag = document.createDocumentFragment();
   v.cards.forEach(card => {
-    tmp.innerHTML = encSlotHtml(card);
-    if (window.sakuAppendWishlist) window.sakuAppendWishlist(tmp.firstElementChild, String(card.i));
-    holder.appendChild(tmp.firstElementChild);
+    const ph = document.createElement('div');
+    ph.className = 'enc-slot enc-slot-pending'; ph.dataset.encCard = String(card.n); ph.title = card.m;
+    ph.setAttribute('role', 'button'); ph.tabIndex = 0;
+    ENC_PENDING.set(ph, card); frag.appendChild(ph);
+    if (ENC_IO) ENC_IO.observe(ph);
   });
-  if (window.sakuBasicObserve) window.sakuBasicObserve(body);
+  holder.appendChild(frag);
+  if (!ENC_IO) holder.querySelectorAll('.enc-slot-pending').forEach(encFillSlot);
 }
+/* Une carte complète, c'est une centaine d'éléments SVG : on ne dessine que celles qui approchent de l'écran
+   (avant, ouvrir un gros animé ou « Tout déplier » créait des dizaines de milliers d'éléments d'un coup). */
+const ENC_PENDING = new WeakMap();
+function encReleaseSlots(root) { if (ENC_IO && root) root.querySelectorAll('.enc-slot-pending').forEach(ph => ENC_IO.unobserve(ph)); }
+function encFillSlot(ph) {
+  const card = ENC_PENDING.get(ph); if (!card || !ph.isConnected) return;
+  ENC_PENDING.delete(ph); if (ENC_IO) ENC_IO.unobserve(ph);
+  const tmp = document.createElement('div'); tmp.innerHTML = encSlotHtml(card);
+  const el = tmp.firstElementChild;
+  if (window.sakuAppendWishlist) window.sakuAppendWishlist(el, String(card.i));
+  ph.replaceWith(el);
+  if (window.sakuBasicObserve) window.sakuBasicObserve(el);
+}
+const ENC_IO = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+  const hits = entries.filter(e => e.isIntersecting).map(e => e.target);
+  // par petits paquets, pour que le défilement reste fluide
+  const step = () => { hits.splice(0, 24).forEach(encFillSlot); if (hits.length) requestAnimationFrame(step); };
+  if (hits.length) step();
+}, { rootMargin: '600px 0px' }) : null;
 function encGroupEl(v) {
   const open = encOpenSet.has(v.g.label), cover = encGroupCover(v.g), total = v.g.cards.length;
   const sec = document.createElement('section');
@@ -376,8 +398,9 @@ function encToggleGroup(sec) {
   const open = !sec.classList.contains('open');
   sec.classList.toggle('open', open);
   sec.querySelector('.enc-anime-head').setAttribute('aria-expanded', open ? 'true' : 'false');
+  encAutoOpen.delete(v.g.label);
   if (open) { encOpenSet.add(v.g.label); encGroupBody(sec, v); }
-  else { encOpenSet.delete(v.g.label); const body = sec.querySelector('.enc-anime-body'); if (window.sakuBasicRelease) window.sakuBasicRelease(body); body.innerHTML = ''; }
+  else { encOpenSet.delete(v.g.label); const body = sec.querySelector('.enc-anime-body'); if (window.sakuBasicRelease) window.sakuBasicRelease(body); encReleaseSlots(body); body.innerHTML = ''; }
   encSyncExpandAll();
 }
 function encSyncExpandAll() {
@@ -391,11 +414,12 @@ function encExpandAll() {
   shown.forEach(v => { if (allOpen) encOpenSet.delete(v.g.label); else encOpenSet.add(v.g.label); });
   const keep = encGroupShown; encRender(true, keep);
 }
+const encAutoOpen = new Set();   // animés dépliés par la recherche (refermés quand elle change)
 function encRender(reset, keepCount) {
   const grid = document.getElementById('encBinder');
   if (!grid || !encData) return;
   if (!encGroups.length) encBuildGroups();
-  if (reset) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); encGroupShown = 0; encBlockEls = {}; grid.innerHTML = ''; }
+  if (reset) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); encReleaseSlots(grid); encGroupShown = 0; encBlockEls = {}; grid.innerHTML = ''; }
   const vis = encVisibleGroups(); encLastVisible = vis;
   grid.classList.add('enc-anime-grid');
   if (!vis.length) {
@@ -405,7 +429,7 @@ function encRender(reset, keepCount) {
     const stale = grid.querySelector('.enc-empty'); if (stale) stale.remove();
     const q = encQuery.trim();
     // Une recherche déplie d'elle-même les premiers animés trouvés par un personnage.
-    if (reset && q) vis.slice(0, 6).forEach(v => { if (!v.labelHit || vis.length <= 3) encOpenSet.add(v.g.label); });
+    if (reset && q) vis.slice(0, 6).forEach(v => { if ((!v.labelHit || vis.length <= 3) && !encOpenSet.has(v.g.label)) { encOpenSet.add(v.g.label); encAutoOpen.add(v.g.label); } });
     const target = Math.min(vis.length, Math.max(encGroupShown + ENC_GROUP_STEP, keepCount || 0));
     for (let k = encGroupShown; k < target; k++) { const el = encGroupEl(vis[k]); grid.appendChild(el); encBlockEls[vis[k].gi] = el; }
     encGroupShown = target;
@@ -448,7 +472,9 @@ function encRarPickerHtml(card) {
 }
 
 let encDetailFocus=null;
+const ENC_DETAIL_WORDS={fr:{label:'CARTE / ENCYCLOPÉDIE',universe:'Univers',rarity:'Rareté',edition:'Édition',number:'Numéro',copies:'Dans ta collection',owned:'Possédée',missing:'Pas encore obtenue',close:'Fermer',rank:'Classement AniList',ordinary:'Classique',view:'Voir sur AniList',also:'Aussi appelé'},en:{label:'CARD / ENCYCLOPEDIA',universe:'Universe',rarity:'Rarity',edition:'Edition',number:'Number',copies:'In your collection',owned:'Owned',missing:'Not yet owned',close:'Close',rank:'AniList rank',ordinary:'Basic',view:'View on AniList',also:'Also known as'},es:{label:'CARTA / ENCICLOPEDIA',universe:'Universo',rarity:'Rareza',edition:'Edición',number:'Número',copies:'En tu colección',owned:'En posesión',missing:'Aún no conseguida',close:'Cerrar',rank:'Clasificación AniList',ordinary:'Básica',view:'Ver en AniList',also:'También llamado'}};
 function encOpenCard(n) {
+  const w=ENC_DETAIL_WORDS[((window.SAKU_I18N||{}).lang)||'en']||ENC_DETAIL_WORDS.en;
   if(!encFlat)return;const found=encFlat.find(x=>x.card.n===n);if(!found)return;
   const card=found.card,block=found.block,box=document.getElementById('encDetail');if(!box)return;
   if(!box.classList.contains('show'))encDetailFocus=document.activeElement;
@@ -631,10 +657,15 @@ function encOpen() {
 /* ---------------- wiring ---------------- */
 function encWire() {
   const search = document.getElementById('encSearch');
+  let searchTimer = 0;
   if (search) search.addEventListener('input', () => {
-    encQuery = search.value || '';
-    encRenderIndex();
-    encRender(true);
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      encQuery = search.value || '';
+      encAutoOpen.forEach(l => encOpenSet.delete(l)); encAutoOpen.clear();
+      encRenderIndex();
+      encRender(true);
+    }, 150);
   });
   const rf = document.getElementById('encRarityFilter');
   if (rf) rf.addEventListener('change', () => { encRarity = rf.value || ''; encRender(true); });
