@@ -78,14 +78,52 @@ async function enter(){
  }catch(e){console.warn('Reprise invocation',e);notice('error')}
 }
 window.sakuPortalSummonEnter=enter;
+/* Écran de validation avant un achat (pièces ou gemme). Un achat entièrement couvert par les tirages gratuits passe sans question. */
+const L3=(fr,en,es)=>{const l=lang();return l==='fr'?fr:l==='es'?es:en;};
+const escH=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nfmt=n=>Number(n||0).toLocaleString(lang());
+const unitPrice=i=>i===0||i===2?200:300;
+function confirmBuy(i,n){return new Promise(resolve=>{
+ const gem=i===4,free=gem?0:Math.min(n,freeDraws),paid=gem?0:n-free,cost=paid*unitPrice(i),full=n*unitPrice(i);
+ if(!gem&&cost===0){resolve(true);return;}
+ const snap=window.sakuProgressSnapshot&&window.sakuProgressSnapshot(),bal=snap&&Number.isFinite(Number(snap.coins))?Number(snap.coins):(Number.isFinite(Number(window.sakuSecureCoins))?Number(window.sakuSecureCoins):null);
+ const short=!gem&&bal!==null&&cost>bal;
+ let d=$('portalBuyConfirm');if(d)d.remove();
+ d=document.createElement('dialog');d.id='portalBuyConfirm';d.className='trade-dialog pb-dialog';d.setAttribute('aria-labelledby','pbTitle');
+ const T=window.sakuPortalTimer,timer=T&&!gem&&isFinite(T.left(i))&&T.left(i)>0?'<p class="pb-timer">'+escH(L3('Ce portail disparaît dans ','This portal leaves in ','Este portal se va en ')+T.fmt(T.left(i)))+'</p>':'';
+ const coinImg='<img class="pb-coin" src="summon-machines/coin.svg" alt="">';
+ const row=(k,v,cls)=>'<div class="pb-row'+(cls?' '+cls:'')+'"><span>'+escH(k)+'</span><b>'+v+'</b></div>';
+ let rows='';
+ if(gem){rows=row(L3('Coût','Cost','Coste'),escH(L3('1 gemme d’invocation','1 summoning gem','1 gema de invocación')))+row(L3('Gemmes restantes','Gems left','Gemas restantes'),nfmt(gems)+' → '+nfmt(Math.max(0,gems-1)));}
+ else{
+  if(free)rows+=row(L3('Tirages gratuits utilisés','Free draws used','Tiradas gratis usadas'),String(free));
+  rows+=row(L3('Prix','Price','Precio'),(free?'<s>'+nfmt(full)+'</s> ':'')+coinImg+nfmt(cost),'pb-price');
+  if(bal!==null)rows+=row(L3('Ton solde','Your balance','Tu saldo'),coinImg+nfmt(bal)+' → '+(short?'<span class="pb-neg">'+escH(L3('insuffisant','not enough','insuficiente'))+'</span>':coinImg+nfmt(bal-cost)));
+ }
+ const what=gem?L3('1 booster · 10 cartes épiques ou mieux','1 booster · 10 epic or better cards','1 sobre · 10 cartas épicas o mejores'):(n===1?L3('1 booster · 10 cartes','1 booster · 10 cards','1 sobre · 10 cartas'):L3('5 boosters · 50 cartes','5 boosters · 50 cards','5 sobres · 50 cartas'));
+ d.setAttribute('data-noi18n','');d.innerHTML='<form class="trade-shell pb-shell" method="dialog" data-noi18n>'+
+  '<header class="trade-top"><div><span class="market-kicker" data-noi18n>'+escH(L3('PORTAIL','PORTAL','PORTAL'))+' · '+escH(names[i])+'</span><h2 id="pbTitle">'+escH(L3('Confirmer l’achat','Confirm purchase','Confirmar la compra'))+'</h2></div><button type="button" class="trade-x" data-pb="no" aria-label="'+escH(L3('Annuler','Cancel','Cancelar'))+'">×</button></header>'+
+  '<div class="pb-what"><span class="pb-n">×'+n+'</span><div><b data-noi18n>'+escH(names[i])+'</b><small>'+escH(what)+'</small></div></div>'+
+  '<div class="pb-rows">'+rows+'</div>'+timer+
+  (short?'<p class="trade-error" role="alert">'+escH(L3('Il te manque ','You need ','Te faltan ')+nfmt(cost-bal)+L3(' pièces.',' more coins.',' monedas.'))+'</p>':'')+
+  '<footer class="pb-actions"><button type="button" class="pb-cancel" data-pb="no">'+escH(L3('Annuler','Cancel','Cancelar'))+'</button><button type="button" class="pb-ok" data-pb="yes"'+(short?' disabled':'')+'>'+
+   (gem?escH(L3('Utiliser 1 gemme','Use 1 gem','Usar 1 gema')):escH(L3('Acheter','Buy','Comprar'))+' · '+coinImg+nfmt(cost))+'</button></footer></form>';
+ document.body.appendChild(d);
+ let done=false;const finish=v=>{if(done)return;done=true;try{d.close();}catch(e){}d.remove();resolve(v);};
+ d.addEventListener('click',e=>{const b=e.target.closest('[data-pb]');if(b){finish(b.dataset.pb==='yes');return;}if(e.target===d)finish(false);});
+ d.addEventListener('cancel',e=>{e.preventDefault();finish(false);});
+ d.showModal();const ok=d.querySelector('.pb-ok');if(ok&&!ok.disabled)ok.focus();else d.querySelector('.pb-cancel').focus();
+});}
 async function buy(i,n){
  if(![0,1,2,3,4].includes(i)||![1,5].includes(n)||(i===4&&n!==1)){notice('invalid');return}
  if(!window.sakuBackend||!uid()){notice('sign');if(typeof openAuthModal==='function')openAuthModal();return}
  if(busy||(window.sakuGrimoirePlaying&&window.sakuGrimoirePlaying()))return;busy=true;const who=uid();
  try{
   if(window.sakuDataReady)await window.sakuDataReady;
+  if(window.sakuPortalTimer&&window.sakuPortalTimer.closed(i)){if(typeof showNotification==='function')showNotification(L3('Ce portail est terminé.','This portal has ended.','Este portal ha terminado.'));return}
   if(i===4){await refreshGems();if(gems<1){notice('nogem');return}}
   else await refreshFreeStatus();
+  if(!(await confirmBuy(i,n)))return;if(who!==uid())return;
   const result=await window.sakuBackend.summon(keys[i],n);if(who!==uid())return;
   if(result.portal==='gem'&&Number.isInteger(Number(result.gems)))setGems(Number(result.gems));
   if(Number.isInteger(result.free_remaining))window.sakuPortalFreeDraws(result.free_remaining);
@@ -96,7 +134,7 @@ async function buy(i,n){
   // Le grimoire s'ouvre sur place (couleur de la meilleure carte), puis on passe directement à la révélation des cartes.
   const after=()=>{if(uid()===who&&pending&&pending.id===result.request_id){pending.phase='reveal';openModal()}};
   if(window.sakuGrimoirePlay)window.sakuGrimoirePlay(i,bestRarity(result.packs),after);else animateDrop(i,result.packs.length,after);
- }catch(e){console.warn('Invocation sécurisée',e);notice(e&&e.message==='insufficient_coins'?'funds':e&&e.message==='no_gem'?'nogem':'error');if(i===4)refreshGems().catch(()=>{})}finally{busy=false}}
+ }catch(e){console.warn('Invocation sécurisée',e);if(e&&e.message==='portal_closed'){if(typeof showNotification==='function')showNotification(L3('Ce portail est terminé.','This portal has ended.','Este portal ha terminado.'));refreshDashboard();}else notice(e&&e.message==='insufficient_coins'?'funds':e&&e.message==='no_gem'?'nogem':'error');if(i===4)refreshGems().catch(()=>{})}finally{busy=false}}
 window.sakuPortalBuy=buy;
 function animateDrop(i,n,done){let slide=document.querySelector('.summon-slide[data-index="'+i+'"]');if(!slide){done();return}let tray=document.createElement('div');tray.className='portal-falling';tray.setAttribute('aria-hidden','true');for(let x=0;x<n;x++){let img=document.createElement('img');img.src='summon-machines/pack-'+keys[i]+'.png';img.style.setProperty('--pack-n',x);img.style.setProperty('--pack-total',n);tray.appendChild(img)}slide.appendChild(tray);clearTimeout(fallTimer);let ms=(window.sakuReducedMotion?window.sakuReducedMotion():false)?120:1250;fallTimer=setTimeout(()=>{if(window.SakuSfx)SakuSfx.play('drop');tray.remove();done()},ms)}
 function modalEl(){if(modal)return modal;modal=document.createElement('div');modal.id='portalOpenModal';modal.className='portal-open-modal';modal.hidden=true;modal.innerHTML='<div class="portal-open-panel" role="dialog" aria-modal="true" aria-labelledby="portalOpenTitle"><header><div><span>SAKUGAME / PORTALS</span><h2 id="portalOpenTitle"></h2></div><button type="button" class="portal-open-dismiss" aria-label="Close">×</button></header><div id="portalOpenBody"></div></div>';document.body.appendChild(modal);modal.querySelector('.portal-open-dismiss').onclick=closeModal;return modal;}

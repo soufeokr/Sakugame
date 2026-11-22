@@ -141,12 +141,12 @@
     const pending=window.sakuPortalPending&&window.sakuPortalPending(i),bal=balance();
     box.dataset.portal=keys[i];
     box.innerHTML=
-      '<header class="pp-head"><span class="pp-kicker">'+String(i+1).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0')+' · '+esc(w.tags[i])+'</span><h2 data-noi18n>'+esc(names[i])+'</h2><p>'+esc(w[desc[i]])+'</p></header>'+
+      '<header class="pp-head"><span class="pp-kicker">'+String(i+1).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0')+' · '+esc(w.tags[i])+'</span><h2 data-noi18n>'+esc(names[i])+'</h2><p>'+esc(w[desc[i]])+'</p>'+(window.sakuPortalTimer?window.sakuPortalTimer.chip(i):'')+'</header>'+
       '<div class="pp-stats"><div><b>'+(total===null?'—':num(total))+'</b><span>'+esc(w.chars)+'</span></div>'+
         '<div><b>'+(signed()?num(ownedN):'—')+'</b><span>'+esc(w.owned)+'</span></div>'+
         '<div><b>'+(signed()?num(wishN):'—')+'</b><span>'+esc(w.wish)+'</span></div></div>'+
       (i===GEM?gemBlock()+'<p class="pp-free">'+ic('i-hourglass')+'<span>'+esc(w.gemNoGauge)+'</span></p>':gauge()+
-      '<div class="pp-buy">'+buyButton(i,1)+buyButton(i,5)+'</div>'+
+      (window.sakuPortalTimer&&window.sakuPortalTimer.closed(i)?'':'<div class="pp-buy">'+buyButton(i,1)+buyButton(i,5)+'</div>')+
       freeLine())+
       (signed()?'':'<p class="pp-free">'+ic('i-discord')+'<span>'+esc(w.signBuy)+'</span></p>')+
       '<div class="pp-foot"><button type="button" class="pp-details" onclick="portalInfoOpen('+i+')">'+ic('i-info')+'<span>'+esc(w.details)+'</span></button>'+

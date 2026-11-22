@@ -5229,3 +5229,35 @@ input::placeholder{text-overflow:ellipsis}
 body.showcase-dragging,body.showcase-dragging *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
 .showcase-order-ghost{transition:none}
 html.motion-reduce .showcase-order-item.is-swap-target{transition:none}
+/* b310 — confirmation d'achat de booster + compte à rebours des portails */
+.pb-dialog{width:min(420px,calc(100vw - 24px))}
+.pb-shell{gap:14px}
+.pb-what{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:#ffffff0a;border:1px solid #ffffff14}
+.pb-n{flex:none;display:grid;place-items:center;min-width:48px;height:48px;border-radius:12px;background:#f1d79d;color:#2a1d05;font:900 1.15rem Outfit,system-ui,sans-serif}
+.pb-what b{display:block;font-size:1.05rem;color:#fff}.pb-what small{display:block;margin-top:2px;font-size:.82rem;color:#a9bdd3}
+.pb-rows{display:flex;flex-direction:column;gap:2px}
+.pb-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid #ffffff10;font-size:.9rem;color:#a9bdd3}
+.pb-row:last-child{border-bottom:0}
+.pb-row b{display:inline-flex;align-items:center;gap:5px;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pb-row s{color:#7f93a8;font-weight:600}
+.pb-price b{font-size:1.1rem;color:#fae3ac}
+.pb-coin{width:16px;height:16px}
+.pb-neg{color:#ff9b9b}
+.pb-timer{margin:0;padding:9px 12px;border-radius:10px;background:#ff8a5c1a;border:1px solid #ff8a5c55;color:#ffc4a8;font-size:.84rem;font-weight:700}
+.pb-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+.pb-actions button{min-height:48px;border-radius:12px;font:800 .95rem Outfit,system-ui,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.pb-cancel{border:1px solid #9bc1dd40;background:transparent;color:#eaf2ff}
+.pb-ok{border:0;background:linear-gradient(180deg,#ffe7a8,#e9c46f);color:#2a1d05}
+.pb-ok:disabled{opacity:.45;cursor:not-allowed}
+.pb-ok .pb-coin{width:18px;height:18px}
+.pb-actions button:focus-visible{outline:2px solid #a7dbf7;outline-offset:2px}
+.pp-timer{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;margin:10px 0 0;padding:8px 12px;border-radius:10px;background:#ffffff0d;border:1px solid #ffffff1f;font-size:.84rem;color:#cfe3f2}
+.pp-timer b{font-variant-numeric:tabular-nums;font-size:1rem;color:#fff}
+.pp-timer small{width:100%;font-size:.74rem;color:#9fb6cb}
+.pp-timer.is-soon{background:#ff8a5c1a;border-color:#ff8a5c66;color:#ffc4a8}
+.pp-timer.is-over{background:#ff6b6b14;border-color:#ff6b6b55;color:#ffb3b3}
+.pp-timer.is-permanent{background:#8fe3b014;border-color:#8fe3b044;color:#b7f0cf}
+.portal-tab-timer{display:block;margin-top:2px;font-style:normal;font-size:.64rem;font-weight:800;letter-spacing:.02em;color:#ffc4a8;white-space:nowrap}
+.portal-tab-timer.is-soon{color:#ff9b7a}
+.portal-tab-timer.is-over{color:#ff9b9b}
+.portal-tab.is-closed{opacity:.6}
