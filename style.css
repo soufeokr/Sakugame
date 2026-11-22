@@ -5399,3 +5399,18 @@ html.motion-reduce .portal-zoom{animation:none}
 @media(max-width:560px){.portal-zoom{grid-template-columns:minmax(0,1fr);grid-template-rows:1fr auto auto}.portal-zoom-card{grid-column:1}.portal-zoom-nav{grid-row:2;width:56px;height:46px}.portal-zoom-nav.prev{grid-column:1;justify-self:start}.portal-zoom-nav.next{grid-column:1;justify-self:end}.portal-zoom-count{grid-row:2;grid-column:1}}
 /* b323 — encyclopédie : emplacement vide en attendant que la carte soit dessinée */
 .enc-slot.enc-slot-pending{aspect-ratio:260/372;background:linear-gradient(160deg,#16203a,#0e1628);border:1px solid #9bc1dd14;border-radius:11px}
+/* b324 — échanges : pièces et contre-propositions */
+.trade-coins{display:grid;grid-template-columns:auto minmax(0,110px) 1fr;align-items:center;gap:6px 8px;margin-top:10px;padding:8px 10px;border:1px dashed #f0c46a55;border-radius:12px;background:#f0c46a0d}
+.trade-coins[hidden]{display:none}
+.trade-coins img{width:22px;height:22px}
+.trade-coins input{width:100%;min-width:0;box-sizing:border-box;padding:7px 9px;border-radius:9px;border:1px solid #9bc1dd33;background:#0b1628;color:#fff3d6;font:800 1rem/1.1 Outfit,system-ui,sans-serif;text-align:right}
+.trade-coins input:focus{outline:2px solid #f0c46a88;outline-offset:1px}
+.trade-coins-label{color:#d8c79e;font-size:.8rem;font-weight:700}
+.trade-coins-note{grid-column:1/-1;color:#f3a46b;font-size:.75rem;font-weight:700}
+.trade-coins-note:empty{display:none}
+.trade-limit-coins img{width:13px;height:13px;vertical-align:-2px}
+.deal-coins{display:inline-flex;align-items:center;gap:6px;align-self:center;padding:8px 12px;border-radius:12px;border:1px solid #f0c46a66;background:linear-gradient(160deg,#3a2c1066,#141e33);color:#ffe7a8;font:800 1rem/1 Outfit,system-ui,sans-serif;white-space:nowrap}
+.deal-coins img{width:20px;height:20px}
+.deal-tag{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:999px;background:#5eb1e526;color:#9fd8ff;font:700 .68rem/1.4 system-ui,sans-serif;font-style:normal;vertical-align:1px}
+.deal-countered{opacity:.8}
+@media(max-width:560px){.deal-actions{flex-wrap:wrap}.deal-actions .deal-counter{order:-1;flex:1 1 100%}}

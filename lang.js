@@ -167,6 +167,7 @@ var I18N = {
   "Message (optional)": {fr: "Message (facultatif)",es:"Mensaje (opcional)"},
   "A word for the other player…": {fr: "Un mot pour l'autre joueur…",es:"Unas palabras para el otro jugador…"},
   "Your cards are reserved until the other player answers (7 days at most). Locked cards can't be traded.": {fr: "Tes cartes sont réservées jusqu'à la réponse de l'autre joueur (7 jours maximum). Les cartes verrouillées ne peuvent pas être échangées.",es:"Tus cartas quedan reservadas hasta que el otro jugador responda (7 días como máximo). Las cartas bloqueadas no se pueden intercambiar."},
+  "Your cards and coins are reserved until the other player answers (7 days at most). Locked cards can't be traded.": { fr: "Tes cartes et tes pièces sont réservées jusqu'à la réponse de l'autre joueur (7 jours au plus). Les cartes verrouillées ne peuvent pas être échangées.", es: "Tus cartas y monedas quedan reservadas hasta que el otro jugador responda (7 días como máximo). Las cartas bloqueadas no se pueden intercambiar." },
   "Cards on the market": {fr: "Cartes en vente",es:"Cartas en venta"},
   "Fixed-price offers and 24-hour auctions.": {fr: "Ventes à prix fixe et enchères de 24 heures.",es:"Ventas a precio fijo y subastas de 24 horas."},
   "Refresh": {fr: "Actualiser",es:"Actualizar"},
