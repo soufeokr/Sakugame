@@ -42,7 +42,18 @@
   function notify(text) { if (typeof showNotification === 'function') showNotification(text); }
   function stored() { try { const v = JSON.parse(localStorage.getItem(STORE) || 'null'); return v && CODE_RE.test(v.code) ? v.code : null; } catch (e) { return null; } }
   function forget() { try { localStorage.removeItem(STORE); } catch (e) {} }
-  function link(code) { return location.origin + location.pathname.replace(/index\.html$/, '') + '?ref=' + code; }
+  // Lien d'invitation : page /i/CODE/ avec un aperçu personnalisé (pseudo + photo), générée par l'action « Invites ».
+  // Tant qu'elle n'existe pas, la page 404 du site renvoie vers ?ref=CODE : le lien marche toujours.
+  function link(code) { return location.origin + location.pathname.replace(/index\.html$/, '') + 'i/' + code + '/'; }
+  // Copier ou partager son lien autorise la création de cette page (pseudo et photo visibles dans l'aperçu).
+  let markedFor = null;
+  window.sakuReferralMarkShared = () => markShared();
+  function markShared() {
+    const who = window.sakuSecureUserId || null;
+    if (!who || markedFor === who || !window.sakuRpc) return;
+    markedFor = who;
+    window.sakuRpc('referral_mark_shared', {}).catch(() => { markedFor = null; });
+  }
   function readyCount(s) { return s ? (s.tiers || []).filter(x => x.ready && !x.claimed).length : 0; }
 
   // Lien d'invitation : ?ref=CODE est mémorisé puis retiré de l'adresse.
@@ -119,12 +130,14 @@
 
   async function copy() {
     if (!status) return;
+    markShared();
     const url = link(status.code);
     try { await navigator.clipboard.writeText(url); notify(tr('Link copied!')); }
     catch (e) { const i = $('refLinkInput'); if (i) { i.focus(); i.select(); } notify(tr('Copy the link below.')); }
   }
   async function share() {
     if (!status) return;
+    markShared();
     const url = link(status.code);
     if (navigator.share) {
       try { await navigator.share({title: 'Sakugame', text: tr('Join me on Sakugame: we each get 2 bonus free draws!'), url}); return; } catch (e) { if (e && e.name === 'AbortError') return; }
@@ -137,7 +150,7 @@
     return '<section class="hub-card ref-hero">' +
       '<div class="ref-hero-main"><span class="hub-eyebrow">' + tr('Your code') + '</span>' +
         '<strong class="ref-code" data-noi18n>' + esc(s.code) + '</strong>' +
-        '<div class="ref-link-row"><input id="refLinkInput" class="ref-link-input" type="text" readonly value="' + esc(link(s.code)) + '" aria-label="' + tr('Your invitation link') + '" onclick="this.select()">' +
+        '<div class="ref-link-row"><input id="refLinkInput" class="ref-link-input" type="text" readonly value="' + esc(link(s.code)) + '" aria-label="' + tr('Your invitation link') + '" onclick="this.select()" oncopy="sakuReferralMarkShared()">' +
           '<button type="button" class="hub-primary" onclick="sakuReferralCopy()">' + ic('i-link') + '<span>' + tr('Copy link') + '</span></button>' +
           '<button type="button" class="hub-subtle" onclick="sakuReferralShare()">' + ic('i-send') + '<span>' + tr('Share') + '</span></button></div></div>' +
       '<div class="ref-stats">' +

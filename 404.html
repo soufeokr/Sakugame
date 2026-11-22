@@ -6,6 +6,13 @@
 <title>404 — Page not found · Sakugame</title>
 <meta name="description" content="This page doesn't exist (or moved) — head back to Sakugame, free anime guessing games to play with friends online.">
 <meta name="robots" content="noindex, follow">
+<script>
+  // Lien d'invitation /i/CODE/ dont la page d'aperçu n'est pas encore générée : on va directement à l'accueil avec le code.
+  (function () {
+    var m = location.pathname.match(/^(.*?\/)i\/([A-HJ-NP-Z2-9]{6})\/?$/i);
+    if (m) location.replace(location.origin + m[1] + '?ref=' + m[2].toUpperCase());
+  })();
+</script>
 <meta name="theme-color" content="#0f0f1a">
 <link rel="icon" href="favicon.ico">
 <style>

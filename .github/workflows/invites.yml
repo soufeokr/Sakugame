@@ -1,0 +1,42 @@
+# 🔗 SAKUGAME — pages d'invitation (aperçus de lien « X vous invite à jouer sur Sakugame »).
+# Toutes les 10 minutes, régénère i/CODE/index.html pour chaque joueur qui a partagé son lien,
+# puis publie seulement s'il y a un changement.
+name: Invites
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: invites
+  cancel-in-progress: false
+
+jobs:
+  invites:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate invite pages
+        run: node tools/gen_invites.js
+
+      - name: Commit if changed
+        run: |
+          git add -A i
+          if git diff --cached --quiet; then
+            echo "no change"
+            exit 0
+          fi
+          git config user.name "sakugame-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Invitations : pages d'aperçu mises à jour (auto)"
+          git pull --rebase origin main
+          git push origin HEAD:main
