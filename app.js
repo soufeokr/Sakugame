@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '311';
+    const SAKU_BUILD = '312';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -586,6 +586,7 @@
       if (window.sakuProgressAttach) window.sakuProgressAttach();
       if (window.sakuPlayerAttach) window.sakuPlayerAttach();
       if (window.sakuFriendsAttach) window.sakuFriendsAttach();
+      if (window.sakuReferralAttach) window.sakuReferralAttach();
       // 🎴 fold the guest card collection into the freshly signed-in account
       try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
       playerName = currentAccount.username;
@@ -693,6 +694,7 @@
       if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuReferralDetach) window.sakuReferralDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
       if (typeof cardsLoad === 'function') cardsLoad();
       anilistAutoSyncDone = false;
@@ -1428,7 +1430,7 @@
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
-    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', ranking: 'leaderboardScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', support: 'supportScreen' };
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', ranking: 'leaderboardScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', referral: 'referralScreen', support: 'supportScreen' };
     const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
@@ -1517,6 +1519,7 @@
         else if (route === 'support') showScreen('supportScreen');
         else if (route === 'settings') showPreferencesPage();
         else if (route === 'account') showAccountPage();
+        else if (route === 'referral') { if (window.sakuReferralOpen) window.sakuReferralOpen(); else showScreen('referralScreen'); }
         else if (route === 'encyclopedia') encOpen();
         else showScreen('homepageScreen');
       } catch (e) {}
@@ -2852,6 +2855,7 @@
         if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuReferralDetach) window.sakuReferralDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
         updateUserButton();
         try { sakuRenderDiscordBox(null); } catch (e) {}
@@ -9451,6 +9455,7 @@ function sakuNavGo(destination) {
   else if (destination === 'encyclopedia') encOpen();
   else if (destination === 'support') showScreen('supportScreen');
   else if (destination === 'account') showAccountPage();
+  else if (destination === 'referral') { if (window.sakuReferralOpen) window.sakuReferralOpen(); else showScreen('referralScreen'); }
   else if (destination === 'settings') showPreferencesPage();
   else if (destination === 'summon') { showScreen('summonScreen'); window.scrollTo(0, 0); if(window.portalDashboardRefresh) window.portalDashboardRefresh(); if(window.sakuPortalShowcaseRefresh) window.sakuPortalShowcaseRefresh(); if(window.sakuPortalSummonEnter) window.sakuPortalSummonEnter(); requestAnimationFrame(summonUpdateAtmosphere); }
   else if (destination === 'cardhome') showCardHome();
@@ -9621,6 +9626,7 @@ function sakuAccountRender() {
   const screen = document.getElementById('accountScreen'); if (!screen) return;
   const signed = !!currentAccount;
   if (window.sakuProgressRender) window.sakuProgressRender();
+  if (window.sakuReferralRender) window.sakuReferralRender();
   const put = (id, value) => { const node = document.getElementById(id); if (node) node.textContent = value; };
   const tr = text => typeof t === 'function' ? t(text) : text;
   put('accountPageName', playerName);

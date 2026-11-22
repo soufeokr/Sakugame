@@ -18,7 +18,8 @@
       if(owner!==getUid())return;
       const available=Math.max(0,Math.min(MAX,Math.floor(Number(status.available)||0)));
       const seconds=Math.max(0,Math.ceil(Number(status.next_seconds)||0));
-      state={available,nextAt:available>=MAX?0:Date.now()+seconds*1000};
+      const bonus=Math.max(0,Math.floor(Number(status.bonus)||0));
+      state={available,bonus,nextAt:available>=MAX?0:Date.now()+seconds*1000};
       retryAfter=0;
       render();
     } catch(e) {
@@ -31,7 +32,7 @@
     const box=document.getElementById('topBalances'); if(!box)return;
     const on=!!currentAccount; box.hidden=!on; if(!on)return;
     const p=window.sakuProgressSnapshot&&window.sakuProgressSnapshot();
-    const draws=state?state.available+'/'+MAX:'—', full=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
+    const draws=state?state.available+'/'+MAX+(state.bonus?' +'+state.bonus:''):'—', full=!p?'—':p.coins===Infinity?'∞':Number(p.coins).toLocaleString((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined);
     // Sur téléphone, un gros solde s'écrit en abrégé (1,2 M) pour laisser de la place au pseudo ; le montant exact reste dans l'infobulle.
     let coins=full;if(p&&Number.isFinite(Number(p.coins))&&Number(p.coins)>=100000&&narrow.matches){try{coins=new Intl.NumberFormat((window.SAKU_I18N&&window.SAKU_I18N.lang)||undefined,{notation:'compact',maximumFractionDigits:Number(p.coins)<1e6?0:1}).format(Number(p.coins));}catch(e){}}
     const d=document.getElementById('topBalDrawsVal'), c=document.getElementById('topBalCoinsVal');
@@ -65,7 +66,7 @@
     const bar=document.getElementById('playerPopBar'),pc=p?Math.min(100,Math.floor(p.xp/p.needed*100)):0;
     bar.firstElementChild.style.width=pc+'%';bar.setAttribute('aria-valuenow',String(pc));
     document.getElementById('playerPopCoins').textContent=p?p.coins.toLocaleString()+' '+tr('coins'):'—';
-    document.getElementById('playerPopDraws').textContent=state?state.available+' / '+MAX:'—';
+    document.getElementById('playerPopDraws').textContent=state?state.available+' / '+MAX+(state.bonus?' + '+state.bonus+' '+tr('bonus'):''):'—';
     let text=tr('Loading…');
     if(state){
       if(state.available>=MAX)text=tr('Reserve full')+' · '+tr('One draw every 12 min');

@@ -124,7 +124,7 @@
   }
   function freeLine(){
     const w=get(),fc=freeCount();if(!signed())return '';
-    const next=window.sakuPortalFreeNext?window.sakuPortalFreeNext():0,refill=next&&next>Date.now()&&fc<5?' · <span class="pp-refill" data-next="'+next+'">'+esc(w.refill.replace('{t}',timeLeft(next-Date.now())))+'</span>':'';
+    const next=window.sakuPortalFreeNext?window.sakuPortalFreeNext():0,refill=next&&next>Date.now()?' · <span class="pp-refill" data-next="'+next+'">'+esc(w.refill.replace('{t}',timeLeft(next-Date.now())))+'</span>':'';
     return '<p class="pp-free'+(fc?' has-free':'')+'">'+ic('i-sparkle')+'<span>'+esc(fc?(fc===1?w.freeNote1:w.freeNote.replace('{n}',fc)):w.noFree)+refill+'</span></p>';
   }
   function gemCount(){return window.sakuPortalGems?window.sakuPortalGems():null;}
