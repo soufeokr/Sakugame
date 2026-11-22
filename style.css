@@ -5261,3 +5261,6 @@ html.motion-reduce .showcase-order-item.is-swap-target{transition:none}
 .portal-tab-timer.is-soon{color:#ff9b7a}
 .portal-tab-timer.is-over{color:#ff9b9b}
 .portal-tab.is-closed{opacity:.6}
+/* b311: accueil — plus de grand titre « Jeu de cartes », le contenu remonte */
+body:not(.mobile-cards-home) #homepageScreen .card-home-head{display:none}
+body:not(.mobile-cards-home) #homepageScreen .card-home{margin-top:14px}
