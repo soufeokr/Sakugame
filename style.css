@@ -5381,3 +5381,19 @@ html.motion-reduce .showcase-order-item.is-swap-target{transition:none}
 /* b320 — iOS : plus de zoom quand on touche deux fois vite (invocations, boutons…). Le zoom à deux doigts reste
    possible ; les zones qui ont leur propre touch-action (carrousels, glisser-déposer) la gardent. */
 :where(*){touch-action:manipulation}
+/* b321 — bilan d'invocation : cartes agrandissables */
+.portal-tray-zoomable .portal-reveal-slot.filled{cursor:zoom-in;transition:transform .15s ease,filter .15s ease;border-radius:6px}
+.portal-tray-zoomable .portal-reveal-slot.filled:hover{transform:translateY(-3px) scale(1.04);filter:brightness(1.08)}
+.portal-tray-zoomable .portal-reveal-slot.filled:focus-visible{outline:2px solid #a7dbf7;outline-offset:3px}
+.portal-zoom-hint{display:block;margin-top:8px;font-size:.8rem;font-weight:600;color:#a9bfd3;letter-spacing:0;text-transform:none}
+.portal-zoom{position:fixed;inset:0;z-index:5100;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:1fr auto;align-items:center;justify-items:center;gap:10px;padding:max(16px,env(safe-area-inset-top)) 12px max(16px,env(safe-area-inset-bottom));background:#030812e6;backdrop-filter:blur(4px);animation:portal-zoom-in .18s ease-out}
+@keyframes portal-zoom-in{from{opacity:0}to{opacity:1}}
+html.motion-reduce .portal-zoom{animation:none}
+.portal-zoom-card{grid-column:2;grid-row:1;width:min(380px,100%,calc((100dvh - 120px) * 260 / 372));aspect-ratio:260/372;line-height:0}
+.portal-zoom-card>svg{width:100%;height:100%;display:block}
+.portal-zoom-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:12px;width:44px;height:44px;border-radius:12px;border:1px solid #9bc1dd44;background:#0f2038;color:#e6f2fb;font:400 1.6rem/1 system-ui,sans-serif;cursor:pointer;box-shadow:none}
+.portal-zoom-nav{grid-row:1;width:46px;height:64px;border-radius:12px;border:1px solid #9bc1dd33;background:#0f2038cc;color:#e6f2fb;font:300 2.2rem/1 system-ui,sans-serif;cursor:pointer;box-shadow:none}
+.portal-zoom-nav.prev{grid-column:1}.portal-zoom-nav.next{grid-column:3}
+.portal-zoom-close:hover,.portal-zoom-nav:hover{border-color:#9bc1dd88;transform:none}
+.portal-zoom-count{grid-column:1/-1;grid-row:2;margin:0;color:#a9bfd3;font-weight:700;font-size:.85rem}
+@media(max-width:560px){.portal-zoom{grid-template-columns:minmax(0,1fr);grid-template-rows:1fr auto auto}.portal-zoom-card{grid-column:1}.portal-zoom-nav{grid-row:2;width:56px;height:46px}.portal-zoom-nav.prev{grid-column:1;justify-self:start}.portal-zoom-nav.next{grid-column:1;justify-self:end}.portal-zoom-count{grid-row:2;grid-column:1}}
