@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: invites
@@ -40,3 +41,7 @@ jobs:
           git commit -m "Invitations : pages d'aperçu mises à jour (auto)"
           git pull --rebase origin main
           git push origin HEAD:main
+          # un push fait avec GITHUB_TOKEN ne relance pas la publication du site : on la demande
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" --silent
+        env:
+          GH_TOKEN: ${{ github.token }}
