@@ -440,29 +440,51 @@ function cardsCardFace(char, count, big, finish) {
 /* ---------------- album ---------------- */
 function cardsOwnedCount() { return cardState ? Object.keys(cardState.cards).filter(id => Number(cardState.cards[id]) > 0 && (!cardPoolById || !!cardPoolById[id])).length : 0; }
 function cardsTotalCount() { return Object.keys((cardState && cardState.cards) || {}).length; }
-function cardsRenderStats() {
+/* Encart de progression de la collection : chiffres exacts du serveur (catalogue complet, boosters réellement
+   ouverts, doublons actuels), avec repli sur les données locales tant qu'ils ne sont pas arrivés. */
+let cardsStatsCache = null, cardsStatsKey = '', cardsStatsLoading = false, cardsStatsOpen = false;
+function cardsStatsL3(fr, en, es) { const l = (window.SAKU_I18N && window.SAKU_I18N.lang) || 'en'; return l === 'fr' ? fr : l === 'es' ? es : en; }
+function cardsStatsNf(n) { return Number(n || 0).toLocaleString((window.SAKU_I18N && window.SAKU_I18N.lang) || undefined); }
+function cardsStatsFetch() {
+  if (cardsStatsLoading || !window.sakuSecureUserId || !window.sakuBackend || !window.sakuBackend.collectionStats || !cardState) return;
+  const key = window.sakuSecureUserId + ':' + Object.keys(cardState.cards).length + ':' + Object.values(cardState.cards).reduce((a, b) => a + (Number(b) || 0), 0);
+  if (cardsStatsCache && key === cardsStatsKey && Date.now() - cardsStatsCache.at < 60000) return;
+  cardsStatsLoading = true;
+  window.sakuBackend.collectionStats().then(r => {
+    cardsStatsLoading = false;
+    if (r && typeof r === 'object') { cardsStatsCache = Object.assign({ at: Date.now() }, r); cardsStatsKey = key; cardsRenderStatsBox(); }
+  }).catch(() => { cardsStatsLoading = false; });
+}
+function cardsRenderStats() { cardsRenderStatsBox(); cardsStatsFetch(); }
+function cardsRenderStatsBox() {
   const box = document.getElementById('cardsStats');
   if (!box || !cardState) return;
-  const owned = cardsOwnedCount();
-  const total = cardPool ? cardPool.length : 0;
-  const pct = total ? Math.round(owned * 1000 / total) / 10 : 0;
+  const S = cardsStatsCache && window.sakuSecureUserId ? cardsStatsCache : null;
+  const owned = S ? Number(S.owned) || 0 : cardsOwnedCount();
+  const total = S ? Number(S.total) || 0 : (cardPool ? cardPool.length : 0);
+  const pct = total ? Math.floor(owned * 1000 / total) / 10 : 0;
   let tiers = '';
   CARD_RARITY_ORDER.forEach(k => {
-    const have = Object.keys(cardState.cards).filter(id => {
-      const e = cardPoolById && cardPoolById[String(id)];
-      return e && e.rarity === k;
-    }).length;
+    let have, all = null;
+    if (S && S.rarities && S.rarities[k]) { have = Number(S.rarities[k].owned) || 0; all = Number(S.rarities[k].total) || 0; }
+    else have = Object.keys(cardState.cards).filter(id => { const e = cardPoolById && cardPoolById[String(id)]; return e && e.rarity === k; }).length;
     const meta = cardRarityMeta(k);
     tiers += '<span class="ac-tier' + (k === 'mythic' ? ' mythic' : '') + '"><i style="background:' + meta.color + '"></i>' + escapeHtml(cardRarityLabel(k)) +
-      ' <b>' + have + '</b></span>';
+      ' <b>' + cardsStatsNf(have) + '</b>' + (all != null ? '<small>/' + cardsStatsNf(all) + '</small>' : '') + '</span>';
   });
+  const meta = S ? '<span class="ac-stat-chip"><b>' + cardsStatsNf(S.boosters) + '</b> ' + escapeHtml(cardsStatsL3(Number(S.boosters) > 1 ? 'boosters ouverts' : 'booster ouvert', 'boosters opened', 'sobres abiertos')) + '</span>' +
+    '<span class="ac-stat-chip"><b>' + cardsStatsNf(S.duplicates) + '</b> ' + escapeHtml(cardsStatsL3(Number(S.duplicates) > 1 ? 'doublons' : 'doublon', 'duplicates', 'duplicados')) + '</span>' : '';
+  box.classList.add('ac-stats-compact');
   box.innerHTML =
-    '<div class="ac-prog"><div class="ac-prog-bar"><span style="width:' + Math.min(100, pct) + '%"></span></div>' +
-    '<div class="ac-prog-txt"><b>' + owned + '</b> / ' + total + ' ' + ((typeof t === 'function') ? t('collected') : 'collected') +
-    ' · <b>' + pct + '%</b></div></div>' +
-    '<div class="ac-tiers">' + tiers + '</div>' +
-    '<div class="ac-sub">' + ((typeof t === 'function') ? t('Boosters opened') : 'Boosters opened') + ': <b>' + cardState.opened +
-    '</b> · ' + ((typeof t === 'function') ? t('duplicates') : 'duplicates') + ': <b>' + cardState.dupes + '</b></div>';
+    '<div class="ac-stats-row">' +
+      '<div class="ac-stats-count"><b>' + cardsStatsNf(owned) + '</b><span>/ ' + cardsStatsNf(total) + ' ' + escapeHtml(cardsStatsL3('cartes', 'cards', 'cartas')) + '</span><em>' + String(pct).replace('.', cardsStatsL3(',', '.', ',')) + ' %</em></div>' +
+      '<div class="ac-prog-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '" aria-label="' + escapeHtml(cardsStatsL3('Progression de la collection', 'Collection progress', 'Progreso de la colección')) + '"><span style="width:' + Math.min(100, pct) + '%"></span></div>' +
+      '<div class="ac-stats-meta">' + meta + '</div>' +
+        '<button type="button" class="ac-rar-toggle" aria-expanded="' + cardsStatsOpen + '" aria-controls="cardsStatsTiers">' + escapeHtml(cardsStatsL3('Par rareté', 'By rarity', 'Por rareza')) + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>' +
+    '</div>' +
+    '<div class="ac-tiers" id="cardsStatsTiers"' + (cardsStatsOpen ? '' : ' hidden') + '>' + tiers + '</div>';
+  const tg = box.querySelector('.ac-rar-toggle');
+  if (tg) tg.onclick = () => { cardsStatsOpen = !cardsStatsOpen; cardsRenderStatsBox(); };
 }
 function cardsRenderTop() {
   const cnt = document.getElementById('cardsBoosterCount');

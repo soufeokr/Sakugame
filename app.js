@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '307';
+    const SAKU_BUILD = '308';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1428,7 +1428,7 @@
     // Pages: #/home · #/rules · #/rooms · #/join · #/setup · #/room (lobby + live game share one page).
     // Back/Forward arrows ONLY change the visible page — you STAY connected to your room:
     // the game keeps running, and walking forward drops you right back into it.
-    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', support: 'supportScreen' };
+    const R_PAGES = { home: 'homepageScreen', rules: 'gamesMenuScreen', rooms: 'homepageScreen', join: 'joinRoomScreen', setup: 'hostRoomScreen', cards: 'cardsScreen', showcase: 'showcaseScreen', cardhome: 'cardHomeScreen', market: 'marketScreen', collection: 'collectionScreen', quests: 'questsScreen', ranking: 'leaderboardScreen', encyclopedia: 'encyclopediaScreen', summon: 'summonScreen', settings: 'preferencesScreen', account: 'accountScreen', support: 'supportScreen' };
     const R_ROOM_SCREENS = ['lobbyScreen', 'gameScreen', 'undercoverScreen', 'battleScreen', 'raceScreen', 'blurScreen', 'hotcoldScreen', 'codenamesScreen', 'spectateScreen', 'selectionScreen', 'snapshotScreen'];
     let R_lastRoomScreen = 'lobbyScreen'; // live room screen, so Forward re-enters the exact game view
     let R_muteHash = false;    // hash change came from us — skip the next hashchange render
@@ -1512,6 +1512,7 @@
         else if (route === 'collection') showCollection();
         else if (route === 'market') showMarket();
         else if (route === 'quests') showQuests();
+        else if (route === 'ranking') { if (window.showLeaderboard) window.showLeaderboard(); else showScreen('homepageScreen'); }
         else if (route === 'summon') { showScreen('summonScreen'); if (window.portalDashboardRefresh) window.portalDashboardRefresh(); if (window.sakuPortalShowcaseRefresh) window.sakuPortalShowcaseRefresh(); if (window.sakuPortalSummonEnter) window.sakuPortalSummonEnter(); requestAnimationFrame(summonUpdateAtmosphere); }
         else if (route === 'support') showScreen('supportScreen');
         else if (route === 'settings') showPreferencesPage();
@@ -9457,6 +9458,7 @@ function sakuNavGo(destination) {
   else if (destination === 'collection') showCollection();
   else if (destination === 'market') showMarket();
   else if (destination === 'quests') showQuests();
+  else if (destination === 'ranking' && window.showLeaderboard) window.showLeaderboard();
 }
 document.addEventListener('keydown', function (event) {
   const panel = document.getElementById('sideNavigation');
