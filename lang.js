@@ -395,6 +395,7 @@ var I18N = {
   "Daily limit reached": { fr: "Limite du jour atteinte", es: "Límite diario alcanzado" },
   "Four quick quests, renewed every day.": { fr: "Quatre petites quêtes, renouvelées chaque jour.", es: "Cuatro misiones rápidas, renovadas cada día." },
   "Bigger goals for the whole week. They reset every Monday.": { fr: "Des objectifs plus grands pour toute la semaine. Remis à zéro chaque lundi.", es: "Objetivos más grandes para toda la semana. Se reinician cada lunes." },
+  "Each game has many tiers. Reach both goals to unlock the reward.": { fr: "Chaque jeu a de nombreux paliers. Atteins les deux objectifs pour débloquer la récompense.", es: "Cada juego tiene muchos niveles. Alcanza los dos objetivos para desbloquear la recompensa." },
   "Each game has 5 tiers. Reach both goals to unlock the reward.": { fr: "Chaque jeu a 5 paliers. Atteins les deux objectifs pour débloquer la récompense.", es: "Cada juego tiene 5 niveles. Alcanza los dos objetivos para desbloquear la recompensa." },
   "Permanent milestones for your cards. Your progress is never lost.": { fr: "Des paliers permanents pour tes cartes. Ta progression n’est jamais perdue.", es: "Hitos permanentes para tus cartas. Tu progreso nunca se pierde." },
   "Finish {n} games": { fr: "Termine {n} parties", es: "Termina {n} partidas" },

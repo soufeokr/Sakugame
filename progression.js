@@ -136,7 +136,7 @@
     const list = (s.game_quests || []).map(q => {
       const g = gameInfo(q.id), rounds = !!q.rounds, tier = safe(q.tier), done = !!q.done, gg = Math.max(1, safe(q.goal_games)), gw = Math.max(1, safe(q.goal_wins));
       return {title: esc(tr(g.name)), ico: '<span class="qx-ico qx-ico-game"><svg class="ic" aria-hidden="true"><use href="#i-game-' + g.icon + '"/></svg></span>',
-        pips: pips(tier, 5), done, ready: !!q.ready, coins: q.coins, score: done ? 0 : Math.min(1, (Math.min(1, q.games / gg) + Math.min(1, q.wins / gw)) / 2),
+        pips: safe(q.tiers) > 8 ? '' : pips(tier, Math.max(1, safe(q.tiers) || 5)), done, ready: !!q.ready, coins: q.coins, score: done ? 0 : Math.min(1, (Math.min(1, q.games / gg) + Math.min(1, q.wins / gw)) / 2),
         body: '<div class="qx-objs">' + meter(safe(q.games), gg, rounds ? 'Rounds played' : 'Games played') + meter(safe(q.wins), gw, rounds ? 'Correct rounds' : 'Victories') + '</div>',
         onclick: "sakuClaimGameQuest('" + g.id + "'," + tier + ")"};
     });
@@ -154,7 +154,7 @@
     weekly: ['Bigger goals for the whole week. They reset every Monday.', true,
       ['Blur Guess and Snapshot: 10 rounds count as one game and 10 correct rounds as one win.',
        'A day counts once you have claimed all your daily quests.']],
-    games: ['Each game has 5 tiers. Reach both goals to unlock the reward.', null,
+    games: ['Each game has many tiers. Reach both goals to unlock the reward.', null,
       ['Blur Guess and Snapshot: 10 rounds equal one game for the targets. Only rounds recorded from this update count.',
        'Daily limits apply to counted games and rounds.', 'Explorer: Blur Guess and Snapshot count once you have played 10 rounds.']],
     collection: ['Permanent milestones for your cards. Your progress is never lost.', null,
@@ -319,9 +319,9 @@
     }
   }
   const claim = id => claimWith('progress_claim_daily', {p_quest: String(id)}, 'Quest reward collected!');
-  const claimGameQuest = (id, tier) => Number.isInteger(tier) && tier >= 0 && tier <= 4 && GAME_QUESTS.some(g => g.id === id)
+  const claimGameQuest = (id, tier) => Number.isInteger(tier) && tier >= 0 && tier <= 100 && GAME_QUESTS.some(g => g.id === id)
     ? claimWith('progress_claim_game', {p_game: id, p_tier: tier}, 'Game quest reward collected!') : undefined;
-  const claimCollectionQuest = (id, tier) => Number.isInteger(tier) && tier >= 0 && tier <= 20 && COLLECTION_NAMES[id]
+  const claimCollectionQuest = (id, tier) => Number.isInteger(tier) && tier >= 0 && tier <= 200 && COLLECTION_NAMES[id]
     ? claimWith('progress_claim_collection', {p_quest: id, p_tier: tier}, 'Quest reward collected!') : undefined;
 
   const claimWeeklyQuest = id => /^w_[a-z]{2,20}$/.test(String(id)) ? claimWith('progress_claim_weekly', {p_quest: String(id)}, 'Quest reward collected!') : undefined;
