@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '324';
+    const SAKU_BUILD = '325';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -586,6 +586,7 @@
       if (window.sakuProgressAttach) window.sakuProgressAttach();
       if (window.sakuPlayerAttach) window.sakuPlayerAttach();
       if (window.sakuFriendsAttach) window.sakuFriendsAttach();
+      if (window.sakuNotifAttach) window.sakuNotifAttach();
       if (window.sakuReferralAttach) window.sakuReferralAttach();
       // 🎴 fold the guest card collection into the freshly signed-in account
       try { if (typeof cardsMergeOnSignIn === 'function') cardsMergeOnSignIn(a); } catch (e) {}
@@ -595,7 +596,7 @@
       try { sakuRenderDiscordBox(dc); } catch (e) {}
       // Already inside a room → refresh the displayed name + picture there too
       if (roomCode && currentRoom && currentRoom.players && currentRoom.players[playerId]) {
-        database.ref('rooms/' + roomCode + '/players/' + playerId).update({ name: playerName, avatar: myAvatar() || '' });
+        database.ref('rooms/' + roomCode + '/players/' + playerId).update({ name: playerName, avatar: myAvatar() || '', uid: sakuSeatUid() });
       }
       // Sitting on the host screen when signing in → load the synced AniList account
       const hostScreen = document.getElementById('hostRoomScreen');
@@ -694,6 +695,7 @@
       if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuNotifDetach) window.sakuNotifDetach();
       if (window.sakuReferralDetach) window.sakuReferralDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
       if (typeof cardsLoad === 'function') cardsLoad();
@@ -987,6 +989,11 @@
     let guessMode = false;
     let guessingCharacter = null;
     let roomVisibility = 'private';
+    // 🔒 b325: room visibility — private (code only) · friends (listed for the host's friends) · public (listed for everyone)
+    function sakuVis(v) { return v === 'public' || v === 'friends' ? v : 'private'; }
+    function sakuVisLabel(v) { v = sakuVis(v); return v === 'public' ? 'Public' : v === 'friends' ? 'Friends' : 'Private'; }
+    let sakuUidHealed = null;
+    function sakuSeatUid() { try { return sakuMyDcId() || null; } catch (e) { return null; } }
     let hostSource = 'generic'; // character pool for the next room: 'generic' | 'favorites' | 'mix' (Detective Showdown games)
     let hostPool = 'random';    // 🎲 Hot & Cold + Blur Guess pool: 'random' (full website pool) | 'watched' (only anime the synced accounts have seen)
     let hostMixCount = 12;      // 🔀 Detective Showdown Mix split: how many board slots come from the generic pool
@@ -1654,6 +1661,8 @@
     }
 
     function selectVisibility(type) {
+      type = sakuVis(type);
+      if (type === 'friends' && !currentAccount) { showNotification('Sign in with Discord to open a room to your friends.'); type = 'private'; }
       roomVisibility = type;
       document.querySelectorAll('#hostRoomScreen input[name="visibility"]').forEach(function(input){input.checked=input.value===type;input.closest('.radio-option').classList.toggle('selected',input.checked);});
     }
@@ -1725,7 +1734,7 @@
       const GAMES = ['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'];
       if (['guesswho', 'battle', 'race', 'blur', 'undercover', 'hotcold', 'codenames', 'snapshot'].indexOf(cfg.game) >= 0) { hostGame = cfg.game; document.getElementById('gameSelect').value = cfg.game; }
       // 🔒 visibility radios
-      const vis = cfg.visibility === 'public' ? 'public' : 'private';
+      let vis = sakuVis(cfg.visibility); if (vis === 'friends' && !currentAccount) vis = 'private';
       roomVisibility = vis;
       document.querySelectorAll('#hostRoomScreen input[name="visibility"]').forEach(function (inp) {
         inp.checked = inp.value === vis;
@@ -1859,7 +1868,7 @@
       const s = (currentRoom || {}).settings || {};
       const maxP = clampN((currentRoom || {}).maxPlayers, 2, 12, 8);
       return {
-        game: g, visibility: (currentRoom || {}).visibility === 'public' ? 'public' : 'private',
+        game: g, visibility: sakuVis((currentRoom || {}).visibility),
         source: currentSource() || 'generic',
         maxPlayers: maxP, ucMw: !!s.mrWhite, ucCount: clampN(s.ucCount, 1, 4, 1),
         charCount: clampN(s.characterCount, 12, 80, 24),
@@ -1886,7 +1895,7 @@
       if (!isHost || !currentRoom || !roomCode) { showNotification('Could not load this config.'); return; }
       const g = currentRoom.game || 'guesswho';
       const playerCount = Object.keys(currentRoom.players || {}).length;
-      const updates = { visibility: cfg.visibility === 'public' ? 'public' : 'private' };
+      const updates = { visibility: (sakuVis(cfg.visibility) === 'friends' && !currentAccount) ? 'private' : sakuVis(cfg.visibility) };
       if (g === 'undercover') {
         updates.maxPlayers = Math.min(12, Math.max(Math.max(3, playerCount), clampN(cfg.maxPlayers || cfg.ucMax, 3, 12, 8)));
         updates['settings/mrWhite'] = !!cfg.ucMw;
@@ -2099,8 +2108,8 @@
       const charCount = parseInt(document.getElementById('hostCharCountSlider').value);
       try {
         const roomData = {
-          host: playerId, game: game, visibility: roomVisibility,
-          players: { [playerId]: { id: playerId, ready: false, name: playerName, isHost: true, avatar: myAvatar() || '' } },
+          host: playerId, game: game, visibility: (roomVisibility === 'friends' && !sakuSeatUid()) ? 'private' : sakuVis(roomVisibility),
+          players: { [playerId]: { id: playerId, ready: false, name: playerName, isHost: true, avatar: myAvatar() || '', uid: sakuSeatUid() } },
           state: 'lobby', chat: {}, createdAt: Date.now(), lastActivity: Date.now()
         };
         if (isUc) {
@@ -2131,7 +2140,7 @@
         document.getElementById('displayRoomCode').textContent = roomCode;
         document.getElementById('lobbySettingsIcon').style.display = 'block';
         document.getElementById('lobbyGameName').innerHTML = ic(GAME_ICONS[game] || 'gamepad') + ' ' + (GAME_LABELS[game] || 'Detective Showdown');
-        document.getElementById('lobbyRoomType').textContent = roomVisibility === 'private' ? 'Private' : 'Public';
+        document.getElementById('lobbyRoomType').textContent = sakuVisLabel(roomData.visibility);
         updateLobby();
       } catch (error) { showNotification('Error creating room: ' + error.message); console.error('Firebase error:', error); }
     }
@@ -2166,7 +2175,7 @@
           return;
         }
         if (room.state === 'lobby' && playerCount < maxPlayers) {
-          await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '' });
+          await database.ref('rooms/' + roomCode + '/players/' + playerId).set({ id: playerId, ready: false, name: playerName, isHost: false, avatar: myAvatar() || '', uid: sakuSeatUid() });
           touchActivity();
           setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markDisconnectTracking();
           saveSession();
@@ -2176,7 +2185,7 @@
           // ⏳ QUEUE: no free seat right now — wait for the next game
           const queueCount = Object.keys(room.queue || {}).length;
           if (queueCount >= QUEUE_MAX) { showNotification('That room\'s queue is full (' + QUEUE_MAX + ' waiting) — try another room!'); roomCode = null; return; }
-          await database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now() });
+          await database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now(), uid: sakuSeatUid() });
           touchActivity();
           setupRoomListener(); setupChatListener(); setupPlayerCleanup(); markQueueDisconnect();
           saveSession();
@@ -2189,7 +2198,7 @@
       showScreen('lobbyScreen');
       document.getElementById('displayRoomCode').textContent = roomCode;
       document.getElementById('lobbyGameName').innerHTML = ic(GAME_ICONS[room.game] || 'gamepad') + ' ' + (GAME_LABELS[room.game] || 'Detective Showdown');
-      document.getElementById('lobbyRoomType').textContent = room.visibility === 'private' ? 'Private' : 'Public';
+      document.getElementById('lobbyRoomType').textContent = sakuVisLabel(room.visibility);
       updateLobby();
     }
 
@@ -2247,7 +2256,11 @@
           isHost = !!currentRoom.players[playerId].isHost;
           if (isHost && !wasHost) showNotification('You are now the room host!');
           document.getElementById('lobbySettingsIcon').style.display = isHost ? 'block' : 'none';
+          // 👥 b325: my Sakugame account id on my seat — lets a "Friends" room show up for the host's friends
+          const myUid = sakuSeatUid();
+          if (myUid && currentRoom.players[playerId].uid !== myUid && sakuUidHealed !== roomCode + ':' + myUid) { sakuUidHealed = roomCode + ':' + myUid; database.ref('rooms/' + roomCode + '/players/' + playerId + '/uid').set(myUid).catch(() => {}); }
         }
+        { const rt = document.getElementById('lobbyRoomType'), lbl = sakuVisLabel(currentRoom.visibility); if (rt && rt.textContent !== lbl && rt.dataset.vis !== lbl) { rt.textContent = lbl; rt.dataset.vis = lbl; } }
         // ⏳ QUEUE membership: waiting (queue/{pid}) vs seated (players/{pid}).
         // Seated/queue transitions flip local state + notifications exactly once.
         const meSeated = !!(currentRoom.players && currentRoom.players[playerId]);
@@ -2446,7 +2459,7 @@
         // no grace) — reclaim the spot if the room thinks we're not waiting.
         try {
           if (imQueued && currentRoom && !(currentRoom.queue || {})[playerId] && !(currentRoom.players || {})[playerId]) {
-            database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now() });
+            database.ref('rooms/' + roomCode + '/queue/' + playerId).set({ id: playerId, name: playerName, avatar: myAvatar() || '', joinedAt: Date.now(), uid: sakuSeatUid() });
           }
         } catch (e) {}
       });
@@ -2761,7 +2774,7 @@
       try {
         const updates = {};
         promote.forEach(qp => {
-          updates['players/' + qp.id] = { id: qp.id, ready: false, name: qp.name, isHost: false, avatar: qp.avatar || '' };
+          updates['players/' + qp.id] = { id: qp.id, ready: false, name: qp.name, isHost: false, avatar: qp.avatar || '', uid: qp.uid || null };
           updates['queue/' + qp.id] = null;
         });
         await database.ref('rooms/' + roomCode).update(updates);
@@ -2855,6 +2868,7 @@
         if (window.sakuProgressDetach) window.sakuProgressDetach();
       if (window.sakuPlayerDetach) window.sakuPlayerDetach();
       if (window.sakuFriendsDetach) window.sakuFriendsDetach();
+      if (window.sakuNotifDetach) window.sakuNotifDetach();
       if (window.sakuReferralDetach) window.sakuReferralDetach();
       if (window.sakuShowcaseDetach) window.sakuShowcaseDetach();
         updateUserButton();
@@ -3005,17 +3019,38 @@
     // ============================================================
     // ===== 🌐 PUBLIC ROOM BROWSER (join room screen) ============
     // ============================================================
+    // 👥 b325: "Friends" rooms are listed too, but only those whose host is one of my friends
+    let friendRoomsRef = null, pubRoomsRaw = {}, friendRoomsRaw = {};
+    function sakuFriendIds() { try { return new Set(((window.sakuFriendsList && window.sakuFriendsList()) || []).map(f => f.id)); } catch (e) { return new Set(); } }
+    function mergeRoomLists() {
+      const out = {}, fr = sakuFriendIds();
+      Object.entries(pubRoomsRaw || {}).forEach(([code, r]) => { if (r && r.visibility === 'public') out[code] = r; });
+      if (fr.size) Object.entries(friendRoomsRaw || {}).forEach(([code, r]) => {
+        if (!r || !r.players) return;
+        const host = Object.values(r.players).find(p => p && p.isHost);
+        if (host && host.uid && fr.has(host.uid)) out[code] = Object.assign({}, r, { _friend: true });
+      });
+      renderPublicRooms(out);
+    }
     function startPublicRoomsWatch() {
       if (publicRoomsRef) return;
       publicRoomsRef = database.ref('rooms').orderByChild('visibility').equalTo('public').limitToLast(40);
-      publicRoomsRef.on('value', (snap) => { renderPublicRooms(snap.val() || {}); });
+      publicRoomsRef.on('value', (snap) => { pubRoomsRaw = snap.val() || {}; mergeRoomLists(); });
+      if (sakuSeatUid()) {
+        if (window.sakuFriendsRefresh) window.sakuFriendsRefresh().then(mergeRoomLists).catch(() => {});
+        friendRoomsRef = database.ref('rooms').orderByChild('visibility').equalTo('friends').limitToLast(60);
+        friendRoomsRef.on('value', (snap) => { friendRoomsRaw = snap.val() || {}; mergeRoomLists(); }, () => { friendRoomsRaw = {}; });
+      }
     }
     function stopPublicRoomsWatch() {
       if (publicRoomsRef) { publicRoomsRef.off(); publicRoomsRef = null; }
+      if (friendRoomsRef) { friendRoomsRef.off(); friendRoomsRef = null; }
+      friendRoomsRaw = {};
     }
     function refreshPublicRooms() {
       if (!publicRoomsRef) { startPublicRoomsWatch(); return; }
-      publicRoomsRef.once('value').then(snap => { renderPublicRooms(snap.val() || {}); showNotification('Room list refreshed'); });
+      Promise.all([publicRoomsRef.once('value'), friendRoomsRef ? friendRoomsRef.once('value') : Promise.resolve(null)])
+        .then(([a, b]) => { pubRoomsRaw = a.val() || {}; if (b) friendRoomsRaw = b.val() || {}; mergeRoomLists(); showNotification('Room list refreshed'); });
     }
     let publicRoomsCache = {};
     function filterPublicRooms(){renderPublicRooms(publicRoomsCache);}
@@ -3025,14 +3060,14 @@
       const search=String(input&&input.value||'').trim().toLocaleLowerCase(),game=String(select&&select.value||'');
       const names={guesswho:'Detective Showdown',undercover:'Undercover',battle:'Detective Royale',race:'Wanted!',blur:'Blur Guess',hotcold:'Cold Case',codenames:'Ninja',snapshot:'Snapshot!'};
       const states={lobby:'In the lobby',selection:'Picking characters',playing:'Game in progress',finished:'Game ending'};
-      const entries=Object.entries(publicRoomsCache).filter(([,r])=>r&&r.players&&Object.keys(r.players).length>0).map(([code,r])=>{const playerCount=Object.keys(r.players).length,maxP=r.maxPlayers||2,queueCount=Object.keys(r.queue||{}).length;return {code,r,playerCount,maxP,queueCount,joinable:r.state==='lobby'&&playerCount<maxP};}).filter(e=>e.joinable||e.queueCount<QUEUE_MAX).filter(e=>!game||e.r.game===game).filter(e=>!search||[e.code,names[e.r.game]||'',...Object.values(e.r.players).map(p=>p.name||'')].join(' ').toLocaleLowerCase().includes(search)).sort((a,b)=>(b.joinable-a.joinable)||((b.r.lastActivity||0)-(a.r.lastActivity||0)));
+      const entries=Object.entries(publicRoomsCache).filter(([,r])=>r&&r.players&&Object.keys(r.players).length>0).map(([code,r])=>{const playerCount=Object.keys(r.players).length,maxP=r.maxPlayers||2,queueCount=Object.keys(r.queue||{}).length;return {code,r,playerCount,maxP,queueCount,joinable:r.state==='lobby'&&playerCount<maxP};}).filter(e=>e.joinable||e.queueCount<QUEUE_MAX).filter(e=>!game||e.r.game===game).filter(e=>!search||[e.code,names[e.r.game]||'',...Object.values(e.r.players).map(p=>p.name||'')].join(' ').toLocaleLowerCase().includes(search)).sort((a,b)=>((b.r._friend?1:0)-(a.r._friend?1:0))||(b.joinable-a.joinable)||((b.r.lastActivity||0)-(a.r.lastActivity||0)));
       const count=document.getElementById('publicRoomsCount');if(count)count.textContent=String(entries.length);list.innerHTML='';
       if(!entries.length){list.innerHTML='<p class="pub-empty">'+escapeHtml(tt(search||game?'No rooms match your search.':'No public rooms open right now.'))+'</p>';return;}
       entries.forEach(({code,r,playerCount,maxP,queueCount,joinable})=>{
-        const players=Object.values(r.players||{}),host=players.find(p=>p.isHost)||players[0],namesText=players.slice(0,4).map(p=>p.name||'?').join(', ')+(players.length>4?' +'+(players.length-4):''),card=document.createElement('article');card.className='public-room-card';
+        const players=Object.values(r.players||{}),host=players.find(p=>p.isHost)||players[0],namesText=players.slice(0,4).map(p=>p.name||'?').join(', ')+(players.length>4?' +'+(players.length-4):''),card=document.createElement('article');card.className='public-room-card'+(r._friend?' is-friend-room':'');
         const icon=['guesswho','undercover','battle','race','blur','hotcold','codenames','snapshot'].includes(r.game)?'game-'+r.game:'gamepad';
         const button=joinable?tt('Join'):tt('Join queue')+(queueCount?' ('+queueCount+')':'');
-        card.innerHTML='<div class="pub-card-head"><span class="pub-game-icon">'+ic(icon)+'</span><span class="pub-title">'+escapeHtml(tt(names[r.game]||'Game'))+'</span><span class="pub-status '+(joinable?'is-open':'')+'">'+escapeHtml(tt(states[r.state]||'In the lobby'))+'</span></div><div class="pub-host">'+escapeHtml(tt('Host'))+' · <b>'+escapeHtml(String(host&&host.name||'?'))+'</b></div><div class="pub-names">'+escapeHtml(namesText)+'</div><div class="pub-card-bottom"><span class="pub-capacity">'+ic('user')+' '+playerCount+' / '+maxP+'</span><span class="pub-code">'+escapeHtml(tt('Code'))+' '+escapeHtml(String(code))+'</span></div>'+(queueCount?'<div class="pub-queue">'+queueCount+' '+escapeHtml(tt('in queue'))+'</div>':'')+'<button type="button" class="pub-join">'+escapeHtml(button)+' <span aria-hidden="true">→</span></button>';
+        card.innerHTML='<div class="pub-card-head"><span class="pub-game-icon">'+ic(icon)+'</span><span class="pub-title">'+escapeHtml(tt(names[r.game]||'Game'))+'</span>'+(r._friend?'<span class="pub-friend-tag">'+ic('friends')+' '+escapeHtml(tt('Friend'))+'</span>':'')+'<span class="pub-status '+(joinable?'is-open':'')+'">'+escapeHtml(tt(states[r.state]||'In the lobby'))+'</span></div><div class="pub-host">'+escapeHtml(tt('Host'))+' · <b>'+escapeHtml(String(host&&host.name||'?'))+'</b></div><div class="pub-names">'+escapeHtml(namesText)+'</div><div class="pub-card-bottom"><span class="pub-capacity">'+ic('user')+' '+playerCount+' / '+maxP+'</span><span class="pub-code">'+escapeHtml(tt('Code'))+' '+escapeHtml(String(code))+'</span></div>'+(queueCount?'<div class="pub-queue">'+queueCount+' '+escapeHtml(tt('in queue'))+'</div>':'')+'<button type="button" class="pub-join">'+escapeHtml(button)+' <span aria-hidden="true">→</span></button>';
         card.querySelector('.pub-join').addEventListener('click',()=>joinRoomByCode(code));list.appendChild(card);
       });
     }
@@ -6269,13 +6304,8 @@
         syncPoolUI();
         syncMixUI();
       }
-      if (currentRoom.visibility === 'private') {
-        document.getElementById('modalPrivate').classList.add('selected');
-        document.getElementById('modalPublic').classList.remove('selected');
-      } else {
-        document.getElementById('modalPublic').classList.add('selected');
-        document.getElementById('modalPrivate').classList.remove('selected');
-      }
+      { const v = sakuVis(currentRoom.visibility), ids = { private: 'modalPrivate', friends: 'modalFriends', public: 'modalPublic' };
+        Object.keys(ids).forEach(k => { const el = document.getElementById(ids[k]); if (el) el.classList.toggle('selected', k === v); }); }
       document.getElementById('settingsModal').classList.add('show');
     }
 
@@ -6392,12 +6422,14 @@
     }
 
     async function changeVisibility(type) {
-      document.querySelectorAll('#modalPrivate, #modalPublic').forEach(opt => opt.classList.remove('selected'));
-      const target = event ? event.currentTarget : document.getElementById('modalPrivate');
-      if (target) target.classList.add('selected');
+      type = sakuVis(type);
+      if (type === 'friends' && !sakuSeatUid()) { showNotification('Sign in with Discord to open a room to your friends.'); return; }
+      const ids = { private: 'modalPrivate', friends: 'modalFriends', public: 'modalPublic' };
+      Object.keys(ids).forEach(k => { const el = document.getElementById(ids[k]); if (el) el.classList.toggle('selected', k === type); });
+      if (type === 'friends') { try { await database.ref('rooms/' + roomCode + '/players/' + playerId + '/uid').set(sakuSeatUid()); } catch (e) {} }
       await database.ref('rooms/' + roomCode + '/visibility').set(type);
       touchActivity();
-      document.getElementById('lobbyRoomType').textContent = type === 'private' ? 'Private' : 'Public';
+      document.getElementById('lobbyRoomType').textContent = sakuVisLabel(type);
     }
 
     function updateModalCharCount() {

@@ -154,5 +154,6 @@
     if (currentAccount) attach(); else render();
   });
   window.sakuSocialTab = tab; window.sakuFriendsAttach = attach; window.sakuFriendsDetach = detach; window.sakuFriendsPublish = function () {};
+  window.sakuFriendsList = () => (social.friends || []).filter(c => safeId(c.id)).slice(); window.sakuFriendsRefresh = () => refresh();
   window.__sakuFriendsTest = {setSocial, render, search, action, getSocial: () => social, setUid: v => { uid = v; }};
 })();

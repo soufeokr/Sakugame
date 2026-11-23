@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=overlays-content">
-<meta name="saku-build" content="324">
+<meta name="saku-build" content="325">
 <meta name="theme-color" content="#0f0f1a">
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <script>/* Animations : réglage du site (toujours / selon l'appareil / réduites). Par défaut toujours actives, même si l'appareil demande moins d'animations. */
@@ -13,7 +13,7 @@ window.sakuSyncMotion=function(){document.documentElement.classList.toggle('moti
 if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})();</script>
 <title>Sakugame — Anime guessing games to play with friends online</title>
 <!-- 📲 PWA: installable as an app (Add to Home Screen) -->
-<link rel="manifest" href="manifest.json?v=324">
+<link rel="manifest" href="manifest.json?v=325">
 <!-- ⚡ Warm up the third-party connections we always need (Firebase SDK + RTDB,
      AniList API + image CDN) so first-use requests skip DNS/TLS setup -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -81,16 +81,16 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sakugame">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" href="favicon.ico?v=324" sizes="any">
-<link rel="apple-touch-icon" href="icons/icon-180.png?v=324">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=324">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=324">
+<link rel="icon" href="favicon.ico?v=325" sizes="any">
+<link rel="apple-touch-icon" href="icons/icon-180.png?v=325">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png?v=325">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=325">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://sakugame-e14de-default-rtdb.europe-west1.firebasedatabase.app" crossorigin>
   <link rel="preconnect" href="https://nafesytcmueciltowcci.supabase.co" crossorigin>
   <link rel="preconnect" href="https://s4.anilist.co">
   <link rel="preconnect" href="https://raw.githubusercontent.com">
-  <link rel="stylesheet" href="style.css?v=324">
+  <link rel="stylesheet" href="style.css?v=325">
 </head>
 <body>
 
@@ -115,6 +115,8 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5 5 13.4a4.8 4.8 0 0 1 0-6.9 4.8 4.8 0 0 1 6.9 0l.1.1.1-.1a4.8 4.8 0 0 1 6.9 0 4.8 4.8 0 0 1 0 6.9z" fill="#ff5c7a" stroke="#ff2e63" stroke-width="0.7" stroke-linejoin="round"/></symbol>
   <symbol id="i-users" viewBox="0 0 24 24"><g transform="rotate(-13 6 12)"><rect x="2.9" y="7.6" width="6.2" height="8.8" rx="1.1" fill="#9d6bff" stroke="#e6dcff" stroke-width="1"/></g><g transform="rotate(13 18 12)"><rect x="14.9" y="7.6" width="6.2" height="8.8" rx="1.1" fill="#00c853" stroke="#c9f5d9" stroke-width="1"/></g><rect x="8.9" y="5.2" width="6.2" height="8.8" rx="1.1" fill="#ffa726" stroke="#ffe4bb" stroke-width="1"/><g transform="translate(6 11.7) rotate(-13)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g><g transform="translate(18 11.7) rotate(13)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g><g transform="translate(12 9.3)"><path d="M-1.9 -2.5c.3-1.6 4.1-1.6 4.1 .15 0 .9-.55 1.4-1.3 1.9-.8.5-1 1.1-1 2v.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" transform="scale(0.62)"/><circle cx="0" cy="2.077" r="0.62" fill="#ffffff"/></g></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.8 20.5a7.4 7.4 0 0 1 14.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-friends" viewBox="0 0 24 24"><circle cx="9" cy="8.2" r="3.3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.8 20a6.3 6.3 0 0 1 12.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15.2 5.2a3.1 3.1 0 0 1 0 6M17.6 14.2A6 6 0 0 1 21.2 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 2H4.4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.8 20.6a2.4 2.4 0 0 0 4.4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="10.5" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.8 2.6 4.2 5.5 4.2 9S14.8 18.4 12 21c-2.8-2.6-4.2-5.5-4.2-9S9.2 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   <symbol id="i-discord" viewBox="0 0 24 24"><path fill="currentColor" d="M19.27 5.33C17.9 4.7 16.42 4.21 14.92 4c-.25.45-.48.92-.68 1.43a12.3 12.3 0 0 0-4.48 0c-.2-.51-.43-.98-.68-1.43-1.5.21-2.98.7-4.35 1.33C1.95 9.05 1.16 12.64 1.5 16.18c1.82 1.35 3.58 2.17 5.31 2.72.43-.58.81-1.2 1.14-1.85a9 9 0 0 1-1.78-.85c.15-.11.3-.22.43-.34 3.42 1.56 7.12 1.56 10.49 0 .14.12.28.23.43.34-.57.34-1.16.62-1.78.85.33.65.71 1.27 1.14 1.85 1.73-.55 3.49-1.37 5.31-2.72.41-4.26-.69-7.96-2.92-10.85ZM8.5 13.86c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.81 2.01c0 1.11-.8 2.01-1.81 2.01Zm7 0c-.99 0-1.8-.9-1.8-2.01s.8-2.01 1.8-2.01 1.81.9 1.81 2.01c0 1.11-.8 2.01-1.81 2.01Z"/></symbol>
@@ -345,13 +347,24 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
   <!-- Bottom bar: a full-width strip pinned to the bottom of every page.
        Left: 🎵 now-playing (added here by music.js) · Right: 👤 profile button -->
   <div id="bottomBar">
-    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=324" alt=""><span>SAKUGAME</span></button>
+    <button class="desktop-brand" type="button" onclick="sakuMobileBrandHome()" aria-label="Sakugame — Home"><img src="icons/logo-192.webp?v=325" alt=""><span>SAKUGAME</span></button>
     <span id="betaBadge" title="Sakugame 1.0"><span data-noi18n>1.0</span></span>
     <button type="button" id="roomWindowButton" class="room-window-button" hidden onclick="sakuRoomWindowToggle()"><span class="room-window-dot" aria-hidden="true"></span><span id="roomWindowLabel">Room</span><span class="room-window-action" id="roomWindowAction">↗</span></button>
-    <div id="topBalances" class="top-balances" hidden><button type="button" class="top-bal" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button><button type="button" class="top-bal" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button><button type="button" class="top-bal top-bal-gem" id="topBalGems" hidden onclick="sakuNavGo('summon');setTimeout(function(){summonSelect(4)},60)" aria-label="Summoning gems"><svg viewBox="-50 -50 100 100" aria-hidden="true"><polygon points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="#7a3fd0"/><polygon points="0,-44 38,-22 17,-10 0,-20 -17,-10 -38,-22" fill="#e6ccff"/><polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="#b17cf0"/></svg><strong id="topBalGemsVal">0</strong></button></div>
+    <div id="topBalances" class="top-balances" hidden><div class="top-bal top-bal-duo" role="group"><button type="button" class="top-bal-half" id="topBalCoins" onclick="showMarket()"><img src="summon-machines/coin.svg" alt=""><strong id="topBalCoinsVal">—</strong></button><span class="top-bal-sep" aria-hidden="true"></span><button type="button" class="top-bal-half" id="topBalDraws" onclick="sakuNavGo('summon')"><svg class="ic" aria-hidden="true"><use href="#i-cards"/></svg><strong id="topBalDrawsVal">—</strong></button></div><button type="button" class="top-bal top-bal-gem" id="topBalGems" hidden onclick="sakuNavGo('summon');setTimeout(function(){summonSelect(4)},60)" aria-label="Summoning gems"><svg viewBox="-50 -50 100 100" aria-hidden="true"><polygon points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="#7a3fd0"/><polygon points="0,-44 38,-22 17,-10 0,-20 -17,-10 -38,-22" fill="#e6ccff"/><polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="#b17cf0"/></svg><strong id="topBalGemsVal">0</strong></button></div>
     <button class="username-change-btn" id="usernameBtn" aria-expanded="false" aria-controls="playerPopover" onclick="onUserButton()"><svg class="ic"><use href="#i-user"/></svg> Change Username</button>
+    <button type="button" class="notif-button" id="notifButton" hidden aria-label="Notifications" aria-controls="notifPanel" aria-expanded="false" onclick="sakuNotifToggle()"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg><span class="notif-badge" id="notifBadge" hidden></span></button>
     <button type="button" class="nav-menu-toggle" id="navMenuToggle" aria-label="Open menu" aria-controls="sideNavigation" aria-expanded="false" onclick="sakuNavOpen()"><span></span><span></span><span></span></button>
   </div>
+  <section id="notifPanel" class="notif-panel" role="dialog" aria-label="Notifications" hidden>
+    <header class="notif-head"><strong>Notifications</strong><button type="button" class="notif-mark" id="notifMarkAll">Mark all as read</button></header>
+    <div class="notif-list" id="notifList"></div>
+  </section>
+  <dialog id="inviteDialog" class="invite-dialog" aria-labelledby="inviteTitle">
+    <header class="invite-head"><div><h3 id="inviteTitle">Invite to the room</h3><p><span>Room</span> <b id="inviteCode" data-noi18n>----</b> · <span>Friends first, or search a player.</span></p></div><button type="button" class="invite-close" id="inviteClose" aria-label="Close">×</button></header>
+    <input type="search" id="inviteSearch" class="invite-search" placeholder="Search a player…" autocomplete="off" maxlength="32">
+    <p class="invite-msg" id="inviteMsg" role="status"></p>
+    <div class="invite-list" id="inviteList"></div>
+  </dialog>
   <nav id="mobilePrimaryNav" aria-label="Main navigation">
     <button type="button" data-mobile-destination="games" onclick="sakuMobileGo('games')" aria-current="page"><svg class="ic"><use href="#i-gamepad"/></svg><span>Games</span></button>
     <button type="button" data-mobile-destination="cards" onclick="sakuMobileGo('cards')"><svg class="ic"><use href="#i-cards"/></svg><span>Cards</span></button>
@@ -406,7 +419,7 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
     </section>
   </aside>
   <div class="site-header">
-    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=324" alt="Sakugame logo"><span>SAKUGAME</span></div>
+    <div class="site-logo" onclick="goHome()"><img class="ic" src="icons/logo-192.webp?v=325" alt="Sakugame logo"><span>SAKUGAME</span></div>
   </div>
 
   <!-- 📱 phone-only quick bar — volume & language top-right (hidden on desktop) -->
@@ -1071,6 +1084,7 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
             <label>Room Visibility</label>
             <div class="radio-group">
               <label class="radio-option selected" onclick="selectVisibility('private')"><input type="radio" name="visibility" value="private" checked><div><svg class="ic"><use href="#i-lock"/></svg> Private</div></label>
+              <label class="radio-option" onclick="selectVisibility('friends')"><input type="radio" name="visibility" value="friends"><div><svg class="ic"><use href="#i-friends"/></svg> Friends</div></label>
               <label class="radio-option" onclick="selectVisibility('public')"><input type="radio" name="visibility" value="public"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
@@ -1105,6 +1119,7 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
         <p style="text-align: center; color: var(--muted); margin-bottom: 20px;">Share this code — or the link — with your friends</p>
         <div class="lobby-code-actions">
           <button class="blur-code-btn secondary" onclick="shareRoom()"><svg class="ic"><use href="#i-link"/></svg> Share Room</button>
+          <button class="blur-code-btn secondary lobby-invite-btn" onclick="sakuRoomInviteOpen()"><svg class="ic"><use href="#i-send"/></svg> Invite</button>
           <button class="blur-code-btn secondary" id="blurCodeBtn" onclick="toggleBlur()" aria-pressed="false"><svg class="ic"><use href="#i-eye"/></svg> <span>Hide code</span></button>
         </div>
         <div class="room-code" id="displayRoomCode">----</div>
@@ -1668,6 +1683,7 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
             <label>Room Visibility</label>
             <div class="radio-group">
               <label class="radio-option" id="modalPrivate" onclick="changeVisibility('private')"><div><svg class="ic"><use href="#i-lock"/></svg> Private</div></label>
+              <label class="radio-option" id="modalFriends" onclick="changeVisibility('friends')"><div><svg class="ic"><use href="#i-friends"/></svg> Friends</div></label>
               <label class="radio-option" id="modalPublic" onclick="changeVisibility('public')"><div><svg class="ic"><use href="#i-globe"/></svg> Public</div></label>
             </div>
           </div>
@@ -1855,7 +1871,7 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
       <!-- Discord is the only way in -->
       <div id="authFormView" class="auth-signin">
         <div class="as-hero">
-          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=324" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
+          <div class="as-badges" aria-hidden="true"><img src="icons/logo-192.webp?v=325" alt=""><span class="as-plus">+</span><span class="as-dc"><svg class="ic"><use href="#i-discord"/></svg></span></div>
           <h2>Sign in or create your account</h2>
           <p>Already a player? Pick up right where you left off. New here? Your account is created in one click with Discord — no email, no password.</p>
         </div>
@@ -2046,8 +2062,8 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
 
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script defer src="saku-local-account.js?v=324"></script>
-  <script defer src="saku-features.js?v=324"></script>
+  <script defer src="saku-local-account.js?v=325"></script>
+  <script defer src="saku-features.js?v=325"></script>
 
   <!-- 🐢 HEAVY GAME DATA (characters / char→anime id map / covers — ~1.7 MB) loads
        AFTER first paint instead of blocking the opening page. This loader injects
@@ -2056,7 +2072,7 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
   <script>
     window.sakuDataReady = new Promise(function (resolve, reject) {
       function kickSakuData() {
-        var files = ['characters.js?v=324', 'charanimes.js?v=324', 'animes.js?v=324', 'nsfwdata.js?v=324', 'snappics.js?v=324'];
+        var files = ['characters.js?v=325', 'charanimes.js?v=325', 'animes.js?v=325', 'nsfwdata.js?v=325', 'snappics.js?v=325'];
         var left = files.length, failed = false;
         files.forEach(function (f) {
           var s = document.createElement('script');
@@ -2075,53 +2091,54 @@ if(m&&m.addEventListener)m.addEventListener('change',window.sakuSyncMotion);})()
     });
     window.sakuDataReady.catch(function () {}); // rejection is handled where the promise is awaited
   </script>
-  <script defer src="card-rarity.js?v=324"></script>
-  <script defer src="card-extra.js?v=324"></script>
-  <script defer src="strongest-data.js?v=324"></script>
-  <script defer src="strongest-render.js?v=324"></script>
-  <script defer src="card-finish.js?v=324"></script>
-  <script defer src="basic-render.js?v=324"></script>
-  <script defer src="cardgame.js?v=324"></script>
-  <script defer src="encyclopedia.js?v=324"></script>
-  <script defer src="character-localization.js?v=324"></script>
-  <script defer src="enc.js?v=324"></script>
-  <script defer src="card-tilt.js?v=324"></script>
-  <script defer src="card-levels.js?v=324"></script>
-  <script defer src="card-controls.js?v=324"></script>
-  <script defer src="library-tools.js?v=324"></script>
-  <script defer src="rarity-sync.js?v=324"></script>
-  <script defer src="strongest-sync.js?v=324"></script>
-  <script defer src="hoshi-data.js?v=324"></script>
-  <script defer src="pic-sync.js?v=324"></script>
-  <script defer src="undercover.js?v=324"></script>
-  <script defer src="music.js?v=324"></script>
-  <script defer src="lang.js?v=324"></script>
-  <script defer src="game-guides.js?v=324"></script>
-  <script defer src="app.js?v=324"></script>
-  <script defer src="supabase-client.js?v=324"></script>
-  <script defer src="saku-session.js?v=324"></script>
-  <script defer src="saku-sfx.js?v=324"></script>
-  <script defer src="retro-index.js?v=324"></script>
-  <script defer src="cinema-index.js?v=324"></script>
-  <script defer src="portal-rates.js?v=324"></script>
-  <script defer src="portal-timer.js?v=324"></script>
-<script defer src="portal-info.js?v=324"></script>
-  <script defer src="portal-showcase.js?v=324"></script>
-  <script defer src="card-backs.js?v=324"></script>
-  <script defer src="portal-grimoire.js?v=324"></script>
-  <script defer src="portal-summon.js?v=324"></script>
-  <script defer src="progression.js?v=324"></script>
-  <script defer src="player-popover.js?v=324"></script>
-  <script defer src="friends.js?v=324"></script>
-  <script defer src="showcase.js?v=324"></script>
-  <script defer src="market.js?v=324"></script>
-  <script defer src="referral.js?v=324"></script>
-  <script defer src="launch-notice.js?v=324"></script>
-  <script defer src="trade.js?v=324"></script>
-  <script defer src="exchange.js?v=324"></script>
-<script defer src="upgrade-all.js?v=324"></script>
-<script defer src="mortgage.js?v=324"></script>
-<script defer src="leaderboard.js?v=324"></script>
+  <script defer src="card-rarity.js?v=325"></script>
+  <script defer src="card-extra.js?v=325"></script>
+  <script defer src="strongest-data.js?v=325"></script>
+  <script defer src="strongest-render.js?v=325"></script>
+  <script defer src="card-finish.js?v=325"></script>
+  <script defer src="basic-render.js?v=325"></script>
+  <script defer src="cardgame.js?v=325"></script>
+  <script defer src="encyclopedia.js?v=325"></script>
+  <script defer src="character-localization.js?v=325"></script>
+  <script defer src="enc.js?v=325"></script>
+  <script defer src="card-tilt.js?v=325"></script>
+  <script defer src="card-levels.js?v=325"></script>
+  <script defer src="card-controls.js?v=325"></script>
+  <script defer src="library-tools.js?v=325"></script>
+  <script defer src="rarity-sync.js?v=325"></script>
+  <script defer src="strongest-sync.js?v=325"></script>
+  <script defer src="hoshi-data.js?v=325"></script>
+  <script defer src="pic-sync.js?v=325"></script>
+  <script defer src="undercover.js?v=325"></script>
+  <script defer src="music.js?v=325"></script>
+  <script defer src="lang.js?v=325"></script>
+  <script defer src="game-guides.js?v=325"></script>
+  <script defer src="app.js?v=325"></script>
+  <script defer src="supabase-client.js?v=325"></script>
+  <script defer src="saku-session.js?v=325"></script>
+  <script defer src="saku-sfx.js?v=325"></script>
+  <script defer src="retro-index.js?v=325"></script>
+  <script defer src="cinema-index.js?v=325"></script>
+  <script defer src="portal-rates.js?v=325"></script>
+  <script defer src="portal-timer.js?v=325"></script>
+<script defer src="portal-info.js?v=325"></script>
+  <script defer src="portal-showcase.js?v=325"></script>
+  <script defer src="card-backs.js?v=325"></script>
+  <script defer src="portal-grimoire.js?v=325"></script>
+  <script defer src="portal-summon.js?v=325"></script>
+  <script defer src="progression.js?v=325"></script>
+  <script defer src="player-popover.js?v=325"></script>
+  <script defer src="friends.js?v=325"></script>
+  <script defer src="showcase.js?v=325"></script>
+  <script defer src="market.js?v=325"></script>
+  <script defer src="referral.js?v=325"></script>
+  <script defer src="launch-notice.js?v=325"></script>
+  <script defer src="trade.js?v=325"></script>
+  <script defer src="notifications.js?v=325"></script>
+  <script defer src="exchange.js?v=325"></script>
+<script defer src="upgrade-all.js?v=325"></script>
+<script defer src="mortgage.js?v=325"></script>
+<script defer src="leaderboard.js?v=325"></script>
 
   <!-- 🍪 One-time storage notice (b107): we only use your browser's local
        storage — NO tracking, NO third-party cookies. One CTA, that's it. -->

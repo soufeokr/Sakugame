@@ -238,6 +238,7 @@
     const lv = state ? Number(state.level) || null : null;
     if (lastLevel != null && lv != null && lv > lastLevel) { try { document.dispatchEvent(new CustomEvent('saku:level-up', {detail: {level: lv}})); } catch (e) {} }
     lastLevel = lv;
+    if (state && window.sakuNotifQuests) { try { window.sakuNotifQuests(state); } catch (e) {} }
     render();
     if (window.sakuPlayerRender) window.sakuPlayerRender();
     if (window.sakuShowcaseProgressChanged) window.sakuShowcaseProgressChanged();
