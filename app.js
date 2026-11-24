@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '326';
+    const SAKU_BUILD = '327';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1181,6 +1181,10 @@
 
     function showScreen(screenId) {
       if(window.sakuMobileScreenChanged)window.sakuMobileScreenChanged(screenId);
+      // ⚡ b327: les modules vident les grandes grilles de l'écran qu'on quitte (moins d'éléments en mémoire)
+      const prevScreen = document.querySelector('.screen.active');
+      if (prevScreen && prevScreen.id !== screenId) setTimeout(() => { try { document.dispatchEvent(new CustomEvent('saku-screen-leave', { detail: prevScreen.id })); } catch (e) {} }, 0);
+      setTimeout(() => { try { document.dispatchEvent(new CustomEvent('saku-screen-show', { detail: screenId })); } catch (e) {} }, 0);
       document.body.classList.toggle('home-cards-atmosphere', screenId === 'cardHomeScreen');
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');

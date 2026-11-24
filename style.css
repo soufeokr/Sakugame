@@ -5520,3 +5520,41 @@ html.motion-reduce .portal-zoom{animation:none}
 .pub-friend-tag .ic{width:12px;height:12px}
 .lobby-code-actions .blur-code-btn{white-space:nowrap}
 .lobby-code-actions .blur-code-btn:not(#blurCodeBtn){flex:1 1 auto}
+
+/* b327 — collection : cartes dessinées à l'approche de l'écran */
+.ac-tile.ac-pending{aspect-ratio:260/372;background:linear-gradient(160deg,#16203a,#0e1628);border:1px solid #9bc1dd14;border-radius:11px;padding:0;box-shadow:none;cursor:pointer}
+.ac-tile.ac-pending.missing{opacity:.62}
+.msell-tile-art.saku-lazy{aspect-ratio:260/372;background:linear-gradient(160deg,#16203a,#0e1628);border-radius:8px}
+
+/* Build 327 — perf: phones and touch screens drop backdrop blurs (very costly
+   to repaint on mobile GPUs) for denser, opaque backgrounds. Privacy blurs
+   (hidden words, room codes, secret cards) are untouched. */
+@media (max-width:900px),(hover:none) and (pointer:coarse){
+  .howto-modal,#phoneTopBar,.nav-backdrop,#usernameModal.guest-name-modal,.guide-image-dialog::backdrop,.portal-info-modal,.cards-detail,
+  .market-sell-dialog::backdrop,.market-offers-dialog::backdrop,.showcase-modal,.showcase-preview-bar,.anime-modal,.gs-callout,.game-controls,
+  .qx-tabs,.market-sell-dialog .market-sell-dialog-head,.trade-dialog::backdrop,.ln-dialog::backdrop,.portal-zoom,.invite-dialog::backdrop,
+  .notif-panel,.notif-toast{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .howto-modal{background:#05081af2}
+  #phoneTopBar{background:#0d1936}
+  .nav-backdrop{background:#030814d9}
+  #usernameModal.guest-name-modal{background:#040a17ed}
+  .guide-image-dialog::backdrop{background:#030812f5}
+  .portal-info-modal,.showcase-modal{background:#020813f2}
+  .anime-modal{background:#020813f5}
+  .cards-detail{background:#030914f5}
+  .market-sell-dialog::backdrop,.market-offers-dialog::backdrop,.trade-dialog::backdrop,.ln-dialog::backdrop,.invite-dialog::backdrop{background:#030a16eb}
+  .showcase-preview-bar{background:#071022}
+  .gs-callout{background:#08101f}
+  .game-controls{background:#0b1222}
+  .qx-tabs{background:#0a1526}
+  .market-sell-dialog .market-sell-dialog-head{background:#13243f}
+  .portal-zoom{background:#030812f7}
+  /* decorative blurs: same look from soft gradients, no filter pass */
+  .pack-shine::before,.ac-back-shine{filter:none}
+  .card-home-portal-glow{filter:none;background:radial-gradient(closest-side,#a994ee50,#a994ee00);height:60%;bottom:-10%}
+  .summon-v2 .summon-stage::before{filter:none}
+  #sakuraBg .petal{filter:none}
+}
+
+/* Build 327 — perf: looping animations pause while scrolled out of view. */
+.saku-off,.saku-off *,.saku-off::before,.saku-off::after,.saku-off *::before,.saku-off *::after{animation-play-state:paused!important}

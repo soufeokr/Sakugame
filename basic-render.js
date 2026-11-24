@@ -50,9 +50,27 @@ function fitVisibleNames(root){if(!root || !root.isConnected)return;
     } catch(e) {} // Hidden screens are fitted when their cards are shown.
   });
 }
-window.sakuBasicObserve=function(root){if(!root)return;root.querySelectorAll('image[data-saku-src]').forEach(function(im){var h=observer&&hostOf(im);if(h)observer.observe(h);else loadImg(im);});
+window.sakuBasicObserve=function(root){if(!root)return;window.sakuAnimWatch(root);root.querySelectorAll('image[data-saku-src]').forEach(function(im){var h=observer&&hostOf(im);if(h)observer.observe(h);else loadImg(im);});
   if(typeof requestAnimationFrame==='function') requestAnimationFrame(function(){fitVisibleNames(root);});
 };
 if(typeof document!=='undefined' && document.fonts && document.fonts.ready) document.fonts.ready.then(function(){fitVisibleNames(document.body);});
+/* b327 — Remplissage différé : le visuel d'une carte (une centaine d'éléments SVG) n'est créé qu'à
+   l'approche de l'écran. sakuLazyFill(hôte, fonction qui renvoie le HTML). */
+var LAZY=new WeakMap();
+var lazyIO=typeof IntersectionObserver==='function'?new IntersectionObserver(function(entries){entries.forEach(function(e){if(!e.isIntersecting)return;var h=e.target,fn=LAZY.get(h);lazyIO.unobserve(h);LAZY.delete(h);if(!fn||!h.isConnected)return;h.insertAdjacentHTML('afterbegin',fn());h.classList.remove('saku-lazy');window.sakuBasicObserve(h);});},{rootMargin:'600px 0px'}):null;
+window.sakuLazyFill=function(host,fn){if(!host)return;if(!lazyIO){host.insertAdjacentHTML('afterbegin',fn());window.sakuBasicObserve(host);return;}host.classList.add('saku-lazy');LAZY.set(host,fn);lazyIO.observe(host);};
+window.sakuLazyRelease=function(root){if(lazyIO&&root)root.querySelectorAll('.saku-lazy').forEach(function(h){lazyIO.unobserve(h);LAZY.delete(h);});};
 window.sakuBasicRelease=function(root){if(observer&&root)root.querySelectorAll('image[data-saku-src]').forEach(function(im){var h=hostOf(im);if(h)observer.unobserve(h);});};
+
+/* b327 — Les animations en boucle (étoiles niv. 3, finitions, reflets, flèche d'amélioration)
+   se mettent en pause quand la carte sort de l'écran : classe .saku-off. */
+var ANIM_SEL='.saku-stars.lv-3,.ac-upgradable,.card-finish:not(.finish-mini),.pack-shine,.ac-back-shine,.ac-slot.basic-rendered';
+var animIO=typeof IntersectionObserver==='function'?new IntersectionObserver(function(entries){entries.forEach(function(e){e.target.classList.toggle('saku-off',!e.isIntersecting);});},{rootMargin:'120px 0px'}):null;
+var ANIM_SEEN=new WeakSet();
+window.sakuAnimWatch=function(root){if(!animIO||!root||!root.querySelectorAll)return;var list=root.querySelectorAll(ANIM_SEL);if(root.matches&&root.matches(ANIM_SEL))animIO.observe(root);for(var i=0;i<list.length;i++){var el=list[i];if(ANIM_SEEN.has(el))continue;ANIM_SEEN.add(el);animIO.observe(el);}};
+window.sakuAnimRelease=function(root){if(!animIO||!root||!root.querySelectorAll)return;var list=root.querySelectorAll(ANIM_SEL);for(var i=0;i<list.length;i++){animIO.unobserve(list[i]);ANIM_SEEN.delete(list[i]);}};
+if(typeof document!=='undefined'){document.addEventListener('saku-screen-leave',function(e){var el=document.getElementById(e.detail);if(el)window.sakuAnimRelease(el);});
+  var animScan=function(){var a=document.querySelector('.screen.active');if(a)window.sakuAnimWatch(a);};
+  document.addEventListener('saku-screen-show',function(){if(window.requestIdleCallback)window.requestIdleCallback(animScan,{timeout:800});else setTimeout(animScan,60);});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',animScan);else animScan();}
 })();

@@ -599,7 +599,7 @@ function cardsRenderAnimeList(grid, q, rf, ownedOnly, favOnly) {
   const more = document.getElementById('cardsMoreBtn');
   const shown = list.slice(0, cardAlbumLimit);
   if (more) { more.style.display = list.length > cardAlbumLimit ? '' : 'none'; more.textContent = cardTr('Show more') + ' (' + (list.length - cardAlbumLimit) + ')'; }
-  if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
+  cardsLazyRelease(grid);
   grid.classList.add('anime-mode');
   if (!grid.dataset.animeClick) { grid.dataset.animeClick = '1'; grid.addEventListener('click', e => { const b = e.target.closest('[data-anime]'); if (b && grid.contains(b)) cardsOpenAnime(b.dataset.anime); }); }
   if (!shown.length) { grid.innerHTML = '<p class="ac-empty">' + escapeHtml(cardTr('No anime matches.')) + '</p>'; return; }
@@ -630,7 +630,7 @@ function cardsOpenAnime(key) {
 function cardsCloseAnime() {
   const box = document.getElementById('cardsAnimeModal'); if (!box || box.hidden) return;
   box.hidden = true; cardAnimeOpen = null; document.body.classList.remove('anime-modal-open');
-  const grid = document.getElementById('cardsAnimeGrid'); if (grid) { if (window.sakuBasicRelease) window.sakuBasicRelease(grid); grid.innerHTML = ''; }
+  const grid = document.getElementById('cardsAnimeGrid'); if (grid) { cardsLazyRelease(grid); grid.innerHTML = ''; }
   if (cardAnimeFocus && cardAnimeFocus.isConnected) try { cardAnimeFocus.focus({ preventScroll: true }); } catch (e) {}
   cardAnimeFocus = null;
 }
@@ -648,10 +648,8 @@ function cardsRenderAnimeModal() {
   if (mine) rows = rows.filter(r => r.count > 0);
   rows.sort((a, b) => (!!b.count - !!a.count) || CARD_RARITY_ORDER.indexOf(b.p.rarity) - CARD_RARITY_ORDER.indexOf(a.p.rarity) || a.p.rank - b.p.rank);
   const grid = document.getElementById('cardsAnimeGrid');
-  if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
-  grid.innerHTML = rows.length ? rows.map(cardsTileHtml).join('') : '<p class="ac-empty">' + escapeHtml(cardTr('No card matches — open a booster to start your collection!')) + '</p>';
-  if (window.sakuAppendWishlist) grid.querySelectorAll('[data-card-id]').forEach(tile => window.sakuAppendWishlist(tile, tile.dataset.cardId));
-  if (window.sakuBasicObserve) window.sakuBasicObserve(grid);
+  if (rows.length) cardsLazyGrid(grid, rows);
+  else { cardsLazyRelease(grid); grid.innerHTML = '<p class="ac-empty">' + escapeHtml(cardTr('No card matches — open a booster to start your collection!')) + '</p>'; }
 }
 document.addEventListener('keydown', function (e) {
   if (e.key !== 'Escape' || !cardAnimeOpen || document.getElementById('cardsDetail')?.classList.contains('show')) return;
@@ -731,15 +729,61 @@ function cardsRenderAlbum() {
     more.style.display = rows.length > cardAlbumLimit ? '' : 'none';
     more.textContent = cardTr('Show more') + ' (' + (rows.length - cardAlbumLimit) + ')';
   }
-  if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
   if (!shown.length) {
+    cardsLazyRelease(grid);
     grid.innerHTML = '<p class="ac-empty">' + escapeHtml(cardTr('No card matches — open a booster to start your collection!')) + '</p>';
     return;
   }
-  grid.innerHTML = shown.map(cardsTileHtml).join('');
-  if(window.sakuAppendWishlist)grid.querySelectorAll('[data-card-id]').forEach(tile=>window.sakuAppendWishlist(tile,tile.dataset.cardId));
-  if (window.sakuBasicObserve) window.sakuBasicObserve(grid);
+  cardsLazyGrid(grid, shown);
 }
+/* b327 — Une carte dessinée, c'est une centaine d'éléments SVG : la collection ne dessine que les cartes
+   qui approchent de l'écran (avant, l'ouvrir créait ~25 000 éléments d'un coup et bloquait la page). */
+const CARD_PENDING = new WeakMap();
+const CARD_IO = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) cardsFillTile(e.target); });
+}, { rootMargin: '700px 0px' }) : null;
+function cardsLazyRelease(grid) {
+  if (!grid) return;
+  if (window.sakuBasicRelease) window.sakuBasicRelease(grid);
+  if (CARD_IO) grid.querySelectorAll('.ac-pending').forEach(ph => CARD_IO.unobserve(ph));
+}
+function cardsLazyGrid(grid, rows) {
+  cardsLazyRelease(grid);
+  grid.textContent = '';
+  const frag = document.createDocumentFragment();
+  rows.forEach(r => {
+    const ph = document.createElement('div');
+    ph.className = 'ac-tile ac-pending' + (r.count ? '' : ' missing');
+    ph.dataset.cardId = String(r.p.id); ph.title = String(r.p.name);
+    ph.setAttribute('role', 'button'); ph.tabIndex = 0;
+    CARD_PENDING.set(ph, r); frag.appendChild(ph);
+    if (CARD_IO) CARD_IO.observe(ph);
+  });
+  grid.appendChild(frag);
+  if (!CARD_IO) grid.querySelectorAll('.ac-pending').forEach(cardsFillTile);
+}
+function cardsFillTile(ph) {
+  const r = CARD_PENDING.get(ph); if (!r || !ph.isConnected) return;
+  CARD_PENDING.delete(ph); if (CARD_IO) CARD_IO.unobserve(ph);
+  const tmp = document.createElement('div'); tmp.innerHTML = cardsTileHtml(r);
+  const el = tmp.firstElementChild; if (!el) return;
+  if (window.sakuAppendWishlist) window.sakuAppendWishlist(el, el.dataset.cardId);
+  const focused = document.activeElement === ph;
+  ph.replaceWith(el);
+  if (focused) try { el.focus({ preventScroll: true }); } catch (e) {}
+  if (window.sakuBasicObserve) window.sakuBasicObserve(el);
+}
+/* En quittant la collection, ses grilles sont vidées ; elles sont reconstruites à la prochaine visite. */
+document.addEventListener('saku-screen-leave', e => {
+  if (e.detail !== 'collectionScreen' && e.detail !== 'cardsScreen') return;
+  const active = document.querySelector('.screen.active');
+  if (active && (active.id === 'collectionScreen' || active.id === 'cardsScreen')) return;
+  const grid = document.getElementById('cardsAlbum');
+  if (grid && !grid.classList.contains('anime-mode')) { cardsLazyRelease(grid); grid.textContent = ''; }
+});
+/* Clic ou Entrée sur une carte pas encore dessinée : ouvrir quand même sa fiche. */
+document.addEventListener('click', e => { const ph = e.target.closest && e.target.closest('.ac-pending'); if (ph && ph.dataset.cardId) cardsOpenDetail(ph.dataset.cardId); });
+document.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const ph = e.target.closest && e.target.closest('.ac-pending'); if (ph && ph.dataset.cardId) cardsOpenDetail(ph.dataset.cardId); });
 function cardsTileHtml(r) {
   {
     const meta = cardRarityMeta(r.p.rarity);
