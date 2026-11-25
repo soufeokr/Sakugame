@@ -46,8 +46,11 @@
   function fitName(){const btn=document.getElementById('usernameBtn'),n=btn&&btn.querySelector('.user-btn-name');if(!n)return;btn.classList.remove('name-squeezed');if(!narrow.matches)return;if(n.scrollWidth>n.clientWidth+1&&n.clientWidth<34)btn.classList.add('name-squeezed');}
   window.sakuFitTopName=fitName;
   try{const ro=new ResizeObserver(()=>fitName());const watch=()=>{['bottomBar','topBalances','usernameBtn'].forEach(id=>{const el=document.getElementById(id);if(el)ro.observe(el);});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();}catch(e){}
-  function detach() { uid=null;state=null;busy=false;retryAfter=0;close(false);renderBar(); }
-  function attach() { if(!currentAccount){detach();return;} refresh(true); }
+  function detach() { uid=null;state=null;busy=false;retryAfter=0;primedFor=null;close(false);renderBar(); }
+  // b328 — statut des tirages gratuits déjà reçu avec le compte : pas de second appel.
+  let primedFor=null;
+  window.sakuFreeDrawsPrime=function(owner,status){if(!owner||!status)return;const available=Math.max(0,Math.min(MAX,Math.floor(Number(status.available)||0)));const seconds=Math.max(0,Math.ceil(Number(status.next_seconds)||0));const bonus=Math.max(0,Math.floor(Number(status.bonus)||0));uid=owner;state={available,bonus,nextAt:available>=MAX?0:Date.now()+seconds*1000};retryAfter=0;primedFor=owner;};
+  function attach() { if(!currentAccount){detach();return;} if(primedFor&&primedFor===getUid()){primedFor=null;render();return;} primedFor=null; refresh(true); }
   function position() {
     const pop=document.getElementById('playerPopover'), btn=document.getElementById('usernameBtn');
     if(!pop||pop.hidden||!btn)return;

@@ -38,6 +38,7 @@
   }
 
   function clear() {
+    window.__sakuBoot = null;
     if (window.sakuProfileSyncStop) window.sakuProfileSyncStop();
     window.sakuSecureUserId = null;
     window.sakuSecureCoins = null;
@@ -78,40 +79,82 @@
   }
   window.sakuRpc = rpc;
 
+  // b328 — Le compte arrive en un seul appel (account_bootstrap). Le petit script en tête de
+  // index.html lance cet appel dès l'ouverture de la page ; on récupère sa réponse ici.
+  var hydratingId = null;
+  function takeEarlyBoot(uidv) {
+    var b = window.__sakuBoot; window.__sakuBoot = null;
+    if (!b || b.uid !== uidv || !b.p || Date.now() - b.at > 30000) return null;
+    return b.p;
+  }
+  async function bootstrap(uidv) {
+    var early = takeEarlyBoot(uidv), data = null;
+    if (early) { try { data = await early; } catch (e) { data = null; } }
+    if (!data || data.uid !== uidv) data = await rpc('account_bootstrap');
+    return data;
+  }
+  async function legacyLoad() {
+    var res = await Promise.all([
+      window.sakuBackend.gameCollection(),
+      window.sakuBackend.wallet(),
+      rpc('profile_data_get').catch(function (e) { warn(e); return null; })
+    ]);
+    return { cards: res[0], coins: res[1], profile: res[2], progress: null, free: null };
+  }
+
   async function hydrate() {
     var run = ++sequence;
     if (!window.sakuBackend) throw new Error('Service de compte indisponible');
-    var user = await currentUserOrNull();
+    var user;
+    try { user = await currentUserOrNull(); } catch (e) { if (run === sequence) hydratingId = null; throw e; }
     if (run !== sequence) return;
-    if (!user) { if (currentAccount || window.sakuSecureUserId) clear(); return; }
-    if (window.sakuSecureUserId && window.sakuSecureUserId !== user.id) clear();
-    var res = await Promise.all([window.sakuBackend.gameCollection(), window.sakuBackend.wallet()]);
-    if (run !== sequence) return;
-    var store = window.sakuLocalAccountRef(user.id);
-    var server = null;
-    try { server = await rpc('profile_data_get'); } catch (e) { warn(e); }
-    if (run !== sequence) return;
-    if (window.sakuProfileSync) window.sakuProfileSync(user.id, server && typeof server === 'object' ? server : {});
-    var local = (await store.once('value')).val() || {};
-    var name = metaName(user), avatar = metaAvatar(user);
-    var dc = { id: user.id, username: name, globalName: name, avatar: avatar, linkedAt: Date.now() };
-    await store.update({ dc: dc });
-    if (run !== sequence) return;
-    window.sakuSecureUserId = user.id;
-    window.sakuSecureCoins = res[1];
-    await sakuAdoptAccount(Object.assign({}, local, { dc: dc, cards: res[0] }));
-    if (typeof cardsRenderStats === 'function') try { cardsRenderStats(); } catch (e) {}
-    var album = document.getElementById('collectionScreen');
-    if (typeof cardsRenderAlbum === 'function' && album && album.classList.contains('active')) cardsRenderAlbum();
+    if (!user) { hydratingId = null; if (currentAccount || window.sakuSecureUserId) clear(); return; }
+    hydratingId = user.id;
+    try {
+      if (window.sakuSecureUserId && window.sakuSecureUserId !== user.id) clear();
+      var got = null;
+      try {
+        var boot = await bootstrap(user.id);
+        if (run !== sequence) return;
+        if (boot && boot.uid === user.id && boot.coins != null && window.sakuBackend.buildCollection) {
+          got = { cards: window.sakuBackend.buildCollection(boot.cards || [], boot.options || []), coins: boot.coins,
+            profile: boot.profile, progress: boot.progress || null, free: boot.free || null };
+        }
+      } catch (e) { warn(e); }
+      if (run !== sequence) return;
+      if (!got) { got = await legacyLoad(); if (run !== sequence) return; }
+      var store = window.sakuLocalAccountRef(user.id);
+      var server = got.profile;
+      if (window.sakuProfileSync) window.sakuProfileSync(user.id, server && typeof server === 'object' ? server : {});
+      var local = (await store.once('value')).val() || {};
+      var name = metaName(user), avatar = metaAvatar(user);
+      var dc = { id: user.id, username: name, globalName: name, avatar: avatar, linkedAt: Date.now() };
+      await store.update({ dc: dc });
+      if (run !== sequence) return;
+      window.sakuSecureUserId = user.id;
+      window.sakuSecureCoins = got.coins;
+      if (got.progress && window.sakuProgressPrime) try { window.sakuProgressPrime(user.id, got.progress); } catch (e) {}
+      if (got.free && window.sakuFreeDrawsPrime) try { window.sakuFreeDrawsPrime(user.id, got.free); } catch (e) {}
+      await sakuAdoptAccount(Object.assign({}, local, { dc: dc, cards: got.cards }));
+      if (typeof cardsRenderStats === 'function') try { cardsRenderStats(); } catch (e) {}
+      var album = document.getElementById('collectionScreen');
+      if (typeof cardsRenderAlbum === 'function' && album && album.classList.contains('active')) cardsRenderAlbum();
+    } finally {
+      if (run === sequence) hydratingId = null;
+    }
   }
 
   function start() {
     if (started) return;
     started = true;
     if (!window.sakuBackend) { warn(new Error('sakuBackend absent')); return; }
+    // Supabase signale aussi la session trouvée au démarrage : on ne relance pas un
+    // chargement déjà en cours (ou déjà fait) pour le même joueur.
+    var s0 = readSession();
+    if (s0 && s0.user && s0.user.id) hydratingId = s0.user.id;
     window.sakuBackend.onAuthStateChange(function (user) {
       // Le renouvellement périodique du jeton ne doit pas réinitialiser l'interface.
-      if (user && user.id === window.sakuSecureUserId) return;
+      if (user && (user.id === window.sakuSecureUserId || user.id === hydratingId)) return;
       setTimeout(function () { hydrate().catch(warn); }, 0);
     });
     hydrate().catch(warn);

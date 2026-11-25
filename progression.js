@@ -254,11 +254,15 @@
     return fetching;
   }
   function scheduleFetch(delay) { clearTimeout(refetchTimer); refetchTimer = setTimeout(fetchState, delay || 1200); }
-  function detach() { boundUid = null; state = null; lastLevel = null; loadFailed = false; pending.clear(); clearTimeout(refetchTimer); render(); }
+  function detach() { boundUid = null; state = null; lastLevel = null; loadFailed = false; primed = false; pending.clear(); clearTimeout(refetchTimer); render(); }
+  // b328 — progression déjà reçue avec le compte (account_bootstrap) : pas de second appel.
+  let primed = false;
+  function prime(uid, snap) { if (!uid || !snap || typeof snap !== 'object') return; boundUid = String(uid); state = snap; loadFailed = false; primed = true; }
   function attach() {
     if (!currentAccount) { detach(); return; }
     const uid = sakuMyDcId();
-    if (uid === boundUid && state) { render(); return; }
+    if (uid === boundUid && state) { if (primed) { primed = false; changed(); } else render(); return; }
+    primed = false;
     boundUid = uid; state = null; loadFailed = false; render(); fetchState();
   }
   function matchPrefix(kind, gid) {
@@ -357,6 +361,7 @@
   window.showQuests = function () { showScreen('questsScreen'); render(); fetchState(); try { window.scrollTo(0, 0); } catch (e) {} };
   window.sakuProgressRefresh = fetchState;
   window.sakuProgressSetCoins = c => { c = Number(c); if (state && Number.isFinite(c) && c >= 0) { state = Object.assign({}, state, {coins: Math.floor(c)}); changed(); } };
+  window.sakuProgressPrime = prime;
   window.sakuProgressAttach = attach; window.sakuProgressDetach = detach; window.sakuProgressGame = game; window.sakuProgressRound = round;
   window.sakuProgressMulti = multi; window.sakuClaimQuest = claim; window.sakuProgressRender = render; window.sakuProgressClipboard = renderClipboard;
   window.sakuProgressSnapshot = function () {
