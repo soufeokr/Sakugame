@@ -22,6 +22,7 @@
     return '#' + id;
   }
   function gameName(g) {
+    if (g === 'arena') return 'Arena';
     try { if (typeof GAME_LABELS !== 'undefined' && GAME_LABELS[g]) return typeof t === 'function' ? t(GAME_LABELS[g]) : GAME_LABELS[g]; } catch (e) {}
     return L3('un jeu', 'a game', 'un juego');
   }
@@ -75,12 +76,19 @@
       else if (n.kind === 'friend_request' || n.kind === 'friend_accept') { if (window.sakuNavOpen) window.sakuNavOpen(); if (window.sakuSocialTab) window.sakuSocialTab('friends'); }
       else if (n.kind === 'referral') { if (window.sakuReferralOpen) window.sakuReferralOpen(); }
       else if (n.kind === 'quest') { if (typeof showQuests === 'function') showQuests(); }
-      else if (n.kind === 'room_invite' && d.code) joinRoom(d.code);
+      else if (n.kind === 'room_invite' && d.code) joinRoom(d.code, d.game);
     } catch (e) { console.warn(e); }
   }
-  function joinRoom(code) {
+  // Arena n'existe que sur la version test du site : ses invitations y mènent.
+  const ARENA_TEST_URL = 'https://soufeokr.github.io/Sakugame/test/';
+  function joinRoom(code, game) {
     code = String(code || '').toUpperCase();
     if (!/^[A-Z0-9]{4}$/.test(code)) return;
+    if (game === 'arena') {
+      if (typeof window.sakuArenaJoin === 'function') window.sakuArenaJoin(code);
+      else location.href = ARENA_TEST_URL + '?arena=' + code;
+      return;
+    }
     if (typeof roomCode !== 'undefined' && roomCode === code) { if (typeof showScreen === 'function') showScreen('lobbyScreen'); return; }
     if (typeof joinRoomByCode === 'function') joinRoomByCode(code);
   }
@@ -183,7 +191,7 @@
     let box = $('notifToasts'); if (!box) { box = document.createElement('div'); box.id = 'notifToasts'; box.className = 'notif-toasts'; document.body.appendChild(box); }
     const el = document.createElement('div'); el.className = 'notif-toast'; el.setAttribute('role', 'status');
     el.innerHTML = avatarHtml(n) + '<span class="notif-toast-text">' + text(n) + '</span><button type="button" class="notif-toast-join">' + esc(L3('Rejoindre', 'Join', 'Unirse')) + '</button><button type="button" class="notif-toast-x" aria-label="' + esc(L3('Fermer', 'Close', 'Cerrar')) + '">×</button>';
-    el.querySelector('.notif-toast-join').addEventListener('click', () => { el.remove(); joinRoom(n.data.code); });
+    el.querySelector('.notif-toast-join').addEventListener('click', () => { el.remove(); joinRoom(n.data.code, n.data.game); });
     el.querySelector('.notif-toast-x').addEventListener('click', () => el.remove());
     box.appendChild(el);
     try { if (window.SakuSfx) window.SakuSfx.play('tap'); } catch (e) {}
@@ -195,7 +203,7 @@
   const invited = new Map();
   function friends() { try { return (window.sakuFriendsList && window.sakuFriendsList()) || []; } catch (e) { return []; } }
   function inviteRow(p, isFriend) {
-    const key = (typeof roomCode !== 'undefined' ? roomCode : '') + ':' + p.id, done = invited.get(key);
+    const key = invCtx.code + ':' + p.id, done = invited.get(key);
     return '<div class="invite-row"><span class="notif-ava">' + (okAvatar(p.avatar) ? '<img src="' + esc(p.avatar) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '<b>' + esc(String(p.name || '?').trim().charAt(0).toUpperCase() || '?') + '</b></span>' +
       '<span class="invite-name" data-noi18n>' + esc(p.name || L3('Joueur', 'Player', 'Jugador')) + (isFriend ? '<small>' + esc(p.favorite ? L3('Ami favori', 'Favorite friend', 'Amigo favorito') : L3('Ami', 'Friend', 'Amigo')) + '</small>' : '') + '</span>' +
       '<button type="button" class="invite-send' + (done ? ' is-sent' : '') + '" data-invite="' + esc(p.id) + '"' + (done ? ' disabled' : '') + '>' + esc(done ? L3('Invité', 'Invited', 'Invitado') : L3('Inviter', 'Invite', 'Invitar')) + '</button></div>';
@@ -231,22 +239,26 @@
     unavailable: () => L3('Invitation impossible.', 'Invitation unavailable.', 'Invitación imposible.')
   };
   async function sendInvite(btn) {
-    const to = btn.dataset.invite, code = typeof roomCode !== 'undefined' ? roomCode : null;
+    const to = btn.dataset.invite, code = invCtx.code || null;
     if (!to || !code) return;
     btn.disabled = true; const msg = $('inviteMsg'); if (msg) msg.textContent = '';
     try {
-      await rpc('notif_room_invite', {p_to: to, p_code: code, p_game: (typeof currentRoom !== 'undefined' && currentRoom && currentRoom.game) || ''});
+      await rpc('notif_room_invite', {p_to: to, p_code: code, p_game: invCtx.game || ''});
       invited.set(code + ':' + to, true); btn.classList.add('is-sent'); btn.textContent = L3('Invité', 'Invited', 'Invitado');
     } catch (e) {
       btn.disabled = false; const k = String(e && e.message || '').trim();
       if (msg) msg.textContent = INVITE_ERR[k] ? INVITE_ERR[k]() : L3('L\'invitation n\'a pas pu être envoyée.', 'The invitation could not be sent.', 'No se pudo enviar la invitación.');
     }
   }
-  function openInvite() {
-    if (typeof roomCode === 'undefined' || !roomCode) return;
+  // Salon des jeux du site par défaut ; Arena passe son propre code (openInvite(code, 'arena')).
+  let invCtx = {code: '', game: ''};
+  function openInvite(code, game) {
+    if (typeof code !== 'string') code = typeof roomCode !== 'undefined' ? roomCode : '';
+    if (!code) return;
+    invCtx = {code: String(code).toUpperCase(), game: typeof game === 'string' ? game : ((typeof currentRoom !== 'undefined' && currentRoom && currentRoom.game) || '')};
     if (!uid) { if (typeof showNotification === 'function') showNotification(L3('Connecte-toi avec Discord pour inviter des joueurs.', 'Sign in with Discord to invite players.', 'Inicia sesión con Discord para invitar jugadores.')); return; }
     const d = $('inviteDialog'); if (!d) return;
-    $('inviteSearch').value = ''; $('inviteMsg').textContent = ''; $('inviteCode').textContent = roomCode;
+    $('inviteSearch').value = ''; $('inviteMsg').textContent = ''; $('inviteCode').textContent = invCtx.code;
     lastResults = []; renderInvite([]);
     if (window.sakuFriendsRefresh) window.sakuFriendsRefresh().then(() => { if (d.open) renderInvite(lastResults); }).catch(() => {});
     if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', '');

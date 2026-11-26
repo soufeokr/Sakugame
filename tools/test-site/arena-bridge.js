@@ -1,0 +1,82 @@
+/* Sakugame (version test) — Arena dans le site.
+   • Ajoute l'écran Arena (iframe arena/index.html) et l'entrée « Arena » du menu et de l'accueil Cartes.
+   • Pont window.sakuArenaBridge lu par Arena : compte, collection, catalogue, base Firebase, invitations.
+   • Lien direct : ?arena=CODE ouvre Arena et rejoint le salon Amical. */
+(function () {
+  'use strict';
+  const SRC = 'arena/index.html?v=__ARENA_V__';
+  let pending = null;
+  const $ = id => document.getElementById(id);
+  function frame() { return $('arenaFrame'); }
+  function app() { try { const f = frame(); return f && f.contentWindow && f.contentWindow.ArenaApp; } catch (e) { return null; } }
+  function guestId() {
+    let id = null;
+    try { id = JSON.parse(localStorage.getItem('sakuArena:guest') || 'null'); } catch (e) {}
+    if (!id) { id = 'g' + Math.random().toString(36).slice(2, 12); try { localStorage.setItem('sakuArena:guest', JSON.stringify(id)); } catch (e) {} }
+    return id;
+  }
+
+  window.sakuArenaBridge = {
+    me() {
+      let id = null, name = '', avatar = '';
+      try { id = typeof sakuMyDcId === 'function' ? sakuMyDcId() : null; } catch (e) {}
+      try { name = typeof playerName === 'string' ? playerName : ''; } catch (e) {}
+      try { avatar = (typeof myAvatar === 'function' && myAvatar()) || ''; } catch (e) {}
+      return { pid: id || guestId(), uid: id, name: name || 'Joueur', avatar: avatar, signedIn: !!id };
+    },
+    owned() { try { return (typeof cardState !== 'undefined' && cardState && cardState.cards) || null; } catch (e) { return null; } },
+    catalogue() { try { return window.sakuMarket ? window.sakuMarket.list() : []; } catch (e) { return []; } },
+    db() { try { return typeof database !== 'undefined' ? database : null; } catch (e) { return null; } },
+    invite(code) { if (window.sakuRoomInviteOpen) window.sakuRoomInviteOpen(code, 'arena'); },
+    notify(msg) { if (typeof showNotification === 'function') showNotification(msg); },
+    ready() { if (pending) { const c = pending; pending = null; const a = app(); if (a && a.join) a.join(c); } }
+  };
+
+  function navInset() {
+    const nav = $('mobilePrimaryNav');
+    if (!nav) return 0;
+    const r = nav.getBoundingClientRect();
+    if (!r.height || getComputedStyle(nav).display === 'none' || getComputedStyle(nav).visibility === 'hidden') return 0;
+    return r.top < window.innerHeight && r.bottom >= window.innerHeight - 2 ? Math.round(window.innerHeight - r.top) : 0;
+  }
+  function fit() {
+    const inset = navInset();
+    document.documentElement.style.setProperty('--saku-nav-inset', inset + 'px');
+    const f = frame(); if (!f || !f.offsetParent) return;
+    const top = Math.max(0, f.getBoundingClientRect().top + window.scrollY);
+    f.style.height = Math.max(420, window.innerHeight - top - inset) + 'px';
+  }
+  function open(code) {
+    if (typeof showScreen !== 'function') return;
+    showScreen('arenaScreen');
+    try { if (window.sakuMobileScreenChanged) window.sakuMobileScreenChanged('collectionScreen'); } catch (e) {}
+    window.scrollTo(0, 0);
+    const f = frame();
+    if (f && !f.getAttribute('src')) f.setAttribute('src', SRC);
+    requestAnimationFrame(fit);
+    if (code) { const a = app(); if (a && a.join) a.join(code); else pending = code; }
+    else { const a = app(); if (a && a.refresh) a.refresh(); }
+  }
+  window.sakuArenaOpen = open;
+  window.sakuArenaJoin = code => open(String(code || '').toUpperCase());
+  window.addEventListener('resize', fit);
+
+  const navGo = window.sakuNavGo;
+  if (typeof navGo === 'function') {
+    window.sakuNavGo = function (destination) {
+      if (destination === 'arena') { if (typeof sakuNavClose === 'function') sakuNavClose(false); open(); return; }
+      return navGo.apply(this, arguments);
+    };
+  }
+
+  function mount() {
+    if (!$('sakuTestPill')) {
+      const pill = document.createElement('div'); pill.id = 'sakuTestPill'; pill.className = 'saku-test-pill'; pill.setAttribute('data-noi18n', '');
+      pill.textContent = 'Version test'; document.body.appendChild(pill);
+    }
+    fit();
+    const m = /[?&]arena=([A-Za-z0-9]{4})\b/.exec(location.search);
+    if (m) setTimeout(() => open(m[1].toUpperCase()), 300);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
+})();

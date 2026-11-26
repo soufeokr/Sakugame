@@ -1,0 +1,150 @@
+/* Sakugame Arena (version test) — menu, écrans et intégration dans le site. */
+body{background-attachment:scroll;min-height:100%}
+.wrap{max-width:1320px}
+#app{padding-bottom:40px}
+.kicker{display:block;font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#7fb3d9}
+.testtag{font-style:normal;margin-left:8px;padding:2px 8px;border-radius:99px;border:1px solid #f2a93b66;color:#ffcf85;letter-spacing:.08em;font-size:10px}
+.ghostbtn.danger{border-color:#ff8f8a55;color:#ffc1bd}
+.ghostbtn.danger:hover{background:#3a1820}
+.ghostbtn.confirm{background:#5a1d26;border-color:#ff8f8a;color:#fff}
+.ghostbtn:disabled{opacity:.4;cursor:not-allowed}
+.primary.wide{width:100%;margin-top:14px}
+.warn{color:#ffcf85}
+
+/* ---------- en-tête des écrans ---------- */
+.ahead{display:flex;align-items:flex-start;gap:14px;padding:24px 0 18px}
+.ahead h1{font-size:30px;line-height:1.1;margin-top:3px}
+.ahead .sub{margin:5px 0 0}
+.backbtn{flex:none;width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:#102540;display:grid;place-items:center;color:#d8ecfb;margin-top:4px}
+.backbtn:hover{background:#17345a;border-color:#9fd8ff66}
+.backbtn svg{width:20px;height:20px}
+
+/* ---------- menu ---------- */
+.amenu{padding:26px 0 30px}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;flex-wrap:wrap;padding:26px 28px;border-radius:22px;border:1px solid var(--line);
+  background:radial-gradient(ellipse 70% 120% at 0% 0%,#2b7fd640,transparent 60%),radial-gradient(ellipse 60% 120% at 100% 100%,#a07cf533,transparent 60%),linear-gradient(180deg,#10223d,#0c1a2f)}
+.hero h1{font-size:54px;line-height:1;letter-spacing:-.02em;margin:6px 0 8px;background:linear-gradient(180deg,#ffffff,#9fd8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{max-width:520px;font-size:14px;margin:0}
+.herodeck{display:flex;flex-direction:column;gap:3px;min-width:220px;padding:14px 16px;border-radius:15px;background:#0a1628cc;border:1px solid var(--line)}
+.herodeck span{font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.herodeck b{font-size:18px}
+.herodeck small{color:var(--muted);font-size:12px}
+.resume{display:block;width:100%;margin-top:14px;padding:13px 16px;border-radius:14px;border:1px solid #9fd8ff66;background:#13335a;color:#eaf4ff;font-weight:700;text-align:left}
+.resume:hover{background:#1a4170}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+.tile{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:18px;border-radius:18px;border:1px solid var(--line);
+  background:linear-gradient(180deg,#10223d,#0d1a2e);min-height:150px;transition:transform .15s,border-color .15s,background .15s}
+.tile:hover{transform:translateY(-2px);border-color:#9fd8ff66;background:linear-gradient(180deg,#132a4a,#0f1f37)}
+.tile b{font-size:19px}
+.tile span:last-child{color:var(--muted);font-size:12.5px;line-height:1.45}
+.tile .ti{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:#102540;border:1px solid var(--line);color:var(--sky);margin-bottom:6px}
+.tile .ti svg{width:23px;height:23px}
+.tile.big{grid-column:span 2;min-height:178px;background:radial-gradient(ellipse 80% 120% at 100% 0%,#2b7fd633,transparent 60%),linear-gradient(180deg,#112848,#0d1a2e)}
+.tile.big b{font-size:24px}
+.tile.big .ti{width:52px;height:52px;background:linear-gradient(140deg,#9fd8ff,#2b7fd6);color:#06182e;border:0}
+.tile.big .ti svg{width:27px;height:27px}
+
+/* ---------- decks ---------- */
+.builder{padding:0 0 50px}
+.dtabs{display:flex;gap:4px;background:#081220;border-radius:11px;padding:3px;margin-bottom:12px}
+.dtabs button{flex:1;padding:8px 6px;border-radius:9px;font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dtabs button.on{background:#1c3d66;color:#fff}
+.dname{display:flex;align-items:center;gap:9px;margin-bottom:12px;font-size:12px;color:var(--muted)}
+.dname input{flex:1;height:38px;border:1px solid var(--line);border-radius:10px;background:#102540;color:#fff;padding:0 11px;font:inherit;font-weight:700}
+.deckhead h2{font-size:30px}
+.deckhead h2 small{font-size:15px;color:var(--muted);font-weight:700}
+.activetag{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#06182e;background:var(--sky);border-radius:99px;padding:4px 10px}
+.deckrow.out{border-color:#f2a93b44}
+.deckrow small{color:#ffcf85;font-size:10.5px;font-weight:600}
+.dbtns{display:flex;gap:8px;flex-wrap:wrap}
+.colseg{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.colseg button{border:1px solid var(--line);background:#102540;color:#cfe3f5;border-radius:11px;padding:9px 14px;font-size:13px;font-weight:700}
+.colseg button.on{border-color:#9fd8ff;background:#1c3d66;color:#fff}
+.colseg button b{color:var(--sky);margin-left:4px}
+.colseg button:disabled{opacity:.4;cursor:not-allowed}
+.poolcard.unowned .card{opacity:.55;filter:saturate(.5)}
+.poolcard .nown{position:absolute;left:6px;right:6px;bottom:44px;z-index:9;text-align:center;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ffdca3;background:#2a1a08e6;border:1px solid #f2a93b66;border-radius:7px;padding:3px 0}
+
+/* ---------- Duel / Amical ---------- */
+.setup{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start;padding-bottom:40px}
+.setup .panel h2{font-size:18px;margin-bottom:10px}
+.deckpick{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.dpk{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 14px;border-radius:13px;border:1px solid var(--line);background:#102540}
+.dpk b{font-size:15px}
+.dpk span{font-size:12px;color:var(--muted)}
+.dpk em{font-style:normal;font-size:11px;color:#ffcf85}
+.dpk.on{border-color:#9fd8ff;background:#163a63;box-shadow:inset 0 0 0 1px #9fd8ff55}
+.dpk.on b::before{content:"★ ";color:var(--sky)}
+.dpk.bad span{color:#ffb3ae}
+.seg.big button{padding:11px 8px;font-size:13.5px}
+.setup .seg+.sub{margin:12px 2px 0;min-height:38px}
+.joinrow{display:flex;gap:8px}
+.joinrow input{flex:1;min-width:0;height:48px;border:1px solid var(--line);border-radius:12px;background:#102540;color:#fff;padding:0 14px;font:800 22px/1 Outfit,sans-serif;letter-spacing:.3em;text-transform:uppercase}
+.lobby{text-align:center}
+.codebig{font:900 54px/1.1 Outfit,sans-serif;letter-spacing:.22em;margin:6px 0 14px;color:#fff;text-shadow:0 0 30px #2b7fd6aa}
+.lobby .dbtns{justify-content:center}
+.players{display:flex;flex-direction:column;gap:8px;margin:18px 0 4px;text-align:left}
+.pl{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:13px;background:#102540;border:1px solid var(--line)}
+.pl.wait{opacity:.6;border-style:dashed}
+.ava{position:relative;width:36px;height:36px;border-radius:50%;overflow:hidden;background:#1c3d66;display:grid;place-items:center;flex:none}
+.ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ava b{font-size:15px}
+.pn{flex:1;font-weight:700}
+.pn small{color:var(--muted);font-weight:600;margin-left:4px}
+.pr{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pr.ok{color:var(--pv)}
+
+/* ---------- partie ---------- */
+.game{padding-top:16px}
+.hudbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.oppst{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--pv);padding:4px 9px;border-radius:99px;border:1px solid #5fe0b044}
+.oppst.off{color:#ffb3ae;border-color:#ff8f8a55}
+.endbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ---------- règles / historique / paramètres ---------- */
+.rules h2{font-size:20px;margin:22px 0 10px}
+.rules h2:first-child{margin-top:0}
+.ess{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px;color:#d8ecfb}
+.rules .row{padding:10px 0;border-top:1px solid var(--line-soft)}
+.rules .row b{display:block;margin-bottom:2px}
+.rules .row p{margin:0;color:var(--muted);font-size:13px}
+.statline.hist{margin-bottom:16px}
+.statline.hist small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.hrow{display:grid;grid-template-columns:90px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 12px;border-radius:11px;background:#102540;border:1px solid #ffffff0a;margin-top:6px;font-size:13px}
+.hrow b{font-weight:800}
+.hrow.win b{color:var(--pv)}
+.hrow.loss b{color:#ffb3ae}
+.hrow small{color:var(--muted)}
+.setlist{display:flex;flex-direction:column;gap:4px}
+.setrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,340px);gap:18px;align-items:center;padding:14px 0;border-top:1px solid var(--line-soft)}
+.setrow:first-child{border-top:0}
+.setrow .sub{margin:3px 0 0}
+
+/* ---------- responsive ---------- */
+@media (max-width:1120px){
+  .side{order:2}
+  .builder aside{order:0}
+  .builder .decklist{max-height:230px}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  .amenu{padding-top:14px}
+  .hero{padding:20px 18px}
+  .hero h1{font-size:42px}
+  .herodeck{width:100%}
+  .tiles{gap:10px}
+  .tile{min-height:0;padding:14px}
+  .tile.big{min-height:0}
+  .tile b{font-size:16px}
+  .tile.big b{font-size:19px}
+  .tile span:last-child{font-size:11.5px}
+  .ahead{padding:16px 0 12px}
+  .ahead h1{font-size:24px}
+  .setup{grid-template-columns:1fr}
+  .setrow{grid-template-columns:1fr;gap:10px}
+  .hrow{grid-template-columns:70px minmax(0,1fr);gap:4px 10px}
+  .hrow small{grid-column:2}
+  .codebig{font-size:44px}
+  .hudbtns .ghostbtn{padding:7px 10px;font-size:12px}
+}
+@media (max-width:760px){ .back-label{font-size:8px;letter-spacing:.04em;padding:6px 3px 8px} }
