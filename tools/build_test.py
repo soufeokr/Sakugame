@@ -94,6 +94,8 @@ def main():
     s = replace_once(s, '<div class="card-home-shortcuts">',
                      '<div class="card-home-shortcuts"><button type="button" onclick="sakuNavGo(\'arena\')"><svg class="ic"><use href="#i-swords"/></svg><strong data-noi18n>Arena</strong><small data-noi18n>Duel, Amical, Deck</small>'
                      '<span aria-hidden="true"><svg class="saku-arrow-icon saku-arrow-small" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></span></button>', 'shortcuts')
+    s = replace_once(s, '<span>Games</span></button>\n',
+                     '<span>Games</span></button>\n    <button type="button" data-mobile-destination="arena" onclick="sakuNavGo(\'arena\')"><svg class="ic"><use href="#i-swords"/></svg><span data-noi18n>Arena</span></button>\n', 'mobile nav')
     s = replace_once(s, '<div class="screen" id="cardHomeScreen"></div>',
                      '<div class="screen" id="cardHomeScreen"></div>\n\n  <div class="screen" id="arenaScreen"><iframe id="arenaFrame" class="arena-frame" title="Arena" allow="clipboard-write"></iframe></div>', 'screen')
     notif = re.search(r'<script defer src="notifications\.js\?v=\d+"></script>', s)

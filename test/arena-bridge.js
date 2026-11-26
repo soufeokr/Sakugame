@@ -4,7 +4,7 @@
    • Lien direct : ?arena=CODE ouvre Arena et rejoint le salon Amical. */
 (function () {
   'use strict';
-  const SRC = 'arena/index.html?v=f1f02f3c';
+  const SRC = 'arena/index.html?v=5439bb1d';
   let pending = null;
   const $ = id => document.getElementById(id);
   function frame() { return $('arenaFrame'); }
@@ -49,7 +49,7 @@
   function open(code) {
     if (typeof showScreen !== 'function') return;
     showScreen('arenaScreen');
-    try { if (window.sakuMobileScreenChanged) window.sakuMobileScreenChanged('collectionScreen'); } catch (e) {}
+    markNav(true);
     window.scrollTo(0, 0);
     const f = frame();
     if (f && !f.getAttribute('src')) f.setAttribute('src', SRC);
@@ -57,6 +57,14 @@
     if (code) { const a = app(); if (a && a.join) a.join(code); else pending = code; }
     else { const a = app(); if (a && a.refresh) a.refresh(); }
   }
+  // Barre du bas (téléphone) : le bouton Arena est mis en avant tant que l'écran Arena est ouvert.
+  function markNav(on) {
+    document.querySelectorAll('#mobilePrimaryNav [data-mobile-destination]').forEach(b => {
+      if (b.dataset.mobileDestination === 'arena') { if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); }
+      else if (on) b.removeAttribute('aria-current');
+    });
+  }
+  document.addEventListener('saku-screen-show', e => { if (e.detail !== 'arenaScreen') markNav(false); });
   window.sakuArenaOpen = open;
   window.sakuArenaJoin = code => open(String(code || '').toUpperCase());
   window.addEventListener('resize', fit);
