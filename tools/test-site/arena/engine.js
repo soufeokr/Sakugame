@@ -19,11 +19,13 @@
     { id: 'deck', titre: 'Deck de 20 personnages uniques', etat: 'cahier',
       texte: "20 cartes possédées, toutes éditions confondues, Uncommon minimum. Une même personne n'occupe qu'une place : l'identité canonique est le nom normalisé, la meilleure édition disponible (Strongest > Hoshi > Basic) est retenue." },
     { id: 'setup', titre: 'Mise en place', etat: 'cahier',
-      texte: 'Chaque joueur a 5 cartes cachées sur le terrain, 3 en main, 12 en pioche. Deux cartes du terrain sont révélées au départ. Premier joueur tiré au hasard.' },
+      texte: "Chaque joueur a 5 cartes cachées sur le terrain, 3 en main, 12 en pioche. Avant le premier tour, chaque joueur choisit les 2 cartes de son terrain qu'il retourne ; elles sont révélées en même temps. Premier joueur tiré au hasard : il ne joue qu'un seul coup à son premier tour." },
     { id: 'plateau', titre: ' Orientation du plateau', etat: 'proposition',
       texte: "Plateau 2 rangées x 5 colonnes, une rangée par joueur, les deux rangées face à face. La colonne n d'une rangée fait face à la colonne n de l'autre. Une carte ne se déplace jamais d'une rangée à l'autre." },
     { id: 'coups', titre: 'Deux coups par tour', etat: 'cahier',
-      texte: 'Révéler, poser, attaquer, utiliser une capacité active et déplacer coûtent chacun un coup. Piocher est ajouté (PROPOSITION) et coûte un coup.' },
+      texte: "Révéler, poser, remplacer, attaquer, utiliser une capacité active et déplacer coûtent chacun un coup. Piocher coûte un coup. Exception : le joueur qui commence n'a qu'un coup à son tout premier tour." },
+    { id: 'remplacement', titre: 'Remplacement', etat: 'cahier',
+      texte: "Pour un coup, une carte visible de votre terrain peut être remplacée par une carte de votre main : la nouvelle carte arrive face visible sur la case, l'ancienne part au fond de votre pioche (elle ne compte pas comme morte et perd ses statuts et bonus). Impossible sur une carte qui brûle ou prise dans une Prison de glace complète." },
     { id: 'remplissage', titre: 'Remplissage du terrain', etat: 'proposition',
       texte: "En début de tour, les cases vides sont remplies gratuitement depuis la main d'abord, puis depuis le sommet de la pioche ; les cartes arrivent face cachée. La main n'est jamais remplie automatiquement : seule l'action Piocher (ou une capacité) y ajoute une carte." },
     { id: 'adjacence', titre: "Bonus d'animé voisin", etat: 'proposition',
@@ -51,7 +53,7 @@
     { id: 'familles', titre: 'Familles de capacités Épique & Légendaire', etat: 'cahier',
       texte: "261 cartes Épique ou Légendaire sont rattachées à l'une des 17 familles du document (Tireur, Électricité, Feu, Glace et eau, Lame, Rempart, Vitesse, Soigneur, Stratège, Poison, Invocateur, Régénération, Assassin, Psychique, Explosifs, Copie, Vol). Les autres gardent la capacité de leur profil. Passive : aucun coup, s'applique tant que la carte est face visible. Active : un coup, nombre d'utilisations par partie." },
     { id: 'quota', titre: 'Une capacité par carte', etat: 'cahier',
-      texte: "Chaque carte a une seule capacité ; seules les Spéciales en ont deux (Goku Mythique garde Kamehameha, Ultra Instinct reste à la Spéciale). PROPOSITION pour les familles : l'Épique reçoit la passive de sa famille et la Légendaire son active (Soigneur et Copie n'ont qu'une passive). Un réglage avant la partie permet de donner à toutes la passive, ou à toutes l'active." },
+      texte: "Chaque carte a une seule capacité ; seules les Spéciales en ont deux (Goku Mythique garde Kamehameha, Ultra Instinct reste à la Spéciale). PROPOSITION pour les familles : l'Épique reçoit la passive de sa famille et la Légendaire son active (Soigneur et Copie n'ont qu'une passive). La règle est la même pour tous les joueurs." },
     { id: 'statuts', titre: 'Statuts partagés', etat: 'cahier',
       texte: "Paralysie (pas d'attaque à son prochain tour), Brûlure (PV fixes à la fin de chacun de ses tours, 2 tours, ni déplacement ni remplacement), Gel (−% d'ATK jusqu'à la fin de son prochain tour), Venin (doublé ou triplé à chaque tour, 3 tours, cumulable ×2, soins bloqués). Un exemplaire de chaque, une carte cachée n'en subit aucun, Rempart y est immunisé, et un statut tombe quand la carte quitte le terrain." }
   );
@@ -268,8 +270,7 @@
   function passiveChosen(d) {
     var f = familyOfDef(d); if (!f) return false;
     if (!FAMILIES[f].active) return true;
-    if (SETTINGS.famMode === 'passive') return true;
-    if (SETTINGS.famMode === 'active') return false;
+    /* Règle commune à tous les joueurs : l'Épique a la passive de sa famille, la Légendaire son active. */
     return d.rarity === 'epic';
   }
 
@@ -535,28 +536,14 @@
       for (var h = 0; h < 3; h++) { var c = p.deck.pop(); if (c) p.hand.push(c); }
     });
 
-    // Deux cartes révélées au départ, par joueur.
-    [0, 1].forEach(function (pi) {
-      var slots = [0, 1, 2, 3, 4];
-      shuffle(slots, rng);
-      for (var k = 0; k < 2; k++) {
-        var c = st.cards[st.players[pi].terrain[slots[k]]];
-        if (c) c.faceUp = true;
-      }
-    });
-
+    // Mise en place : chaque joueur choisit les 2 cartes qu'il retourne (action « setup »).
     st.turnOwner = rng() < 0.5 ? 0 : 1;
     st.turnNo = 1;
-    st.actionsLeft = 2;
+    st.actionsLeft = 1;
+    st.phase = 'setup';
+    st.setup = [null, null];
     st.log = [];
-    refreshBonuses(st, true);
-    log(st, 'p', 'Mise en place : deck de 20 cartes, 5 sur le terrain (2 révélées), 3 en main, 12 en pioche.');
-    log(st, 'turn', 'Tour 1 — ' + st.players[st.turnOwner].nom + ' commence (tirage au sort).');
-    checkFusions(st);
-    [0, 1].forEach(function (pi) {
-      st.players[pi].terrain.forEach(function (u) { if (u && st.cards[u].faceUp) onReveal(st, u); });
-    });
-    revealTriggers(st);
+    log(st, 'p', 'Mise en place : deck de 20 cartes, 5 sur le terrain, 3 en main, 12 en pioche. Chaque joueur choisit 2 cartes à retourner.');
     return st;
   }
 
@@ -922,6 +909,70 @@
     spend(st);
     checkEnd(st);
     return ok('Carte posée.');
+  }
+
+  /* Mise en place : le joueur pi choisit les 2 cartes de son terrain à retourner.
+     Les choix restent secrets jusqu'à ce que les deux joueurs aient choisi. */
+  function setupReveal(st, pi, uids) {
+    if (st.over) return fail('La partie est terminée.');
+    if (st.phase !== 'setup') return fail('La mise en place est terminée.');
+    if (pi !== 0 && pi !== 1) return fail('Joueur invalide.');
+    if (st.setup[pi]) return fail('Vos cartes sont déjà choisies.');
+    var row = st.players[pi].terrain, list = (uids || []).filter(function (u, k, a) { return a.indexOf(u) === k; });
+    var need = Math.min(2, row.filter(Boolean).length);
+    if (list.length !== need) return fail('Choisissez ' + need + ' cartes à retourner.');
+    if (list.some(function (u) { return row.indexOf(u) < 0; })) return fail('Choisissez des cartes de votre terrain.');
+    st.setup[pi] = list;
+    log(st, 'p', st.players[pi].nom === 'Vous' ? 'Vous avez choisi vos cartes.' : st.players[pi].nom + ' a choisi ses cartes.');
+    if (st.setup[0] && st.setup[1]) finishSetup(st);
+    return ok('Choix enregistré.');
+  }
+  function finishSetup(st) {
+    [0, 1].forEach(function (pi) {
+      st.setup[pi].forEach(function (u) { var c = st.cards[u]; if (c) { c.faceUp = true; fx(st, { t: 'reveal', uid: u, at: where(st, u) }); } });
+    });
+    st.phase = 'play';
+    refreshBonuses(st, true);
+    var first = st.players[st.turnOwner].nom;
+    log(st, 'turn', 'Tour 1 — ' + (first === 'Vous' ? 'vous commencez' : first + ' commence') + ' (tirage au sort) avec 1 seul coup.');
+    checkFusions(st);
+    [0, 1].forEach(function (pi) {
+      st.players[pi].terrain.forEach(function (u) { if (u && st.cards[u].faceUp) onReveal(st, u); });
+    });
+    revealTriggers(st);
+    checkEnd(st);
+  }
+
+  /* Remplacement : une carte de la main prend la place d'une carte visible, qui part au fond de la pioche. */
+  function replaceFromHand(st, handIndex, slot) {
+    if (st.over) return fail('La partie est terminée.');
+    var p = st.players[st.turnOwner];
+    if (handIndex < 0 || handIndex >= p.hand.length) return fail('Carte en main invalide.');
+    if (slot < 0 || slot >= COLS) return fail('Case invalide.');
+    var oldUid = p.terrain[slot];
+    if (!oldUid) return fail('Case vide : posez simplement la carte.');
+    var old = st.cards[oldUid];
+    if (!old.faceUp) return fail('Seule une carte visible peut être remplacée.');
+    if (st.actionsLeft <= 0) return fail('Plus de coup disponible.');
+    var why = moveBlocked(st, old);
+    if (why) return fail(why);
+    var from = where(st, oldUid), oldName = def(st, old).name;
+    p.terrain[slot] = null;
+    resetCard(st, old);
+    p.deck.unshift(oldUid);
+    fx(st, { t: 'project', at: from });
+    var uid = p.hand.splice(handIndex, 1)[0];
+    var card = st.cards[uid];
+    card.faceUp = true;
+    p.terrain[slot] = uid;
+    fx(st, { t: 'place', uid: uid, at: { owner: card.owner, slot: slot } });
+    log(st, 'pose', def(st, card).name + ' remplace ' + oldName + ' en colonne ' + (slot + 1) + ' ; ' + oldName + ' part au fond de la pioche.');
+    refreshBonuses(st, false);
+    onReveal(st, uid);
+    revealTriggers(st, uid);
+    spend(st);
+    checkEnd(st);
+    return ok('Carte remplacée.');
   }
 
   function attack(st, attackerUid, targetUid) {
@@ -1865,7 +1916,7 @@
     totalCards: totalCards,
     refreshBonuses: refreshBonuses,
     actions: {
-      reveal: reveal, placeFromHand: placeFromHand, attack: attack,
+      reveal: reveal, placeFromHand: placeFromHand, replaceFromHand: replaceFromHand, setupReveal: setupReveal, attack: attack,
       moveSwap: moveSwap, moveSingle: moveSingle, drawAction: drawAction,
       useAbility: useAbility, endTurn: endTurn
     }

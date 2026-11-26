@@ -2,3 +2,4 @@
 #arenaScreen.active{display:block;padding:0!important;margin:0!important;max-width:none!important;width:100%}
 .arena-frame{display:block;width:100%;height:calc(100vh - 72px);border:0;background:#0c1226}
 .saku-test-pill{position:fixed;left:10px;bottom:calc(10px + var(--saku-nav-inset,0px));z-index:9000;pointer-events:none;font:800 10px/1 Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#ffcf85;background:#2a1a08e6;border:1px solid #f2a93b88;border-radius:99px;padding:6px 10px}
+@media (max-width:900px){.saku-test-pill{left:8px;font-size:8.5px;padding:4px 8px;opacity:.8}}

@@ -5,7 +5,10 @@
 
   function apply(st, action) {
     if (!action) return { ok: false, error: 'Action vide.' };
+    if (action.type === 'setup') return A.actions.setupReveal(st, action.player, action.uids);
+    if (st.phase === 'setup') return { ok: false, error: 'Choisissez d’abord les cartes à retourner.' };
     switch (action.type) {
+      case 'replace': return A.actions.replaceFromHand(st, action.handIndex, action.slot);
       case 'attack': return A.actions.attack(st, action.attacker, action.target);
       case 'reveal': return A.actions.reveal(st, action.uid);
       case 'place': return A.actions.placeFromHand(st, action.handIndex, action.slot);

@@ -35,7 +35,7 @@
   function setSeat(s) { ME = s; OP = 1 - s; }
 
   var UI = {
-    screen: 'menu', st: null, match: null, net: null, decks: null, editing: 0, who: undefined, colMode: null, joinCode: '', sel: null, mode: 'idle', pending: null,
+    screen: 'menu', st: null, setupSel: [], setupSent: false, match: null, net: null, decks: null, editing: 0, who: undefined, colMode: null, joinCode: '', sel: null, mode: 'idle', pending: null,
     busy: false, anim: false, endShown: false, search: '', rarity: 'all', series: 'all', famf: 'all',
     limit: 60, inspect: null, fxOn: true
   };
@@ -66,7 +66,7 @@
     var src = opts.thumb || def.thumb;
     var art = src ? '<img src="' + esc(src) + '" alt="" loading="lazy" draggable="false" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' : '<div class="novis">' + esc((def.name || '?').slice(0, 1)) + '</div>';
     var f = A.familyOfDef(def);
-    var famtag = f ? '<span class="famtag" style="--famc:' + FAMC[f] + '" title="' + esc(FAM[f].nom) + '">' + FAM[f].icon + (opts.big ? '<i>' + esc(FAM[f].nom) + '</i>' : '') + '</span>' : '';
+    var famtag = '';
     var status = (opts.status || []).length ? '<div class="status">' + opts.status.map(function (k) {
       return '<span class="st-' + k + '" title="' + esc(ST_TXT[k] || k) + '">' + ST_ICON[k] + '</span>';
     }).join('') + '</div>' : '';
@@ -135,13 +135,21 @@
       var tg = T.uids.has(uid);
       var slotCls = 'slot filled' + (cellT ? ' case-targetable' : '');
       var cellAttrs = cellT ? ' data-act="cell" data-owner="' + pi + '" data-slot="' + s + '"' : '';
-      if (!c.faceUp && !(isOpp && see.hidden)) {
+      var setupPick = st.phase === 'setup' && !isOpp;
+      if (!c.faceUp && !(isOpp && see.hidden) && !setupPick) {
         cells += '<div class="' + slotCls + '" data-pos="' + pos + '"' + cellAttrs + '>' +
           cardBack(attrs + ' data-hidden="1"', isOpp ? 'adversaire' : (A.canReveal(st, uid) ? 'à révéler' : 'prise dans la glace'), tg ? ' targetable' : '') + deco + '</div>';
         continue;
       }
-      var targetable = tg, selectable = false, dim = false;
-      if (!isOpp && st.turnOwner === ME) {
+      var targetable = tg, selectable = false, dim = false, picked = false;
+      if (setupPick) {
+        picked = UI.setupSel.indexOf(uid) >= 0;
+        if (setupDone()) dim = !(UI.setupSel.indexOf(uid) >= 0); else selectable = true;
+      } else if (st.phase === 'setup') {
+        selectable = false;
+      } else if (!isOpp && st.turnOwner === ME && UI.mode === 'place') {
+        targetable = c.faceUp; dim = !c.faceUp;
+      } else if (!isOpp && st.turnOwner === ME) {
         if (UI.mode === 'attack') dim = true;
         else if (UI.mode === 'move') { if (UI.sel && UI.sel.uid === uid) dim = true; else targetable = c.faceUp; }
         else if (UI.mode === 'ability') dim = !tg;
@@ -155,8 +163,8 @@
       cells += '<div class="' + slotCls + '" data-pos="' + pos + '"' + cellAttrs + '>' + cardFace(d, {
         pv: stt.pv, atk: stt.atk, nom: A.displayName(st, c),
         thumb: c.fusion && window.__FUSION_IMG__ ? window.__FUSION_IMG__ : null,
-        selected: UI.sel && UI.sel.uid === uid, targetable: targetable, ally: targetable && !isOpp,
-        selectable: selectable, dim: dim, peek: !c.faceUp,
+        selected: picked || (UI.sel && UI.sel.uid === uid), targetable: targetable, ally: targetable && !isOpp,
+        selectable: selectable, dim: dim, peek: !c.faceUp, cls: picked ? ['setup-picked'] : null,
         locked: c.lockedUntil >= st.turnNo || A.paralysed(st, c), attacked: c.attacked,
         status: c.faceUp ? A.statusList(st, c) : (A.imprisoned(st, c) ? ['prison'] : []),
         atkDown: (c.status && c.status.freeze && c.status.freeze.until >= st.turnNo) || (c.flatAtk < 0),
@@ -176,7 +184,7 @@
     var peekHand = isOpp && see.oppHand ? '<div class="peekhand">👁 main adverse : ' + (p.hand.length ? p.hand.map(function (u) { return '<span>' + esc(A.def(st, st.cards[u]).name) + '</span>'; }).join('') : '<span>vide</span>') + '</div>' : '';
     var cols = '<div class="cols">' + [1, 2, 3, 4, 5].map(function (n) { return '<span>' + n + '</span>'; }).join('') + '</div>';
     return '<section class="zone ' + (isOpp ? 'opp' : 'me') + '"><div class="zonehead"><div class="zname">' + (isOpp ? esc(p.nom === 'Adversaire' ? 'Adversaire' : p.nom) : 'Votre terrain') +
-      '<span class="tag">' + (isOpp ? (see.hidden ? 'cartes cachées vues (Stratège)' : 'face cachée') : (st.turnOwner === ME ? 'à vous' : 'en attente')) + '</span></div>' + counters + '</div>' +
+      '<span class="tag">' + (isOpp ? (see.hidden ? 'cartes cachées vues (Stratège)' : 'face cachée') : (st.phase === 'setup' ? 'mise en place' : st.turnOwner === ME ? 'à vous' : 'en attente')) + '</span></div>' + counters + '</div>' +
       peekHand + '<div class="board">' + cells + '</div>' + cols + '</section>';
   }
 
@@ -184,22 +192,28 @@
     var st = UI.st, p = st.players[ME], html = '';
     p.hand.forEach(function (uid, i) {
       var c = st.cards[uid], d = A.def(st, c);
-      var canPlace = st.turnOwner === ME && st.actionsLeft > 0 && p.terrain.some(function (u) { return !u; });
+      var canPlace = st.phase !== 'setup' && st.turnOwner === ME && st.actionsLeft > 0 && p.terrain.some(function (u) { return !u || st.cards[u].faceUp; });
       html += cardFace(d, { selectable: canPlace, selected: UI.mode === 'place' && UI.sel && UI.sel.index === i, dim: !canPlace,
         nom: A.displayName(st, c), thumb: c.fusion && window.__FUSION_IMG__ ? window.__FUSION_IMG__ : null, attrs: 'data-act="hand" data-i="' + i + '"' });
     });
     for (var k = p.hand.length; k < 3; k++) html += '<div class="slot-empty">main</div>';
-    return '<div class="handwrap"><div class="zonehead"><div class="zname">Votre main <span class="tag">poser = 1 coup, face visible</span></div></div><div class="hand">' + html + '</div></div>';
+    return '<div class="handwrap"><div class="zonehead"><div class="zname">Votre main <span class="tag">poser ou remplacer = 1 coup</span></div></div><div class="hand">' + html + '</div></div>';
   }
 
   function actionBar() {
     var st = UI.st;
     if (st.over) return '<div class="actionbar"><span class="hint">Partie terminée.</span>' + (isOnline() ? '<button class="act" data-act="go" data-s="friendly">Salon</button>' : '<button class="act" data-act="again">Rejouer</button>') + '<button class="act" data-act="go" data-s="menu">Menu Arena</button></div>';
+    if (st.phase === 'setup') {
+      if (setupDone()) return '<div class="actionbar"><span class="hint">Cartes choisies. En attente de ' + esc(st.players[OP].nom) + '…</span></div>';
+      var n = UI.setupSel.length;
+      return '<div class="actionbar setupbar"><span class="hint"><b style="color:#fff">Mise en place</b> : touche 2 cartes de ton terrain à retourner (' + n + '/2)</span>' +
+        '<button class="act go" data-act="setupok"' + (n === 2 ? '' : ' disabled') + '>Retourner ces cartes</button></div>';
+    }
     if (st.turnOwner !== ME) return '<div class="actionbar"><span class="hint">' + esc(st.players[OP].nom) + ' joue…</span></div>';
     var btn = [], sel = UI.sel && UI.sel.uid ? st.cards[UI.sel.uid] : null;
     if (UI.mode === 'attack') btn.push('<span class="hint">Choisissez une cible en surbrillance —</span><button class="act" data-act="cancel">annuler</button>');
     else if (UI.mode === 'move') btn.push('<span class="hint">Échangez avec une carte visible alliée, ou visez une case vide —</span><button class="act" data-act="cancel">annuler</button>');
-    else if (UI.mode === 'place') btn.push('<span class="hint">Choisissez une case vide de votre terrain —</span><button class="act" data-act="cancel">annuler</button>');
+    else if (UI.mode === 'place') btn.push('<span class="hint">Touchez une case vide pour la poser, ou une de vos cartes visibles pour la remplacer (elle part au fond de la pioche) —</span><button class="act" data-act="cancel">annuler</button>');
     else if (UI.mode === 'ability' && UI.pending) {
       var T = currentTargets();
       var quoi = T.kind === 'cell' ? 'une case adverse' : (T.kind === 'ally' ? (UI.pending.cible === 'allie-puis-ennemi' ? 'une alliée qui a déjà attaqué' : 'une alliée') : (UI.pending.stage1 ? 'la cible de son attaque' : 'une cible ennemie'));
@@ -214,7 +228,7 @@
           if (ab.key === 'janedoe') return;
           var used = sel.usedAbil[ab.key] || 0, dis = (used >= ab.uses) || st.actionsLeft <= 0 || (ab.key === 'clonage' && sel.clone) || (A.imprisoned(st, sel) && sel.prison.full);
           btn.push('<button class="act' + (ab.fam ? ' ab' : '') + '"' + famStyle(ab.fam) + ' data-act="ability" data-key="' + ab.key + '"' + (dis ? ' disabled' : '') + ' title="' + esc(ab.desc) + '">' +
-            (ab.fam ? FAM[ab.fam].icon + ' ' : '') + esc(ab.nom) + ' <b>' + (ab.uses - used) + '/' + ab.uses + '</b></button>');
+            esc(ab.nom) + ' <b>' + (ab.uses - used) + '/' + ab.uses + '</b></button>');
         });
         btn.push('<button class="act" data-act="tomove"' + (st.actionsLeft > 0 && A.canMove(st, sel.uid) ? '' : ' disabled') + '>Déplacer</button>');
       }
@@ -242,7 +256,6 @@
     var nom = A.displayName(st, c), thumb = c.fusion && window.__FUSION_IMG__ ? window.__FUSION_IMG__ : null;
     var pct = Math.max(0, Math.min(100, Math.round(s.pv / s.maxPv * 100)));
     var f = A.familyOfDef(d), abs = A.abilitiesFor(d), pass = A.passivesFor(d), blocks = '';
-    if (f) blocks += '<div class="famhead" style="--famc:' + FAMC[f] + '"><span class="ico">' + FAM[f].icon + '</span>Famille ' + esc(FAM[f].nom) + '</div>';
     if (pass.length) blocks += '<div class="psec">Passives</div>' + pass.map(function (p) {
       return '<div class="abil passive"><div class="t"><span>' + esc(p.nom) + '</span><em>passif</em></div><div class="d">' + esc(p.desc) + '</div></div>';
     }).join('');
@@ -250,7 +263,6 @@
       var used = c.usedAbil[ab.key] || 0;
       return '<div class="abil"><div class="t"><span>' + esc(ab.nom) + '</span><em>' + (ab.uses - used) + '/' + ab.uses + ' restante(s)</em></div><div class="d">' + esc(ab.desc) + '</div></div>';
     }).join('');
-    if (f) blocks += '<p class="sub" style="margin-top:8px">Une seule capacité par carte : ' + (pass.length ? 'la passive' : 'l’active') + ' de la famille ' + esc(FAM[f].nom) + ' (réglage avant la partie).</p>';
     if (!abs.length && !pass.length) blocks = '<p class="sub">Aucune capacité (Rare et Uncommon).</p>';
     var sts = A.statusList(st, c);
     if (sts.length || c.clone) {
@@ -578,6 +590,24 @@
   /* ---------- interactions ---------- */
   function resetSelection() { UI.sel = null; UI.mode = 'idle'; UI.pending = null; }
   function isDuel() { return !!(UI.match && UI.match.kind === 'duel'); }
+  /* Mise en place : mes 2 cartes à retourner sont-elles déjà choisies ? */
+  function setupDone() {
+    var st = UI.st; if (!st || st.phase !== 'setup') return false;
+    if (st.setup && st.setup[ME]) return true;
+    if (isOnline()) { var m = UI.net && UI.net.room && UI.net.room.arena && UI.net.room.arena.match; return !!(UI.setupSent || (m && m.setup && m.setup[ME])); }
+    return false;
+  }
+  function confirmSetup() {
+    var uids = UI.setupSel.slice(0, 2);
+    if (uids.length !== 2 || setupDone()) return;
+    if (isOnline()) {
+      var N = UI.net; if (!N) return;
+      UI.setupSent = true; render();
+      N.ref.child('arena/match/setup/' + ME).set(uids).catch(function () { UI.setupSent = false; render(); toast('Choix non envoyé : vérifie ta connexion.', true); });
+      return;
+    }
+    doAction({ type: 'setup', player: ME, uids: uids });
+  }
   function isOnline() { return !!(UI.match && UI.match.kind === 'online'); }
 
   function run(action) {
@@ -598,6 +628,7 @@
     run(action).then(function (res) {
       if (!UI.st) return;
       if (res.ok) { UI.mode = 'idle'; UI.pending = null; }
+      if (res.ok && action.type === 'setup' && UI.st.phase === 'play') turnBanner();
       if (UI.sel && UI.sel.uid && !UI.st.cards[UI.sel.uid]) resetSelection();
       render();
       if (UI.st.over) { setTimeout(showEnd, 420); return; }
@@ -613,7 +644,7 @@
     var step = function () {
       if (!UI.st || UI.st !== game || !isDuel()) { UI.busy = false; return; }
       if (UI.st.over) { finish(); return; }
-      if (UI.st.turnOwner !== OP) { UI.busy = false; render(); return; }
+      if (UI.st.phase === 'setup' || UI.st.turnOwner !== OP) { UI.busy = false; render(); return; }
       var act = AI.nextAction(UI.st) || { type: 'endTurn' };
       run(act).then(function (res) {
         if (!res.ok && UI.st === game) return run({ type: 'endTurn' });
@@ -706,7 +737,7 @@
 
   var SET = Object.assign({ fx: true, speed: 'normal', fam: 'split', level: 'normal' }, load('sakuArena:settings', {}));
   function saveSet() { save('sakuArena:settings', SET); }
-  UI.fxOn = SET.fx !== false; A.SETTINGS.famMode = SET.fam || 'split';
+  UI.fxOn = SET.fx !== false; A.SETTINGS.famMode = 'split';
 
   var STARTER = ['Riza Hawkeye', 'Mikoto Misaka', 'Portgas D. Ace', 'Toushirou Hitsugaya', 'Byakuya Kuchiki', 'Franky', 'Tengen Uzui', 'Tsunade Senju', 'Erwin Smith', 'Orochimaru',
     'Suguru Getou', 'Ban', 'Hisoka Morow', 'Tatsumaki', 'Solf Kimblee', 'Himiko Toga', 'Keigo Takami', 'Ryomen Sukuna', 'Gokuu Son', 'Makima'];
@@ -783,7 +814,7 @@
   function deckPicker(act) {
     return '<div class="deckpick">' + UI.decks.decks.map(function (d, n) {
       var s = deckSummary(n);
-      return '<button class="dpk' + (UI.decks.active === n ? ' on' : '') + (s.ok ? '' : ' bad') + '" data-act="' + act + '" data-n="' + n + '"><b>' + esc(d.name) + '</b><span>' + s.n + '/20 cartes' + (s.fams ? ' · ' + s.fams + ' à famille' : '') + '</span>' +
+      return '<button class="dpk' + (UI.decks.active === n ? ' on' : '') + (s.ok ? '' : ' bad') + '" data-act="' + act + '" data-n="' + n + '"><b>' + esc(d.name) + '</b><span>' + s.n + '/20 cartes</span>' +
         (s.out ? '<em>' + s.out + ' hors collection</em>' : '') + '</button>';
     }).join('') + '</div>';
   }
@@ -795,9 +826,9 @@
       ['duel', 'Duel', 'Affronte l’IA avec ton deck. Trois niveaux de difficulté.'],
       ['friendly', 'Amical', 'Défie un ami en ligne avec un code de salon. Sans enjeu.'],
       ['deck', 'Deck', 'Compose jusqu’à 3 decks de 20 cartes depuis ta collection.'],
-      ['rules', 'Règles', 'Comment jouer, statuts et les 17 familles de capacités.'],
+      ['rules', 'Règles', 'Comment jouer, statuts et capacités des cartes.'],
       ['history', 'Historique', 'Tes derniers combats et ton bilan.'],
-      ['settings', 'Paramètres', 'Animations, vitesse de l’IA, réglage des capacités.']
+      ['settings', 'Paramètres', 'Animations et vitesse de l’IA.']
     ];
     return '<div class="amenu"><section class="hero"><div><span class="kicker">SAKUGAME / ARENA <i class="testtag">version test</i></span><h1>Arena</h1>' +
       '<p class="sub">Combats de cartes en 1 contre 1 : 5 cases, 3 cartes en main, 2 coups par tour. Élimine toutes les cartes adverses.</p></div>' +
@@ -817,7 +848,7 @@
     var deckRows = deck.map(function (i, k) {
       var d = POOL[i], f = A.familyOfDef(d), own = isOwned(i, om);
       return '<div class="deckrow' + (own ? '' : ' out') + '"><img src="' + esc(d.thumb) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' +
-        '<span class="nm">' + esc(d.name) + (own ? '' : ' <small>hors collection</small>') + '</span>' + (f ? '<span class="fi" style="--famc:' + FAMC[f] + '" title="' + esc(FAM[f].nom) + '">' + FAM[f].icon + '</span>' : '') +
+        '<span class="nm">' + esc(d.name) + (own ? '' : ' <small>hors collection</small>') + '</span>' + 
         '<button data-act="remove" data-i="' + k + '" title="Retirer">×</button></div>';
     }).join('') || '<div class="sub" style="padding:10px 0">Aucune carte : choisis-en 20 dans la liste.</div>';
     var barSegs = RARITY_ORDER.filter(function (r) { return counts[r]; }).map(function (r) { return '<span style="width:' + (counts[r] / 20 * 100) + '%;background:var(--' + r + ')"></span>'; }).join('');
@@ -827,7 +858,6 @@
       if (mine && !isOwned(o.i, om)) return false;
       if (UI.rarity !== 'all' && o.d.rarity !== UI.rarity) return false;
       if (UI.series !== 'all' && o.d.series !== UI.series) return false;
-      if (UI.famf !== 'all') { var f = A.familyOfDef(o.d); if (UI.famf === 'any' ? !f : f !== UI.famf) return false; }
       if (q && (o.d.name + ' ' + o.d.series).toLowerCase().indexOf(q) < 0) return false;
       return true;
     });
@@ -846,7 +876,7 @@
       '<div class="rbar">' + barSegs + '</div><div class="counts">' + (countChips || '<span>vide</span>') + '</div>' +
       '<div class="decklist">' + deckRows + '</div>' +
       '<div class="dbtns"><button class="ghostbtn" data-act="autodeck">Auto (ma collection)</button><button class="ghostbtn" data-act="random">Aléatoire</button>' +
-        '<button class="ghostbtn" data-act="famdeck">Familles</button><button class="ghostbtn" data-act="clear">Vider</button></div>' +
+        '<button class="ghostbtn" data-act="clear">Vider</button></div>' +
       '<div class="sticky-cta"><button class="primary" style="width:100%" data-act="go" data-s="duel" ' + (deck.length === 20 ? '' : 'disabled') + '>' +
         (deck.length === 20 ? 'Jouer un Duel avec ce deck' : 'Encore ' + need + ' carte' + (need > 1 ? 's' : '')) + '</button></div>' +
       '</aside><section>' +
@@ -856,8 +886,7 @@
       '<div class="filters"><label class="search"><span>⌕</span><input id="q" type="search" placeholder="Rechercher un personnage ou une série…" value="' + esc(UI.search) + '"></label>' +
         '<select id="series"><option value="all">Toutes les séries (' + SERIES.length + ')</option>' +
           SERIES.map(function (s) { return '<option value="' + esc(s) + '"' + (UI.series === s ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') + '</select>' +
-        '<select id="famf"><option value="all">Toutes les familles</option><option value="any"' + (UI.famf === 'any' ? ' selected' : '') + '>Avec une famille</option>' +
-          FAM_KEYS.map(function (k) { return '<option value="' + k + '"' + (UI.famf === k ? ' selected' : '') + '>' + FAM[k].icon + ' ' + esc(FAM[k].nom) + '</option>'; }).join('') + '</select></div>' +
+        '</div>' +
       '<div class="chips"><button class="chip' + (UI.rarity === 'all' ? ' active' : '') + '" data-act="rarity" data-r="all">Toutes raretés</button>' +
         RARITY_ORDER.map(function (r) { return '<button class="chip' + (UI.rarity === r ? ' active' : '') + '" data-act="rarity" data-r="' + r + '">' + RARITY_FR[r] + '</button>'; }).join('') + '</div>' +
       '<div class="sub" style="margin-bottom:11px">' + list.length + ' carte(s) — touche une carte pour l’ajouter ou la retirer.</div>' +
@@ -869,7 +898,7 @@
   function renderDuel() {
     var lv = SET.level || 'normal', s = deckSummary(UI.decks.active);
     var desc = { easy: 'L’IA joue un deck d’Uncommon, de Rare et de quelques Épiques, et se trompe de temps en temps.',
-      normal: 'L’IA joue un deck mélangé, avec une moitié de cartes à famille de capacités.',
+      normal: 'L’IA joue un deck mélangé de toutes les raretés.',
       hard: 'L’IA joue un deck d’Épiques, de Légendaires, de Mythiques et de Spéciales, et choisit toujours son meilleur coup.' };
     return head('Duel', 'Un combat contre l’IA. Rien n’est misé.') +
       '<div class="setup"><section class="panel"><h2>1. Ton deck</h2>' + deckPicker('pickactive') +
@@ -917,23 +946,37 @@
       '<section class="panel"><h2>Ton deck</h2>' + deckPicker('pickactive') + '<p class="sub">Change de deck avant le lancement : il est envoyé au salon.</p></section></div>';
   }
 
-  function renderRules() {
-    var rows = A.RULES.map(function (r) { return '<div class="row"><b>' + esc(r.titre) + '</b><p>' + esc(r.texte) + '</p></div>'; }).join('');
-    var fams = FAM_KEYS.map(function (k) {
+  /* Capacités des cartes, listées par rareté et par ordre alphabétique (pas par famille). */
+  function abilityLists() {
+    var ep = [], le = [];
+    FAM_KEYS.forEach(function (k) {
       var F = FAM[k];
-      return '<div class="famcard" style="--famc:' + FAMC[k] + '"><h4><span class="ico">' + F.icon + '</span>' + esc(F.nom) + '</h4>' +
-        '<p><b>' + esc(F.passive.nom) + '</b> (passive) — É : ' + esc(F.passive.e) + ' L : ' + esc(F.passive.l) + '</p>' +
-        (F.active ? '<p><b>' + esc(F.active.nom) + '</b> (active) — É : ' + esc(F.active.e) + ' (' + F.active.ue + '×) L : ' + esc(F.active.l) + ' (' + F.active.ul + '×)</p>' : '<p><i>Pas d’active.</i></p>') + '</div>';
-    }).join('');
+      ep.push({ n: F.passive.nom, t: 'passive', d: F.passive.e });
+      if (F.active) le.push({ n: F.active.nom, t: 'active · ' + F.active.ul + ' utilisation' + (F.active.ul > 1 ? 's' : ''), d: F.active.l });
+      else le.push({ n: F.passive.nom, t: 'passive', d: F.passive.l });
+    });
+    function rows(list) {
+      return list.sort(function (a, b) { return a.n.localeCompare(b.n, 'fr'); }).map(function (x) {
+        return '<div class="row"><b>' + esc(x.n) + ' <em class="abt">' + esc(x.t) + '</em></b><p>' + esc(x.d) + '</p></div>';
+      }).join('');
+    }
+    return '<h2>Capacités des Épiques</h2><p class="sub">Une capacité passive : elle s’applique toute seule tant que la carte est visible.</p>' + rows(ep) +
+      '<h2>Capacités des Légendaires</h2><p class="sub">Une capacité active (elle coûte un coup), ou une passive renforcée.</p>' + rows(le) +
+      '<p class="sub" style="margin-top:12px">Les Mythiques ont leur propre capacité et les Spéciales en ont deux : elles sont décrites sur la carte (touche-la pour voir le détail). Rare et Uncommon n’ont pas de capacité.</p>';
+  }
+  function renderRules() {
+    var rows = A.RULES.filter(function (r) { return r.id !== 'familles'; }).map(function (r) { return '<div class="row"><b>' + esc(r.titre) + '</b><p>' + esc(r.texte) + '</p></div>'; }).join('');
     var sts = Object.keys(ST_TXT).filter(function (k) { return k !== 'venom2' && k !== 'prison2'; }).map(function (k) { return '<div class="row"><b>' + ST_ICON[k] + ' ' + esc(ST_TXT[k].split(' : ')[0]) + '</b><p>' + esc(ST_TXT[k].split(' : ')[1] || '') + '</p></div>'; }).join('');
     return head('Règles', 'Tout ce qu’il faut savoir pour jouer.') +
       '<section class="panel rules"><h2>L’essentiel</h2><ul class="ess">' +
-      '<li>Chaque joueur a un deck de <b>20 cartes</b> : 5 sur le terrain (face cachée, 2 révélées au départ), 3 en main, le reste en pioche.</li>' +
-      '<li>À ton tour, tu as <b>2 coups</b> : révéler une carte, poser une carte de ta main, attaquer, utiliser une capacité, déplacer, ou piocher.</li>' +
-      '<li>Une carte ne peut attaquer qu’une fois par tour. Les cartes Épiques, Légendaires et Spéciales ont une capacité de famille ; les Spéciales en ont deux.</li>' +
+      '<li>Chaque joueur a un deck de <b>20 cartes</b> : 5 sur le terrain face cachée, 3 en main, le reste en pioche.</li>' +
+      '<li>Au début, chacun choisit les <b>2 cartes de son terrain à retourner</b> ; elles sont révélées en même temps.</li>' +
+      '<li>À ton tour, tu as <b>2 coups</b> (un seul au tout premier tour pour celui qui commence) : révéler, poser, remplacer, attaquer, utiliser une capacité, déplacer ou piocher.</li>' +
+      '<li><b>Remplacer</b> : une carte de ta main prend la place d’une de tes cartes visibles, qui part au fond de ta pioche.</li>' +
+      '<li>Une carte n’attaque qu’une fois par tour. Épiques, Légendaires et Mythiques ont une capacité, les Spéciales deux.</li>' +
       '<li>Tu gagnes quand l’adversaire n’a plus aucune carte : terrain, main et pioche vides.</li></ul>' +
       '<h2>Règles détaillées</h2>' + rows + '<h2>Statuts</h2>' + sts +
-      '<h2>Familles Épique &amp; Légendaire</h2><div class="famgrid">' + fams + '</div></section>';
+      abilityLists() + '</section>';
   }
 
   function renderHistory() {
@@ -953,14 +996,11 @@
   }
 
   function renderSettings() {
-    var fm = A.SETTINGS.famMode;
     function seg(act, opts, cur) { return '<div class="seg">' + opts.map(function (o) { return '<button data-act="' + act + '" data-v="' + o[0] + '" class="' + (cur === o[0] ? 'on' : '') + '">' + o[1] + '</button>'; }).join('') + '</div>'; }
     return head('Paramètres', 'Réglages enregistrés sur cet appareil.') +
       '<section class="panel setlist">' +
       '<div class="setrow"><div><b>Animations de combat</b><p class="sub">Frappes, éclairs, explosions… Désactive-les sur un appareil lent.</p></div>' + seg('fxset', [['1', 'Activées'], ['0', 'Désactivées']], UI.fxOn ? '1' : '0') + '</div>' +
       '<div class="setrow"><div><b>Vitesse de l’IA</b><p class="sub">Temps entre deux coups de l’IA en Duel.</p></div>' + seg('speed', [['normal', 'Normale'], ['fast', 'Rapide']], SET.speed) + '</div>' +
-      '<div class="setrow"><div><b>Capacités de famille</b> <span class="badge-etat proposition">test</span><p class="sub">Une seule capacité par carte (les Spéciales en ont deux). Choisis laquelle est utilisée. En Amical, c’est le réglage de l’hôte qui compte.</p></div>' +
-        seg('fammode', [['split', 'É passive · L active'], ['passive', 'Passives'], ['active', 'Actives']], fm) + '</div>' +
       '</section>';
   }
 
@@ -1003,15 +1043,16 @@
     AI.level = lv === 'easy' ? 'easy' : 'normal';
     setSeat(0); UI.match = { kind: 'duel', level: lv }; UI.busy = false;
     UI.st = A.newGame({ pool: POOL, deck0: deck, deck1: aiDeck(lv), nom0: 'Vous', nom1: 'IA ' + LEVEL_FR[lv] });
+    APPLY(UI.st, { type: 'setup', player: OP, uids: AI.chooseSetup(UI.st, OP) });
     UI.st.fx.length = 0;
     enterGame();
-    if (UI.st.turnOwner === OP) scheduleAI();
   }
   function enterGame() {
     removeModal('endmodal');
-    UI.screen = 'game'; UI.endShown = false; resetSelection(); UI.inspect = null;
+    UI.screen = 'game'; UI.endShown = false; resetSelection(); UI.inspect = null; UI.setupSel = []; UI.setupSent = false;
     render(); try { window.scrollTo(0, 0); } catch (e) {}
-    banner(UI.st.turnOwner === ME ? 'Vous commencez' : 'L’adversaire commence', UI.st.turnOwner === ME ? '#2b7fd6' : '#b0306a');
+    if (UI.st.phase === 'setup') banner('Choisis 2 cartes à retourner', '#2b7fd6');
+    else banner(UI.st.turnOwner === ME ? 'Vous commencez' : 'L’adversaire commence', UI.st.turnOwner === ME ? '#2b7fd6' : '#b0306a');
   }
 
   /* ================================================================== */
@@ -1045,7 +1086,7 @@
         if (snap.exists()) { if (++tries < 6) return attempt(); throw new Error('code'); }
         var p = seatPlayer(m); p.isHost = true;
         var room = { host: m.pid, game: 'arena', visibility: 'private', state: 'lobby', createdAt: Date.now(), lastActivity: Date.now(), maxPlayers: 2, chat: {},
-          players: {}, arena: { decks: {}, fam: A.SETTINGS.famMode } };
+          players: {}, arena: { decks: {} } };
         room.players[m.pid] = p; room.arena.decks[m.pid] = deck.map(function (i) { return KEY[i]; });
         return ref.set(room).then(function () {
           try { ref.onDisconnect().remove(); } catch (e) {}
@@ -1093,7 +1134,7 @@
     if (d0.length !== 20 || d1.length !== 20) { toast('Les deux decks doivent compter 20 cartes.', true); return; }
     var st = A.newGame({ pool: POOL, deck0: d0, deck1: d1, nom0: (room.players[host] || {}).name || 'Hôte', nom1: (room.players[guest] || {}).name || 'Invité' });
     st.fx.length = 0;
-    var match = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: 1, st: ser(st), fx: '[]', by: N.pid, seats: [host, guest], at: Date.now(), fam: A.SETTINGS.famMode };
+    var match = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: 1, st: ser(st), fx: '[]', by: N.pid, seats: [host, guest], at: Date.now() };
     N.ref.update({ 'arena/match': match, 'arena/rematch': null, state: 'playing', lastActivity: Date.now() }).catch(function () { toast('Lancement impossible.', true); });
   }
   function netPush(evs) {
@@ -1115,7 +1156,6 @@
     }
     N.room = room;
     var a = room.arena || {}, m = a.match;
-    if (m && m.fam && A.SETTINGS.famMode !== m.fam) A.SETTINGS.famMode = m.fam;
     if (m && m.id !== N.matchId) {
       var seat = m.seats && m.seats[0] === N.pid ? 0 : (m.seats && m.seats[1] === N.pid ? 1 : -1);
       if (seat < 0) { toast('Tu ne fais pas partie de cette partie.', true); return; }
@@ -1134,6 +1174,17 @@
         var snapshot = { st: m.st, fx: m.fx };
         N.q = N.q.then(function () { return applyRemote(snapshot); }).catch(function () {});
       }
+    }
+    if (m && N.isHost && UI.st && UI.st.phase === 'setup' && m.setup && m.setup[0] && m.setup[1] && !N.setupBusy) {
+      N.setupBusy = true;
+      var s0 = [].concat(m.setup[0]), s1 = [].concat(m.setup[1]);
+      N.q = N.q.then(function () {
+        if (!UI.st || UI.st.phase !== 'setup') return;
+        APPLY(UI.st, { type: 'setup', player: 0, uids: s0 }); UI.st.fx.length = 0;
+        return run({ type: 'setup', player: 1, uids: s1 }).then(function (res) {
+          if (res.ok) { resetSelection(); render(); turnBanner(); }
+        });
+      }).catch(function () {}).then(function () { N.setupBusy = false; });
     }
     if (m && m.forfeit && UI.st && !UI.st.over) {
       var loser = m.seats[0] === m.forfeit ? 0 : 1;
@@ -1201,19 +1252,13 @@
   }
 
   function openRules() {
-    var rows = A.RULES.map(function (r) {
+    var rows = A.RULES.filter(function (r) { return r.id !== 'familles'; }).map(function (r) {
       return '<div class="row"><b>' + esc(r.titre) + '<span class="badge-etat ' + (r.etat === 'cahier' ? 'cahier' : 'proposition') + '">' + (r.etat === 'cahier' ? 'cahier' : 'proposition') + '</span></b><p>' + esc(r.texte) + '</p></div>';
-    }).join('');
-    var fams = FAM_KEYS.map(function (k) {
-      var F = FAM[k];
-      return '<div class="famcard" style="--famc:' + FAMC[k] + '"><h4><span class="ico">' + F.icon + '</span>' + esc(F.nom) + '</h4>' +
-        '<p><b>' + esc(F.passive.nom) + '</b> (passive) — É : ' + esc(F.passive.e) + ' L : ' + esc(F.passive.l) + '</p>' +
-        (F.active ? '<p><b>' + esc(F.active.nom) + '</b> (active) — É : ' + esc(F.active.e) + ' (' + F.active.ue + '×) L : ' + esc(F.active.l) + ' (' + F.active.ul + '×)</p>' : '<p><i>Pas d’active.</i></p>') + '</div>';
     }).join('');
     var interp = A.INTERPRETATIONS.map(function (r) { return '<div class="row"><b>' + esc(r.sujet) + '</b><p>' + esc(r.texte) + '</p></div>'; }).join('');
     var box0 = document.createElement('div'); box0.className = 'modal'; box0.id = 'rulesmodal';
     box0.innerHTML = '<div class="box"><h2>Règles implémentées</h2><p class="sub">Les points non tranchés sont marqués <span class="badge-etat proposition">proposition</span>.</p>' + rows +
-      '<h2 style="margin-top:24px;font-size:21px">Familles Épique &amp; Légendaire</h2><div class="famgrid">' + fams + '</div>' +
+      '<div class="rules">' + abilityLists() + '</div>' +
       '<h2 style="margin-top:24px;font-size:21px">Interprétations</h2>' + interp +
       '<div style="margin-top:20px;text-align:right"><button class="ghostbtn" data-act="closemodal">Fermer</button></div></div>';
     document.body.appendChild(box0);
@@ -1247,18 +1292,10 @@
       var om = UI.colMode === 'mine' ? ownedMap() : null;
       setDeckIdx(UI.editing, uniqueByName(shuffle(POOL.map(function (_, k) { return k; }).filter(function (k) { return isOwned(k, om); }))).slice(0, 20)); render(); return;
     }
-    if (act === 'famdeck') {
-      var om2 = UI.colMode === 'mine' ? ownedMap() : null, byFam = {};
-      POOL.forEach(function (d, k) { var f = A.familyOfDef(d); if (f && isOwned(k, om2)) (byFam[f] = byFam[f] || []).push(k); });
-      var pick = FAM_KEYS.map(function (f) { return byFam[f] ? shuffle(byFam[f].slice())[0] : null; }).filter(function (x) { return x != null; });
-      var rest = shuffle(Object.keys(byFam).reduce(function (a, f) { return a.concat(byFam[f]); }, []));
-      setDeckIdx(UI.editing, uniqueByName(pick.concat(rest)).slice(0, 20)); render(); return;
-    }
     if (act === 'colmode') { UI.colMode = el.dataset.v; UI.limit = 60; render(); return; }
     if (act === 'rarity') { UI.rarity = el.dataset.r; UI.limit = 60; render(); return; }
     if (act === 'more') { UI.limit += 120; render(); return; }
     /* réglages */
-    if (act === 'fammode') { A.SETTINGS.famMode = SET.fam = el.dataset.v; saveSet(); render(); return; }
     if (act === 'fxset') { UI.fxOn = SET.fx = el.dataset.v === '1'; saveSet(); render(); return; }
     if (act === 'speed') { SET.speed = el.dataset.v; saveSet(); render(); return; }
     if (act === 'level') { SET.level = el.dataset.v; saveSet(); render(); return; }
@@ -1288,6 +1325,20 @@
 
     if (!UI.st || UI.st.over || UI.screen !== 'game') return;
     if (UI.anim) return;
+    if (UI.st.phase === 'setup') {
+      if (act === 'setupok') { confirmSetup(); return; }
+      if (act === 'card') {
+        var su = parseInt(el.dataset.uid, 10), so = parseInt(el.dataset.owner, 10);
+        UI.inspect = su;
+        if (so === ME && !setupDone()) {
+          var k = UI.setupSel.indexOf(su);
+          if (k >= 0) UI.setupSel.splice(k, 1);
+          else { if (UI.setupSel.length >= 2) UI.setupSel.shift(); UI.setupSel.push(su); }
+        }
+        render();
+      }
+      return;
+    }
     if (act === 'card' && UI.mode === 'idle' && UI.st.turnOwner !== ME) { UI.inspect = el.dataset.uid ? parseInt(el.dataset.uid, 10) : UI.inspect; render(); return; }
     if (UI.st.turnOwner !== ME) { toast('C’est au tour de l’adversaire.', true); return; }
 
@@ -1314,6 +1365,11 @@
       if (act === 'cell') {
         if (UI.mode === 'place' && UI.sel) doAction({ type: 'place', handIndex: UI.sel.index, slot: slot });
         else if (UI.mode === 'move' && UI.sel) doAction({ type: 'moveSingle', uid: UI.sel.uid, slot: slot });
+        return;
+      }
+      if (UI.mode === 'place' && UI.sel && UI.sel.index != null && owner === ME && uid) {
+        if (UI.st.cards[uid].faceUp) doAction({ type: 'replace', handIndex: UI.sel.index, slot: slot });
+        else toast('Seule une carte visible peut être remplacée.', true);
         return;
       }
       if (UI.mode === 'attack') {
@@ -1357,7 +1413,6 @@
   });
   document.addEventListener('change', function (e) {
     if (e.target.id === 'series') { UI.series = e.target.value; UI.limit = 60; render(); }
-    if (e.target.id === 'famf') { UI.famf = e.target.value; UI.limit = 60; render(); }
     if (e.target.id === 'deckname') { UI.decks.decks[UI.editing].name = (e.target.value.trim() || ('Deck ' + (UI.editing + 1))).slice(0, 24); saveDecks(); render(); }
   });
   document.addEventListener('keydown', function (e) {

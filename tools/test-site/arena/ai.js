@@ -181,14 +181,45 @@
     return out;
   }
 
+  /* Mise en place : l'IA retourne ses 2 cartes les plus solides. */
+  function chooseSetup(st, pi) {
+    var row = st.players[pi].terrain.filter(Boolean);
+    var score = function (u) { var c = st.cards[u], d = A.def(st, c); return d.pv + d.atk * 1.3 + (A.familyOfDef(d) ? 30 : 0) + Math.random() * 12; };
+    return row.slice().sort(function (a, b) { return score(b) - score(a); }).slice(0, 2);
+  }
+
+  /* Remplacement : une carte visible faible ou abîmée cède sa place à une carte plus forte de la main. */
+  function candidateReplaces(st) {
+    var me = st.turnOwner, p = st.players[me], out = [];
+    if (!p.hand.length) return out;
+    var base = evaluate(st, me);
+    var vis = [];
+    p.terrain.forEach(function (u, s) {
+      if (!u) return; var c = st.cards[u]; if (!c.faceUp) return;
+      var sc = A.stats(st, c); vis.push({ s: s, w: c.pv / Math.max(1, sc.maxPv) + (sc.atk + sc.maxPv) / 600 });
+    });
+    vis.sort(function (a, b) { return a.w - b.w; });
+    vis.slice(0, 2).forEach(function (v) {
+      for (var h = 0; h < Math.min(3, p.hand.length); h++) {
+        var a = { type: 'replace', handIndex: h, slot: v.s };
+        var sim = cloneState(st), r = APPLY(sim, a);
+        if (!r || !r.ok) continue;
+        a.score = (evaluate(sim, me) - base) * 0.8 - 8;
+        out.push(a);
+      }
+    });
+    return out;
+  }
+
   function nextAction(st) {
-    if (!st || st.over || st.actionsLeft <= 0) return null;
+    if (!st || st.over || st.actionsLeft <= 0 || st.phase === 'setup') return null;
     var me = st.turnOwner;
     var cands = [];
 
     cands = cands.concat(candidateAttacks(st));
     cands = cands.concat(candidateAbilities(st));
     cands = cands.concat(candidateMoves(st));
+    cands = cands.concat(candidateReplaces(st));
 
     var hidden = cardsOf(st, me).filter(function (u) { return !st.cards[u].faceUp && A.canReveal(st, u); });
     if (hidden.length) cands.push({ type: 'reveal', uid: hidden[0], score: 18 + hidden.length * 2 });
@@ -214,6 +245,6 @@
     return best;
   }
 
-  global.ArenaAI = { nextAction: nextAction, level: 'normal' };
+  global.ArenaAI = { nextAction: nextAction, chooseSetup: chooseSetup, level: 'normal' };
   if (typeof module !== 'undefined' && module.exports) module.exports = global.ArenaAI;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
