@@ -820,25 +820,40 @@
   }
 
   function renderMenu() {
-    var m = me(), act = UI.decks.decks[UI.decks.active], s = deckSummary(UI.decks.active);
+    var m = me(), n = UI.decks.active, act = UI.decks.decks[n], s = deckSummary(n), list = deckIdx(n);
     var h = load(histKey(), []), wins = h.filter(function (x) { return x.res === 'win'; }).length;
-    var tiles = [
-      ['duel', 'Duel', 'Affronte l’IA avec ton deck. Trois niveaux de difficulté.'],
-      ['friendly', 'Amical', 'Défie un ami en ligne avec un code de salon. Sans enjeu.'],
-      ['deck', 'Deck', 'Compose jusqu’à 3 decks de 20 cartes depuis ta collection.'],
-      ['rules', 'Règles', 'Comment jouer, statuts et capacités des cartes.'],
-      ['history', 'Historique', 'Tes derniers combats et ton bilan.'],
-      ['settings', 'Paramètres', 'Animations et vitesse de l’IA.']
-    ];
-    return '<div class="amenu"><section class="hero"><div><span class="kicker">SAKUGAME / ARENA <i class="testtag">version test</i></span><h1>Arena</h1>' +
-      '<p class="sub">Combats de cartes en 1 contre 1 : 5 cases, 3 cartes en main, 2 coups par tour. Élimine toutes les cartes adverses.</p></div>' +
-      '<div class="herodeck"><span>Deck de combat</span><b>' + esc(act.name) + '</b><small>' + s.n + '/20' + (s.out ? ' · ' + s.out + ' hors collection' : '') + '</small>' +
-      '<small>' + (m.signedIn ? esc(m.name) : 'Invité (non connecté)') + ' · ' + h.length + ' combat' + (h.length > 1 ? 's' : '') + ', ' + wins + ' victoire' + (wins > 1 ? 's' : '') + '</small></div></section>' +
+    var rate = h.length ? Math.round(wins / h.length * 100) + ' %' : '—';
+    var counts = {}; list.forEach(function (i) { var r = POOL[i].rarity; counts[r] = (counts[r] || 0) + 1; });
+    var bar = RARITY_ORDER.filter(function (r) { return counts[r]; }).map(function (r) { return '<span style="width:' + (counts[r] / 20 * 100) + '%;background:var(--' + r + ')"></span>'; }).join('');
+    var shown = list.slice().sort(function (a, b) { return RARITY_ORDER.indexOf(POOL[a].rarity) - RARITY_ORDER.indexOf(POOL[b].rarity); }).slice(0, 10);
+    var thumbs = shown.map(function (i) { var d = POOL[i]; return '<span class="mth r-' + d.rarity + '" title="' + esc(d.name) + '"><img src="' + esc(d.thumb) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'"></span>'; }).join('');
+    for (var k = shown.length; k < 10; k++) thumbs += '<span class="mth empty"></span>';
+    var lv = LEVEL_FR[SET.level || 'normal'];
+    function play(key, title, desc, meta, cta) {
+      return '<button class="mplaycard ' + key + '" data-act="go" data-s="' + key + '"><span class="bgico" aria-hidden="true">' + icon(key) + '</span>' +
+        '<span class="ti">' + icon(key) + '</span><span class="tx"><b>' + title + '</b><span>' + desc + '</span></span>' +
+        '<span class="foot"><em>' + meta + '</em><span class="cta">' + cta + ' <span aria-hidden="true">→</span></span></span></button>';
+    }
+    function link(key, title, desc) {
+      return '<button class="mlink" data-act="go" data-s="' + key + '"><span class="ti">' + icon(key) + '</span><span class="tx"><b>' + title + '</b><span>' + desc + '</span></span><span class="arr" aria-hidden="true">›</span></button>';
+    }
+    return '<div class="amenu">' +
+      '<section class="hero"><div class="herotx"><span class="kicker">SAKUGAME / ARENA <i class="testtag">version test</i></span><h1>Arena</h1>' +
+        '<p class="sub">Combats de cartes en 1 contre 1 : 5 cases, 3 cartes en main, 2 coups par tour. Élimine toutes les cartes adverses.</p></div>' +
+        '<div class="herostats"><div><b>' + h.length + '</b><span>combat' + (h.length > 1 ? 's' : '') + '</span></div><div><b>' + wins + '</b><span>victoire' + (wins > 1 ? 's' : '') + '</span></div><div><b>' + rate + '</b><span>de victoires</span></div></div>' +
+        '<span class="who">' + (m.signedIn ? esc(m.name) : 'Invité (non connecté)') + '</span></section>' +
       (UI.net ? '<button class="resume" data-act="go" data-s="friendly">Salon Amical en cours · ' + esc(UI.net.code) + ' — revenir</button>' : '') +
       (UI.st && !UI.st.over ? '<button class="resume" data-act="resume">Partie en cours — reprendre</button>' : '') +
-      '<div class="tiles">' + tiles.map(function (t, k) {
-        return '<button class="tile' + (k < 2 ? ' big' : '') + '" data-act="go" data-s="' + t[0] + '"><span class="ti">' + icon(t[0]) + '</span><b>' + t[1] + '</b><span>' + t[2] + '</span></button>';
-      }).join('') + '</div></div>';
+      '<div class="mgrid"><div class="mplay">' +
+        play('duel', 'Duel', 'Affronte l’IA avec ton deck. Trois niveaux de difficulté.', 'Niveau ' + lv, 'Jouer') +
+        play('friendly', 'Amical', 'Défie un ami en ligne avec un code de salon. Sans enjeu.', 'Salon privé à 2', '<span class="lg">Créer ou rejoindre</span><span class="sm">Jouer</span>') +
+      '</div><aside class="mside">' +
+        '<button class="mdeck" data-act="go" data-s="deck"><span class="kicker">Deck de combat</span>' +
+          '<span class="mdhead"><b>' + esc(act.name) + '</b><small' + (s.ok ? '' : ' class="bad"') + '>' + s.n + '/20</small></span>' +
+          '<span class="mthumbs">' + thumbs + '</span><span class="rbar">' + bar + '</span>' +
+          '<span class="mdfoot"><small>' + (s.out ? s.out + ' carte' + (s.out > 1 ? 's' : '') + ' hors collection' : (s.ok ? 'Prêt pour le combat' : 'Deck incomplet')) + '</small><span class="cta">Modifier mes decks <span aria-hidden="true">→</span></span></span></button>' +
+        '<nav class="mlinks">' + link('rules', 'Règles', 'Comment jouer, statuts et capacités') + link('history', 'Historique', 'Tes derniers combats et ton bilan') + link('settings', 'Paramètres', 'Animations et vitesse de l’IA') + '</nav>' +
+      '</aside></div></div>';
   }
 
   function renderDeck() {
