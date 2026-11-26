@@ -25,9 +25,9 @@
     { id: 'coups', titre: 'Deux coups par tour', etat: 'cahier',
       texte: "Révéler, poser, remplacer, attaquer, utiliser une capacité active et déplacer coûtent chacun un coup. Piocher coûte un coup. Exception : le joueur qui commence n'a qu'un coup à son tout premier tour." },
     { id: 'remplacement', titre: 'Remplacement', etat: 'cahier',
-      texte: "Pour un coup, une carte visible de votre terrain peut être remplacée par une carte de votre main : la nouvelle carte arrive face visible sur la case, l'ancienne part au fond de votre pioche (elle ne compte pas comme morte et perd ses statuts et bonus). Impossible sur une carte qui brûle ou prise dans une Prison de glace complète." },
+      texte: "Pour un coup, une carte visible de votre terrain peut être remplacée par une carte de votre main : la nouvelle carte arrive face visible sur la case, l'ancienne part au fond de votre pioche (elle ne compte pas comme morte, perd ses statuts et bonus mais garde ses dégâts), et vous piochez aussitôt une carte gratuitement. Impossible sur une carte qui brûle ou prise dans une Prison de glace complète." },
     { id: 'remplissage', titre: 'Remplissage du terrain', etat: 'proposition',
-      texte: "En début de tour, les cases vides sont remplies gratuitement depuis la main d'abord, puis depuis le sommet de la pioche ; les cartes arrivent face cachée. La main n'est jamais remplie automatiquement : seule l'action Piocher (ou une capacité) y ajoute une carte." },
+      texte: "Quand une carte meurt (ou quitte le terrain), sa case est remplie au début du tour suivant de son propriétaire : il choisit, gratuitement, une carte de sa main ou la carte du dessus de sa pioche ; elle arrive face cachée. Si sa main est vide, la pioche remplit sans choix. Une carte renvoyée dans la pioche ne se régénère pas : elle garde ses dégâts." },
     { id: 'adjacence', titre: "Bonus d'animé voisin", etat: 'proposition',
       etatTexte: true,
       texte: "Un voisin visible de la même série donne +10 ATK et +10 PV maximum et actuels, cumulable à +20 (deux voisins au maximum). Sont voisines deux cases orthogonalement ou diagonalement adjacentes. PROPOSITION : seuls les voisins alliés comptent (synergie d'équipe). Quand le bonus tombe, les PV actuels sont conservés puis plafonnés au nouveau maximum." },
@@ -764,6 +764,7 @@
     opts = opts || {};
     var card = st.cards[targetUid];
     if (!card) return 0;
+    if (!where(st, targetUid)) return 0;   // une carte revenue en main ou dans la pioche ne subit plus rien
     var kind = opts.kind || (sourceUid ? 'ability' : 'effect');
     var d = def(st, card);
     var src = sourceUid ? st.cards[sourceUid] : null;
@@ -960,7 +961,7 @@
     p.terrain[slot] = null;
     resetCard(st, old);
     p.deck.unshift(oldUid);
-    fx(st, { t: 'project', at: from });
+    fx(st, { t: 'project', uid: oldUid, at: from });
     var uid = p.hand.splice(handIndex, 1)[0];
     var card = st.cards[uid];
     card.faceUp = true;
@@ -970,6 +971,7 @@
     refreshBonuses(st, false);
     onReveal(st, uid);
     revealTriggers(st, uid);
+    if (draw(st, p === st.players[0] ? 0 : 1, true)) log(st, 'draw', p.nom + ' pioche une carte gratuitement (main : ' + p.hand.length + ').');
     spend(st);
     checkEnd(st);
     return ok('Carte remplacée.');
@@ -1634,7 +1636,8 @@
     var d = def(st, c);
     c.faceUp = false; c.bonus = 0; c.status = {}; c.prison = null; c.taunt = null; c.clone = null;
     c.atkMul = 1; c.pvMul = 1; c.buffUntil = 0; c.attacked = false; c.ambush = false;
-    c.pv = d.pv; c.lockedUntil = 0;
+    /* Renvoyée dans la pioche, la carte ne se régénère pas : elle garde ses dégâts (bonus de PV retirés). */
+    c.pv = Math.max(1, Math.min(c.pv, d.pv)); c.lockedUntil = 0;
   }
 
   /* Assimilation : Denji entre sur le terrain -> fusion sur SA case.
@@ -1642,10 +1645,10 @@
   function findCard(st, pi, key) {
     var out = { terrain: null, hand: null };
     st.players[pi].terrain.forEach(function (u, slot) {
-      if (u && !out.terrain && canonName(def(st, st.cards[u]).name) === key) out.terrain = { uid: u, slot: slot };
+      if (u && st.cards[u] && !out.terrain && canonName(def(st, st.cards[u]).name) === key) out.terrain = { uid: u, slot: slot };
     });
     st.players[pi].hand.forEach(function (u, idx) {
-      if (!out.hand && canonName(def(st, st.cards[u]).name) === key) out.hand = { uid: u, idx: idx };
+      if (!out.hand && st.cards[u] && canonName(def(st, st.cards[u]).name) === key) out.hand = { uid: u, idx: idx };
     });
     return out;
   }
@@ -1745,7 +1748,7 @@
         var hr = heal(st, uid, Math.round(stats(st, c).maxPv * (isLeg(st, c) ? 0.1 : 0.06)));
         if (hr > 0) log(st, 'soin', 'Régénération : ' + d.name + ' récupère ' + hr + ' PV.');
       }
-      if (c.mahoraga && c.mahoragaTarget && st.cards[c.mahoragaTarget]) {
+      if (c.mahoraga && c.mahoragaTarget && st.cards[c.mahoragaTarget] && where(st, c.mahoragaTarget)) {
         log(st, 'abil', 'Megumi — Mahoraga riposte et élimine ' + def(st, st.cards[c.mahoragaTarget]).name + '.');
         var tgt = c.mahoragaTarget;
         c.mahoraga = false; c.mahoragaTarget = null;
@@ -1755,22 +1758,54 @@
     refreshBonuses(st, false);
   }
 
+  /* Remplissage des cases vides (carte morte ou renvoyée) au début du tour de leur propriétaire :
+     le joueur choisit pour chaque case une carte de sa main ou la carte du dessus de sa pioche (gratuit, face cachée). */
   function refillTerrain(st, pi) {
-    var p = st.players[pi];
-    var placed = 0;
-    for (var s = 0; s < COLS; s++) {
-      if (p.terrain[s]) continue;
-      var uid = null;
-      if (p.hand.length) uid = p.hand.shift();
-      else if (p.deck.length) uid = p.deck.pop();
-      if (!uid) break;
-      st.cards[uid].faceUp = false;
-      st.cards[uid].bonus = 0;
-      p.terrain[s] = uid;
-      placed++;
+    var p = st.players[pi], slots = [];
+    for (var s = 0; s < COLS; s++) if (!p.terrain[s]) slots.push(s);
+    st.refill = null;
+    if (!slots.length || (!p.hand.length && !p.deck.length)) return;
+    if (!p.hand.length) {            // main vide : la pioche remplit sans choix
+      slots.forEach(function (sl) { refillOne(st, pi, sl, 'deck'); });
+      afterRefill(st, pi);
+      return;
     }
-    if (placed) log(st, 'refill', p.nom + ' remplit ' + placed + ' case(s) vide(s) face cachée.');
+    st.refill = { owner: pi, slots: slots };
+    var nb = slots.length + ' case' + (slots.length > 1 ? 's' : '') + ' vide' + (slots.length > 1 ? 's' : '');
+    log(st, 'refill', (p.nom === 'Vous' ? 'Vous devez remplir ' : p.nom + ' doit remplir ') + nb + ' : carte de la main ou de la pioche.');
+  }
+  function refillOne(st, pi, slot, from, handIndex) {
+    var p = st.players[pi], uid = null;
+    if (from === 'hand') uid = p.hand.splice(handIndex, 1)[0];
+    else uid = p.deck.pop();
+    if (!uid) return false;
+    var c = st.cards[uid];
+    c.faceUp = false; c.bonus = 0;
+    p.terrain[slot] = uid;
+    fx(st, { t: 'place', uid: uid, at: { owner: pi, slot: slot } });
+    log(st, 'refill', (p.nom === 'Vous' ? 'Vous remplissez' : p.nom + ' remplit') + ' la colonne ' + (slot + 1) + ' depuis ' + (from === 'hand' ? (p.nom === 'Vous' ? 'votre main' : 'sa main') : (p.nom === 'Vous' ? 'votre pioche' : 'sa pioche')) + ' (face cachée).');
+    return true;
+  }
+  function afterRefill(st, pi) {
+    st.refill = null;
     refreshBonuses(st, false);
+    checkFusions(st);
+    checkEnd(st);
+  }
+  function refillAction(st, slot, from, handIndex) {
+    var R = st.refill;
+    if (!R) return fail('Aucune case à remplir.');
+    if (R.owner !== st.turnOwner) return fail('Ce n’est pas à vous de remplir.');
+    if (R.slots.indexOf(slot) < 0) return fail('Cette case n’est pas à remplir.');
+    var p = st.players[R.owner];
+    if (from === 'hand') { if (!(handIndex >= 0 && handIndex < p.hand.length)) return fail('Carte en main invalide.'); }
+    else if (from === 'deck') { if (!p.deck.length) return fail('Pioche vide : choisissez une carte de votre main.'); }
+    else return fail('Choix invalide.');
+    refillOne(st, R.owner, slot, from, handIndex);
+    R.slots = R.slots.filter(function (x) { return x !== slot; });
+    if (!R.slots.length || (!p.hand.length && !p.deck.length)) afterRefill(st, R.owner);
+    else if (!p.hand.length) { R.slots.slice().forEach(function (sl) { refillOne(st, R.owner, sl, 'deck'); }); afterRefill(st, R.owner); }
+    return ok('Case remplie.');
   }
 
   /* Amaterasu : 25 dégâts à la carte présente sur chaque case en flammes. */
@@ -1840,7 +1875,7 @@
     checkFusions(st);
     startOfTurnTriggers(st, st.turnOwner);
     refillTerrain(st, st.turnOwner);
-    checkFusions(st);
+    if (!st.refill) checkFusions(st);
     p.terrain.forEach(function (uid) { if (uid) st.cards[uid].attacked = false; });
     log(st, 'turn', 'Tour ' + Math.ceil(st.turnNo / 2) + ' — ' + p.nom + ' (' + st.actionsLeft + ' coups).');
     st.stats.tours++;
@@ -1916,7 +1951,7 @@
     totalCards: totalCards,
     refreshBonuses: refreshBonuses,
     actions: {
-      reveal: reveal, placeFromHand: placeFromHand, replaceFromHand: replaceFromHand, setupReveal: setupReveal, attack: attack,
+      reveal: reveal, placeFromHand: placeFromHand, replaceFromHand: replaceFromHand, setupReveal: setupReveal, refill: refillAction, attack: attack,
       moveSwap: moveSwap, moveSingle: moveSingle, drawAction: drawAction,
       useAbility: useAbility, endTurn: endTurn
     }

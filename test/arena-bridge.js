@@ -4,8 +4,8 @@
    • Lien direct : ?arena=CODE ouvre Arena et rejoint le salon Amical. */
 (function () {
   'use strict';
-  const SRC = 'arena/index.html?v=93085391';
-  let pending = null;
+  const SRC = 'arena/index.html?v=62c31be1';
+  let pending = null, cardIndex = null;
   const $ = id => document.getElementById(id);
   function frame() { return $('arenaFrame'); }
   function app() { try { const f = frame(); return f && f.contentWindow && f.contentWindow.ArenaApp; } catch (e) { return null; } }
@@ -27,6 +27,20 @@
     owned() { try { return (typeof cardState !== 'undefined' && cardState && cardState.cards) || null; } catch (e) { return null; } },
     catalogue() { try { return window.sakuMarket ? window.sakuMarket.list() : []; } catch (e) { return []; } },
     db() { try { return typeof database !== 'undefined' ? database : null; } catch (e) { return null; } },
+    // Visuels officiels des cartes (même rendu que la collection) : SVG avec l'image déjà chargée.
+    cardSvg(id) {
+      try {
+        const list = window.sakuMarket ? window.sakuMarket.list() : [];
+        if (!cardIndex || cardIndex.n !== list.length) { cardIndex = { n: list.length, map: new Map(list.map(c => [String(c.id), c])) }; }
+        const c = cardIndex.map.get(String(id));
+        if (!c) return null;
+        let svg = '';
+        if ((c.edition === 'strongest' || c.edition === 'hoshi') && window.sakuStrongestCard) svg = window.sakuStrongestCard(c, true);
+        else if (window.sakuBasicCard) svg = window.sakuBasicCard(c, true, { image: typeof cardThumb === 'function' ? cardThumb(c.image) : c.image, level: 0 });
+        return svg ? svg.replace(/data-saku-src=/g, 'href=') : null;
+      } catch (e) { return null; }
+    },
+    backSvg() { try { return window.sakuBasicBack ? window.sakuBasicBack() : null; } catch (e) { return null; } },
     invite(code) { if (window.sakuRoomInviteOpen) window.sakuRoomInviteOpen(code, 'arena'); },
     notify(msg) { if (typeof showNotification === 'function') showNotification(msg); },
     ready() { if (pending) { const c = pending; pending = null; const a = app(); if (a && a.join) a.join(c); } }

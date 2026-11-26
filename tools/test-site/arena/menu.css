@@ -228,3 +228,42 @@ body{min-height:100vh}
   .mlink .tx b{font-size:14px}
   .mlink .tx span{font-size:11.5px}
 }
+
+/* ---------- cartes : visuel officiel Sakugame ---------- */
+.card-svg{display:block;font-family:Outfit,system-ui,sans-serif}
+.card-svg .chud{fill:#eaf2ff;font:700 8.5px ui-monospace,monospace;letter-spacing:1.6px;opacity:.85}
+.card-svg .cname{fill:#fff;font-family:'Arial Narrow','Liberation Sans Narrow',system-ui,sans-serif;font-weight:800;letter-spacing:.6px}
+.card-svg .cseries{fill:#b6c8dc;font-weight:700;font-size:9px;letter-spacing:1.2px}
+.card-svg .corbit{fill:none;stroke-width:3.4;stroke-linecap:round;stroke-dasharray:42 1168;opacity:0}
+.slot{aspect-ratio:260/372}
+.hand .slot-empty{aspect-ratio:260/372}
+.card.svgc{background:none;border:0;border-radius:10px;box-shadow:0 10px 22px -14px #000;overflow:visible;aspect-ratio:260/372}
+.slot.filled .card.svgc{height:100%;width:100%}
+.card.svgc .sv{position:absolute;inset:0;pointer-events:none}
+.card.svgc .sv svg{display:block;width:100%;height:100%}
+.card.svgc .badges{position:absolute;left:8%;right:8%;top:57%;padding:0;gap:0;display:flex;justify-content:space-between;z-index:4;pointer-events:none}
+.card.svgc .badge{flex:0 0 auto;min-width:36%;padding:3px 6px;border-radius:7px;font-size:12px;text-align:center;box-shadow:0 2px 8px -2px #000c}
+.card.svgc .badge.pv{background:#0f3328f2;color:#8ff0cb;border:1px solid #5fe0b066}
+.card.svgc .badge.atk{background:#3a1820f2;color:#ffb3ae;border:1px solid #ff8f8a66}
+.card.svgc .badge.up{border-color:#9fd8ff;color:#e8f6ff}
+.card.svgc .badge.down{border-color:#ff8f8a;color:#ffd0cd}
+.card.svgc .status{top:9%;right:6%}
+.card.svgc.targetable::before{border-radius:10px}
+.card.svgc.selected{outline-offset:2px;border-radius:10px}
+.card.svgc.peek{opacity:.7}
+.card.svgc.attacked .badges{opacity:.6}
+.card.hidden-face.svgback{background:none;border:0;border-radius:10px;overflow:hidden;aspect-ratio:260/372;box-shadow:0 10px 22px -14px #000}
+.slot.filled .card.hidden-face.svgback{height:100%;width:100%}
+.svgback .bk{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.svgback .back-label{position:absolute;left:12%;right:12%;bottom:5%;padding:3px 4px;border-radius:99px;background:#06101ecc;border:1px solid #9fd8ff33;font-size:8.5px;letter-spacing:.1em;color:#cfe3f5;z-index:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.poolcard .card.svgc{width:100%}
+.poolcard .nown{bottom:auto;top:50%}
+.inspector .preview .card.svgc{width:100%}
+.slot.refill-target{border:2px dashed #ffd47a;background:#2a2108aa;animation:glow 1.6s infinite}
+.slot.refill-target::after{content:"à remplir";position:absolute;inset:0;display:grid;place-items:center;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#ffd47a;text-align:center}
+@media (max-width:760px){
+  .card.svgc .badge{font-size:9.5px;padding:2px 3px;border-radius:5px;min-width:40%}
+  .card.svgc .badges{left:6%;right:6%;top:56%}
+  .svgback .back-label{font-size:6.5px;letter-spacing:.04em;padding:2px 2px;left:6%;right:6%}
+  .card.svgc .status{top:7%;right:4%}
+}

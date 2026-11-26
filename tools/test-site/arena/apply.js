@@ -7,6 +7,8 @@
     if (!action) return { ok: false, error: 'Action vide.' };
     if (action.type === 'setup') return A.actions.setupReveal(st, action.player, action.uids);
     if (st.phase === 'setup') return { ok: false, error: 'Choisissez d’abord les cartes à retourner.' };
+    if (action.type === 'refill') return A.actions.refill(st, action.slot, action.from, action.handIndex);
+    if (st.refill) return { ok: false, error: 'Remplissez d’abord vos cases vides (main ou pioche).' };
     switch (action.type) {
       case 'replace': return A.actions.replaceFromHand(st, action.handIndex, action.slot);
       case 'attack': return A.actions.attack(st, action.attacker, action.target);

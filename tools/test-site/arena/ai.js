@@ -211,8 +211,20 @@
     return out;
   }
 
+  /* Remplissage : l'IA garde sa main (cartes à poser face visible plus tard) et prend la pioche ;
+     pioche vide -> sa carte de main la plus faible. */
+  function chooseRefill(st) {
+    var R = st.refill, p = st.players[R.owner], slot = R.slots[0];
+    if (p.deck.length && (p.hand.length <= 3 || Math.random() < 0.7)) return { type: 'refill', slot: slot, from: 'deck' };
+    var best = 0, bestV = Infinity;
+    p.hand.forEach(function (u, k) { var d = A.def(st, st.cards[u]); var v = d.pv + d.atk * 1.3; if (v < bestV) { bestV = v; best = k; } });
+    return { type: 'refill', slot: slot, from: 'hand', handIndex: best };
+  }
+
   function nextAction(st) {
-    if (!st || st.over || st.actionsLeft <= 0 || st.phase === 'setup') return null;
+    if (!st || st.over || st.phase === 'setup') return null;
+    if (st.refill) return chooseRefill(st);
+    if (st.actionsLeft <= 0) return null;
     var me = st.turnOwner;
     var cands = [];
 

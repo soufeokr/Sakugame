@@ -29,6 +29,7 @@
   var POOL = (window.ARENA_CARDS || []).map(function (a) {
     return { name: a[0], series: a[1], rarity: a[2], profil: a[3], pv: a[4], atk: a[5], characterRank: a[6], image: a[7], thumb: thumbUrl(a[7]) };
   });
+  POOL.forEach(function (d, i) { Object.defineProperty(d, '__i', { value: i, enumerable: false }); });
   window.__FUSION_IMG__ = 'fusion.webp';
   /* Siège du joueur local : 0 (hôte / Duel) ou 1 (invité en Amical). */
   var ME = 0, OP = 1;
@@ -55,9 +56,42 @@
   function famStyle(f) { return f ? ' style="--famc:' + FAMC[f] + '"' : ''; }
 
   /* ---------- carte ---------- */
+  /* Visuel officiel Sakugame (SVG de la collection) fourni par le site ; sinon visuel simple. */
+  var SVGC = {}, BACK_URI = null;
+  function officialSvg(def) {
+    var i = def.__i;
+    if (i == null || !HOST || !HOST.cardSvg) return null;
+    if (i in SVGC) return SVGC[i];
+    var id = siteIds()[i];
+    if (!siteIds().length) return null;          // catalogue du site pas encore prêt : on réessaiera
+    var svg = id ? HOST.cardSvg(id) : null;
+    SVGC[i] = svg || null;
+    return SVGC[i];
+  }
+  function backUri() {
+    if (BACK_URI !== null) return BACK_URI;
+    var svg = null; try { svg = HOST && HOST.backSvg ? HOST.backSvg() : null; } catch (e) { svg = null; }
+    if (svg && !/^<svg[^>]*xmlns=/.test(svg)) svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"');
+    BACK_URI = svg ? 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) : '';
+    return BACK_URI;
+  }
   function cardFace(def, opts) {
     opts = opts || {};
     var cls = ['card', 'r-' + def.rarity];
+    var svg = opts.thumb ? null : officialSvg(def);
+    if (svg) {
+      cls.push('svgc');
+      ['selected', 'targetable', 'selectable', 'dim', 'locked', 'attacked', 'peek'].forEach(function (k) { if (opts[k]) cls.push(k); });
+      if (opts.ally) cls.push('ally');
+      if (opts.cls) Array.prototype.push.apply(cls, opts.cls);
+      var pv2 = opts.pv != null ? opts.pv : def.pv, atk2 = opts.atk != null ? opts.atk : def.atk;
+      var st2 = (opts.status || []).length ? '<div class="status">' + opts.status.map(function (k) {
+        return '<span class="st-' + k + '" title="' + esc(ST_TXT[k] || k) + '">' + ST_ICON[k] + '</span>'; }).join('') + '</div>' : '';
+      return '<div class="' + cls.join(' ') + '" ' + (opts.attrs || '') + ' title="' + esc(opts.nom || def.name) + '">' +
+        '<div class="sv">' + svg + '</div>' + st2 +
+        '<div class="badges"><span class="badge pv' + (pv2 > def.pv ? ' up' : '') + '">' + pv2 + '</span>' +
+        '<span class="badge atk' + (atk2 > def.atk ? ' up' : (opts.atkDown ? ' down' : '')) + '">' + atk2 + '</span></div></div>';
+    }
     ['selected', 'targetable', 'selectable', 'dim', 'locked', 'attacked', 'peek'].forEach(function (k) { if (opts[k]) cls.push(k); });
     if (opts.ally) cls.push('ally');
     if (opts.cls) Array.prototype.push.apply(cls, opts.cls);
@@ -80,6 +114,9 @@
       '<div class="series">' + esc(def.series) + '</div></div>';
   }
   function cardBack(attrs, label, extra) {
+    var uri = backUri();
+    if (uri) return '<div class="card hidden-face svgback selectable' + (extra || '') + '" ' + (attrs || '') + '>' +
+      '<img class="bk" src="' + uri + '" alt="" draggable="false"><div class="back-label">' + (label || 'Arena') + '</div></div>';
     return '<div class="card hidden-face selectable' + (extra || '') + '" ' + (attrs || '') + '>' +
       '<div class="back"><svg viewBox="0 0 40 40" fill="none" stroke="#9fd8ff" stroke-width="1.4">' +
       '<path d="M20 4 L34 11 v9c0 8-6 13-14 16-8-3-14-8-14-16v-9z"/><path d="M20 12 l7 4v4c0 4-3 6.5-7 8-4-1.5-7-4-7-8v-4z"/></svg></div>' +
@@ -124,7 +161,9 @@
         (fire.length ? '<div class="fire" title="Mur de flammes"><b>' + fire.reduce(function (a, f) { return a + f.dmg; }, 0) + ' × ' + Math.max.apply(null, fire.map(function (f) { return f.left; })) + '</b></div>' : '');
       var cellT = T.cells.has(pos);
       if (!uid) {
-        var canPlace = !isOpp && st.turnOwner === ME && (UI.mode === 'place' || UI.mode === 'move') && st.actionsLeft > 0;
+        var refillHere = !isOpp && st.refill && st.refill.owner === ME && st.turnOwner === ME && st.refill.slots[0] === s;
+        if (refillHere) { cells += '<div class="slot refill-target" data-pos="' + pos + '"></div>'; continue; }
+        var canPlace = !isOpp && st.turnOwner === ME && !st.refill && (UI.mode === 'place' || UI.mode === 'move') && st.actionsLeft > 0;
         var clickable = canPlace || cellT;
         cells += '<div class="slot' + (clickable ? (canPlace ? ' empty-targetable' : ' case-targetable') : '') + '" data-pos="' + pos + '"' +
           (clickable ? ' data-act="cell" data-owner="' + pi + '" data-slot="' + s + '"' : '') + '>' + deco + '</div>';
@@ -192,7 +231,7 @@
     var st = UI.st, p = st.players[ME], html = '';
     p.hand.forEach(function (uid, i) {
       var c = st.cards[uid], d = A.def(st, c);
-      var canPlace = st.phase !== 'setup' && st.turnOwner === ME && st.actionsLeft > 0 && p.terrain.some(function (u) { return !u || st.cards[u].faceUp; });
+      var canPlace = st.phase !== 'setup' && st.turnOwner === ME && (st.refill ? true : st.actionsLeft > 0 && p.terrain.some(function (u) { return !u || st.cards[u].faceUp; }));
       html += cardFace(d, { selectable: canPlace, selected: UI.mode === 'place' && UI.sel && UI.sel.index === i, dim: !canPlace,
         nom: A.displayName(st, c), thumb: c.fusion && window.__FUSION_IMG__ ? window.__FUSION_IMG__ : null, attrs: 'data-act="hand" data-i="' + i + '"' });
     });
@@ -209,7 +248,13 @@
       return '<div class="actionbar setupbar"><span class="hint"><b style="color:#fff">Mise en place</b> : touche 2 cartes de ton terrain à retourner (' + n + '/2)</span>' +
         '<button class="act go" data-act="setupok"' + (n === 2 ? '' : ' disabled') + '>Retourner ces cartes</button></div>';
     }
-    if (st.turnOwner !== ME) return '<div class="actionbar"><span class="hint">' + esc(st.players[OP].nom) + ' joue…</span></div>';
+    if (st.turnOwner !== ME) return '<div class="actionbar"><span class="hint">' + esc(st.players[OP].nom) + (st.refill ? ' remplit ses cases vides…' : ' joue…') + '</span></div>';
+    if (st.refill) {
+      var R = st.refill, pp = st.players[ME];
+      return '<div class="actionbar setupbar"><span class="hint"><b style="color:#fff">Case vide — colonne ' + (R.slots[0] + 1) + '</b>' + (R.slots.length > 1 ? ' (encore ' + (R.slots.length - 1) + ' après)' : '') +
+        ' : touche une carte de ta main pour l’y poser face cachée, ou prends la carte du dessus de ta pioche. Gratuit.</span>' +
+        '<button class="act go" data-act="refilldeck"' + (pp.deck.length ? '' : ' disabled') + '>Prendre dans la pioche (' + pp.deck.length + ')</button></div>';
+    }
     var btn = [], sel = UI.sel && UI.sel.uid ? st.cards[UI.sel.uid] : null;
     if (UI.mode === 'attack') btn.push('<span class="hint">Choisissez une cible en surbrillance —</span><button class="act" data-act="cancel">annuler</button>');
     else if (UI.mode === 'move') btn.push('<span class="hint">Échangez avec une carte visible alliée, ou visez une case vide —</span><button class="act" data-act="cancel">annuler</button>');
@@ -1397,6 +1442,13 @@
         doAction({ type: 'moveSwap', a: UI.sel.uid, b: uid }); return;
       }
       UI.inspect = uid; UI.sel = { uid: uid }; UI.mode = 'idle'; render(); return;
+    }
+    if (UI.st.refill) {
+      var R2 = UI.st.refill;
+      if (act === 'hand') { doAction({ type: 'refill', slot: R2.slots[0], from: 'hand', handIndex: parseInt(el.dataset.i, 10) }); return; }
+      if (act === 'refilldeck') { doAction({ type: 'refill', slot: R2.slots[0], from: 'deck' }); return; }
+      if (act === 'card') { UI.inspect = parseInt(el.dataset.uid, 10); render(); return; }
+      toast('Remplis d’abord ta case vide : carte de ta main ou de la pioche.', true); return;
     }
     if (act === 'hand') {
       var hi = parseInt(el.dataset.i, 10);
