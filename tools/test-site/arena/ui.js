@@ -56,70 +56,51 @@
   function famStyle(f) { return f ? ' style="--famc:' + FAMC[f] + '"' : ''; }
 
   /* ---------- carte ---------- */
-  /* Visuel officiel Sakugame (SVG de la collection) fourni par le site ; sinon visuel simple. */
-  var SVGC = {}, BACK_URI = null;
-  function officialSvg(def) {
-    var i = def.__i;
-    if (i == null || !HOST || !HOST.cardSvg) return null;
-    if (i in SVGC) return SVGC[i];
-    var id = siteIds()[i];
-    if (!siteIds().length) return null;          // catalogue du site pas encore prêt : on réessaiera
-    var svg = id ? HOST.cardSvg(id) : null;
-    SVGC[i] = svg || null;
-    return SVGC[i];
-  }
-  function backUri() {
-    if (BACK_URI !== null) return BACK_URI;
-    var svg = null; try { svg = HOST && HOST.backSvg ? HOST.backSvg() : null; } catch (e) { svg = null; }
-    if (svg && !/^<svg[^>]*xmlns=/.test(svg)) svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"');
-    BACK_URI = svg ? 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) : '';
-    return BACK_URI;
+  /* ---------- carte Arena ----------
+     Inspirée du cadre Sakugame (coins coupés, liseré de rareté, plaque de nom), mais pensée pour le combat :
+     jauge de PV sous l'image, étiquettes PV / ATK intégrées au cadre, repère de capacité, statuts lisibles. */
+  var RGEM = { uncommon: 'U', rare: 'R', epic: 'É', legendary: 'L', mythic: 'M', special: 'S' };
+  var ICO_PV = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.2 2.6 9.1A3.4 3.4 0 0 1 8 4.6a3.4 3.4 0 0 1 5.4 4.5z" fill="currentColor"/></svg>';
+  var ICO_ATK = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.6 1.6 7.4 7.8l-1.2-.4-.9.9 1.1 1.1-3.1 3.1.8.8 3.1-3.1 1.1 1.1.9-.9-.4-1.2 6.2-6.2V1.6z" fill="currentColor"/></svg>';
+  function abilityMark(def) {
+    var a = A.abilitiesFor(def).length, p = A.passivesFor(def).length;
+    if (!a && !p) return '';
+    var t = a && p ? 'Capacité active et passive' : a ? 'Capacité active' : 'Capacité passive';
+    return '<span class="amark' + (a ? ' actv' : '') + '" title="' + t + '">' + (a && p ? '✦✦' : a ? '✦' : '◆') + '</span>';
   }
   function cardFace(def, opts) {
     opts = opts || {};
-    var cls = ['card', 'r-' + def.rarity];
-    var svg = opts.thumb ? null : officialSvg(def);
-    if (svg) {
-      cls.push('svgc');
-      ['selected', 'targetable', 'selectable', 'dim', 'locked', 'attacked', 'peek'].forEach(function (k) { if (opts[k]) cls.push(k); });
-      if (opts.ally) cls.push('ally');
-      if (opts.cls) Array.prototype.push.apply(cls, opts.cls);
-      var pv2 = opts.pv != null ? opts.pv : def.pv, atk2 = opts.atk != null ? opts.atk : def.atk;
-      var st2 = (opts.status || []).length ? '<div class="status">' + opts.status.map(function (k) {
-        return '<span class="st-' + k + '" title="' + esc(ST_TXT[k] || k) + '">' + ST_ICON[k] + '</span>'; }).join('') + '</div>' : '';
-      return '<div class="' + cls.join(' ') + '" ' + (opts.attrs || '') + ' title="' + esc(opts.nom || def.name) + '">' +
-        '<div class="sv">' + svg + '</div>' + st2 +
-        '<div class="badges"><span class="badge pv' + (pv2 > def.pv ? ' up' : '') + '">' + pv2 + '</span>' +
-        '<span class="badge atk' + (atk2 > def.atk ? ' up' : (opts.atkDown ? ' down' : '')) + '">' + atk2 + '</span></div></div>';
-    }
-    ['selected', 'targetable', 'selectable', 'dim', 'locked', 'attacked', 'peek'].forEach(function (k) { if (opts[k]) cls.push(k); });
+    var cls = ['card', 'acard', 'r-' + def.rarity];
+    ['selected', 'targetable', 'selectable', 'dim', 'locked', 'attacked', 'peek', 'big'].forEach(function (k) { if (opts[k]) cls.push(k); });
     if (opts.ally) cls.push('ally');
     if (opts.cls) Array.prototype.push.apply(cls, opts.cls);
-    var pv = opts.pv != null ? opts.pv : def.pv;
-    var atk = opts.atk != null ? opts.atk : def.atk;
+    var pv = opts.pv != null ? opts.pv : def.pv, atk = opts.atk != null ? opts.atk : def.atk;
+    var maxPv = Math.max(1, opts.maxPv || Math.max(def.pv, pv));
+    var pct = Math.max(0, Math.min(100, Math.round(pv / maxPv * 100)));
     var src = opts.thumb || def.thumb;
-    var art = src ? '<img src="' + esc(src) + '" alt="" loading="lazy" draggable="false" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' : '<div class="novis">' + esc((def.name || '?').slice(0, 1)) + '</div>';
-    var f = A.familyOfDef(def);
-    var famtag = '';
+    var art = src ? '<img src="' + esc(src) + '" alt="" loading="lazy" draggable="false" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' : '';
     var status = (opts.status || []).length ? '<div class="status">' + opts.status.map(function (k) {
       return '<span class="st-' + k + '" title="' + esc(ST_TXT[k] || k) + '">' + ST_ICON[k] + '</span>';
     }).join('') + '</div>' : '';
     var atkCls = atk > def.atk ? ' up' : (opts.atkDown ? ' down' : '');
-    return '<div class="' + cls.join(' ') + '" ' + (opts.attrs || '') + '>' +
-      '<span class="ribbon"></span>' + famtag + status +
-      '<div class="art">' + art + '</div>' +
-      '<div class="badges"><span class="badge pv' + (pv > def.pv ? ' up' : '') + '">' + pv + '</span>' +
-      '<span class="badge atk' + atkCls + '">' + atk + '</span></div>' +
-      '<div class="name">' + esc(opts.nom || def.name) + '</div>' +
-      '<div class="series">' + esc(def.series) + '</div></div>';
+    return '<div class="' + cls.join(' ') + '" ' + (opts.attrs || '') + ' title="' + esc((opts.nom || def.name) + ' — ' + def.series) + '">' +
+      '<div class="afr"><div class="ain">' +
+        '<div class="aart"><span class="ainit">' + esc((def.name || '?').charAt(0)) + '</span>' + art + '</div>' +
+        '<div class="ahp' + (pct <= 30 ? ' low' : pct <= 60 ? ' mid' : '') + '"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="aname"><b>' + esc(opts.nom || def.name) + '</b><small>' + esc(def.series) + '</small></div>' +
+        '<div class="astats"><span class="spv' + (pv > def.pv ? ' up' : '') + '">' + ICO_PV + '<b>' + pv + '</b></span>' +
+          '<span class="satk' + atkCls + '">' + ICO_ATK + '<b>' + atk + '</b></span></div>' +
+      '</div></div>' +
+      '<span class="agem">' + (RGEM[def.rarity] || '') + '</span>' + abilityMark(def) + status + '</div>';
   }
+  var BACK_ART = '<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="abk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bfe6ff"/><stop offset="1" stop-color="#5a8fd6"/></linearGradient></defs>' +
+    '<path d="M50 8 84 22v26c0 21-14 35-34 44C30 83 16 69 16 48V22z" fill="none" stroke="url(#abk)" stroke-width="2.6"/>' +
+    '<path d="M50 17 76 28v20c0 16-10 27-26 34-16-7-26-18-26-34V28z" fill="#0c2240" stroke="#9fd8ff55" stroke-width="1"/>' +
+    '<g fill="url(#abk)">' + [0, 72, 144, 216, 288].map(function (r) { return '<ellipse cx="50" cy="38" rx="6" ry="10" transform="rotate(' + r + ' 50 49)"/>'; }).join('') + '</g>' +
+    '<circle cx="50" cy="49" r="4.2" fill="#0c2240" stroke="#bfe6ff" stroke-width="1.6"/></svg>';
   function cardBack(attrs, label, extra) {
-    var uri = backUri();
-    if (uri) return '<div class="card hidden-face svgback selectable' + (extra || '') + '" ' + (attrs || '') + '>' +
-      '<img class="bk" src="' + uri + '" alt="" draggable="false"><div class="back-label">' + (label || 'Arena') + '</div></div>';
-    return '<div class="card hidden-face selectable' + (extra || '') + '" ' + (attrs || '') + '>' +
-      '<div class="back"><svg viewBox="0 0 40 40" fill="none" stroke="#9fd8ff" stroke-width="1.4">' +
-      '<path d="M20 4 L34 11 v9c0 8-6 13-14 16-8-3-14-8-14-16v-9z"/><path d="M20 12 l7 4v4c0 4-3 6.5-7 8-4-1.5-7-4-7-8v-4z"/></svg></div>' +
+    return '<div class="card acard aback selectable' + (extra || '') + '" ' + (attrs || '') + '>' +
+      '<div class="afr"><div class="ain"><div class="abk">' + BACK_ART + '<span class="abkt">ARENA</span></div></div></div>' +
       '<div class="back-label">' + (label || 'Arena') + '</div></div>';
   }
 
@@ -200,7 +181,7 @@
       }
       var clone = c.clone ? '<div class="clonep" title="Clone : encaisse 50 % des coups, attaque avec sa carte">✦<span> clone</span> ' + Math.max(0, c.clone.pv) + '<span> PV · ' + c.clone.atk + ' ATK</span></div>' : '';
       cells += '<div class="' + slotCls + '" data-pos="' + pos + '"' + cellAttrs + '>' + cardFace(d, {
-        pv: stt.pv, atk: stt.atk, nom: A.displayName(st, c),
+        pv: stt.pv, atk: stt.atk, maxPv: stt.maxPv, nom: A.displayName(st, c),
         thumb: c.fusion && window.__FUSION_IMG__ ? window.__FUSION_IMG__ : null,
         selected: picked || (UI.sel && UI.sel.uid === uid), targetable: targetable, ally: targetable && !isOpp,
         selectable: selectable, dim: dim, peek: !c.faceUp, cls: picked ? ['setup-picked'] : null,
@@ -314,7 +295,7 @@
       blocks += '<div class="psec">En jeu</div>' + sts.map(function (k) { return '<div class="abil statusx"><div class="t"><span>' + ST_ICON[k] + ' ' + esc(ST_TXT[k].split(' : ')[0]) + '</span></div><div class="d">' + esc(ST_TXT[k].split(' : ')[1] || '') + '</div></div>'; }).join('') +
         (c.clone ? '<div class="abil passive"><div class="t"><span>✦ Clone</span><em>' + Math.max(0, c.clone.pv) + '/' + c.clone.maxPv + ' PV · ' + c.clone.atk + ' ATK</em></div><div class="d">Encaisse 50 % des coups reçus et attaque avec sa carte.</div></div>' : '');
     }
-    return '<aside class="inspector"><div class="preview">' + cardFace(d, { nom: nom, pv: s.pv, atk: s.atk, thumb: thumb, cls: ['static'], big: true, status: sts }) + '</div>' +
+    return '<aside class="inspector"><div class="preview">' + cardFace(d, { nom: nom, pv: s.pv, atk: s.atk, maxPv: s.maxPv, thumb: thumb, cls: ['static'], big: true, status: sts }) + '</div>' +
       '<span class="tag" style="color:var(--' + d.rarity + ')">' + RARITY_FR[d.rarity] + '</span>' +
       '<h3>' + esc(nom) + '</h3><div class="s">' + esc(d.series) + ' · profil ' + esc(d.profil || '—') + (c.faceUp ? '' : ' · face cachée') + '</div>' +
       '<div class="statline"><div><span>PV</span><b>' + s.pv + ' / ' + s.maxPv + '</b></div><div><span>ATK</span><b>' + s.atk + '</b></div></div>' +
@@ -711,7 +692,7 @@
     UI.endShown = true;
     var w = UI.st.over.winner, res = w === -1 ? 'draw' : (w === ME ? 'win' : 'loss');
     var titre = res === 'draw' ? 'Match nul' : (res === 'win' ? 'Victoire' : 'Défaite');
-    recordResult(res);
+    var rk = recordResult(res);
     var btns = isOnline()
       ? '<button class="primary" data-act="rematch">' + (UI.net && UI.net.wantRematch ? 'En attente de l’adversaire…' : 'Revanche') + '</button><button class="ghostbtn" data-act="netleave">Quitter le salon</button>'
       : '<button class="primary" data-act="again">Rejouer</button><button class="ghostbtn" data-act="go" data-s="deck">Changer de deck</button><button class="ghostbtn" data-act="go" data-s="menu">Menu Arena</button>';
@@ -720,6 +701,9 @@
       '<p class="sub">' + esc(UI.st.over.reason) + '</p><div class="statline">' +
       '<div><span>Dégâts infligés</span><b>' + UI.st.stats.degats[OP] + '</b></div><div><span>Dégâts subis</span><b>' + UI.st.stats.degats[ME] + '</b></div>' +
       '<div><span>Éliminations</span><b>' + UI.st.stats.eliminations[ME] + '</b></div><div><span>Tours</span><b>' + Math.ceil(UI.st.turnNo / 2) + '</b></div></div>' +
+      (rk ? '<div class="rankgain' + (rk.up ? ' promo' : '') + '">' + rankLogo(rk.after.t, 62) + '<div><span>' + (rk.up && rk.after.t > rk.before.t ? 'Nouveau rang !' : rk.up ? 'Division supérieure !' : 'Rang') + '</span>' +
+        '<b>' + esc(rk.after.name) + '</b><div class="rbar2"><i style="width:' + rk.after.pct + '%"></i></div><small>' + rk.after.pts + ' PR' + (rk.after.hi ? ' / ' + rk.after.hi : '') + '</small></div>' +
+        '<em class="' + (rk.delta > 0 ? 'up' : rk.delta < 0 ? 'dn' : '') + '">' + (rk.delta > 0 ? '+' : '') + rk.delta + ' PR</em></div>' : '') +
       '<div class="endbtns">' + btns + '</div></div>';
     document.body.appendChild(box0);
     if (UI.fxOn && res === 'win') {
@@ -832,6 +816,114 @@
     h.unshift({ t: Date.now(), kind: isOnline() ? 'online' : 'duel', level: UI.match && UI.match.level || null, res: res,
       opp: UI.st.players[OP].nom, turns: Math.ceil(UI.st.turnNo / 2), elim: UI.st.stats.eliminations[ME] });
     save(histKey(), h.slice(0, 40));
+    return isDuel() ? applyRank(res, UI.match && UI.match.level) : null;
+  }
+
+
+  /* ================================================================== */
+  /* Rangs Arena : points de rang (PR) gagnés en Duel, 7 paliers.        */
+  /* ================================================================== */
+  var TIERS = [
+    { key: 'bronze',  nom: 'Bronze',  min: 0,    div: 3, c1: '#ffd2ad', c2: '#a35a2a', c3: '#4a2410', glow: '#e08a50' },
+    { key: 'argent',  nom: 'Argent',  min: 300,  div: 3, c1: '#ffffff', c2: '#8fa3bd', c3: '#2c3a4d', glow: '#c9d8ea' },
+    { key: 'or',      nom: 'Or',      min: 600,  div: 3, c1: '#fff1b8', c2: '#d99a14', c3: '#5a3a06', glow: '#ffc24d' },
+    { key: 'platine', nom: 'Platine', min: 900,  div: 3, c1: '#d9fff7', c2: '#2fb3a6', c3: '#0c3d3a', glow: '#5fe0d0' },
+    { key: 'diamant', nom: 'Diamant', min: 1200, div: 3, c1: '#e6f6ff', c2: '#3b82f0', c3: '#0e2a66', glow: '#6fb8ff' },
+    { key: 'maitre',  nom: 'Maître',  min: 1500, div: 1, c1: '#f6e0ff', c2: '#9b4fe8', c3: '#33105c', glow: '#c27cff' },
+    { key: 'legende', nom: 'Légende', min: 2000, div: 1, c1: '#ffe0e8', c2: '#e2456e', c3: '#4f0c22', glow: '#ff8fb0' }
+  ];
+  var ROMAN = ['I', 'II', 'III'];
+  var RANK_GAIN = { easy: [10, -12], normal: [18, -8], hard: [28, -4] };   // [victoire, défaite]
+  function rankKey() { return 'sakuArena:rank:' + (UI.who || 'guest'); }
+  function rankLoad() { var r = load(rankKey(), null); return r && typeof r.pts === 'number' ? r : { pts: 0, best: 0 }; }
+  function rankInfo(pts) {
+    var t = 0;
+    for (var i = TIERS.length - 1; i >= 0; i--) if (pts >= TIERS[i].min) { t = i; break; }
+    var T = TIERS[t], next = TIERS[t + 1], span = (next ? next.min : T.min + 500) - T.min;
+    var size = T.div > 1 ? span / T.div : span, k = Math.min(T.div - 1, Math.floor((pts - T.min) / size));
+    var lo = T.min + k * size, hi = T.div > 1 || next ? lo + size : null;
+    var divLabel = T.div > 1 ? ROMAN[T.div - 1 - k] : '';
+    return { t: t, tier: T, div: divLabel, name: T.nom + (divLabel ? ' ' + divLabel : ''), lo: lo, hi: next || T.div > 1 ? hi : null,
+      pct: hi ? Math.max(0, Math.min(100, Math.round((pts - lo) / (hi - lo) * 100))) : 100, pts: pts };
+  }
+  /* Emblèmes de rang (SVG, 100×100). */
+  var RSEQ = 0;
+  function rankLogo(t, size, extraCls) {
+    var T = TIERS[t], id = 'rk' + (++RSEQ), g = 'url(#' + id + 'g)', d = 'url(#' + id + 'd)', sh = 'url(#' + id + 's)';
+    var defs = '<defs><linearGradient id="' + id + 'g" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="' + T.c1 + '"/><stop offset=".55" stop-color="' + T.c2 + '"/><stop offset="1" stop-color="' + T.c3 + '"/></linearGradient>' +
+      '<linearGradient id="' + id + 'd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + T.c3 + '"/><stop offset="1" stop-color="#050a14"/></linearGradient>' +
+      '<radialGradient id="' + id + 's" cx=".35" cy=".25" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>';
+    var SHIELD = 'M50 9 82 21v26c0 21-13 36-32 45C31 83 18 68 18 47V21z', SHIELD_IN = 'M50 18 74 27v20c0 16-10 28-24 35-14-7-24-19-24-35V27z';
+    var chev = function (y) { return '<path d="M37 ' + y + 'l13-10 13 10" fill="none" stroke="' + T.c1 + '" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>'; };
+    var star = function (x, y, r, fill) { var p = ''; for (var i = 0; i < 10; i++) { var a = Math.PI / 5 * i - Math.PI / 2, rr = i % 2 ? r * .45 : r; p += (i ? 'L' : 'M') + (x + Math.cos(a) * rr).toFixed(1) + ' ' + (y + Math.sin(a) * rr).toFixed(1); } return '<path d="' + p + 'Z" fill="' + (fill || T.c1) + '"/>'; };
+    var wing = function (side, big) {
+      var f = ['M30 30C18 21 6 21 1 25c6 5 15 9 28 15z', 'M29 40C17 35 5 37 2 44c8 3 16 5 27 6z', 'M29 50C19 48 8 52 6 59c8 1 15 0 23-1z', 'M30 58C22 60 15 66 14 72c7-1 13-4 18-8z'];
+      var tr = (side > 0 ? 'matrix(-1 0 0 1 100 0) ' : '') + (big ? '' : 'translate(6 9) scale(.82)');
+      return '<g transform="' + tr + '">' + f.map(function (d0, k) {
+        return '<path d="' + d0 + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="1.1" opacity="' + (1 - k * .08) + '"/>';
+      }).join('') + '</g>';
+    };
+    var body = '';
+    if (T.key === 'bronze') {
+      body = '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".5" stroke-width="1.5"/>' + chev(56);
+    } else if (T.key === 'argent') {
+      body = wing(-1, false) + wing(1, false) + '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".5" stroke-width="1.5"/>' + chev(50) + chev(63);
+    } else if (T.key === 'or') {
+      var leaves = '';
+      for (var i = 0; i < 6; i++) { var a = (200 + i * 22) * Math.PI / 180, x = 50 + Math.cos(a) * 40, y = 56 - Math.sin(a) * 40;
+        leaves += '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="3.4" ry="7.5" transform="rotate(' + (i * 22 - 30) + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')" fill="' + g + '" stroke="' + T.c3 + '" stroke-width=".8"/>';
+        var x2 = 100 - x; leaves += '<ellipse cx="' + x2.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="3.4" ry="7.5" transform="rotate(' + (30 - i * 22) + ' ' + x2.toFixed(1) + ' ' + y.toFixed(1) + ')" fill="' + g + '" stroke="' + T.c3 + '" stroke-width=".8"/>'; }
+      body = leaves + '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".55" stroke-width="1.5"/>' + star(50, 48, 13) + chev(70);
+    } else if (T.key === 'platine') {
+      body = '<path d="M50 5 88 27v46L50 95 12 73V27z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/>' +
+        '<path d="M50 15 79 32v36L50 85 21 68V32z" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".6" stroke-width="1.5"/>' +
+        '<path d="M50 27 64 50 50 73 36 50z" fill="' + g + '"/><path d="M50 27 64 50H36z" fill="#fff" fill-opacity=".35"/>' + chev(84 - 4) ;
+    } else if (T.key === 'diamant') {
+      body = '<path d="M28 16h44l20 26-42 52L8 42z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/>' +
+        '<path d="M28 16 38 42 50 16 62 42 72 16M8 42h84M38 42l12 52 12-52" fill="none" stroke="' + T.c1 + '" stroke-opacity=".75" stroke-width="1.5"/>' +
+        '<path d="M28 16 38 42H8z" fill="#fff" fill-opacity=".3"/><path d="M50 16 62 42H38z" fill="#fff" fill-opacity=".18"/>' +
+        star(84, 14, 7, '#fff') + star(14, 70, 5, '#fff');
+    } else if (T.key === 'maitre') {
+      body = wing(-1, true) + wing(1, true) + '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".6" stroke-width="1.5"/>' +
+        '<path d="M32 17 35 3l8 7 7-9 7 9 8-7 3 14z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="1.3"/><circle cx="50" cy="5" r="2.2" fill="#fff"/><circle cx="35" cy="5" r="1.6" fill="' + T.c1 + '"/><circle cx="65" cy="5" r="1.6" fill="' + T.c1 + '"/>' +
+        '<path d="M50 36 61 50 50 66 39 50z" fill="' + g + '"/><path d="M50 36 61 50H39z" fill="#fff" fill-opacity=".35"/>';
+    } else {
+      var rays = '', petals = '';
+      for (var r = 0; r < 16; r++) { var ang = r * 22.5; rays += '<path d="M50 50 L' + (50 + Math.cos((ang - 4) * Math.PI / 180) * 49).toFixed(1) + ' ' + (50 + Math.sin((ang - 4) * Math.PI / 180) * 49).toFixed(1) + ' L' + (50 + Math.cos((ang + 4) * Math.PI / 180) * 49).toFixed(1) + ' ' + (50 + Math.sin((ang + 4) * Math.PI / 180) * 49).toFixed(1) + 'z" fill="' + T.glow + '" fill-opacity="' + (r % 2 ? .25 : .45) + '"/>'; }
+      for (var k = 0; k < 5; k++) petals += '<path d="M50 50C41 40 41 22 50 14c2 4 4 5 0 9 4-4 6-5 8-1 7 10 1 22-8 28z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="1" transform="rotate(' + (k * 72) + ' 50 50)"/>';
+      body = rays + petals + '<circle cx="50" cy="50" r="15" fill="' + d + '" stroke="' + T.c1 + '" stroke-width="2"/>' + star(50, 50, 9, '#fff3c4') +
+        '<path d="M36 16 38 4l7 6 5-8 5 8 7-6 2 12z" fill="#ffe7a8" stroke="#7a4a06" stroke-width="1"/><circle cx="50" cy="4" r="1.8" fill="#fff"/>';
+    }
+    return '<svg class="rlogo' + (extraCls ? ' ' + extraCls : '') + '" viewBox="0 0 100 100" width="' + size + '" height="' + size + '" role="img" aria-label="Rang ' + T.nom + '">' + defs +
+      '<g style="filter:drop-shadow(0 0 ' + Math.max(2, size / 14).toFixed(1) + 'px ' + T.glow + '88)">' + body + '</g>' +
+      '<ellipse cx="40" cy="28" rx="26" ry="16" fill="' + sh + '" pointer-events="none"/></svg>';
+  }
+  function rankBadge(pts, size) { var R = rankInfo(pts || 0); return '<span class="rbadge" title="' + esc(R.name) + ' · ' + R.pts + ' PR">' + rankLogo(R.t, size || 22) + '<b>' + esc(R.name) + '</b></span>'; }
+  /* Duel : met à jour les PR. Un palier atteint est protégé (on ne redescend pas sous son minimum). */
+  function applyRank(res, level) {
+    var r = rankLoad(), before = rankInfo(r.pts), g = RANK_GAIN[level] || RANK_GAIN.normal;
+    var delta = res === 'win' ? g[0] : res === 'loss' ? g[1] : 0;
+    var pts = Math.max(before.tier.min, r.pts + delta);
+    delta = pts - r.pts; r.pts = pts; r.best = Math.max(r.best || 0, pts); save(rankKey(), r);
+    var after = rankInfo(pts);
+    return { delta: delta, before: before, after: after, up: after.t > before.t || (after.t === before.t && after.lo > before.lo), down: after.lo < before.lo };
+  }
+  function renderRanks() {
+    var me0 = rankInfo(rankLoad().pts);
+    var rows = TIERS.map(function (T, t) {
+      var cur = t === me0.t, next = TIERS[t + 1];
+      var divs = T.div > 1 ? ROMAN.slice(0, T.div).reverse().join(' → ') : 'division unique';
+      return '<div class="rkrow' + (cur ? ' cur' : '') + (t > me0.t ? ' locked' : '') + '">' + rankLogo(t, 64) +
+        '<div><b>' + T.nom + '</b><span>' + T.min + (next ? ' – ' + (next.min - 1) : '+') + ' PR · ' + divs + '</span>' + (cur ? '<em>Ton rang : ' + esc(me0.name) + '</em>' : '') + '</div></div>';
+    }).join('');
+    var gains = ['easy', 'normal', 'hard'].map(function (k) { return '<div><span>' + LEVEL_FR[k] + '</span><b class="up">+' + RANK_GAIN[k][0] + '</b><b class="dn">' + RANK_GAIN[k][1] + '</b></div>'; }).join('');
+    return head('Rangs', 'Gagne des points de rang (PR) en Duel pour monter de Bronze à Légende.') +
+      '<div class="setup"><section class="panel"><h2>Les 7 rangs</h2><div class="rklist">' + rows + '</div></section>' +
+      '<section class="panel"><h2>Points par Duel</h2><div class="rkgain"><div class="h"><span>Niveau</span><b>Victoire</b><b>Défaite</b></div>' + gains + '</div>' +
+      '<ul class="ess" style="margin-top:14px"><li>Bronze, Argent, Or, Platine et Diamant ont 3 divisions (III, II puis I) de 100 PR.</li>' +
+      '<li>Un rang atteint est protégé : une défaite ne te fait pas redescendre en dessous.</li>' +
+      '<li>Les matchs Amicaux ne rapportent ni ne retirent de PR.</li>' +
+      '<li>Version test : les PR sont enregistrés sur cet appareil.</li></ul></section></div>';
   }
 
   /* ================================================================== */
@@ -844,7 +936,8 @@
     rules: '<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5V4.5M8 7h8M8 11h6"/>',
     history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
-    back: '<path d="M19 12H5M11 18l-6-6 6-6"/>'
+    back: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
+    ranks: '<path d="M12 2 20 6v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="m8.5 12 3.5-3 3.5 3M8.5 15.5l3.5-3 3.5 3"/>'
   };
   function icon(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[k] + '</svg>'; }
   function head(title, sub) {
@@ -867,7 +960,7 @@
   function renderMenu() {
     var m = me(), n = UI.decks.active, act = UI.decks.decks[n], s = deckSummary(n), list = deckIdx(n);
     var h = load(histKey(), []), wins = h.filter(function (x) { return x.res === 'win'; }).length;
-    var rate = h.length ? Math.round(wins / h.length * 100) + ' %' : '—';
+    var rate = h.length ? Math.round(wins / h.length * 100) + ' %' : '—', RK = rankInfo(rankLoad().pts);
     var counts = {}; list.forEach(function (i) { var r = POOL[i].rarity; counts[r] = (counts[r] || 0) + 1; });
     var bar = RARITY_ORDER.filter(function (r) { return counts[r]; }).map(function (r) { return '<span style="width:' + (counts[r] / 20 * 100) + '%;background:var(--' + r + ')"></span>'; }).join('');
     var shown = list.slice().sort(function (a, b) { return RARITY_ORDER.indexOf(POOL[a].rarity) - RARITY_ORDER.indexOf(POOL[b].rarity); }).slice(0, 10);
@@ -885,7 +978,8 @@
     return '<div class="amenu">' +
       '<section class="hero"><div class="herotx"><span class="kicker">SAKUGAME / ARENA <i class="testtag">version test</i></span><h1>Arena</h1>' +
         '<p class="sub">Combats de cartes en 1 contre 1 : 5 cases, 3 cartes en main, 2 coups par tour. Élimine toutes les cartes adverses.</p></div>' +
-        '<div class="herostats"><div><b>' + h.length + '</b><span>combat' + (h.length > 1 ? 's' : '') + '</span></div><div><b>' + wins + '</b><span>victoire' + (wins > 1 ? 's' : '') + '</span></div><div><b>' + rate + '</b><span>de victoires</span></div></div>' +
+        '<button class="herorank" data-act="go" data-s="ranks">' + rankLogo(RK.t, 74) + '<span class="hrk"><span class="kicker">Rang</span><b>' + esc(RK.name) + '</b>' +
+          '<span class="rbar2"><i style="width:' + RK.pct + '%"></i></span><small>' + RK.pts + ' PR' + (RK.hi ? ' / ' + RK.hi : '') + ' · ' + h.length + ' combat' + (h.length > 1 ? 's' : '') + ', ' + rate + ' de victoires</small></span></button>' +
         '<span class="who">' + (m.signedIn ? esc(m.name) : 'Invité (non connecté)') + '</span></section>' +
       (UI.net ? '<button class="resume" data-act="go" data-s="friendly">Salon Amical en cours · ' + esc(UI.net.code) + ' — revenir</button>' : '') +
       (UI.st && !UI.st.over ? '<button class="resume" data-act="resume">Partie en cours — reprendre</button>' : '') +
@@ -897,7 +991,7 @@
           '<span class="mdhead"><b>' + esc(act.name) + '</b><small' + (s.ok ? '' : ' class="bad"') + '>' + s.n + '/20</small></span>' +
           '<span class="mthumbs">' + thumbs + '</span><span class="rbar">' + bar + '</span>' +
           '<span class="mdfoot"><small>' + (s.out ? s.out + ' carte' + (s.out > 1 ? 's' : '') + ' hors collection' : (s.ok ? 'Prêt pour le combat' : 'Deck incomplet')) + '</small><span class="cta">Modifier mes decks <span aria-hidden="true">→</span></span></span></button>' +
-        '<nav class="mlinks">' + link('rules', 'Règles', 'Comment jouer, statuts et capacités') + link('history', 'Historique', 'Tes derniers combats et ton bilan') + link('settings', 'Paramètres', 'Animations et vitesse de l’IA') + '</nav>' +
+        '<nav class="mlinks">' + link('ranks', 'Rangs', 'Les 7 rangs et les points par Duel') + link('rules', 'Règles', 'Comment jouer, statuts et capacités') + link('history', 'Historique', 'Tes derniers combats et ton bilan') + link('settings', 'Paramètres', 'Animations et vitesse de l’IA') + '</nav>' +
       '</aside></div></div>';
   }
 
@@ -965,7 +1059,7 @@
       '<button class="ghostbtn" data-act="go" data-s="deck">Modifier mes decks</button></section>' +
       '<section class="panel"><h2>2. Difficulté</h2><div class="seg big">' + ['easy', 'normal', 'hard'].map(function (k) {
         return '<button data-act="level" data-v="' + k + '" class="' + (lv === k ? 'on' : '') + '">' + LEVEL_FR[k] + '</button>'; }).join('') + '</div>' +
-      '<p class="sub">' + desc[lv] + '</p>' +
+      '<p class="sub">' + desc[lv] + '</p><p class="stake">' + rankLogo(rankInfo(rankLoad().pts).t, 28) + '<span>Victoire <b class="up">+' + RANK_GAIN[lv][0] + ' PR</b> · Défaite <b class="dn">' + RANK_GAIN[lv][1] + ' PR</b></span></p>' +
       '<button class="primary wide" data-act="startduel"' + (s.ok ? '' : ' disabled') + '>' + (s.ok ? 'Lancer le duel' : 'Ton deck doit compter 20 cartes') + '</button></section></div>';
   }
 
@@ -989,7 +1083,7 @@
     var seats = ids.map(function (id) {
       var p = players[id] || {}, ready = decks[id] && decks[id].length === 20;
       return '<div class="pl"><span class="ava">' + (p.avatar ? '<img src="' + esc(p.avatar) + '" alt="" onerror="this.remove()">' : '') + '<b>' + esc(String(p.name || '?').charAt(0).toUpperCase()) + '</b></span>' +
-        '<span class="pn">' + esc(p.name || 'Joueur') + (id === N.pid ? ' <small>(toi)</small>' : '') + (room.host === id ? ' <small>hôte</small>' : '') + '</span>' +
+        '<span class="pn">' + esc(p.name || 'Joueur') + (id === N.pid ? ' <small>(toi)</small>' : '') + (room.host === id ? ' <small>hôte</small>' : '') + '</span>' + rankBadge(p.rank || 0, 22) +
         '<span class="pr' + (ready ? ' ok' : '') + '">' + (ready ? 'deck prêt' : 'deck…') + '</span></div>';
     }).join('');
     if (ids.length < 2) seats += '<div class="pl wait"><span class="ava"></span><span class="pn">En attente d’un adversaire…</span></div>';
@@ -1070,7 +1164,7 @@
     document.body.dataset.screen = UI.screen;
     if (UI.screen === 'game' && UI.st) { root.innerHTML = renderGame(); var lg = document.getElementById('log'); if (lg) lg.scrollTop = lg.scrollHeight; return; }
     var html = UI.screen === 'deck' ? renderDeck() : UI.screen === 'duel' ? renderDuel() : UI.screen === 'friendly' ? renderFriendly()
-      : UI.screen === 'rules' ? renderRules() : UI.screen === 'history' ? renderHistory() : UI.screen === 'settings' ? renderSettings() : renderMenu();
+      : UI.screen === 'rules' ? renderRules() : UI.screen === 'ranks' ? renderRanks() : UI.screen === 'history' ? renderHistory() : UI.screen === 'settings' ? renderSettings() : renderMenu();
     root.innerHTML = html;
   }
   function go(screen) {
@@ -1128,7 +1222,7 @@
   }
   function deser(j) { var st = JSON.parse(j); st.pool = POOL; st.rng = Math.random; st.fx = []; st.log = st.log || []; return st; }
   function db() { try { return HOST && HOST.db(); } catch (e) { return null; } }
-  function seatPlayer(m) { return { id: m.pid, name: String(m.name || 'Joueur').slice(0, 32), avatar: m.avatar || '', uid: m.uid || null, ready: true, isHost: false, arena: true, online: true }; }
+  function seatPlayer(m) { return { id: m.pid, name: String(m.name || 'Joueur').slice(0, 32), avatar: m.avatar || '', uid: m.uid || null, ready: true, isHost: false, arena: true, online: true, rank: rankLoad().pts }; }
 
   function netAttach(code, ref, isHost) {
     var m = me();
@@ -1496,6 +1590,8 @@
   };
   window.addEventListener('error', function (e) { toast('Erreur : ' + e.message, true); });
   UI.render = render;
+  UI.rankLogo = rankLogo;
+  UI.showEnd = showEnd;
   UI.doAction = doAction;
   UI.isAnimating = function () { return UI.anim || UI.busy; };
   window.__ARENA_UI = UI;
