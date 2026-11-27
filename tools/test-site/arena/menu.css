@@ -344,3 +344,10 @@ body{min-height:100vh}
   .rankgain .rlogo{width:50px;height:50px}
 }
 @media (max-width:760px){ .endbox .statline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px} .endbox .statline>div{min-width:0} }
+.rankedbox{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 4px;padding:12px 14px;border-radius:13px;background:#102540;border:1px solid var(--line);text-align:left}
+.rankedbox b{display:block;font-size:14px}
+.rankedbox span{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.rankedbox span b{display:inline;font-size:12px}
+.rankedbox .up{color:#5fe0b0}.rankedbox .dn{color:#ff8f8a}
+.rankedbox.on{border-color:#ffd47a88;background:linear-gradient(180deg,#2a2412,#15120a)}
+.rankedbox.on>div>b{color:#ffd47a}

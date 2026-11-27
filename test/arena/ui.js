@@ -697,13 +697,13 @@
       ? '<button class="primary" data-act="rematch">' + (UI.net && UI.net.wantRematch ? 'En attente de l’adversaire…' : 'Revanche') + '</button><button class="ghostbtn" data-act="netleave">Quitter le salon</button>'
       : '<button class="primary" data-act="again">Rejouer</button><button class="ghostbtn" data-act="go" data-s="deck">Changer de deck</button><button class="ghostbtn" data-act="go" data-s="menu">Menu Arena</button>';
     var box0 = document.createElement('div'); box0.className = 'modal'; box0.id = 'endmodal';
-    box0.innerHTML = '<div class="box endbox' + (res === 'loss' ? ' lose' : '') + '"><span class="tag" style="color:var(--sky)">' + (isOnline() ? 'Amical' : 'Duel') + ' terminé</span><div class="res">' + titre + '</div>' +
+    box0.innerHTML = '<div class="box endbox' + (res === 'loss' ? ' lose' : '') + '"><span class="tag" style="color:var(--sky)">' + (isOnline() ? (rk ? 'Match classé' : 'Amical') : 'Duel') + ' terminé</span><div class="res">' + titre + '</div>' +
       '<p class="sub">' + esc(UI.st.over.reason) + '</p><div class="statline">' +
       '<div><span>Dégâts infligés</span><b>' + UI.st.stats.degats[OP] + '</b></div><div><span>Dégâts subis</span><b>' + UI.st.stats.degats[ME] + '</b></div>' +
       '<div><span>Éliminations</span><b>' + UI.st.stats.eliminations[ME] + '</b></div><div><span>Tours</span><b>' + Math.ceil(UI.st.turnNo / 2) + '</b></div></div>' +
-      (rk ? '<div class="rankgain' + (rk.up ? ' promo' : '') + '">' + rankLogo(rk.after.t, 62) + '<div><span>' + (rk.up && rk.after.t > rk.before.t ? 'Nouveau rang !' : rk.up ? 'Division supérieure !' : 'Rang') + '</span>' +
-        '<b>' + esc(rk.after.name) + '</b><div class="rbar2"><i style="width:' + rk.after.pct + '%"></i></div><small>' + rk.after.pts + ' PR' + (rk.after.hi ? ' / ' + rk.after.hi : '') + '</small></div>' +
-        '<em class="' + (rk.delta > 0 ? 'up' : rk.delta < 0 ? 'dn' : '') + '">' + (rk.delta > 0 ? '+' : '') + rk.delta + ' PR</em></div>' : '') +
+      (rk ? '<div class="rankgain' + (rk.up ? ' promo' : '') + '">' + rankLogo(rk.after.t, 62, '', divPips(rk.after)) + '<div><span>' + (rk.up && rk.after.t > rk.before.t ? 'Nouveau rang !' : rk.up ? 'Division supérieure !' : 'Rang') + '</span>' +
+        '<b>' + esc(rk.after.name) + '</b><div class="rbar2"><i style="width:' + rk.after.pct + '%"></i></div><small>' + rk.after.pts + ' Elo' + (rk.after.hi ? ' / ' + rk.after.hi : '') + ' · adversaire ' + rk.opp + '</small></div>' +
+        '<em class="' + (rk.delta > 0 ? 'up' : rk.delta < 0 ? 'dn' : '') + '">' + (rk.delta > 0 ? '+' : '') + rk.delta + ' Elo</em></div>' : '') +
       '<div class="endbtns">' + btns + '</div></div>';
     document.body.appendChild(box0);
     if (UI.fxOn && res === 'win') {
@@ -816,115 +816,175 @@
     h.unshift({ t: Date.now(), kind: isOnline() ? 'online' : 'duel', level: UI.match && UI.match.level || null, res: res,
       opp: UI.st.players[OP].nom, turns: Math.ceil(UI.st.turnNo / 2), elim: UI.st.stats.eliminations[ME] });
     save(histKey(), h.slice(0, 40));
-    return isDuel() ? applyRank(res, UI.match && UI.match.level) : null;
+    if (isDuel()) return applyRank(res, AI_ELO[(UI.match && UI.match.level) || 'normal'], UI.match && UI.match.id);
+    var m = UI.net && UI.net.room && UI.net.room.arena && UI.net.room.arena.match;
+    if (isOnline() && m && m.ranked && m.ratings) {
+      var opp = m.seats[0] === UI.net.pid ? m.seats[1] : m.seats[0];
+      return applyRank(res, Number(m.ratings[opp]) || ELO_START, m.id);
+    }
+    return null;
   }
 
 
   /* ================================================================== */
-  /* Rangs Arena : points de rang (PR) gagnés en Duel, 7 paliers.        */
+  /* Rangs Arena : cote Elo (départ 1000), 7 paliers.                    */
   /* ================================================================== */
   var TIERS = [
-    { key: 'bronze',  nom: 'Bronze',  min: 0,    div: 3, c1: '#ffd2ad', c2: '#a35a2a', c3: '#4a2410', glow: '#e08a50' },
-    { key: 'argent',  nom: 'Argent',  min: 300,  div: 3, c1: '#ffffff', c2: '#8fa3bd', c3: '#2c3a4d', glow: '#c9d8ea' },
-    { key: 'or',      nom: 'Or',      min: 600,  div: 3, c1: '#fff1b8', c2: '#d99a14', c3: '#5a3a06', glow: '#ffc24d' },
-    { key: 'platine', nom: 'Platine', min: 900,  div: 3, c1: '#d9fff7', c2: '#2fb3a6', c3: '#0c3d3a', glow: '#5fe0d0' },
-    { key: 'diamant', nom: 'Diamant', min: 1200, div: 3, c1: '#e6f6ff', c2: '#3b82f0', c3: '#0e2a66', glow: '#6fb8ff' },
-    { key: 'maitre',  nom: 'Maître',  min: 1500, div: 1, c1: '#f6e0ff', c2: '#9b4fe8', c3: '#33105c', glow: '#c27cff' },
-    { key: 'legende', nom: 'Légende', min: 2000, div: 1, c1: '#ffe0e8', c2: '#e2456e', c3: '#4f0c22', glow: '#ff8fb0' }
+    { key: 'bronze',  nom: 'Bronze',  min: 600,  div: 3, c1: '#ffd2ad', c2: '#a35a2a', c3: '#4a2410', glow: '#e08a50' },
+    { key: 'argent',  nom: 'Argent',  min: 900,  div: 3, c1: '#ffffff', c2: '#8fa3bd', c3: '#2c3a4d', glow: '#c9d8ea' },
+    { key: 'or',      nom: 'Or',      min: 1200, div: 3, c1: '#fff1b8', c2: '#d99a14', c3: '#5a3a06', glow: '#ffc24d' },
+    { key: 'platine', nom: 'Platine', min: 1500, div: 3, c1: '#d9fff7', c2: '#2fb3a6', c3: '#0c3d3a', glow: '#5fe0d0' },
+    { key: 'diamant', nom: 'Diamant', min: 1800, div: 3, c1: '#e6f6ff', c2: '#3b82f0', c3: '#0e2a66', glow: '#6fb8ff' },
+    { key: 'maitre',  nom: 'Maître',  min: 2100, div: 1, c1: '#f6e0ff', c2: '#9b4fe8', c3: '#33105c', glow: '#c27cff' },
+    { key: 'legende', nom: 'Légende', min: 2400, div: 1, c1: '#ffe0e8', c2: '#e2456e', c3: '#4f0c22', glow: '#ff8fb0' }
   ];
   var ROMAN = ['I', 'II', 'III'];
-  var RANK_GAIN = { easy: [10, -12], normal: [18, -8], hard: [28, -4] };   // [victoire, défaite]
+  /* Elo : on gagne plus en battant un adversaire mieux classé, on perd moins en tombant contre lui. */
+  var ELO_START = 1000, AI_ELO = { easy: 850, normal: 1100, hard: 1400 };
+  function kFactor(games) { return games < 10 ? 48 : games < 30 ? 36 : 28; }
+  function eloExpected(me, opp) { return 1 / (1 + Math.pow(10, (opp - me) / 400)); }
+  function eloDelta(me, opp, score, games) {
+    var d = Math.round(kFactor(games || 0) * (score - eloExpected(me, opp)));
+    if (score === 1) d = Math.max(d, 2); else if (score === 0) d = Math.min(d, -2);
+    return d;
+  }
+  function eloStake(opp) { var r = rankLoad(); return { win: eloDelta(r.pts, opp, 1, r.games), loss: eloDelta(r.pts, opp, 0, r.games), draw: eloDelta(r.pts, opp, .5, r.games) }; }
   function rankKey() { return 'sakuArena:rank:' + (UI.who || 'guest'); }
-  function rankLoad() { var r = load(rankKey(), null); return r && typeof r.pts === 'number' ? r : { pts: 0, best: 0 }; }
+  function rankLoad() { var r = load(rankKey(), null); return r && r.v === 2 && typeof r.pts === 'number' ? r : { v: 2, pts: ELO_START, best: ELO_START, games: 0, done: [] }; }
   function rankInfo(pts) {
-    var t = 0;
+    var t = 0, raw = pts; pts = Math.max(pts, TIERS[0].min);
     for (var i = TIERS.length - 1; i >= 0; i--) if (pts >= TIERS[i].min) { t = i; break; }
     var T = TIERS[t], next = TIERS[t + 1], span = (next ? next.min : T.min + 500) - T.min;
     var size = T.div > 1 ? span / T.div : span, k = Math.min(T.div - 1, Math.floor((pts - T.min) / size));
     var lo = T.min + k * size, hi = T.div > 1 || next ? lo + size : null;
     var divLabel = T.div > 1 ? ROMAN[T.div - 1 - k] : '';
     return { t: t, tier: T, div: divLabel, name: T.nom + (divLabel ? ' ' + divLabel : ''), lo: lo, hi: next || T.div > 1 ? hi : null,
-      pct: hi ? Math.max(0, Math.min(100, Math.round((pts - lo) / (hi - lo) * 100))) : 100, pts: pts };
+      pct: hi ? Math.max(0, Math.min(100, Math.round((pts - lo) / (hi - lo) * 100))) : 100, pts: raw };
   }
-  /* Emblèmes de rang (SVG, 100×100). */
+  /* Emblèmes de rang (SVG 120×120) : métal biseauté, gemme centrale, ornement propre à chaque rang,
+     et pastilles de division (III = 1, II = 2, I = 3) sous l'emblème. */
   var RSEQ = 0;
-  function rankLogo(t, size, extraCls) {
-    var T = TIERS[t], id = 'rk' + (++RSEQ), g = 'url(#' + id + 'g)', d = 'url(#' + id + 'd)', sh = 'url(#' + id + 's)';
-    var defs = '<defs><linearGradient id="' + id + 'g" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="' + T.c1 + '"/><stop offset=".55" stop-color="' + T.c2 + '"/><stop offset="1" stop-color="' + T.c3 + '"/></linearGradient>' +
-      '<linearGradient id="' + id + 'd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + T.c3 + '"/><stop offset="1" stop-color="#050a14"/></linearGradient>' +
-      '<radialGradient id="' + id + 's" cx=".35" cy=".25" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>';
-    var SHIELD = 'M50 9 82 21v26c0 21-13 36-32 45C31 83 18 68 18 47V21z', SHIELD_IN = 'M50 18 74 27v20c0 16-10 28-24 35-14-7-24-19-24-35V27z';
-    var chev = function (y) { return '<path d="M37 ' + y + 'l13-10 13 10" fill="none" stroke="' + T.c1 + '" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>'; };
-    var star = function (x, y, r, fill) { var p = ''; for (var i = 0; i < 10; i++) { var a = Math.PI / 5 * i - Math.PI / 2, rr = i % 2 ? r * .45 : r; p += (i ? 'L' : 'M') + (x + Math.cos(a) * rr).toFixed(1) + ' ' + (y + Math.sin(a) * rr).toFixed(1); } return '<path d="' + p + 'Z" fill="' + (fill || T.c1) + '"/>'; };
-    var wing = function (side, big) {
-      var f = ['M30 30C18 21 6 21 1 25c6 5 15 9 28 15z', 'M29 40C17 35 5 37 2 44c8 3 16 5 27 6z', 'M29 50C19 48 8 52 6 59c8 1 15 0 23-1z', 'M30 58C22 60 15 66 14 72c7-1 13-4 18-8z'];
-      var tr = (side > 0 ? 'matrix(-1 0 0 1 100 0) ' : '') + (big ? '' : 'translate(6 9) scale(.82)');
-      return '<g transform="' + tr + '">' + f.map(function (d0, k) {
-        return '<path d="' + d0 + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="1.1" opacity="' + (1 - k * .08) + '"/>';
-      }).join('') + '</g>';
-    };
-    var body = '';
-    if (T.key === 'bronze') {
-      body = '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".5" stroke-width="1.5"/>' + chev(56);
-    } else if (T.key === 'argent') {
-      body = wing(-1, false) + wing(1, false) + '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".5" stroke-width="1.5"/>' + chev(50) + chev(63);
-    } else if (T.key === 'or') {
-      var leaves = '';
-      for (var i = 0; i < 6; i++) { var a = (200 + i * 22) * Math.PI / 180, x = 50 + Math.cos(a) * 40, y = 56 - Math.sin(a) * 40;
-        leaves += '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="3.4" ry="7.5" transform="rotate(' + (i * 22 - 30) + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')" fill="' + g + '" stroke="' + T.c3 + '" stroke-width=".8"/>';
-        var x2 = 100 - x; leaves += '<ellipse cx="' + x2.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="3.4" ry="7.5" transform="rotate(' + (30 - i * 22) + ' ' + x2.toFixed(1) + ' ' + y.toFixed(1) + ')" fill="' + g + '" stroke="' + T.c3 + '" stroke-width=".8"/>'; }
-      body = leaves + '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".55" stroke-width="1.5"/>' + star(50, 48, 13) + chev(70);
-    } else if (T.key === 'platine') {
-      body = '<path d="M50 5 88 27v46L50 95 12 73V27z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/>' +
-        '<path d="M50 15 79 32v36L50 85 21 68V32z" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".6" stroke-width="1.5"/>' +
-        '<path d="M50 27 64 50 50 73 36 50z" fill="' + g + '"/><path d="M50 27 64 50H36z" fill="#fff" fill-opacity=".35"/>' + chev(84 - 4) ;
-    } else if (T.key === 'diamant') {
-      body = '<path d="M28 16h44l20 26-42 52L8 42z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/>' +
-        '<path d="M28 16 38 42 50 16 62 42 72 16M8 42h84M38 42l12 52 12-52" fill="none" stroke="' + T.c1 + '" stroke-opacity=".75" stroke-width="1.5"/>' +
-        '<path d="M28 16 38 42H8z" fill="#fff" fill-opacity=".3"/><path d="M50 16 62 42H38z" fill="#fff" fill-opacity=".18"/>' +
-        star(84, 14, 7, '#fff') + star(14, 70, 5, '#fff');
-    } else if (T.key === 'maitre') {
-      body = wing(-1, true) + wing(1, true) + '<path d="' + SHIELD + '" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="2"/><path d="' + SHIELD_IN + '" fill="' + d + '" stroke="' + T.c1 + '" stroke-opacity=".6" stroke-width="1.5"/>' +
-        '<path d="M32 17 35 3l8 7 7-9 7 9 8-7 3 14z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="1.3"/><circle cx="50" cy="5" r="2.2" fill="#fff"/><circle cx="35" cy="5" r="1.6" fill="' + T.c1 + '"/><circle cx="65" cy="5" r="1.6" fill="' + T.c1 + '"/>' +
-        '<path d="M50 36 61 50 50 66 39 50z" fill="' + g + '"/><path d="M50 36 61 50H39z" fill="#fff" fill-opacity=".35"/>';
-    } else {
-      var rays = '', petals = '';
-      for (var r = 0; r < 16; r++) { var ang = r * 22.5; rays += '<path d="M50 50 L' + (50 + Math.cos((ang - 4) * Math.PI / 180) * 49).toFixed(1) + ' ' + (50 + Math.sin((ang - 4) * Math.PI / 180) * 49).toFixed(1) + ' L' + (50 + Math.cos((ang + 4) * Math.PI / 180) * 49).toFixed(1) + ' ' + (50 + Math.sin((ang + 4) * Math.PI / 180) * 49).toFixed(1) + 'z" fill="' + T.glow + '" fill-opacity="' + (r % 2 ? .25 : .45) + '"/>'; }
-      for (var k = 0; k < 5; k++) petals += '<path d="M50 50C41 40 41 22 50 14c2 4 4 5 0 9 4-4 6-5 8-1 7 10 1 22-8 28z" fill="' + g + '" stroke="' + T.c3 + '" stroke-width="1" transform="rotate(' + (k * 72) + ' 50 50)"/>';
-      body = rays + petals + '<circle cx="50" cy="50" r="15" fill="' + d + '" stroke="' + T.c1 + '" stroke-width="2"/>' + star(50, 50, 9, '#fff3c4') +
-        '<path d="M36 16 38 4l7 6 5-8 5 8 7-6 2 12z" fill="#ffe7a8" stroke="#7a4a06" stroke-width="1"/><circle cx="50" cy="4" r="1.8" fill="#fff"/>';
+  var GEMS = { bronze: ['#ffd9a8', '#c2601e'], argent: ['#e9f6ff', '#5b86b8'], or: ['#fff4b0', '#e08a00'], platine: ['#d4fff6', '#139c8c'],
+    diamant: ['#eaf7ff', '#2f6fe8'], maitre: ['#f3dcff', '#8a2be2'], legende: ['#ffe1ea', '#d81b55'] };
+  function rankLogo(t, size, extraCls, pips) {
+    var T = TIERS[t], id = 'rk' + (++RSEQ), G = GEMS[T.key];
+    var m = 'url(#' + id + 'm)', dk = 'url(#' + id + 'd)', hl = 'url(#' + id + 'h)', gm = 'url(#' + id + 'g)', gl = 'url(#' + id + 'l)';
+    var defs = '<defs>' +
+      '<linearGradient id="' + id + 'm" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="' + T.c1 + '"/><stop offset=".38" stop-color="' + T.c2 + '"/><stop offset=".55" stop-color="' + T.c1 + '" stop-opacity=".9"/><stop offset=".72" stop-color="' + T.c2 + '"/><stop offset="1" stop-color="' + T.c3 + '"/></linearGradient>' +
+      '<linearGradient id="' + id + 'd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + T.c3 + '"/><stop offset="1" stop-color="#04070f"/></linearGradient>' +
+      '<linearGradient id="' + id + 'h" x1="0" y1="0" x2=".6" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<radialGradient id="' + id + 'g" cx=".38" cy=".3" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="' + G[0] + '"/><stop offset="1" stop-color="' + G[1] + '"/></radialGradient>' +
+      '<radialGradient id="' + id + 'l" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="' + T.glow + '" stop-opacity=".55"/><stop offset="1" stop-color="' + T.glow + '" stop-opacity="0"/></radialGradient></defs>';
+    function plate(d, inner) {   // pièce métallique biseautée
+      return '<path d="' + d + '" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.6" stroke-linejoin="round"/>' +
+        '<path d="' + d + '" fill="none" stroke="' + hl + '" stroke-width="1.4" stroke-linejoin="round" transform="translate(0 .6)"/>' +
+        (inner ? '<path d="' + inner + '" fill="' + dk + '" stroke="' + T.c1 + '" stroke-opacity=".55" stroke-width="1.2" stroke-linejoin="round"/>' : '');
     }
-    return '<svg class="rlogo' + (extraCls ? ' ' + extraCls : '') + '" viewBox="0 0 100 100" width="' + size + '" height="' + size + '" role="img" aria-label="Rang ' + T.nom + '">' + defs +
-      '<g style="filter:drop-shadow(0 0 ' + Math.max(2, size / 14).toFixed(1) + 'px ' + T.glow + '88)">' + body + '</g>' +
-      '<ellipse cx="40" cy="28" rx="26" ry="16" fill="' + sh + '" pointer-events="none"/></svg>';
+    function gem(cx, cy, r, kind) {   // gemme facettée
+      if (kind === 'round') return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + gm + '" stroke="' + T.c3 + '" stroke-width="1.2"/>' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * .62).toFixed(1) + '" fill="none" stroke="#fff" stroke-opacity=".35"/><ellipse cx="' + (cx - r * .35).toFixed(1) + '" cy="' + (cy - r * .4).toFixed(1) + '" rx="' + (r * .3).toFixed(1) + '" ry="' + (r * .18).toFixed(1) + '" fill="#fff" fill-opacity=".85"/>';
+      var p = 'M' + cx + ' ' + (cy - r) + 'L' + (cx + r * .8) + ' ' + cy + 'L' + cx + ' ' + (cy + r) + 'L' + (cx - r * .8) + ' ' + cy + 'Z';
+      return '<path d="' + p + '" fill="' + gm + '" stroke="' + T.c3 + '" stroke-width="1.2" stroke-linejoin="round"/>' +
+        '<path d="M' + cx + ' ' + (cy - r) + 'L' + (cx + r * .8) + ' ' + cy + 'H' + (cx - r * .8) + 'Z" fill="#fff" fill-opacity=".32"/>' +
+        '<path d="M' + (cx - r * .8) + ' ' + cy + 'L' + cx + ' ' + (cy + r) + 'V' + (cy - r) + 'Z" fill="#000" fill-opacity=".12"/>';
+    }
+    function star(x, y, r, fill, op) { var d = ''; for (var i = 0; i < 10; i++) { var a = Math.PI / 5 * i - Math.PI / 2, rr = i % 2 ? r * .42 : r; d += (i ? 'L' : 'M') + (x + Math.cos(a) * rr).toFixed(1) + ' ' + (y + Math.sin(a) * rr).toFixed(1); } return '<path d="' + d + 'Z" fill="' + (fill || '#fff') + '"' + (op ? ' fill-opacity="' + op + '"' : '') + '/>'; }
+    function sparkle(x, y, r) { return '<path d="M' + x + ' ' + (y - r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + 'Z" fill="#fff"/>'; }
+    function chev(y, w) { return '<path d="M' + (60 - w) + ' ' + y + 'l' + w + '-' + (w * .7).toFixed(1) + ' ' + w + ' ' + (w * .7).toFixed(1) + '" fill="none" stroke="' + T.c1 + '" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>'; }
+    function crown(cx, cy, s) {
+      return '<g transform="translate(' + cx + ' ' + cy + ') scale(' + s + ')"><path d="M-17 7-19-9-9-1 0-14 9-1 19-9 17 7z" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.3" stroke-linejoin="round"/>' +
+        '<path d="M-17 7h34v4h-34z" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1"/><circle cx="0" cy="-14" r="2.6" fill="' + gm + '"/><circle cx="-19" cy="-9" r="2" fill="' + gm + '"/><circle cx="19" cy="-9" r="2" fill="' + gm + '"/><circle cx="0" cy="3" r="2.4" fill="' + gm + '"/></g>';
+    }
+    var SH = 'M60 14 92 26v28c0 24-14 40-32 50-18-10-32-26-32-50V26z', SH_IN = 'M60 23 84 32v22c0 18-10 31-24 39-14-8-24-21-24-39V32z';
+    var body = '<circle cx="60" cy="58" r="56" fill="' + gl + '"/>';
+    if (T.key === 'bronze') {
+      body += plate(SH, SH_IN) + gem(60, 50, 9, 'round') + chev(80, 12);
+    } else if (T.key === 'argent') {
+      body += '<path d="M30 34 6 22l12 26-10 4 22 10z" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.3" stroke-linejoin="round"/><path d="M90 34l24-12-12 26 10 4-22 10z" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.3" stroke-linejoin="round"/>' +
+        plate(SH, SH_IN) + gem(60, 48, 11) + chev(76, 11) + chev(87, 11);
+    } else if (T.key === 'or') {
+      var leaf = 'M0-8C4-4 4 4 0 8-4 4-4-4 0-8z', wreath = '<path d="M44 106C18 96 10 66 20 40M76 106c26-10 34-40 24-66" fill="none" stroke="' + T.c2 + '" stroke-width="2" stroke-linecap="round"/>';
+      for (var i = 0; i < 8; i++) {
+        var phi = 112 + i * 14, x = 60 + Math.cos(phi * Math.PI / 180) * 47, y = 62 + Math.sin(phi * Math.PI / 180) * 47, rot = phi + 160;
+        wreath += '<path d="' + leaf + '" transform="translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ') rotate(' + rot.toFixed(0) + ') scale(' + (1.05 - i * .04).toFixed(2) + ')" fill="' + m + '" stroke="' + T.c3 + '" stroke-width=".9"/>';
+        wreath += '<path d="' + leaf + '" transform="translate(' + (120 - x).toFixed(1) + ' ' + y.toFixed(1) + ') rotate(' + (-rot).toFixed(0) + ') scale(' + (1.05 - i * .04).toFixed(2) + ')" fill="' + m + '" stroke="' + T.c3 + '" stroke-width=".9"/>';
+      }
+      body += wreath + plate(SH, SH_IN) + star(60, 52, 15, gm) + star(60, 52, 15, 'none') + '<path d="M60 37 63.6 47.2H74.3L65.6 53.4 69 63.6 60 57.3 51 63.6 54.4 53.4 45.7 47.2H56.4z" fill="none" stroke="' + T.c3 + '" stroke-width="1"/>' + chev(82, 10) + star(60, 8, 6, T.c1);
+    } else if (T.key === 'platine') {
+      var HX = 'M60 8 98 30v44L60 114 22 74V30z', HX_IN = 'M60 18 89 35v34L60 103 31 69V35z';
+      body += '<path d="M24 40 4 56l20 16z" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.2"/><path d="M96 40l20 16-20 16z" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.2"/>' +
+        plate(HX, HX_IN) + '<path d="M60 28 72 54 60 90 48 54z" fill="' + gm + '" stroke="' + T.c3 + '" stroke-width="1.2"/><path d="M60 28 72 54H48z" fill="#fff" fill-opacity=".38"/><path d="M48 54 60 90V54z" fill="#000" fill-opacity=".12"/>' +
+        '<path d="M40 96h40" stroke="' + T.c1 + '" stroke-width="3" stroke-linecap="round" stroke-opacity=".8"/>';
+    } else if (T.key === 'diamant') {
+      var rays = '';
+      for (var r = 0; r < 12; r++) { var a0 = r * 30 + 15, L0 = r % 2 ? 50 : 60;
+        rays += '<path d="M60 60 L' + (60 + Math.cos((a0 - 3) * Math.PI / 180) * 26).toFixed(1) + ' ' + (60 + Math.sin((a0 - 3) * Math.PI / 180) * 26).toFixed(1) + ' L' + (60 + Math.cos(a0 * Math.PI / 180) * L0).toFixed(1) + ' ' + (60 + Math.sin(a0 * Math.PI / 180) * L0).toFixed(1) + ' L' + (60 + Math.cos((a0 + 3) * Math.PI / 180) * 26).toFixed(1) + ' ' + (60 + Math.sin((a0 + 3) * Math.PI / 180) * 26).toFixed(1) + 'z" fill="' + (r % 2 ? T.c2 : '#cfe9ff') + '" fill-opacity="' + (r % 2 ? .6 : .85) + '"/>'; }
+      body += rays + '<path d="M34 22h52l24 30-50 62L10 52z" fill="' + gm + '" stroke="' + T.c3 + '" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M34 22 46 52 60 22 74 52 86 22M10 52h100M46 52l14 62 14-62" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.3" stroke-linejoin="round"/>' +
+        '<path d="M34 22 46 52H10z" fill="#fff" fill-opacity=".42"/><path d="M60 22 74 52H46z" fill="#fff" fill-opacity=".22"/><path d="M74 52 60 114 110 52z" fill="#000" fill-opacity=".18"/>' +
+        sparkle(98, 18, 8) + sparkle(18, 86, 5) + sparkle(84, 96, 4);
+    } else if (T.key === 'maitre') {
+      var feather = 'M0 0C-10-5-27-5-38 1-27 6-11 7 0 4z', wings = '';
+      [-28, -12, 4, 20, 36].forEach(function (deg, k) {
+        var sc = 1 - k * .09;
+        wings += '<path d="' + feather + '" transform="translate(34 50) rotate(' + deg + ') scale(' + sc.toFixed(2) + ')" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.1"/>';
+        wings += '<path d="' + feather + '" transform="translate(86 50) scale(-1 1) rotate(' + deg + ') scale(' + sc.toFixed(2) + ')" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.1"/>';
+      });
+      body += wings + plate(SH, SH_IN) + crown(60, 15, 1) + gem(60, 56, 15) + sparkle(60, 86, 5);
+    } else {
+      var burst = '', petals = '';
+      for (var q = 0; q < 16; q++) { var a1 = q * 22.5, L = q % 2 ? 46 : 57; burst += '<path d="M60 60 L' + (60 + Math.cos((a1 - 5) * Math.PI / 180) * 20).toFixed(1) + ' ' + (60 + Math.sin((a1 - 5) * Math.PI / 180) * 20).toFixed(1) + ' L' + (60 + Math.cos(a1 * Math.PI / 180) * L).toFixed(1) + ' ' + (60 + Math.sin(a1 * Math.PI / 180) * L).toFixed(1) + ' L' + (60 + Math.cos((a1 + 5) * Math.PI / 180) * 20).toFixed(1) + ' ' + (60 + Math.sin((a1 + 5) * Math.PI / 180) * 20).toFixed(1) + 'z" fill="' + (q % 2 ? '#ffd47a' : '#fff0c2') + '" fill-opacity="' + (q % 2 ? .55 : .8) + '"/>'; }
+      for (var k2 = 0; k2 < 5; k2++) petals += '<path d="M0 0C-11-9-13-26-4-36L0-31 4-36C13-26 11-9 0 0z" transform="translate(60 60) rotate(' + (k2 * 72) + ')" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1.2"/>' +
+        '<path d="M0-6C-3-14-3-22 0-28" transform="translate(60 60) rotate(' + (k2 * 72) + ')" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.2"/>';
+      body += burst + petals + '<circle cx="60" cy="60" r="17" fill="' + dk + '" stroke="#ffe7a8" stroke-width="2.4"/>' + gem(60, 60, 11, 'round') + crown(60, 16, .95) +
+        '<path d="M38 96 28 108l12-2 4 9 6-14M82 96l10 12-12-2-4 9-6-14" fill="' + m + '" stroke="' + T.c3 + '" stroke-width="1"/>';
+    }
+    var pipsHtml = '';
+    if (pips) { for (var n = 0; n < pips; n++) { var px = 60 + (n - (pips - 1) / 2) * 11; pipsHtml += '<path d="M' + px + ' 109l4.2 5-4.2 5-4.2-5z" fill="' + gm + '" stroke="' + T.c3 + '" stroke-width="1"/>'; } }
+    return '<svg class="rlogo' + (extraCls ? ' ' + extraCls : '') + '" viewBox="0 0 120 124" width="' + size + '" height="' + size + '" role="img" aria-label="Rang ' + T.nom + '">' + defs +
+      '<g style="filter:drop-shadow(0 ' + Math.max(1, size / 40).toFixed(1) + 'px ' + Math.max(2, size / 16).toFixed(1) + 'px #000a)">' + body + '</g>' + pipsHtml + '</svg>';
   }
-  function rankBadge(pts, size) { var R = rankInfo(pts || 0); return '<span class="rbadge" title="' + esc(R.name) + ' · ' + R.pts + ' PR">' + rankLogo(R.t, size || 22) + '<b>' + esc(R.name) + '</b></span>'; }
-  /* Duel : met à jour les PR. Un palier atteint est protégé (on ne redescend pas sous son minimum). */
-  function applyRank(res, level) {
-    var r = rankLoad(), before = rankInfo(r.pts), g = RANK_GAIN[level] || RANK_GAIN.normal;
-    var delta = res === 'win' ? g[0] : res === 'loss' ? g[1] : 0;
-    var pts = Math.max(before.tier.min, r.pts + delta);
-    delta = pts - r.pts; r.pts = pts; r.best = Math.max(r.best || 0, pts); save(rankKey(), r);
+  function divPips(R) { return R.tier.div > 1 ? R.tier.div - ROMAN.indexOf(R.div) : 0; }
+  function rankBadge(pts, size) { var R = rankInfo(pts || 0); return '<span class="rbadge" title="' + esc(R.name) + ' · ' + R.pts + ' Elo">' + rankLogo(R.t, size || 22) + '<b>' + esc(R.name) + '</b></span>'; }
+  /* Applique le résultat d'un match classé (une seule fois par match). */
+  function applyRank(res, oppRating, matchId) {
+    var r = rankLoad(), before = rankInfo(r.pts);
+    if (matchId && (r.done || []).indexOf(matchId) >= 0) return null;
+    var score = res === 'win' ? 1 : res === 'loss' ? 0 : .5;
+    var delta = eloDelta(r.pts, oppRating, score, r.games);
+    var pts = Math.max(0, r.pts + delta);
+    delta = pts - r.pts; r.pts = pts; r.games = (r.games || 0) + 1; r.best = Math.max(r.best || 0, pts);
+    if (matchId) r.done = (r.done || []).concat([matchId]).slice(-40);
+    save(rankKey(), r);
     var after = rankInfo(pts);
-    return { delta: delta, before: before, after: after, up: after.t > before.t || (after.t === before.t && after.lo > before.lo), down: after.lo < before.lo };
+    return { delta: delta, opp: oppRating, before: before, after: after, up: after.t > before.t || (after.t === before.t && after.lo > before.lo) };
   }
   function renderRanks() {
-    var me0 = rankInfo(rankLoad().pts);
+    var rr = rankLoad(), me0 = rankInfo(rr.pts);
     var rows = TIERS.map(function (T, t) {
       var cur = t === me0.t, next = TIERS[t + 1];
-      var divs = T.div > 1 ? ROMAN.slice(0, T.div).reverse().join(' → ') : 'division unique';
-      return '<div class="rkrow' + (cur ? ' cur' : '') + (t > me0.t ? ' locked' : '') + '">' + rankLogo(t, 64) +
-        '<div><b>' + T.nom + '</b><span>' + T.min + (next ? ' – ' + (next.min - 1) : '+') + ' PR · ' + divs + '</span>' + (cur ? '<em>Ton rang : ' + esc(me0.name) + '</em>' : '') + '</div></div>';
+      var divs = T.div > 1 ? ROMAN.slice(0, T.div).reverse().join(' → ') + ' (100 Elo chacune)' : 'division unique';
+      return '<div class="rkrow' + (cur ? ' cur' : '') + (t > me0.t ? ' locked' : '') + '">' + rankLogo(t, 64, '', cur ? divPips(me0) : 0) +
+        '<div><b>' + T.nom + '</b><span>' + (t === 0 ? 'moins de ' + next.min : T.min + (next ? ' – ' + (next.min - 1) : ' et plus')) + ' Elo · ' + divs + '</span>' + (cur ? '<em>Ton rang : ' + esc(me0.name) + ' · ' + rr.pts + ' Elo</em>' : '') + '</div></div>';
     }).join('');
-    var gains = ['easy', 'normal', 'hard'].map(function (k) { return '<div><span>' + LEVEL_FR[k] + '</span><b class="up">+' + RANK_GAIN[k][0] + '</b><b class="dn">' + RANK_GAIN[k][1] + '</b></div>'; }).join('');
-    return head('Rangs', 'Gagne des points de rang (PR) en Duel pour monter de Bronze à Légende.') +
+    var diffs = [-300, -150, 0, 150, 300], k = kFactor(rr.games);
+    var table = diffs.map(function (d) {
+      var w = Math.max(2, Math.round(k * (1 - eloExpected(1500, 1500 + d)))), l = Math.min(-2, Math.round(k * (0 - eloExpected(1500, 1500 + d))));
+      return '<div><span>' + (d === 0 ? 'Même cote' : (d > 0 ? '+' : '') + d + ' Elo') + '</span><b class="up">+' + w + '</b><b class="dn">' + l + '</b></div>';
+    }).join('');
+    var ai = ['easy', 'normal', 'hard'].map(function (lv) { var st = eloStake(AI_ELO[lv]); return '<div><span>IA ' + LEVEL_FR[lv] + ' (' + AI_ELO[lv] + ')</span><b class="up">+' + st.win + '</b><b class="dn">' + st.loss + '</b></div>'; }).join('');
+    return head('Rangs', 'Ta cote Elo monte ou descend après chaque match classé, selon le niveau de ton adversaire.') +
       '<div class="setup"><section class="panel"><h2>Les 7 rangs</h2><div class="rklist">' + rows + '</div></section>' +
-      '<section class="panel"><h2>Points par Duel</h2><div class="rkgain"><div class="h"><span>Niveau</span><b>Victoire</b><b>Défaite</b></div>' + gains + '</div>' +
-      '<ul class="ess" style="margin-top:14px"><li>Bronze, Argent, Or, Platine et Diamant ont 3 divisions (III, II puis I) de 100 PR.</li>' +
-      '<li>Un rang atteint est protégé : une défaite ne te fait pas redescendre en dessous.</li>' +
-      '<li>Les matchs Amicaux ne rapportent ni ne retirent de PR.</li>' +
-      '<li>Version test : les PR sont enregistrés sur cet appareil.</li></ul></section></div>';
+      '<section class="panel"><h2>Points selon l’adversaire</h2><p class="sub">Écart entre la cote de ton adversaire et la tienne (coefficient actuel : ' + k + ').</p>' +
+        '<div class="rkgain"><div class="h"><span>Adversaire</span><b>Victoire</b><b>Défaite</b></div>' + table + '</div>' +
+        '<h2 style="margin-top:20px">Duel contre l’IA</h2><div class="rkgain"><div class="h"><span>Niveau</span><b>Victoire</b><b>Défaite</b></div>' + ai + '</div>' +
+      '<ul class="ess" style="margin-top:14px"><li>Battre un joueur mieux classé rapporte beaucoup ; battre un joueur moins bien classé rapporte peu.</li>' +
+      '<li>Perdre contre plus fort coûte peu ; perdre contre plus faible coûte cher.</li>' +
+      '<li>Départ à 1000 Elo. Les 10 premiers matchs comptent plus (coefficient 48), puis 36 jusqu’au 30e, puis 28.</li>' +
+      '<li>En Amical, l’hôte peut rendre la partie classée ; sinon elle ne compte pas.</li>' +
+      '<li>Version test : la cote est enregistrée sur cet appareil.</li></ul></section></div>';
   }
+
 
   /* ================================================================== */
   /* Écrans                                                              */
@@ -978,8 +1038,8 @@
     return '<div class="amenu">' +
       '<section class="hero"><div class="herotx"><span class="kicker">SAKUGAME / ARENA <i class="testtag">version test</i></span><h1>Arena</h1>' +
         '<p class="sub">Combats de cartes en 1 contre 1 : 5 cases, 3 cartes en main, 2 coups par tour. Élimine toutes les cartes adverses.</p></div>' +
-        '<button class="herorank" data-act="go" data-s="ranks">' + rankLogo(RK.t, 74) + '<span class="hrk"><span class="kicker">Rang</span><b>' + esc(RK.name) + '</b>' +
-          '<span class="rbar2"><i style="width:' + RK.pct + '%"></i></span><small>' + RK.pts + ' PR' + (RK.hi ? ' / ' + RK.hi : '') + ' · ' + h.length + ' combat' + (h.length > 1 ? 's' : '') + ', ' + rate + ' de victoires</small></span></button>' +
+        '<button class="herorank" data-act="go" data-s="ranks">' + rankLogo(RK.t, 78, '', divPips(RK)) + '<span class="hrk"><span class="kicker">Rang</span><b>' + esc(RK.name) + '</b>' +
+          '<span class="rbar2"><i style="width:' + RK.pct + '%"></i></span><small>' + RK.pts + ' Elo' + (RK.hi ? ' / ' + RK.hi : '') + ' · ' + h.length + ' combat' + (h.length > 1 ? 's' : '') + ', ' + rate + ' de victoires</small></span></button>' +
         '<span class="who">' + (m.signedIn ? esc(m.name) : 'Invité (non connecté)') + '</span></section>' +
       (UI.net ? '<button class="resume" data-act="go" data-s="friendly">Salon Amical en cours · ' + esc(UI.net.code) + ' — revenir</button>' : '') +
       (UI.st && !UI.st.over ? '<button class="resume" data-act="resume">Partie en cours — reprendre</button>' : '') +
@@ -991,7 +1051,7 @@
           '<span class="mdhead"><b>' + esc(act.name) + '</b><small' + (s.ok ? '' : ' class="bad"') + '>' + s.n + '/20</small></span>' +
           '<span class="mthumbs">' + thumbs + '</span><span class="rbar">' + bar + '</span>' +
           '<span class="mdfoot"><small>' + (s.out ? s.out + ' carte' + (s.out > 1 ? 's' : '') + ' hors collection' : (s.ok ? 'Prêt pour le combat' : 'Deck incomplet')) + '</small><span class="cta">Modifier mes decks <span aria-hidden="true">→</span></span></span></button>' +
-        '<nav class="mlinks">' + link('ranks', 'Rangs', 'Les 7 rangs et les points par Duel') + link('rules', 'Règles', 'Comment jouer, statuts et capacités') + link('history', 'Historique', 'Tes derniers combats et ton bilan') + link('settings', 'Paramètres', 'Animations et vitesse de l’IA') + '</nav>' +
+        '<nav class="mlinks">' + link('ranks', 'Rangs', 'Les 7 rangs et le calcul Elo') + link('rules', 'Règles', 'Comment jouer, statuts et capacités') + link('history', 'Historique', 'Tes derniers combats et ton bilan') + link('settings', 'Paramètres', 'Animations et vitesse de l’IA') + '</nav>' +
       '</aside></div></div>';
   }
 
@@ -1059,7 +1119,7 @@
       '<button class="ghostbtn" data-act="go" data-s="deck">Modifier mes decks</button></section>' +
       '<section class="panel"><h2>2. Difficulté</h2><div class="seg big">' + ['easy', 'normal', 'hard'].map(function (k) {
         return '<button data-act="level" data-v="' + k + '" class="' + (lv === k ? 'on' : '') + '">' + LEVEL_FR[k] + '</button>'; }).join('') + '</div>' +
-      '<p class="sub">' + desc[lv] + '</p><p class="stake">' + rankLogo(rankInfo(rankLoad().pts).t, 28) + '<span>Victoire <b class="up">+' + RANK_GAIN[lv][0] + ' PR</b> · Défaite <b class="dn">' + RANK_GAIN[lv][1] + ' PR</b></span></p>' +
+      '<p class="sub">' + desc[lv] + '</p><p class="stake">' + rankLogo(rankInfo(rankLoad().pts).t, 28) + '<span>IA ' + AI_ELO[lv] + ' Elo · Victoire <b class="up">+' + eloStake(AI_ELO[lv]).win + '</b> · Défaite <b class="dn">' + eloStake(AI_ELO[lv]).loss + '</b></span></p>' +
       '<button class="primary wide" data-act="startduel"' + (s.ok ? '' : ' disabled') + '>' + (s.ok ? 'Lancer le duel' : 'Ton deck doit compter 20 cartes') + '</button></section></div>';
   }
 
@@ -1087,13 +1147,18 @@
         '<span class="pr' + (ready ? ' ok' : '') + '">' + (ready ? 'deck prêt' : 'deck…') + '</span></div>';
     }).join('');
     if (ids.length < 2) seats += '<div class="pl wait"><span class="ava"></span><span class="pn">En attente d’un adversaire…</span></div>';
+    var ranked = !!(room.arena && room.arena.ranked), oppId = ids.filter(function (id) { return id !== N.pid; })[0];
+    var oppRating = oppId && players[oppId] ? Number(players[oppId].rank) || ELO_START : null, stake = oppRating != null ? eloStake(oppRating) : null;
+    var rankedBox = '<div class="rankedbox' + (ranked ? ' on' : '') + '"><div><b>' + (ranked ? 'Partie classée' : 'Partie amicale') + '</b><span>' +
+      (ranked ? (stake ? 'Contre ' + oppRating + ' Elo : victoire <b class="up">+' + stake.win + '</b> · défaite <b class="dn">' + stake.loss + '</b>' : 'Ta cote Elo changera selon celle de ton adversaire.') : 'Ne compte pas pour le classement.') + '</span></div>' +
+      (N.isHost && room.state === 'lobby' ? '<button class="ghostbtn" data-act="toggleranked">' + (ranked ? 'Rendre amicale' : 'Rendre classée') + '</button>' : '') + '</div>';
     var canStart = N.isHost && room.state === 'lobby' && ids.length === 2 && ids.every(function (id) { return decks[id] && decks[id].length === 20; });
     var resume = UI.st && isOnline() ? '<button class="primary wide" data-act="resume">' + (UI.st.over ? 'Revoir la fin de partie' : 'Reprendre la partie') + '</button>' : '';
     return head('Amical', 'Salon privé : seuls les joueurs qui ont le code peuvent entrer.') +
       '<div class="setup"><section class="panel lobby">' + resume + '<span class="kicker">Code du salon</span><div class="codebig">' + esc(N.code) + '</div>' +
       '<div class="dbtns"><button class="ghostbtn" data-act="copycode">Copier le code</button><button class="ghostbtn" data-act="copylink">Copier le lien</button>' +
       (m.signedIn && HOST && HOST.invite ? '<button class="ghostbtn" data-act="invite">Inviter un ami</button>' : '') + '</div>' +
-      '<div class="players">' + seats + '</div>' +
+      '<div class="players">' + seats + '</div>' + rankedBox +
       (room.state !== 'lobby' ? '' : N.isHost ? '<button class="primary wide" data-act="netstart"' + (canStart ? '' : ' disabled') + '>' + (canStart ? 'Lancer la partie' : 'En attente du deuxième joueur') + '</button>'
         : '<p class="sub">L’hôte lance la partie dès que vous êtes deux.</p>') +
       '<button class="ghostbtn" data-act="netleave" style="margin-top:12px">Quitter le salon</button></section>' +
@@ -1195,7 +1260,7 @@
     if (deck.length !== 20) { toast('Ton deck doit compter 20 cartes.', true); return; }
     var lv = SET.level || 'normal';
     AI.level = lv === 'easy' ? 'easy' : 'normal';
-    setSeat(0); UI.match = { kind: 'duel', level: lv }; UI.busy = false;
+    setSeat(0); UI.match = { kind: 'duel', level: lv, id: 'd' + Date.now().toString(36) }; UI.busy = false;
     UI.st = A.newGame({ pool: POOL, deck0: deck, deck1: aiDeck(lv), nom0: 'Vous', nom1: 'IA ' + LEVEL_FR[lv] });
     APPLY(UI.st, { type: 'setup', player: OP, uids: AI.chooseSetup(UI.st, OP) });
     UI.st.fx.length = 0;
@@ -1288,7 +1353,9 @@
     if (d0.length !== 20 || d1.length !== 20) { toast('Les deux decks doivent compter 20 cartes.', true); return; }
     var st = A.newGame({ pool: POOL, deck0: d0, deck1: d1, nom0: (room.players[host] || {}).name || 'Hôte', nom1: (room.players[guest] || {}).name || 'Invité' });
     st.fx.length = 0;
-    var match = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: 1, st: ser(st), fx: '[]', by: N.pid, seats: [host, guest], at: Date.now() };
+    var ratings = {}; ratings[host] = Number((room.players[host] || {}).rank) || ELO_START; ratings[guest] = Number((room.players[guest] || {}).rank) || ELO_START;
+    var match = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), v: 1, st: ser(st), fx: '[]', by: N.pid, seats: [host, guest], at: Date.now(),
+      ranked: !!(room.arena && room.arena.ranked), ratings: ratings };
     N.ref.update({ 'arena/match': match, 'arena/rematch': null, state: 'playing', lastActivity: Date.now() }).catch(function () { toast('Lancement impossible.', true); });
   }
   function netPush(evs) {
@@ -1460,6 +1527,7 @@
     /* amical */
     if (act === 'netcreate') { netCreate(); return; }
     if (act === 'netjoin') { var inp = document.getElementById('joincode'); netJoin(inp ? inp.value : ''); return; }
+    if (act === 'toggleranked') { if (UI.net && UI.net.isHost && UI.net.room) UI.net.ref.child('arena/ranked').set(!(UI.net.room.arena && UI.net.room.arena.ranked)).catch(function () {}); return; }
     if (act === 'netstart') { if (UI.net && UI.net.room) newMatch(UI.net.room); return; }
     if (act === 'netleave') { netLeave(); go('friendly'); return; }
     if (act === 'copycode') { if (UI.net) copy(UI.net.code, 'Code copié.'); return; }
