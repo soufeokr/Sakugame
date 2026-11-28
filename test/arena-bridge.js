@@ -5,7 +5,7 @@
    • Onglet « Arena » dans la fiche des cartes (Collection, Encyclopédie) : stats et capacités de combat. */
 (function () {
   'use strict';
-  const SRC = 'arena/index.html?v=3a241314';
+  const SRC = 'arena/index.html?v=e9348494';
   let pending = null, cardIndex = null;
   const $ = id => document.getElementById(id);
   function frame() { return $('arenaFrame'); }
@@ -94,7 +94,7 @@
 
 
   /* ---------- Onglet Arena dans la fiche des cartes (Collection et Encyclopédie) ---------- */
-  const ARENA_V = '3a241314';
+  const ARENA_V = 'e9348494';
   let engineP = null, arenaIdx = null, arenaTabOn = false;
   const RAR_FR = { uncommon: 'Uncommon', rare: 'Rare', epic: 'Épique', legendary: 'Légendaire', mythic: 'Mythique', special: 'Spéciale' };
   const RAR_COL = { uncommon: '#6fd08c', rare: '#58a8ff', epic: '#b47cff', legendary: '#ffbf3c', mythic: '#ff5a8a', special: '#7ff3ff' };
@@ -262,7 +262,7 @@
       const sc = siteCard(id, info), d = arenaDefFor(sc.name, sc.series, sc.rarity, true) || arenaDefFor(sc.name, sc.series, sc.rarity, false);
       pane.dataset.card = String(id);
       pane.innerHTML = d ? paneHtml(A, d) : '<span class="card-detail-eyebrow">ARENA / COMBAT</span><h2>' + esc(sc.name) + '</h2>' +
-        '<p class="arena-note">' + (sc.rarity === 'common' ? 'Les cartes Common ne sont pas jouables dans Arena.' : 'Ce personnage n’est pas encore jouable dans Arena.') + '</p>';
+        '<p class="arena-note">' + (sc.rarity === 'common' ? 'Les cartes Common ne sont pas jouables dans Arena.' : 'Ce personnage n’est pas jouable dans Arena.') + '</p>';
     }).catch(() => { pane.innerHTML = '<p class="arena-note">Impossible de charger Arena pour le moment. Réessaie dans un instant.</p>'; });
   }
   function closeDetails() {

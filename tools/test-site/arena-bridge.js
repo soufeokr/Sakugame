@@ -262,7 +262,7 @@
       const sc = siteCard(id, info), d = arenaDefFor(sc.name, sc.series, sc.rarity, true) || arenaDefFor(sc.name, sc.series, sc.rarity, false);
       pane.dataset.card = String(id);
       pane.innerHTML = d ? paneHtml(A, d) : '<span class="card-detail-eyebrow">ARENA / COMBAT</span><h2>' + esc(sc.name) + '</h2>' +
-        '<p class="arena-note">' + (sc.rarity === 'common' ? 'Les cartes Common ne sont pas jouables dans Arena.' : 'Ce personnage n’est pas encore jouable dans Arena.') + '</p>';
+        '<p class="arena-note">' + (sc.rarity === 'common' ? 'Les cartes Common ne sont pas jouables dans Arena.' : 'Ce personnage n’est pas jouable dans Arena.') + '</p>';
     }).catch(() => { pane.innerHTML = '<p class="arena-note">Impossible de charger Arena pour le moment. Réessaie dans un instant.</p>'; });
   }
   function closeDetails() {
