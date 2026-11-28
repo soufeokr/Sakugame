@@ -5,7 +5,7 @@
    • Onglet « Arena » dans la fiche des cartes (Collection, Encyclopédie) : stats et capacités de combat. */
 (function () {
   'use strict';
-  const SRC = 'arena/index.html?v=c2e1cb1f';
+  const SRC = 'arena/index.html?v=3a241314';
   let pending = null, cardIndex = null;
   const $ = id => document.getElementById(id);
   function frame() { return $('arenaFrame'); }
@@ -94,7 +94,7 @@
 
 
   /* ---------- Onglet Arena dans la fiche des cartes (Collection et Encyclopédie) ---------- */
-  const ARENA_V = 'c2e1cb1f';
+  const ARENA_V = '3a241314';
   let engineP = null, arenaIdx = null, arenaTabOn = false;
   const RAR_FR = { uncommon: 'Uncommon', rare: 'Rare', epic: 'Épique', legendary: 'Légendaire', mythic: 'Mythique', special: 'Spéciale' };
   const RAR_COL = { uncommon: '#6fd08c', rare: '#58a8ff', epic: '#b47cff', legendary: '#ffbf3c', mythic: '#ff5a8a', special: '#7ff3ff' };
@@ -143,38 +143,90 @@
     const HIST = /\b(fate|ragnarok|valkyrie|drifters)\b/;
     Object.keys(seen).forEach(k => { if (Object.keys(seen[k]).length >= 2 && !HIST.test(k)) seriesAlias[k] = 1; });
   }
+  /* Titres d'une même œuvre que l'apprentissage ne relie pas (trop peu de personnages communs) :
+     début du titre côté site → début du titre côté Arena. */
+  const SERIES_ALIAS = [
+    ['Shingeki no Kyojin', 'Attack on Titan'], ['Kimetsu no Yaiba', 'Demon Slayer'], ['Shuumatsu no Valkyrie', 'Record of Ragnarok'],
+    ['Kara no Kyoukai', 'the Garden of sinners'], ['Ginga Eiyuu Densetsu', 'Legend of the Galactic Heroes'], ['The Future Diary', 'Mirai Nikki'],
+    ['Pandora Hearts', 'PandoraHearts'], ['Mahouka Koukou no Rettousei', 'The Irregular at Magic High School'], ['Nisemonogatari', 'Monogatari'],
+    ['Bakemonogatari', 'Monogatari'], ['Hataraku Maou-sama', 'The Devil is a Part-Timer'], ['Kyoukai no Kanata', 'Beyond the Boundary'],
+    ['Rakudai Kishi no Cavalry', 'Chivalry of a Failed Knight'], ['Kekkai Sensen', 'Blood Blockade Battlefront'], ['Saga of Tanya the Evil', 'Youjo Senki'],
+    ['Shuumatsu Nani Shitemasu ka', 'WorldEnd'], ['Kumo desu ga, Nani ka', 'So I\'m a Spider, So What'], ['Houseki no Kuni', 'Land of the Lustrous'],
+    ['Tenkuu Shinpan', 'High-Rise Invasion'], ['Fumetsu no Anata e', 'To Your Eternity'], ['Maou Gakuin no Futekigousha', 'The Misfit of Demon King Academy'],
+    ['Tantei wa mou, Shindeiru', 'The Detective Is Already Dead'], ['TSUKIMICHI', 'Tsuki ga Michibiku']
+  ].map(x => [rom(x[0]), rom(x[1])]);
+  /* Même nom pour deux personnages d'une même série (romanisations inversées entre le site et Arena). */
+  const CARD_ALIAS = [
+    ['jousuke higashikata', 'diamond wa kudakenai', 'Josuke Higashikata'],   // Partie 4 : Crazy Diamond
+    ['josuke higashikata', 'jojolion', 'Jousuke Higashikata'],               // Partie 8 : Soft & Wet
+    ['sung jin woo', 'ore dake level up', 'Jin-U Seong'],
+    ['yoo mi ra', 'god of high school', 'Mi-Ra Yu']
+  ].map(x => [x[0], rom(x[1]), x[2]]);
   function seriesNear(arenaSeries, siteSeries) {
     const x = seriesToks(arenaSeries), y = seriesToks(siteSeries);
     if (x.some(t => y.indexOf(t) >= 0)) return true;
+    const rs = rom(siteSeries), ra = rom(arenaSeries);
+    if (SERIES_ALIAS.some(p => rs.indexOf(p[0]) === 0 && ra.indexOf(p[1]) === 0)) return true;
     if (!seriesAlias) learnSeriesAlias();
-    return !!seriesAlias[rom(siteSeries) + '|' + rom(arenaSeries)];
+    return !!seriesAlias[rs + '|' + ra];
   }
-  function arenaDefFor(name, series) {
+  /* Choix parmi des candidats : la même rareté d'abord (Gojo Mythique ≠ Gojo Spéciale). */
+  function pickRarity(list, rarity, strict) {
+    if (!list.length) return null;
+    if (rarity) {
+      const same = list.filter(d => d.rarity === rarity);
+      if (same.length) return same.length === 1 ? same[0] : 'amb';
+      if (strict) return null;
+    }
+    return list.length === 1 ? list[0] : 'amb';
+  }
+  function arenaDefFor(name, series, rarity, strict) {
     if (!arenaIdx) {
-      arenaIdx = { ns: {}, list: [] };
+      arenaIdx = { ns: {}, list: [], byName: {} };
       window.ARENA_CARDS.forEach(a => {
         const d = { name: a[0], series: a[1], rarity: a[2], profil: a[3], pv: a[4], atk: a[5], characterRank: a[6] };
         const k = norm(a[0]) + '|' + norm(a[1]);
-        if (!arenaIdx.ns[k]) arenaIdx.ns[k] = d;
+        (arenaIdx.ns[k] = arenaIdx.ns[k] || []).push(d);
+        (arenaIdx.byName[a[0]] = arenaIdx.byName[a[0]] || []).push(d);
         arenaIdx.list.push({ d: d, t: toks(a[0]) });
       });
     }
-    const exact = arenaIdx.ns[norm(name) + '|' + norm(series)];
-    if (exact) return exact;
+    const rn = norm(name), rs = rom(series);
+    for (let i = 0; i < CARD_ALIAS.length; i++) {
+      if (rn === CARD_ALIAS[i][0] && rs.indexOf(CARD_ALIAS[i][1]) >= 0) {
+        const r = pickRarity(arenaIdx.byName[CARD_ALIAS[i][2]] || [], rarity, strict);
+        return r && r !== 'amb' ? r : null;
+      }
+    }
+    const exList = arenaIdx.ns[norm(name) + '|' + norm(series)] || [];
+    const exact = pickRarity(exList, rarity, true);
+    if (exact && exact !== 'amb') return exact;
     const t = toks(name);
     if (!t.length) return null;
     // Mêmes mots (ordre et romanisation libres), dans une série proche.
-    const eq = arenaIdx.list.filter(x => x.t.length === t.length && x.t.every((k, i) => k === t[i]) && seriesNear(x.d.series, series));
-    if (eq.length === 1) return eq[0].d;
-    if (eq.length > 1 || t.length < 2) return null;
-    // Particule en plus ou en moins (Monkey D. Luffy, Trafalgar D. Water Law), dans une série proche.
-    const extraOk = (small, big) => small.length >= 2 && small.every(k => big.indexOf(k) >= 0) &&
-      big.filter(k => small.indexOf(k) < 0).every(k => k.length === 1 || k === 'water');
-    const inc = arenaIdx.list.filter(x => (extraOk(t, x.t) || extraOk(x.t, t)) && seriesNear(x.d.series, series));
-    return inc.length === 1 ? inc[0].d : null;
+    const eq = arenaIdx.list.filter(x => x.t.length === t.length && x.t.every((k, i) => k === t[i]) && seriesNear(x.d.series, series)).map(x => x.d);
+    const e2 = pickRarity(eq, rarity, true);
+    if (e2 === 'amb') return null;
+    if (e2) return e2;
+    if (t.length >= 2) {
+      // Particule en plus ou en moins (Monkey D. Luffy, Trafalgar D. Water Law), dans une série proche.
+      const extraOk = (small, big) => small.length >= 2 && small.every(k => big.indexOf(k) >= 0) &&
+        big.filter(k => small.indexOf(k) < 0).every(k => k.length === 1 || k === 'water');
+      const inc = arenaIdx.list.filter(x => (extraOk(t, x.t) || extraOk(x.t, t)) && seriesNear(x.d.series, series)).map(x => x.d);
+      const i2 = pickRarity(inc, rarity, true);
+      if (i2 === 'amb') return null;
+      if (i2) return i2;
+      if (strict) return null;
+      const i3 = pickRarity(inc, null, false);
+      if (i3 && i3 !== 'amb') return i3;
+    }
+    if (strict) return null;
+    if (exList.length) return exList[0];
+    const e3 = pickRarity(eq, null, false);
+    return e3 && e3 !== 'amb' ? e3 : null;
   }
-  // Lecture seule (outils de test) : fiche Arena correspondant à un nom et une série du site.
-  window.sakuArenaBridge.arenaCardFor = (name, series) => (window.ARENA_CARDS ? arenaDefFor(name, series) : null);
+  // Lecture seule (outils de test) : fiche Arena d'une carte du site (même rareté d'abord, sinon la plus proche).
+  window.sakuArenaBridge.arenaCardFor = (name, series, rarity, strict) => (window.ARENA_CARDS ? (arenaDefFor(name, series, rarity, true) || (strict ? null : arenaDefFor(name, series, rarity, false))) : null);
   function siteCard(id, info) {
     try {
       if (typeof cardBuildPool === 'function') cardBuildPool();
@@ -207,7 +259,7 @@
     if (pane.dataset.card === String(id)) return;
     pane.innerHTML = '<p class="arena-note">Chargement d’Arena…</p>';
     arenaEngine().then(A => {
-      const sc = siteCard(id, info), d = arenaDefFor(sc.name, sc.series);
+      const sc = siteCard(id, info), d = arenaDefFor(sc.name, sc.series, sc.rarity, true) || arenaDefFor(sc.name, sc.series, sc.rarity, false);
       pane.dataset.card = String(id);
       pane.innerHTML = d ? paneHtml(A, d) : '<span class="card-detail-eyebrow">ARENA / COMBAT</span><h2>' + esc(sc.name) + '</h2>' +
         '<p class="arena-note">' + (sc.rarity === 'common' ? 'Les cartes Common ne sont pas jouables dans Arena.' : 'Ce personnage n’est pas encore jouable dans Arena.') + '</p>';

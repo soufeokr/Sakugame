@@ -327,9 +327,9 @@
   function isNamed(d) { var k = canonName(d.name); return !!(NAMED_ACTIVE[k] || PASSIVES[k]); }
   function sigOf(d) {
     if (!d || tierOfDef(d) < 0) return [];
-    var ck = d.name + '|' + d.rarity;
+    var ck = d.name + '|' + d.series + '|' + d.rarity;
     if (sigCache[ck]) return sigCache[ck];
-    var out = [], raw = isNamed(d) ? null : SIG[d.name];
+    var out = [], raw = isNamed(d) ? null : (SIG[d.name + '|' + d.series + '|' + d.rarity] || SIG[d.name]);
     if (raw) {
       var list = Array.isArray(raw[0]) ? raw : [raw];
       list.slice(0, d.rarity === 'special' ? 2 : 1).forEach(function (x) { if (EFFECTS[x[0]]) out.push({ key: x[0], nom: x[1] }); });
@@ -530,7 +530,7 @@
     var f = PASSIVES[canonName(def.name)];
     var list = f ? f() : [];
     /* Une seule capacité hors Spéciales : Ultra Instinct est la capacité de la Spéciale Goku. */
-    if (def.rarity !== 'special' && canonName(def.name) === 'goku') list = [];
+    if (def.rarity !== 'special' && (canonName(def.name) === 'goku' || canonName(def.name) === 'gogeta')) list = [];   // Gogeta Mythique : Verrouillage seul
     sigOf(def).forEach(function (sg) { if (EFFECTS[sg.key].kind === 'passive') list = list.concat([sigEntry(def, sg)]); });
     return list;
   }

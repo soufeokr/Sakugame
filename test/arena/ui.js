@@ -833,7 +833,8 @@
     return { pid: guestId(), uid: null, name: 'Invité', avatar: '', signedIn: false };
   }
   function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
-  var KEY = POOL.map(function (d) { return d.name + '|' + d.series; });
+  /* Clé de deck : nom|série ; la rareté s'ajoute seulement pour départager deux cartes (Gojo Mythique / Gojo Spéciale). */
+  var KEY = (function () { var seen = {}; return POOL.map(function (d) { var k = d.name + '|' + d.series; if (seen[k]) k += '|' + d.rarity; seen[k] = 1; return k; }); })();
   var KEYIDX = {}; KEY.forEach(function (k, i) { if (!(k in KEYIDX)) KEYIDX[k] = i; });
   function keysToIdx(keys) { return (keys || []).map(function (k) { return KEYIDX[k]; }).filter(function (i) { return i != null; }); }
   var SITEID = null;
@@ -842,13 +843,14 @@
     var cat = [];
     try { cat = HOST ? (HOST.catalogue() || []) : []; } catch (e) { cat = []; }
     if (!cat.length) return [];
-    var byNS = {}, byN = {};
+    var byNSR = {}, byNS = {}, byN = {};
     cat.forEach(function (c) {
       var k = norm(c.name) + '|' + norm(c.series); if (!byNS[k]) byNS[k] = String(c.id);
+      var kr = k + '|' + (c.rarity || ''); if (!byNSR[kr]) byNSR[kr] = String(c.id);
       var n = norm(c.name); (byN[n] = byN[n] || []).push(String(c.id));
     });
     SITEID = POOL.map(function (d) {
-      var id = byNS[norm(d.name) + '|' + norm(d.series)];
+      var id = byNSR[norm(d.name) + '|' + norm(d.series) + '|' + d.rarity] || byNS[norm(d.name) + '|' + norm(d.series)];
       if (!id) { var l = byN[norm(d.name)]; if (l && l.length === 1) id = l[0]; }
       return id || null;
     });
