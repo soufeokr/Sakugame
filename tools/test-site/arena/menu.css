@@ -351,3 +351,7 @@ body{min-height:100vh}
 .rankedbox .up{color:#5fe0b0}.rankedbox .dn{color:#ff8f8a}
 .rankedbox.on{border-color:#ffd47a88;background:linear-gradient(180deg,#2a2412,#15120a)}
 .rankedbox.on>div>b{color:#ffd47a}
+
+/* Effets des capacités (règles) */
+.rules .row>b[style]::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--famc);margin-right:7px;vertical-align:1px}
+.rules p.abex{margin-top:4px;font-size:12px;opacity:.8}

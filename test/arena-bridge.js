@@ -4,7 +4,7 @@
    • Lien direct : ?arena=CODE ouvre Arena et rejoint le salon Amical. */
 (function () {
   'use strict';
-  const SRC = 'arena/index.html?v=7a51937f';
+  const SRC = 'arena/index.html?v=b46c9bdb';
   let pending = null, cardIndex = null;
   const $ = id => document.getElementById(id);
   function frame() { return $('arenaFrame'); }

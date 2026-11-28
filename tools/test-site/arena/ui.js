@@ -10,18 +10,21 @@
   var FAMC = {
     tireur: '#d9a441', electricite: '#e3b81a', feu: '#ff6a2b', glace: '#38b6f0', lame: '#8b9bc4', rempart: '#c2873a',
     vitesse: '#22c7b4', soigneur: '#3fc77f', stratege: '#8e7cf0', poison: '#6fbf2c', invocateur: '#b07cf5',
-    regeneration: '#e0507f', assassin: '#c8364f', psychique: '#c060ff', explosifs: '#ff8a1f', copie: '#ee6fc6', vol: '#5f9dff'
+    regeneration: '#e0507f', assassin: '#c8364f', psychique: '#c060ff', explosifs: '#ff8a1f', copie: '#ee6fc6', vol: '#5f9dff',
+    vampire: '#c0284f', force: '#e2574c', eveil: '#ffb020', zone: '#ff7ab6', protection: '#7fd3ff', pression: '#b5651d',
+    temps: '#2ec4d6', sceau: '#9aa3b8'
   };
-  var ST_ICON = { para: 'ϟ', burn: '♨', freeze: '❄', venom: '☣', venom2: '☣²', prison: '◆', prison2: '◆', taunt: '⛨' };
+  var ST_ICON = { para: 'ϟ', burn: '♨', freeze: '❄', venom: '☣', venom2: '☣²', prison: '◆', prison2: '◆', taunt: '⛨', seal: '⊘' };
   var ST_TXT = {
     para: 'Paralysie : ne peut pas attaquer à son prochain tour.',
     burn: 'Brûlure : perd des PV à la fin de chacun de ses tours ; ni déplacement ni remplacement.',
     freeze: 'Gel : ATK réduite jusqu’à la fin de son prochain tour.',
     venom: 'Venin : perd un % de ses PV max à chaque tour (doublé ou triplé) ; soins bloqués.',
     venom2: 'Venin ×2 : deux poisons cumulés ; soins bloqués.',
-    prison: 'Prison de glace : ne peut pas attaquer (cachée : ne peut pas être retournée).',
-    prison2: 'Prison de glace : ni attaque, ni capacité, ni déplacement.',
-    taunt: 'Dur à cuire : subira la prochaine attaque adverse, dégâts réduits.'
+    prison: 'Entrave : ne peut pas attaquer (cachée : ne peut pas être retournée).',
+    prison2: 'Entrave : ni attaque, ni capacité, ni déplacement.',
+    taunt: 'Dur à cuire : subira la prochaine attaque adverse, dégâts réduits.',
+    seal: 'Annulation : pas de capacité active et passive suspendue.'
   };
 
   /* Pool : tableaux compacts -> objets. */
@@ -83,7 +86,8 @@
       return '<span class="st-' + k + '" title="' + esc(ST_TXT[k] || k) + '">' + ST_ICON[k] + '</span>';
     }).join('') + '</div>' : '';
     var atkCls = atk > def.atk ? ' up' : (opts.atkDown ? ' down' : '');
-    return '<div class="' + cls.join(' ') + '" ' + (opts.attrs || '') + ' title="' + esc((opts.nom || def.name) + ' — ' + def.series) + '">' +
+    var techs = A.passivesFor(def).concat(A.abilitiesFor(def)).map(function (x) { return x.nom; }).join(' · ');
+    return '<div class="' + cls.join(' ') + '" ' + (opts.attrs || '') + ' title="' + esc((opts.nom || def.name) + ' — ' + def.series + (techs ? ' — ' + techs : '')) + '">' +
       '<div class="afr"><div class="ain">' +
         '<div class="aart"><span class="ainit">' + esc((def.name || '?').charAt(0)) + '</span>' + art + '</div>' +
         '<div class="ahp' + (pct <= 30 ? ' low' : pct <= 60 ? ' mid' : '') + '"><i style="width:' + pct + '%"></i></div>' +
@@ -252,7 +256,7 @@
         btn.push('<button class="act" data-act="toattack"' + (canAct && targets.length ? '' : ' disabled') + '>Attaquer' + (targets.length ? ' <b>' + targets.length + '</b>' : '') + '</button>');
         A.abilitiesOf(st, sel.uid).forEach(function (ab) {
           if (ab.key === 'janedoe') return;
-          var used = sel.usedAbil[ab.key] || 0, dis = (used >= ab.uses) || st.actionsLeft <= 0 || (ab.key === 'clonage' && sel.clone) || (A.imprisoned(st, sel) && sel.prison.full);
+          var used = sel.usedAbil[ab.key] || 0, dis = (used >= ab.uses) || st.actionsLeft <= 0 || (ab.key === 'clonage' && sel.clone) || (A.imprisoned(st, sel) && sel.prison.full) || A.sealed(st, sel);
           btn.push('<button class="act' + (ab.fam ? ' ab' : '') + '"' + famStyle(ab.fam) + ' data-act="ability" data-key="' + ab.key + '"' + (dis ? ' disabled' : '') + ' title="' + esc(ab.desc) + '">' +
             esc(ab.nom) + ' <b>' + (ab.uses - used) + '/' + ab.uses + '</b></button>');
         });
@@ -283,11 +287,11 @@
     var pct = Math.max(0, Math.min(100, Math.round(s.pv / s.maxPv * 100)));
     var f = A.familyOfDef(d), abs = A.abilitiesFor(d), pass = A.passivesFor(d), blocks = '';
     if (pass.length) blocks += '<div class="psec">Passives</div>' + pass.map(function (p) {
-      return '<div class="abil passive"><div class="t"><span>' + esc(p.nom) + '</span><em>passif</em></div><div class="d">' + esc(p.desc) + '</div></div>';
+      return '<div class="abil passive"><div class="t"><span>' + esc(p.nom) + '</span><em>' + (p.eff ? esc(p.eff) + ' · ' : '') + 'passif' + (A.sealed(st, c) && p.eff ? ' · suspendu' : '') + '</em></div><div class="d">' + esc(p.desc) + '</div></div>';
     }).join('');
     if (abs.length) blocks += '<div class="psec">Actives</div>' + abs.map(function (ab) {
       var used = c.usedAbil[ab.key] || 0;
-      return '<div class="abil"><div class="t"><span>' + esc(ab.nom) + '</span><em>' + (ab.uses - used) + '/' + ab.uses + ' restante(s)</em></div><div class="d">' + esc(ab.desc) + '</div></div>';
+      return '<div class="abil"><div class="t"><span>' + esc(ab.nom) + '</span><em>' + (ab.eff ? esc(ab.eff) + ' · ' : '') + (ab.uses - used) + '/' + ab.uses + ' restante(s)</em></div><div class="d">' + esc(ab.desc) + '</div></div>';
     }).join('');
     if (!abs.length && !pass.length) blocks = '<p class="sub">Aucune capacité (Rare et Uncommon).</p>';
     var sts = A.statusList(st, c);
@@ -301,10 +305,16 @@
       '<div class="statline"><div><span>PV</span><b>' + s.pv + ' / ' + s.maxPv + '</b></div><div><span>ATK</span><b>' + s.atk + '</b></div></div>' +
       '<div class="pvbar"><i style="width:' + pct + '%"></i></div>' +
       '<p class="sub" style="margin:10px 0 0">Base ' + d.pv + ' PV / ' + d.atk + ' ATK' + (c.bonus ? ' · <span style="color:var(--pv)">+' + c.bonus + ' bonus d’animé</span>' : '') +
-      (c.atkBoost ? ' · <span style="color:var(--sky)">+' + Math.round(c.atkBoost * 100) + ' % ATK (Incisif)</span>' : '') + '</p>' + blocks +
+      (c.atkBoost ? ' · <span style="color:var(--sky)">+' + Math.round(c.atkBoost * 100) + ' % ATK (Incisif)</span>' : '') +
+      (c.awaken ? ' · <span style="color:#ffb020">+' + Math.round(c.awaken * 100) + ' % ATK et PV (Éveil)</span>' : '') + '</p>' + blocks +
       (c.attacked ? '<p class="sub" style="color:#ffc9a8;margin-top:10px">A déjà attaqué ce tour.</p>' : '') + '</aside>';
   }
 
+  function pipsHtml(n) {
+    var out = '';
+    for (var i = 0; i < Math.max(2, n); i++) out += '<span class="pip' + (n > i ? ' on' : '') + (i >= 2 ? ' extra' : '') + '"></span>';
+    return out;
+  }
   function logPanel() {
     var items = UI.st.log.slice(-50).map(function (l) { return '<div class="l-' + l.type + ' entry">' + esc(l.text) + '</div>'; }).join('');
     return '<aside class="logbox" id="log"><div class="lt">Journal</div>' + (items || '<div class="sub">Aucun événement.</div>') + '</aside>';
@@ -314,7 +324,7 @@
     var st = UI.st, T = currentTargets();
     var hud = '<div class="hud"><div class="turnline"><span class="turnbadge' + (st.turnOwner === ME ? '' : ' opp') + '"><i class="dot"></i>' + (st.turnOwner === ME ? 'À vous' : 'Adversaire') + '</span>' +
       '<span class="who">Tour <b>' + Math.ceil(st.turnNo / 2) + '</b></span></div>' +
-      '<div class="who" style="display:flex;align-items:center;gap:9px">Coups<div class="pips"><span class="pip' + (st.actionsLeft > 0 ? ' on' : '') + '"></span><span class="pip' + (st.actionsLeft > 1 ? ' on' : '') + '"></span></div></div>' +
+      '<div class="who" style="display:flex;align-items:center;gap:9px">Coups<div class="pips">' + pipsHtml(st.actionsLeft) + '</div></div>' +
       '<div class="hudbtns">' + (isOnline() ? oppStatus() : '') + '<button class="ghostbtn" data-act="go" data-s="menu">Menu</button><button class="ghostbtn" data-act="rules">Règles</button>' +
       (st.over ? '' : '<button class="ghostbtn danger" data-act="forfeit">Abandonner</button>') + '</div></div>';
     return '<div class="game"><div class="arena" id="arena">' + hud + zone(OP, true, T) + zone(ME, false, T) + handStrip() + actionBar() + '</div>' +
@@ -553,7 +563,12 @@
         var b0 = box(ev.at); flash(ev.at, '#fff2c0'); ring(ev.at, '#ffd166', b0 ? b0.w * 3 : 300); ring(ev.at, '#ff6a2b', b0 ? b0.w * 2.2 : 220, 80);
         burst(ev.at, '#ffb347', 30, b0 ? b0.w * 1.8 : 160, 7); shakeScreen(true); return 120; });
       case 'ice': return shoot(ev.from, ev.at, '#bfefff', 16, 260, 0, 'shard').then(function () { burst(ev.at, '#bfefff', 18); ring(ev.at, '#8fe3ff', null); glow(ev.at, '#8fe3ff'); return 60; });
-      case 'shield': glow(ev.at, '#ffd47a'); ring(ev.at, '#ffd47a', null); label(ev.at, 'Dur à cuire', '#c2873a'); return 240;
+      case 'shield': glow(ev.at, '#ffd47a'); ring(ev.at, '#ffd47a', null); label(ev.at, ev.nom || 'Dur à cuire', '#c2873a'); return 240;
+      case 'barrier': glow(ev.at, '#bfefff'); ring(ev.at, '#7fd3ff', null); return 200;
+      case 'powerup': glow(ev.at, '#ffd47a'); ring(ev.at, '#ffb020', null); rise(ev.at, '#ffd47a', 8, ['▲', '✦']); return 280;
+      case 'wave': ring(ev.at, c || '#ff7ab6', null); burst(ev.at, c || '#ff7ab6', 12); return 90;
+      case 'seal': ring(ev.at, '#9aa3b8', null); label(ev.at, '⊘ Annulé', '#9aa3b8'); return 180;
+      case 'tempo': glow(ev.at, '#2ec4d6'); label(ev.at, '+1 coup', '#2ec4d6'); return 200;
       case 'taunt': line(ev.from, ev.at, '#ffd47a', 3, 300, '4 5'); label(ev.at, 'Interception !', '#c2873a'); return 220;
       case 'afterimage': { var el3 = cardEl(ev.at); if (el3) el3.animate([{ filter: 'none' }, { filter: 'blur(2px) drop-shadow(-18px 0 0 #22c7b488) drop-shadow(18px 0 0 #22c7b444)' }, { filter: 'none' }], { duration: 300 }); return 120; }
       case 'clone': ring(ev.at, '#c9b6f2', null); burst(ev.at, '#e8deff', 16); label(ev.at, 'Clone !', '#b07cf5'); return 220;
@@ -566,9 +581,9 @@
       case 'heal': setBadge(ev.at, ev.n); num(ev.at, '+' + ev.n, 'heal', 12); cardAnim(ev.at, 'fx-heal', 620); rise(ev.at, '#5fe0b0', 6, ['+']); return 120;
       case 'status': { var sf = STATUS_FX[ev.s] || [ev.s, '#fff']; label(ev.at || null, sf[0], sf[1]); return 140; }
       case 'dodge': cardAnim(ev.at, 'fx-dodge', 520); num(ev.at, 'Esquive', 'word zero'); return 220;
-      case 'guard': ring(ev.at, '#b07cf5', null); label(ev.at, 'Familier gardien', '#b07cf5'); return 160;
-      case 'undying': glow(ev.at, '#ffd47a'); label(ev.at, 'Increvable', '#e0507f'); return 200;
-      case 'ambush': label(ev.at, 'Embuscade', '#c8364f'); flash(ev.at, '#ff4d6d'); return 140;
+      case 'guard': ring(ev.at, '#b07cf5', null); label(ev.at, ev.nom || 'Familier gardien', '#b07cf5'); return 160;
+      case 'undying': glow(ev.at, '#ffd47a'); label(ev.at, ev.nom || 'Increvable', '#e0507f'); return 200;
+      case 'ambush': label(ev.at, ev.nom || 'Embuscade', '#c8364f'); flash(ev.at, '#ff4d6d'); return 140;
       case 'drain': return shoot(ev.from, ev.to, '#c060ff', 12, 280, 30).then(function () { num(ev.to, '+' + ev.n + ' ATK', 'word clone'); return 40; });
       case 'splash': ring(ev.at, '#ff8a1f', null); burst(ev.at, '#ffd166', 8); return 60;
       case 'burntick': rise(ev.at, '#ff8a3d', 7, ['♨', '•']); return 80;
@@ -1165,23 +1180,42 @@
       '<section class="panel"><h2>Ton deck</h2>' + deckPicker('pickactive') + '<p class="sub">Change de deck avant le lancement : il est envoyé au salon.</p></section></div>';
   }
 
-  /* Capacités des cartes, listées par rareté et par ordre alphabétique (pas par famille). */
+  /* Effets des capacités de signature, par ordre alphabétique (valeurs Épique / Légendaire / Mythique / Spéciale). */
+  var EFF_EX = null;
+  function effectExamples() {
+    if (EFF_EX) return EFF_EX;
+    EFF_EX = {};
+    var order = { special: 0, mythic: 1, legendary: 2, epic: 3 };
+    POOL.slice().sort(function (x, y) { return (order[x.rarity] == null ? 9 : order[x.rarity]) - (order[y.rarity] == null ? 9 : order[y.rarity]); }).forEach(function (d) {
+      A.signatureOf(d).forEach(function (sg) {
+        var l = EFF_EX[sg.key] || (EFF_EX[sg.key] = []);
+        if (l.length < 3) l.push(sg.nom + ' (' + d.name + ')');
+      });
+    });
+    return EFF_EX;
+  }
   function abilityLists() {
-    var ep = [], le = [];
-    FAM_KEYS.forEach(function (k) {
-      var F = FAM[k];
-      ep.push({ n: F.passive.nom, t: 'passive', d: F.passive.e });
-      if (F.active) le.push({ n: F.active.nom, t: 'active · ' + F.active.ul + ' utilisation' + (F.active.ul > 1 ? 's' : ''), d: F.active.l });
-      else le.push({ n: F.passive.nom, t: 'passive', d: F.passive.l });
+    var E = A.EFFECTS, ex = effectExamples(), pas = [], act = [];
+    function uses(arr) {
+      var u = arr.every(function (x) { return x === arr[0]; }) ? String(arr[0]) : arr.join(' / ');
+      return u + ' utilisation' + (u === '1' ? '' : 's');
+    }
+    Object.keys(E).forEach(function (k) {
+      if (!ex[k]) return;   // effet porté par aucune carte
+      var x = E[k];
+      (x.kind === 'passive' ? pas : act).push({ n: x.nom, t: x.kind === 'passive' ? 'passive' : 'active · ' + uses(x.uses), d: x.d(-1), f: x.fam, e: ex[k] });
     });
     function rows(list) {
       return list.sort(function (a, b) { return a.n.localeCompare(b.n, 'fr'); }).map(function (x) {
-        return '<div class="row"><b>' + esc(x.n) + ' <em class="abt">' + esc(x.t) + '</em></b><p>' + esc(x.d) + '</p></div>';
+        return '<div class="row"><b' + famStyle(x.f) + '>' + esc(x.n) + ' <em class="abt">' + esc(x.t) + '</em></b><p>' + esc(x.d) + '</p>' +
+          '<p class="sub abex">Ex. : ' + esc(x.e.join(', ')) + '</p></div>';
       }).join('');
     }
-    return '<h2>Capacités des Épiques</h2><p class="sub">Une capacité passive : elle s’applique toute seule tant que la carte est visible.</p>' + rows(ep) +
-      '<h2>Capacités des Légendaires</h2><p class="sub">Une capacité active (elle coûte un coup), ou une passive renforcée.</p>' + rows(le) +
-      '<p class="sub" style="margin-top:12px">Les Mythiques ont leur propre capacité et les Spéciales en ont deux : elles sont décrites sur la carte (touche-la pour voir le détail). Rare et Uncommon n’ont pas de capacité.</p>';
+    return '<h2>Capacités</h2><p class="sub">Chaque Épique, Légendaire, Mythique et Spéciale porte une vraie technique de son personnage (Getsuga Tenshō, The World, Gear Fifth…), reliée à l’un des effets ci-dessous. ' +
+      'Une seule capacité par carte, deux pour les Spéciales. Quand une valeur change avec la rareté, elle est donnée dans l’ordre Épique / Légendaire / Mythique / Spéciale ; touche une carte en jeu pour voir sa valeur exacte.</p>' +
+      '<h2>Effets passifs</h2><p class="sub">Aucun coup : ils s’appliquent tant que la carte est visible.</p>' + rows(pas) +
+      '<h2>Effets actifs</h2><p class="sub">Un coup par utilisation (sauf mention contraire).</p>' + rows(act) +
+      '<p class="sub" style="margin-top:12px">Quelques personnages ont des capacités uniques aux règles propres (Goku, Sukuna, Megumi, Makima, Reze, Angel Devil, Yoru, Gogeta, Itachi, Sasuke, Hohenheim, Denji, Pochita) : elles sont décrites sur leur carte. Rare et Uncommon n’ont pas de capacité.</p>';
   }
   function renderRules() {
     var rows = A.RULES.filter(function (r) { return r.id !== 'familles'; }).map(function (r) { return '<div class="row"><b>' + esc(r.titre) + '</b><p>' + esc(r.texte) + '</p></div>'; }).join('');

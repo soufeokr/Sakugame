@@ -117,7 +117,7 @@
         sub += Math.max(0, s.pv) + s.atk * 1.2;
         if (c.clone) sub += c.clone.pv + c.clone.atk;
         A.statusList(st, c).forEach(function (k) {
-          sub -= ({ para: 14, burn: 10, freeze: 8, venom: 18, venom2: 34, prison: 12, prison2: 18, taunt: -10 })[k] || 0;
+          sub -= ({ para: 14, burn: 10, freeze: 8, venom: 18, venom2: 34, prison: 12, prison2: 18, taunt: -10, seal: 10 })[k] || 0;
         });
       });
       sub -= 48 * st.players[pi].lost;
@@ -147,7 +147,11 @@
       var gain = evaluate(sim, me) - base;
       /* Une capacité « de préparation » vaut un peu plus que son effet immédiat. */
       if (ab.key === 'durcuire' || ab.key === 'clonage') gain += 18;
-      if (ab.key === 'soigneurregen') gain *= 0.8;
+      if (ab.key === 'garde' || ab.key === 'bouclier' || ab.key === 'esquive') gain += 12;
+      if (ab.key === 'tempo') gain += st.actionsLeft >= 1 ? 26 : 0;
+      if (ab.key === 'analyse') gain += 10;
+      if (ab.key === 'sceau') gain += 10;
+      if (ab.key === 'soigneurregen' || ab.key === 'soinzone') gain *= 0.8;
       a.score = gain * 0.9 - 4;
       out.push(a);
     });
