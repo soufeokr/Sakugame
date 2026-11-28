@@ -257,7 +257,8 @@
         btn.push('<button class="act" data-act="toattack"' + (canAct && targets.length ? '' : ' disabled') + '>Attaquer' + (targets.length ? ' <b>' + targets.length + '</b>' : '') + '</button>');
         A.abilitiesOf(st, sel.uid).forEach(function (ab) {
           if (ab.key === 'janedoe') return;
-          var used = sel.usedAbil[ab.key] || 0, dis = (used >= ab.uses) || st.actionsLeft <= 0 || (ab.key === 'clonage' && sel.clone) || (A.imprisoned(st, sel) && sel.prison.full) || A.sealed(st, sel);
+          var used = sel.usedAbil[ab.key] || 0, dis = (used >= ab.uses) || st.actionsLeft <= 0 || (ab.key === 'clonage' && sel.clone) || (A.imprisoned(st, sel) && sel.prison.full) || A.sealed(st, sel) ||
+            (ab.key === 'combo' && !(canAct && targets.length));
           btn.push('<button class="act' + (ab.fam ? ' ab' : '') + '"' + famStyle(ab.fam) + ' data-act="ability" data-key="' + ab.key + '"' + (dis ? ' disabled' : '') + ' title="' + esc(ab.desc) + '">' +
             esc(ab.nom) + ' <b>' + (ab.uses - used) + '/' + ab.uses + '</b></button>');
         });

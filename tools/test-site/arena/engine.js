@@ -59,7 +59,7 @@
   );
 
   var INTERPRETATIONS = [
-    { sujet: 'Effets — choix du prototype', texte: "Éveil multiplie ATK et PV max de base et rend les PV gagnés ; il disparaît si la carte quitte le terrain. Déferlante et Pression ne touchent que les cartes ennemies visibles. Accélération rend son coup et en ajoute un. Analyse rend son coup. Barrière et Garde durent jusqu'au prochain tour du lanceur. Vol de vie soigne sur les attaques et les capacités, pas sur les statuts. Annulation ne suspend pas les capacités uniques. Les passives « cible touchée » (Paralysie, Brûlure, Gel, Morsure) se déclenchent sur les attaques et sur la cible principale des capacités, pas sur les éclaboussures. Mur de flammes brûle à la fin de chaque tour (des deux joueurs) et ne touche qu'une carte visible. Morsure draine l'ATK pour le reste de la partie ; le boost d'Incisif dure toute la partie. Combo et Ordre tactique résolvent la frappe aussitôt (sinon il ne resterait pas de coup pour attaquer). Dur à cuire dure jusqu'au prochain tour de la carte. Entrave peut viser une carte cachée (elle ne pourra pas être retournée). Le clone encaisse 50 % des coups reçus par son utilisateur, attaque avec lui et ne peut pas être visé directement. Projection renvoie la carte au fond de la pioche adverse, PV et statuts remis à zéro. Big Boom retourne les voisines cachées (effets d'entrée compris) avant de les toucher." },
+    { sujet: 'Effets — choix du prototype', texte: "Éveil multiplie ATK et PV max de base et rend les PV gagnés ; il disparaît si la carte quitte le terrain. Déferlante et Pression ne touchent que les cartes ennemies visibles. Accélération rend son coup et en ajoute un. Analyse rend son coup. Barrière et Garde durent jusqu'au prochain tour du lanceur. Vol de vie soigne sur les attaques et les capacités, pas sur les statuts. Annulation ne suspend pas les capacités uniques. Les passives « cible touchée » (Paralysie, Brûlure, Gel, Morsure) se déclenchent sur les attaques et sur la cible principale des capacités, pas sur les éclaboussures. Mur de flammes brûle à la fin de chaque tour (des deux joueurs) et ne touche qu'une carte visible. Morsure draine l'ATK pour le reste de la partie ; le boost d'Incisif dure toute la partie. Combo remplace l'attaque de la carte (elle ne doit pas avoir déjà attaqué ce tour) : ses deux frappes partent pour un seul coup et une seule utilisation. Ordre tactique résout la frappe aussitôt (sinon il ne resterait pas de coup pour attaquer). Dur à cuire dure jusqu'au prochain tour de la carte. Entrave peut viser une carte cachée (elle ne pourra pas être retournée). Le clone encaisse 50 % des coups reçus par son utilisateur, attaque avec lui et ne peut pas être visé directement. Projection renvoie la carte au fond de la pioche adverse, PV et statuts remis à zéro. Big Boom retourne les voisines cachées (effets d'entrée compris) avant de les toucher." },
     { sujet: 'Angel Devil', texte: "Soin passif de 50 % des dégâts infligés ; « Ailes démoniaques » double les dégâts de sa prochaine attaque, une fois par partie." },
     { sujet: 'Reze', texte: "Jane Doe (passif) : 80 dégâts à l'adversaire visible le plus proche à son entrée sur le terrain — révélation ou pose ; égalité de distance tranchée par la colonne la plus à gauche. « Rang » interprété comme tranche de 100 de characterRank : ATK −10 % par tranche, plancher à −10 % (sans classement connu)." },
     { sujet: 'Sukuna', texte: "« Clivage » répartit 250 dégâts entre les cartes ennemies visibles adjacentes, 250/n arrondi au supérieur par cible ; sans cible adjacente, aucune cible. « Échange » ne se déclenche que sous 16 % de PV et seulement si Sukuna a survécu au coup, deux fois au maximum." },
@@ -258,7 +258,7 @@
     durcuire: { nom: 'Dur à cuire', fam: 'rempart', kind: 'active', cible: 'soi', r: [0.6, 0.8, 0.85, 0.9], uses: [1, 2, 2, 2],
       d: function (t) { return 'Encaisse la prochaine attaque adverse, quelle que soit la carte visée, avec ' + fv(this.r, t) + ' de dégâts en moins (jusqu’à votre prochain tour).'; } },
     combo: { nom: 'Combo', fam: 'vitesse', kind: 'active', cible: 'ennemi', m: [0.5, 0.8, 0.9, 1], uses: [1, 2, 2, 2],
-      d: function (t) { return 'Attaque une seconde fois ce tour, à ' + fv(this.m, t) + ' de son ATK (même si elle a déjà attaqué).'; } },
+      d: function (t) { return 'Remplace son attaque du tour : deux attaques d’affilée pour un seul coup, la première à 100 % de son ATK, la seconde à ' + fv(this.m, t) + '. Si la première met la cible K.O., la seconde frappe l’ennemie à portée la plus affaiblie.'; } },
     ordre: { nom: 'Ordre tactique', fam: 'stratege', kind: 'active', cible: 'allie-puis-ennemi', m: [0.5, 1, 1, 1.2], uses: [1, 2, 2, 2],
       d: function (t) { return 'Une alliée visible qui a déjà attaqué ce tour attaque de nouveau, à ' + fv(this.m, t) + ' de son ATK.'; } },
     venin: { nom: 'Venin', fam: 'poison', kind: 'active', cible: 'ennemi', portee: 'libre', m: [0.2, 0.35, 0.45, 0.5], uses: [1, 1, 1, 2],
@@ -1506,7 +1506,12 @@
       if (!target2) return 'Choisissez la cible de l’attaque.';
       if (strikeTargets(st, targetUid).indexOf(target2) < 0) return 'Cible hors de portée de cette alliée.';
     }
-    if (ab.key === 'combo' && (paralysed(st, st.cards[uid]) || imprisoned(st, st.cards[uid]))) return 'Cette carte ne peut pas attaquer ce tour.';
+    if (ab.key === 'combo') {
+      var cc = st.cards[uid];
+      if (cc.attacked) return 'Cette carte a déjà attaqué ce tour : Combo remplace son attaque.';
+      if (cc.lockedUntil >= st.turnNo) return 'Cette carte est verrouillée pour ce tour.';
+      if (paralysed(st, cc) || imprisoned(st, cc)) return 'Cette carte ne peut pas attaquer ce tour.';
+    }
     return null;
   }
 
@@ -1591,8 +1596,22 @@
         break;
       }
       case 'combo': {
+        /* L'attaque du tour, en deux frappes : 100 % puis m. */
+        var cm = P('m');
+        c.attacked = true;
+        log(st, 'abil', head + ' : deux attaques d’affilée (100 % puis ' + Math.round(cm * 100) + ' %).');
         fx(st, { t: 'afterimage', at: where(st, uid) });
-        strike(st, uid, targetUid, P('m'), ab.nom);
+        strike(st, uid, targetUid, 1, ab.nom + ' (1/2)');
+        if (!st.cards[uid] || !where(st, uid) || st.over) break;
+        var t2 = st.cards[targetUid] && strikeTargets(st, uid).indexOf(targetUid) >= 0 ? targetUid : null;
+        if (!t2) {
+          strikeTargets(st, uid).forEach(function (u) {
+            if (!t2 || st.cards[u].pv < st.cards[t2].pv) t2 = u;
+          });
+        }
+        if (!t2) { log(st, 'abil', head + ' : plus aucune cible à portée pour la seconde attaque.'); break; }
+        fx(st, { t: 'afterimage', at: where(st, uid) });
+        strike(st, uid, t2, cm, ab.nom + ' (2/2)');
         break;
       }
       case 'ordre': {
