@@ -5,7 +5,7 @@
    • Onglet « Arena » dans la fiche des cartes (Collection, Encyclopédie) : stats et capacités de combat. */
 (function () {
   'use strict';
-  const SRC = 'arena/index.html?v=8f6a09c2';
+  const SRC = 'arena/index.html?v=c2e1cb1f';
   let pending = null, cardIndex = null;
   const $ = id => document.getElementById(id);
   function frame() { return $('arenaFrame'); }
@@ -94,7 +94,7 @@
 
 
   /* ---------- Onglet Arena dans la fiche des cartes (Collection et Encyclopédie) ---------- */
-  const ARENA_V = '8f6a09c2';
+  const ARENA_V = 'c2e1cb1f';
   let engineP = null, arenaIdx = null, arenaTabOn = false;
   const RAR_FR = { uncommon: 'Uncommon', rare: 'Rare', epic: 'Épique', legendary: 'Légendaire', mythic: 'Mythique', special: 'Spéciale' };
   const RAR_COL = { uncommon: '#6fd08c', rare: '#58a8ff', epic: '#b47cff', legendary: '#ffbf3c', mythic: '#ff5a8a', special: '#7ff3ff' };

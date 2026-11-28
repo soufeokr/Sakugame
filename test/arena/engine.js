@@ -60,6 +60,7 @@
 
   var INTERPRETATIONS = [
     { sujet: 'Effets — choix du prototype', texte: "Éveil multiplie ATK et PV max de base et rend les PV gagnés ; il disparaît si la carte quitte le terrain. Déferlante et Pression ne touchent que les cartes ennemies visibles. Accélération rend son coup et en ajoute un. Analyse rend son coup. Barrière et Garde durent jusqu'au prochain tour du lanceur. Vol de vie soigne sur les attaques et les capacités, pas sur les statuts. Annulation ne suspend pas les capacités uniques. Les passives « cible touchée » (Paralysie, Brûlure, Gel, Morsure) se déclenchent sur les attaques et sur la cible principale des capacités, pas sur les éclaboussures. Mur de flammes brûle à la fin de chaque tour (des deux joueurs) et ne touche qu'une carte visible. Morsure draine l'ATK pour le reste de la partie ; le boost d'Incisif dure toute la partie. Combo remplace l'attaque de la carte (elle ne doit pas avoir déjà attaqué ce tour) : ses deux frappes partent pour un seul coup et une seule utilisation. Ordre tactique résout la frappe aussitôt (sinon il ne resterait pas de coup pour attaquer). Dur à cuire dure jusqu'au prochain tour de la carte. Entrave peut viser une carte cachée (elle ne pourra pas être retournée). Le clone encaisse 50 % des coups reçus par son utilisateur, attaque avec lui et ne peut pas être visé directement. Projection renvoie la carte au fond de la pioche adverse, PV et statuts remis à zéro. Big Boom retourne les voisines cachées (effets d'entrée compris) avant de les toucher." },
+    { sujet: 'Effets hybrides', texte: "Tempête de glace, Embrasement et Onde de choc touchent la cible et ses voisines visibles (gel, brûlure ou risque de paralysie). Rafale tire au hasard parmi les ennemies visibles, cible redésignée à chaque tir. Point faible dure jusqu'à la fin du prochain tour du lanceur et s'applique à toutes les sources, statuts compris. Contre-attaque répond aux coups directs (attaques et capacités ciblées), pas aux éclaboussures ni aux statuts. Fureur et Combo remplacent l'attaque du tour de la carte. Aucun effet ne dépend des PV restants de la cible : les cartes meurent en deux ou trois coups." },
     { sujet: 'Angel Devil', texte: "Soin passif de 50 % des dégâts infligés ; « Ailes démoniaques » double les dégâts de sa prochaine attaque, une fois par partie." },
     { sujet: 'Reze', texte: "Jane Doe (passif) : 80 dégâts à l'adversaire visible le plus proche à son entrée sur le terrain — révélation ou pose ; égalité de distance tranchée par la colonne la plus à gauche. « Rang » interprété comme tranche de 100 de characterRank : ATK −10 % par tranche, plancher à −10 % (sans classement connu)." },
     { sujet: 'Sukuna', texte: "« Clivage » répartit 250 dégâts entre les cartes ennemies visibles adjacentes, 250/n arrondi au supérieur par cible ; sans cible adjacente, aucune cible. « Échange » ne se déclenche que sous 16 % de PV et seulement si Sukuna a survécu au coup, deux fois au maximum." },
@@ -253,8 +254,8 @@
         var l = 'Une ennemie à portée ne peut ni attaquer, ni utiliser de capacité, ni se déplacer à son prochain tour ; cachée, elle ne peut pas être retournée.';
         return t === 0 ? e : t > 0 ? l : e + ' À partir de Légendaire : ni capacité ni déplacement non plus.';
       } },
-    incisif: { nom: 'Incisif', fam: 'lame', kind: 'active', cible: 'ennemi', portee: 'attaque', low: [1.25, 1.5, 1.6, 1.7], b: [0.1, 0.2, 0.25, 0.3], uses: [1, 2, 2, 2],
-      d: function (t) { return 'Frappe à 100 % de l’ATK en ignorant les réductions de dégâts ; ' + fv(this.low, t, mul) + ' si la cible a moins de la moitié de ses PV ; +' + fv(this.b, t) + ' d’ATK pour le reste de la partie.'; } },
+    incisif: { nom: 'Incisif', fam: 'lame', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [1, 1.15, 1.25, 1.3], b: [0.1, 0.2, 0.25, 0.3], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée en ignorant les réductions de dégâts ; +' + fv(this.b, t) + ' d’ATK pour le reste de la partie.'; } },
     durcuire: { nom: 'Dur à cuire', fam: 'rempart', kind: 'active', cible: 'soi', r: [0.6, 0.8, 0.85, 0.9], uses: [1, 2, 2, 2],
       d: function (t) { return 'Encaisse la prochaine attaque adverse, quelle que soit la carte visée, avec ' + fv(this.r, t) + ' de dégâts en moins (jusqu’à votre prochain tour).'; } },
     combo: { nom: 'Combo', fam: 'vitesse', kind: 'active', cible: 'ennemi', m: [0.5, 0.8, 0.9, 1], uses: [1, 2, 2, 2],
@@ -267,8 +268,8 @@
       d: function (t) { return 'Place devant elle un renfort à ' + fv(this.r, t) + ' de son ATK et de ses PV : il encaisse 50 % des coups reçus et attaque avec elle. Détruit seul, il compte comme une carte morte ; il disparaît avec elle sans compter.'; } },
     soigneurregen: { nom: 'Restauration', fam: 'regeneration', kind: 'active', cible: 'allie', h: [0.35, 0.7, 0.8, 0.9], uses: [2, 2, 2, 3],
       d: function (t) { return 'Rend ' + fv(this.h, t) + ' de ses PV max à une alliée visible ou à elle-même' + (t === 0 ? '.' : t > 0 ? ' et retire tous ses statuts.' : ' ; à partir de Légendaire, retire aussi tous les statuts.'); } },
-    execution: { nom: 'Exécution', fam: 'assassin', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.5, 0.7, 0.8, 0.9], uses: [1, 1, 1, 2],
-      d: function (t) { return (t === 0 ? 'Sur une cible à moins de 30 % de ses PV : dégâts ×1,5' : t > 0 ? 'Sur une cible à moins de 30 % de ses PV : élimination directe (×1,5 sur une Spéciale)' : 'Sur une cible à moins de 30 % de ses PV : ×1,5 (Épique), élimination directe à partir de Légendaire (×1,5 sur une Spéciale)') + ' ; sinon ' + fv(this.m, t) + ' de l’ATK.'; } },
+    execution: { nom: 'Coup mortel', fam: 'assassin', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.8, 0.9, 1, 1.1], pc: [0.35, 0.45, 0.5, 0.55], uses: [1, 2, 2, 2],
+      d: function (t) { return 'Frappe un point vital d’une ennemie à portée : ' + fv(this.m, t) + ' de l’ATK, ou ' + fv(this.pc, t) + ' des PV max de la cible si c’est plus ; ignore réductions de dégâts, renfort et familier.'; } },
     projection: { nom: 'Projection', fam: 'psychique', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.7, 0.9, 1, 1.1], uses: [1, 2, 2, 2],
       d: function (t) { return 'Inflige ' + fv(this.m, t) + ' de l’ATK et renvoie la carte au fond de la pioche adverse (elle ne compte pas comme morte).'; } },
     bigboom: { nom: 'Déflagration', fam: 'explosifs', kind: 'active', cible: 'ennemi', portee: 'attaque', r1: [1.1, 1.2, 1.3, 1.4], r2: [0.65, 0.75, 0.8, 0.85], r3: [0.25, 0.33, 0.4, 0.45], self: [0.2, 0.1, 0.1, 0.05], uses: [1, 2, 2, 2],
@@ -296,7 +297,29 @@
     tempo: { nom: 'Accélération', fam: 'temps', kind: 'active', cible: 'soi', uses: [1, 1, 1, 2],
       d: function () { return 'Ne coûte pas de coup et en rapporte un de plus ce tour.'; } },
     sceau: { nom: 'Annulation', fam: 'sceau', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.4, 0.6, 0.7, 0.8], uses: [1, 2, 2, 2],
-      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée ; jusqu’à la fin de son prochain tour, elle ne peut plus utiliser de capacité active et sa passive est suspendue (les capacités uniques ne sont pas suspendues).'; } }
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée ; jusqu’à la fin de son prochain tour, elle ne peut plus utiliser de capacité active et sa passive est suspendue (les capacités uniques ne sont pas suspendues).'; } },
+
+    /* ---------- actives hybrides : forme d'attaque × élément ---------- */
+    blizzard: { nom: 'Tempête de glace', fam: 'glace', kind: 'active', cible: 'ennemi', portee: 'libre', m: [0.45, 0.55, 0.6, 0.7], s: [0.3, 0.35, 0.4, 0.45], g: [0.2, 0.25, 0.3, 0.35], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur n’importe quelle ennemie visible et ' + fv(this.s, t) + ' sur ses voisines visibles ; toutes les cartes touchées sont gelées (−' + fv(this.g, t) + ' d’ATK jusqu’à la fin de leur prochain tour).'; } },
+    brasier: { nom: 'Embrasement', fam: 'feu', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.6, 0.75, 0.85, 0.95], bd: [0.15, 0.18, 0.2, 0.22], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée ; elle et ses voisines visibles brûlent (' + fv(this.bd, t) + ' de l’ATK par tour pendant 2 tours, ni déplacement ni remplacement).'; } },
+    rafale: { nom: 'Rafale', fam: 'tireur', kind: 'active', cible: 'auto', n: [3, 3, 4, 4], h: [0.3, 0.35, 0.35, 0.4], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.n, t, String) + ' tirs de ' + fv(this.h, t) + ' de l’ATK, chacun sur une ennemie visible au hasard (n’importe quelle colonne).'; } },
+    absorption: { nom: 'Absorption', fam: 'vampire', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.65, 0.8, 0.9, 1], hr: [0.6, 0.8, 0.9, 1], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée ; elle récupère ' + fv(this.hr, t) + ' des dégâts infligés.'; } },
+    marque: { nom: 'Point faible', fam: 'malediction', kind: 'active', cible: 'ennemi', portee: 'libre', m: [0.35, 0.45, 0.5, 0.55], v: [0.2, 0.3, 0.35, 0.4], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur n’importe quelle ennemie visible ; jusqu’à la fin de votre prochain tour, elle subit +' + fv(this.v, t) + ' de dégâts de toutes les sources.'; } },
+    contre: { nom: 'Contre-attaque', fam: 'lame', kind: 'active', cible: 'soi', r: [0.25, 0.35, 0.4, 0.45], rp: [0.6, 0.8, 0.9, 1], uses: [1, 2, 2, 2],
+      d: function (t) { return 'Jusqu’à votre prochain tour : subit ' + fv(this.r, t) + ' de dégâts en moins et répond à chaque attaque ou capacité qui la vise en renvoyant ' + fv(this.rp, t) + ' de son ATK à son auteur, quelle que soit sa colonne.'; } },
+    eclair: { nom: 'Frappe éclair', fam: 'vitesse', kind: 'active', cible: 'ennemi', portee: 'libre', m: [0.7, 0.85, 0.95, 1.05], dd: [0.3, 0.4, 0.45, 0.5], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur n’importe quelle ennemie visible, puis ' + fv(this.dd, t) + ' d’esquive jusqu’à votre prochain tour.'; } },
+    fureur: { nom: 'Fureur', fam: 'force', kind: 'active', cible: 'ennemi', m: [1.5, 1.8, 1.9, 2], self: [0.12, 0.1, 0.08, 0.06], uses: [1, 2, 2, 2],
+      d: function (t) { return 'Remplace son attaque du tour : une seule attaque à ' + fv(this.m, t) + ' de son ATK, puis elle perd ' + fv(this.self, t) + ' de ses PV max.'; } },
+    lumiere: { nom: 'Frappe vitale', fam: 'soigneur', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.6, 0.75, 0.85, 0.95], h: [0.08, 0.1, 0.12, 0.14], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée, puis toutes vos cartes visibles récupèrent ' + fv(this.h, t) + ' de leurs PV max.'; } },
+    seisme: { nom: 'Onde de choc', fam: 'seisme', kind: 'active', cible: 'ennemi', portee: 'attaque', m: [0.45, 0.55, 0.6, 0.65], p: [0.2, 0.3, 0.35, 0.4], uses: [1, 2, 2, 2],
+      d: function (t) { return fv(this.m, t) + ' de l’ATK sur une ennemie à portée et autant sur ses voisines visibles ; chacune a ' + fv(this.p, t) + ' de chances d’être paralysée.'; } }
   };
 
   /* Signature d'une définition : [{ key, nom }] (vide pour Rare, Uncommon et capacités uniques). */
@@ -396,6 +419,8 @@
     if (c && c.prison && c.prison.until >= st.turnNo) out.push(c.prison.full ? 'prison2' : 'prison');
     if (c && c.taunt && c.taunt.until >= st.turnNo) out.push('taunt');
     if (sealed(st, c)) out.push('seal');
+    if (c && c.mark && c.mark.until >= st.turnNo) out.push('mark');
+    if (c && c.counter && c.counter.until >= st.turnNo) out.push('counter');
     return out;
   }
   function paralysed(st, c) { return !!(c && c.status && c.status.para && c.status.para >= st.turnNo); }
@@ -813,10 +838,13 @@
     var src = sourceUid ? st.cards[sourceUid] : null;
     var dmg = Math.max(0, Math.round(amount));
     var at = where(st, targetUid);
+    /* Point faible : dégâts accrus de toutes les sources. */
+    if (card.mark && card.mark.until >= st.turnNo && dmg > 0) dmg = Math.round(dmg * (1 + card.mark.pct));
     if (!opts.pierce) {
       var tf = fam(st, card);
       if (!opts.noReduce) {
         if (card.shieldUntil >= st.turnNo) dmg = Math.round(dmg * (1 - card.shield));
+        if (card.counter && card.counter.until >= st.turnNo) dmg = Math.round(dmg * (1 - card.counter.r));
         if (tf === 'rempart') dmg = Math.round(dmg * (1 - EV(st, card, 'invincible', 'r')));
         if (opts.taunt) dmg = Math.round(dmg * (1 - opts.taunt));
         if (kind === 'ability' && tf === 'psychique') dmg = Math.round(dmg * (1 - EV(st, card, 'barriere', 'r')));
@@ -866,6 +894,14 @@
       /* Électricité (passive de la cible) : paralyse la carte qui lui inflige des dégâts. */
       if (src && kind !== 'effect' && fam(st, card) === 'electricite' && src.faceUp && st.cards[sourceUid] && src.owner !== card.owner) {
         if (st.rng() < EV(st, card, 'paralysie', 'back')) applyStatus(st, sourceUid, 'para');
+      }
+      /* Contre-attaque (posture) : répond aux coups directs d'une carte ennemie, d'où qu'ils viennent. */
+      if (src && opts.primary && (kind === 'attack' || kind === 'ability') && card.counter && card.counter.until >= st.turnNo &&
+          card.faceUp && st.cards[sourceUid] && where(st, sourceUid) && src.owner !== card.owner) {
+        var crp = Math.round(stats(st, card).atk * card.counter.rp);
+        log(st, 'abil', d.name + ' — ' + snom(st, card, 'contre') + ' : renvoie ' + crp + ' dégâts à ' + def(st, src).name + '.');
+        fx(st, { t: 'strike', from: at, to: where(st, sourceUid), fam: 'lame', riposte: true });
+        damage(st, sourceUid, crp, targetUid, { kind: 'ability' });
       }
     }
     if (card.pv <= 0) {
@@ -1472,7 +1508,7 @@
       return { kind: 'ally', uids: out, cells: [] };
     }
     /* ennemi */
-    if (ab.key === 'combo') return { kind: 'enemy', uids: strikeTargets(st, uid), cells: [] };
+    if (ab.key === 'combo' || ab.key === 'fureur') return { kind: 'enemy', uids: strikeTargets(st, uid), cells: [] };
     st.players[foe].terrain.forEach(function (u, s2) {
       if (!u) return;
       var x = st.cards[u];
@@ -1506,15 +1542,26 @@
       if (!target2) return 'Choisissez la cible de l’attaque.';
       if (strikeTargets(st, targetUid).indexOf(target2) < 0) return 'Cible hors de portée de cette alliée.';
     }
-    if (ab.key === 'combo') {
+    if (ab.key === 'combo' || ab.key === 'fureur') {
       var cc = st.cards[uid];
-      if (cc.attacked) return 'Cette carte a déjà attaqué ce tour : Combo remplace son attaque.';
+      if (cc.attacked) return 'Cette carte a déjà attaqué ce tour : ' + ab.nom + ' remplace son attaque.';
       if (cc.lockedUntil >= st.turnNo) return 'Cette carte est verrouillée pour ce tour.';
       if (paralysed(st, cc) || imprisoned(st, cc)) return 'Cette carte ne peut pas attaquer ce tour.';
     }
     return null;
   }
 
+  /* Voisines visibles (colonnes adjacentes, même camp) d'une carte. */
+  function visibleNeighbors(st, uid) {
+    var c = st.cards[uid], out = [];
+    if (!c) return out;
+    var s0 = slotOf(st, uid), row = st.players[c.owner].terrain;
+    [s0 - 1, s0 + 1].forEach(function (s2) {
+      var u = s2 >= 0 && s2 < COLS ? row[s2] : null;
+      if (u && st.cards[u] && st.cards[u].faceUp) out.push(u);
+    });
+    return out;
+  }
   function visibleFoes(st, me) {
     var out = [];
     st.players[1 - me].terrain.forEach(function (u) { if (u && st.cards[u] && st.cards[u].faceUp) out.push(u); });
@@ -1528,7 +1575,7 @@
     var tname = t ? def(st, t).name : '';
     var me = c.owner, head = name + ' — ' + ab.nom;
     /* Vérifications avant tout effet (aucun coup dépensé en cas de refus). */
-    if ((k === 'deferlante' || k === 'pression') && !visibleFoes(st, me).length) return 'Aucune carte ennemie visible.';
+    if ((k === 'deferlante' || k === 'pression' || k === 'rafale') && !visibleFoes(st, me).length) return 'Aucune carte ennemie visible.';
     if (k === 'analyse' && !st.players[me].deck.length) return 'Pioche vide.';
     if (k === 'clonage' && c.clone) return 'Un renfort est déjà en jeu.';
     fx(st, { t: 'cast', uid: uid, at: where(st, uid), nom: ab.nom, fam: ab.fam });
@@ -1576,8 +1623,7 @@
         break;
       }
       case 'incisif': {
-        var ts = stats(st, t), base = atk;
-        if (ts.pv < ts.maxPv / 2) base *= P('low');
+        var base = atk * P('m');
         log(st, 'abil', head + ' sur ' + tname + ' (' + Math.round(base) + ', réductions ignorées).');
         fx(st, { t: 'slash', from: where(st, uid), to: where(st, targetUid) });
         damage(st, targetUid, base, uid, { kind: 'ability', noReduce: true, primary: true });
@@ -1639,7 +1685,7 @@
       case 'soigneurregen': {
         var amount = Math.round(stats(st, c).maxPv * P('h'));
         if (T1) {
-          clearStatus(t); t.prison = null; t.sealUntil = 0;
+          clearStatus(t); t.prison = null; t.sealUntil = 0; t.mark = null;
           log(st, 'abil', head + ' retire tous les statuts de ' + tname + '.');
           fx(st, { t: 'cleanse', at: where(st, targetUid) });
         }
@@ -1648,16 +1694,10 @@
         break;
       }
       case 'execution': {
-        var es = stats(st, t), low = es.pv < es.maxPv * 0.3;
+        var es = stats(st, t), de = Math.round(Math.max(atk * P('m'), es.maxPv * P('pc')));
         fx(st, { t: 'slash', from: where(st, uid), to: where(st, targetUid), exec: true });
-        if (low && T1 && def(st, t).rarity !== 'special') {
-          log(st, 'abil', head + ' : ' + tname + ' est éliminé.');
-          damage(st, targetUid, 99999, uid, { kind: 'ability', pierce: true, primary: true });
-        } else {
-          var de = Math.round(atk * (low ? 1.5 : P('m')));
-          log(st, 'abil', head + ' sur ' + tname + ' (' + de + ' dégâts).');
-          damage(st, targetUid, de, uid, { kind: 'ability', primary: true });
-        }
+        log(st, 'abil', head + ' sur ' + tname + ' (' + de + ' dégâts, point vital).');
+        damage(st, targetUid, de, uid, { kind: 'ability', pierce: true, primary: true });
         break;
       }
       case 'projection': {
@@ -1799,6 +1839,122 @@
         }
         break;
       }
+      case 'blizzard': {
+        var bzm = Math.round(atk * P('m')), bzs = Math.round(atk * P('s')), bzg = P('g');
+        var bzSide = visibleNeighbors(st, targetUid);
+        log(st, 'abil', head + ' : ' + bzm + ' dégâts sur ' + tname + (bzSide.length ? ' et ' + bzs + ' sur ' + bzSide.length + ' voisine(s)' : '') + ', gel −' + Math.round(bzg * 100) + ' % d’ATK.');
+        fx(st, { t: 'ice', at: where(st, targetUid), from: where(st, uid) });
+        damage(st, targetUid, bzm, uid, { kind: 'ability', primary: true });
+        if (st.cards[targetUid] && where(st, targetUid)) applyStatus(st, targetUid, 'freeze', { pct: bzg });
+        bzSide.forEach(function (u) {
+          if (!st.cards[u] || !where(st, u)) return;
+          fx(st, { t: 'ice', at: where(st, u), from: where(st, uid) });
+          damage(st, u, bzs, uid, { kind: 'ability' });
+          if (st.cards[u] && where(st, u)) applyStatus(st, u, 'freeze', { pct: bzg });
+        });
+        break;
+      }
+      case 'brasier': {
+        var frm = Math.round(atk * P('m')), frb = Math.max(1, Math.round(atk * P('bd')));
+        var frAll = [targetUid].concat(visibleNeighbors(st, targetUid));
+        log(st, 'abil', head + ' : ' + frm + ' dégâts sur ' + tname + ' ; ' + frAll.length + ' carte(s) s’embrasent (' + frb + ' PV par tour).');
+        fx(st, { t: 'firewall', at: where(st, targetUid), from: where(st, uid) });
+        damage(st, targetUid, frm, uid, { kind: 'ability', primary: true });
+        frAll.forEach(function (u) {
+          if (!st.cards[u] || !where(st, u)) return;
+          if (u !== targetUid) fx(st, { t: 'splash', at: where(st, u) });
+          applyStatus(st, u, 'burn', { dmg: frb });
+        });
+        break;
+      }
+      case 'rafale': {
+        var rfn = P('n'), rfh = Math.round(atk * P('h'));
+        log(st, 'abil', head + ' : ' + rfn + ' tirs de ' + rfh + ' dégâts.');
+        for (var rfi = 0; rfi < rfn; rfi++) {
+          var rfo = visibleFoes(st, me);
+          if (!rfo.length || st.over || !st.cards[uid]) break;
+          var rfu = rfo[Math.min(rfo.length - 1, Math.floor(st.rng() * rfo.length))];
+          fx(st, { t: 'bullet', from: where(st, uid), to: where(st, rfu) });
+          damage(st, rfu, rfh, uid, { kind: 'ability', primary: rfi === 0 });
+        }
+        break;
+      }
+      case 'absorption': {
+        var abm = Math.round(atk * P('m'));
+        log(st, 'abil', head + ' sur ' + tname + ' (' + abm + ' dégâts).');
+        fx(st, { t: 'slash', from: where(st, uid), to: where(st, targetUid) });
+        var abd = damage(st, targetUid, abm, uid, { kind: 'ability', primary: true });
+        if (st.cards[uid] && where(st, uid) && abd > 0) {
+          var abh = heal(st, uid, Math.round(abd * P('hr')));
+          if (abh > 0) log(st, 'soin', name + ' récupère ' + abh + ' PV.');
+        }
+        break;
+      }
+      case 'marque': {
+        var mkm = Math.round(atk * P('m')), mkv = P('v');
+        log(st, 'abil', head + ' sur ' + tname + ' (' + mkm + ' dégâts).');
+        fx(st, { t: 'mark', from: where(st, uid), at: where(st, targetUid) });
+        damage(st, targetUid, mkm, uid, { kind: 'ability', primary: true });
+        var mkt = st.cards[targetUid];
+        if (mkt && where(st, targetUid) && !statusImmune(st, mkt)) {
+          mkt.mark = { pct: mkv, until: st.turnNo + 2 };
+          log(st, 'status', tname + ' : point faible, +' + Math.round(mkv * 100) + ' % de dégâts subis jusqu’à la fin de votre prochain tour.');
+        }
+        break;
+      }
+      case 'contre': {
+        c.counter = { r: P('r'), rp: P('rp'), until: st.turnNo + 1 };
+        log(st, 'abil', head + ' : −' + Math.round(c.counter.r * 100) + ' % de dégâts et riposte à ' + Math.round(c.counter.rp * 100) + ' % de son ATK jusqu’à votre prochain tour.');
+        fx(st, { t: 'shield', at: where(st, uid), nom: ab.nom });
+        break;
+      }
+      case 'eclair': {
+        var ecm = Math.round(atk * P('m'));
+        log(st, 'abil', head + ' sur ' + tname + ' (' + ecm + ' dégâts), puis ' + Math.round(P('dd') * 100) + ' % d’esquive.');
+        fx(st, { t: 'afterimage', at: where(st, uid) });
+        fx(st, { t: 'slash', from: where(st, uid), to: where(st, targetUid) });
+        damage(st, targetUid, ecm, uid, { kind: 'ability', primary: true });
+        var ecc = st.cards[uid];
+        if (ecc && where(st, uid)) { ecc.dodge = Math.max(ecc.dodgeUntil >= st.turnNo ? (ecc.dodge || 0) : 0, P('dd')); ecc.dodgeUntil = st.turnNo + 1; }
+        break;
+      }
+      case 'fureur': {
+        c.attacked = true;
+        log(st, 'abil', head + ' : une attaque à ' + Math.round(P('m') * 100) + ' % de son ATK.');
+        fx(st, { t: 'powerup', at: where(st, uid), nom: ab.nom });
+        strike(st, uid, targetUid, P('m'), ab.nom);
+        var fuc = st.cards[uid];
+        if (fuc && where(st, uid) && !st.over) {
+          var fus = Math.round(stats(st, fuc).maxPv * P('self'));
+          log(st, 'abil', 'Contrecoup : ' + name + ' perd ' + fus + ' PV.');
+          damage(st, uid, fus, null, { kind: 'effect', pierce: true });
+        }
+        break;
+      }
+      case 'lumiere': {
+        var lum = Math.round(atk * P('m')), luh = P('h'), lut = 0;
+        log(st, 'abil', head + ' sur ' + tname + ' (' + lum + ' dégâts).');
+        fx(st, { t: 'slash', from: where(st, uid), to: where(st, targetUid) });
+        damage(st, targetUid, lum, uid, { kind: 'ability', primary: true });
+        st.players[me].terrain.forEach(function (u) {
+          var x = u && st.cards[u];
+          if (x && x.faceUp) lut += heal(st, u, Math.round(stats(st, x).maxPv * luh));
+        });
+        if (lut > 0) log(st, 'soin', '+' + lut + ' PV au total pour vos cartes visibles.');
+        break;
+      }
+      case 'seisme': {
+        var sqm = Math.round(atk * P('m')), sqp = P('p');
+        var sqAll = [targetUid].concat(visibleNeighbors(st, targetUid));
+        log(st, 'abil', head + ' : ' + sqm + ' dégâts sur ' + sqAll.length + ' carte(s).');
+        sqAll.forEach(function (u, i) {
+          if (!st.cards[u] || !where(st, u)) return;
+          fx(st, { t: 'wave', at: where(st, u), fam: 'seisme' });
+          damage(st, u, sqm, uid, { kind: 'ability', primary: i === 0 });
+          if (st.cards[u] && where(st, u) && st.rng() < sqp) applyStatus(st, u, 'para');
+        });
+        break;
+      }
       default: return 'Capacité non implémentée.';
     }
     return null;
@@ -1808,7 +1964,7 @@
   function resetCard(st, c) {
     var d = def(st, c);
     c.faceUp = false; c.bonus = 0; c.status = {}; c.prison = null; c.taunt = null; c.clone = null;
-    c.atkMul = 1; c.pvMul = 1; c.buffUntil = 0; c.attacked = false; c.ambush = false; c.awaken = 0; c.sealUntil = 0;
+    c.atkMul = 1; c.pvMul = 1; c.buffUntil = 0; c.attacked = false; c.ambush = false; c.awaken = 0; c.sealUntil = 0; c.mark = null; c.counter = null;
     /* Renvoyée dans la pioche, la carte ne se régénère pas : elle garde ses dégâts (bonus de PV retirés). */
     c.pv = Math.max(1, Math.min(c.pv, d.pv)); c.lockedUntil = 0;
   }

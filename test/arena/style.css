@@ -100,7 +100,7 @@ h1,h2,h3{font-family:Outfit,system-ui,sans-serif;font-weight:800;letter-spacing:
 .famtag i{font-style:normal;font-size:9px;letter-spacing:.04em;text-transform:uppercase;opacity:.92}
 .status{position:absolute;right:4px;top:6px;z-index:5;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
 .status span{display:grid;place-items:center;min-width:21px;height:21px;padding:0 4px;border-radius:7px;font:800 11px/1 Outfit,sans-serif;background:#091123e6;border:1px solid currentColor;box-shadow:0 2px 8px -3px #000}
-.st-para{color:#ffe14d}.st-burn{color:#ff8a3d}.st-freeze{color:#8fe3ff}.st-venom,.st-venom2{color:#8dff6a}.st-prison,.st-prison2{color:#bfefff}.st-taunt{color:#ffd47a}.st-seal{color:#c7cede}
+.st-para{color:#ffe14d}.st-burn{color:#ff8a3d}.st-freeze{color:#8fe3ff}.st-venom,.st-venom2{color:#8dff6a}.st-prison,.st-prison2{color:#bfefff}.st-taunt{color:#ffd47a}.st-seal{color:#c7cede}.st-mark{color:#b388ff}.st-counter{color:#ffd47a}
 .clonep{position:absolute;left:8%;right:8%;z-index:8;height:24px;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:6px;font:800 10.5px/1 Outfit,sans-serif;color:#e8deff;background:linear-gradient(90deg,#3b2a70ee,#5a3aa0ee);border:1px dashed #c9b6f2;box-shadow:0 6px 16px -6px #000}
 .zone.me .clonep{top:-15px}
 .zone.opp .clonep{bottom:-15px}

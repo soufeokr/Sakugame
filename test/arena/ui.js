@@ -12,9 +12,9 @@
     vitesse: '#22c7b4', soigneur: '#3fc77f', stratege: '#8e7cf0', poison: '#6fbf2c', invocateur: '#b07cf5',
     regeneration: '#e0507f', assassin: '#c8364f', psychique: '#c060ff', explosifs: '#ff8a1f', copie: '#ee6fc6', vol: '#5f9dff',
     vampire: '#c0284f', force: '#e2574c', eveil: '#ffb020', zone: '#ff7ab6', protection: '#7fd3ff', pression: '#b5651d',
-    temps: '#2ec4d6', sceau: '#9aa3b8'
+    temps: '#2ec4d6', sceau: '#9aa3b8', malediction: '#b388ff', seisme: '#b08a5a'
   };
-  var ST_ICON = { para: 'ϟ', burn: '♨', freeze: '❄', venom: '☣', venom2: '☣²', prison: '◆', prison2: '◆', taunt: '⛨', seal: '⊘' };
+  var ST_ICON = { para: 'ϟ', burn: '♨', freeze: '❄', venom: '☣', venom2: '☣²', prison: '◆', prison2: '◆', taunt: '⛨', seal: '⊘', mark: '◎', counter: '⚔' };
   var ST_TXT = {
     para: 'Paralysie : ne peut pas attaquer à son prochain tour.',
     burn: 'Brûlure : perd des PV à la fin de chacun de ses tours ; ni déplacement ni remplacement.',
@@ -24,6 +24,8 @@
     prison: 'Entrave : ne peut pas attaquer (cachée : ne peut pas être retournée).',
     prison2: 'Entrave : ni attaque, ni capacité, ni déplacement.',
     taunt: 'Dur à cuire : subira la prochaine attaque adverse, dégâts réduits.',
+    mark: 'Point faible : subit plus de dégâts de toutes les sources.',
+    counter: 'Contre-attaque : dégâts réduits et riposte à chaque coup direct reçu.',
     seal: 'Annulation : pas de capacité active et passive suspendue.'
   };
 
@@ -258,7 +260,7 @@
         A.abilitiesOf(st, sel.uid).forEach(function (ab) {
           if (ab.key === 'janedoe') return;
           var used = sel.usedAbil[ab.key] || 0, dis = (used >= ab.uses) || st.actionsLeft <= 0 || (ab.key === 'clonage' && sel.clone) || (A.imprisoned(st, sel) && sel.prison.full) || A.sealed(st, sel) ||
-            (ab.key === 'combo' && !(canAct && targets.length));
+            ((ab.key === 'combo' || ab.key === 'fureur') && !(canAct && targets.length));
           btn.push('<button class="act' + (ab.fam ? ' ab' : '') + '"' + famStyle(ab.fam) + ' data-act="ability" data-key="' + ab.key + '"' + (dis ? ' disabled' : '') + ' title="' + esc(ab.desc) + '">' +
             esc(ab.nom) + ' <b>' + (ab.uses - used) + '/' + ab.uses + '</b></button>');
         });
@@ -661,6 +663,8 @@
       case 'ambush': label(ev.at, ev.nom || 'Embuscade', '#c8364f'); flash(ev.at, '#ff4d6d'); return 140;
       case 'drain': return shoot(ev.from, ev.to, '#c060ff', 12, 280, 30).then(function () { num(ev.to, '+' + ev.n + ' ATK', 'word clone'); return 40; });
       case 'splash': ring(ev.at, '#ff8a1f', null); burst(ev.at, '#ffd166', 8); return 60;
+      case 'bullet': line(ev.from, ev.to, '#ffe9a6', 3, 160); burst(ev.to, '#ffd47a', 7); return 110;
+      case 'mark': line(ev.from, ev.at, '#b388ff', 2, 220, '3 4'); ring(ev.at, '#b388ff', null); label(ev.at, '◎ Point faible', '#b388ff'); return 220;
       case 'burntick': rise(ev.at, '#ff8a3d', 7, ['♨', '•']); return 80;
       case 'venomtick': rise(ev.at, '#8dff6a', 7, ['○', '◦']); return 80;
       case 'cloneko': ring(ev.at, '#c9b6f2', null); burst(ev.at, '#c9b6f2', 14); num(ev.at, 'Clone détruit', 'word clone', -30); return 160;
