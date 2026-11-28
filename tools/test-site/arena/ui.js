@@ -233,7 +233,8 @@
       return '<div class="actionbar setupbar"><span class="hint"><b style="color:#fff">Mise en place</b> : touche 2 cartes de ton terrain à retourner (' + n + '/2)</span>' +
         '<button class="act go" data-act="setupok"' + (n === 2 ? '' : ' disabled') + '>Retourner ces cartes</button></div>';
     }
-    if (st.turnOwner !== ME) return '<div class="actionbar"><span class="hint">' + esc(st.players[OP].nom) + (st.refill ? ' remplit ses cases vides…' : ' joue…') + '</span></div>';
+    var fiche = UI.inspect && st.cards[UI.inspect] ? '<button class="act" data-act="sheet" data-uid="' + UI.inspect + '">Fiche</button>' : '';
+    if (st.turnOwner !== ME) return '<div class="actionbar"><span class="hint">' + esc(st.players[OP].nom) + (st.refill ? ' remplit ses cases vides…' : ' joue…') + '</span>' + fiche + '</div>';
     if (st.refill) {
       var R = st.refill, pp = st.players[ME];
       return '<div class="actionbar setupbar"><span class="hint"><b style="color:#fff">Case vide — colonne ' + (R.slots[0] + 1) + '</b>' + (R.slots.length > 1 ? ' (encore ' + (R.slots.length - 1) + ' après)' : '') +
@@ -267,6 +268,7 @@
       btn.push('<span class="hint">Sélectionnez une carte de votre terrain ou de votre main —</span>');
       btn.push('<button class="act" data-act="draw"' + (st.players[ME].deck.length && st.actionsLeft ? '' : ' disabled') + '>Piocher</button>');
     }
+    if (fiche) btn.push(fiche);
     btn.push('<button class="act danger" data-act="end" style="margin-left:auto">Terminer le tour</button>');
     return '<div class="actionbar">' + btn.join(' ') + '</div>';
   }
@@ -274,7 +276,7 @@
   function inspector() {
     var st = UI.st;
     if (!UI.inspect || !st.cards[UI.inspect]) {
-      return '<aside class="inspector"><h3>Détails</h3><p class="sub" style="margin-top:8px">Cliquez une carte du plateau ou de la main pour voir son visuel, ses stats, sa famille, ses capacités et ses statuts.</p>' +
+      return '<aside class="inspector"><h3>Détails</h3><p class="sub" style="margin-top:8px">Touchez une carte du plateau ou de la main pour voir ses stats, ses capacités et ses statuts. Appui long (ou clic droit) sur n’importe quelle carte : sa fiche complète.</p>' +
         '<p class="sub" style="margin-top:14px"><b style="color:#fff">Statuts</b><br>' + Object.keys(ST_TXT).filter(function (k) { return k !== 'venom2' && k !== 'prison2'; }).map(function (k) { return ST_ICON[k] + ' ' + esc(ST_TXT[k]); }).join('<br>') + '</p></aside>';
     }
     var c = st.cards[UI.inspect], d = A.def(st, c), s = A.stats(st, c);
@@ -301,7 +303,7 @@
     }
     return '<aside class="inspector"><div class="preview">' + cardFace(d, { nom: nom, pv: s.pv, atk: s.atk, maxPv: s.maxPv, thumb: thumb, cls: ['static'], big: true, status: sts }) + '</div>' +
       '<span class="tag" style="color:var(--' + d.rarity + ')">' + RARITY_FR[d.rarity] + '</span>' +
-      '<h3>' + esc(nom) + '</h3><div class="s">' + esc(d.series) + ' · profil ' + esc(d.profil || '—') + (c.faceUp ? '' : ' · face cachée') + '</div>' +
+      '<h3>' + esc(nom) + '</h3><div class="s">' + esc(d.series) + ' · profil ' + esc(profilFr(d.profil)) + (c.faceUp ? '' : ' · face cachée') + '</div>' +
       '<div class="statline"><div><span>PV</span><b>' + s.pv + ' / ' + s.maxPv + '</b></div><div><span>ATK</span><b>' + s.atk + '</b></div></div>' +
       '<div class="pvbar"><i style="width:' + pct + '%"></i></div>' +
       '<p class="sub" style="margin:10px 0 0">Base ' + d.pv + ' PV / ' + d.atk + ' ATK' + (c.bonus ? ' · <span style="color:var(--pv)">+' + c.bonus + ' bonus d’animé</span>' : '') +
@@ -309,6 +311,78 @@
       (c.awaken ? ' · <span style="color:#ffb020">+' + Math.round(c.awaken * 100) + ' % ATK et PV (Éveil)</span>' : '') + '</p>' + blocks +
       (c.attacked ? '<p class="sub" style="color:#ffc9a8;margin-top:10px">A déjà attaqué ce tour.</p>' : '') + '</aside>';
   }
+
+  /* ---------- fiche d'une carte : lire ses stats et ses capacités ----------
+     Bouton ⓘ (deck), bouton « Fiche » (partie), appui long ou clic droit sur n'importe quelle carte. */
+  var PROFIL_FR = { equilibre: 'équilibré', resistant: 'résistant', regeneration: 'régénération' };
+  function profilFr(p) { return PROFIL_FR[p] || p || '—'; }
+  function sheetBlocks(d) {
+    var pass = A.passivesFor(d), abs = A.abilitiesFor(d), out = '';
+    if (pass.length) out += '<div class="psec">' + (pass.length > 1 ? 'Passives' : 'Passive') + '</div>' + pass.map(function (p) {
+      return '<div class="abil passive"><div class="t"><span>' + esc(p.nom) + '</span><em>' + (p.eff ? esc(p.eff) + ' · ' : '') + 'passif</em></div><div class="d">' + esc(p.desc) + '</div></div>';
+    }).join('');
+    if (abs.length) out += '<div class="psec">' + (abs.length > 1 ? 'Actives' : 'Active') + '</div>' + abs.map(function (ab) {
+      return '<div class="abil"><div class="t"><span>' + esc(ab.nom) + '</span><em>' + (ab.eff ? esc(ab.eff) + ' · ' : '') + ab.uses + ' utilisation' + (ab.uses > 1 ? 's' : '') + ' par partie</em></div><div class="d">' + esc(ab.desc) + '</div></div>';
+    }).join('');
+    return out || '<p class="sub">Aucune capacité : les cartes Rare et Uncommon n’en ont pas.</p>';
+  }
+  function sheetDef(d) {
+    return '<aside class="inspector sheet"><div class="preview">' + cardFace(d, { cls: ['static'], big: true }) + '</div>' +
+      '<span class="tag" style="color:var(--' + d.rarity + ')">' + RARITY_FR[d.rarity] + '</span>' +
+      '<h3>' + esc(d.name) + '</h3><div class="s">' + esc(d.series) + ' · profil ' + esc(profilFr(d.profil)) + '</div>' +
+      '<div class="statline"><div><span>PV</span><b>' + d.pv + '</b></div><div><span>ATK</span><b>' + d.atk + '</b></div></div>' +
+      sheetBlocks(d) + '</aside>';
+  }
+  function openSheet(html) {
+    removeModal('sheetmodal');
+    var m = document.createElement('div'); m.className = 'modal'; m.id = 'sheetmodal';
+    m.innerHTML = '<div class="box sheetbox" role="dialog" aria-label="Fiche de la carte">' + html +
+      '<div class="sheetbtns"><button class="ghostbtn" data-act="closesheet">Fermer</button></div></div>';
+    document.body.appendChild(m);
+    var b = m.querySelector('[data-act="closesheet"]'); if (b) b.focus({ preventScroll: true });
+  }
+  function sheetForPool(i) { if (POOL[i]) openSheet(sheetDef(POOL[i])); }
+  function sheetForUid(uid) {
+    var st = UI.st; if (!st || !st.cards[uid]) return;
+    var keep = UI.inspect; UI.inspect = uid;
+    var h = inspector(); UI.inspect = keep;
+    openSheet(h.replace('<aside class="inspector"', '<aside class="inspector sheet"'));
+  }
+  /* Carte visée par un appui long / clic droit : [data-act=card|hand|pick|deckinfo]. */
+  function sheetFromEl(el) {
+    var act = el.dataset.act;
+    if (act === 'pick' || act === 'sheet' && el.dataset.i != null) { sheetForPool(parseInt(el.dataset.i, 10)); return true; }
+    if (act === 'deckrow') { sheetForPool(parseInt(el.dataset.p, 10)); return true; }
+    if (!UI.st) return false;
+    if (act === 'card' && el.dataset.uid) { sheetForUid(parseInt(el.dataset.uid, 10)); return true; }
+    if (act === 'hand') { var u = UI.st.players[ME] && UI.st.players[ME].hand[parseInt(el.dataset.i, 10)]; if (u) { sheetForUid(u); return true; } }
+    return false;
+  }
+  var SHEET_SEL = '[data-act="card"][data-uid],[data-act="hand"],[data-act="pick"],[data-act="deckrow"]';
+  var LP = { t: null, x: 0, y: 0, fired: false };
+  document.addEventListener('pointerdown', function (e) {
+    LP.fired = false; clearTimeout(LP.t);
+    if (e.pointerType === 'mouse') return;   // à la souris : clic droit ou bouton ⓘ
+    var el = e.target.closest && e.target.closest(SHEET_SEL);
+    if (!el || e.target.closest('button')) return;
+    LP.x = e.clientX; LP.y = e.clientY;
+    LP.t = setTimeout(function () {
+      if (sheetFromEl(el)) { LP.fired = true; try { if (navigator.vibrate) navigator.vibrate(12); } catch (err) {} }
+    }, 450);
+  });
+  document.addEventListener('pointermove', function (e) { if (LP.t && Math.abs(e.clientX - LP.x) + Math.abs(e.clientY - LP.y) > 12) { clearTimeout(LP.t); LP.t = null; } });
+  ['pointerup', 'pointercancel'].forEach(function (ev) { document.addEventListener(ev, function () { clearTimeout(LP.t); LP.t = null; }); });
+  /* Après un appui long, le relâchement ne doit pas aussi choisir ou jouer la carte. */
+  document.addEventListener('click', function (e) { if (LP.fired) { LP.fired = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  document.addEventListener('click', function (e) { if (e.target && e.target.id === 'sheetmodal') removeModal('sheetmodal'); });
+  document.addEventListener('contextmenu', function (e) {
+    var el = e.target.closest && e.target.closest(SHEET_SEL);
+    if (!el) return;
+    e.preventDefault();
+    clearTimeout(LP.t); LP.t = null;
+    var touch = e.pointerType === 'touch' || e.pointerType === 'pen';
+    if (!document.getElementById('sheetmodal') && sheetFromEl(el) && touch) LP.fired = true;
+  });
 
   function pipsHtml(n) {
     var out = '';
@@ -1076,8 +1150,9 @@
     deck.forEach(function (i) { var r = POOL[i].rarity; counts[r] = (counts[r] || 0) + 1; });
     var deckRows = deck.map(function (i, k) {
       var d = POOL[i], f = A.familyOfDef(d), own = isOwned(i, om);
-      return '<div class="deckrow' + (own ? '' : ' out') + '"><img src="' + esc(d.thumb) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' +
+      return '<div class="deckrow' + (own ? '' : ' out') + '" data-act="deckrow" data-p="' + i + '"><img src="' + esc(d.thumb) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'">' +
         '<span class="nm">' + esc(d.name) + (own ? '' : ' <small>hors collection</small>') + '</span>' + 
+        '<button class="infob" data-act="sheet" data-i="' + i + '" title="Voir la fiche" aria-label="Voir la fiche de ' + esc(d.name) + '">i</button>' +
         '<button data-act="remove" data-i="' + k + '" title="Retirer">×</button></div>';
     }).join('') || '<div class="sub" style="padding:10px 0">Aucune carte : choisis-en 20 dans la liste.</div>';
     var barSegs = RARITY_ORDER.filter(function (r) { return counts[r]; }).map(function (r) { return '<span style="width:' + (counts[r] / 20 * 100) + '%;background:var(--' + r + ')"></span>'; }).join('');
@@ -1092,7 +1167,8 @@
     });
     var grid = list.slice(0, UI.limit).map(function (o) {
       var own = isOwned(o.i, om);
-      return '<div class="poolcard' + (chosen.has(o.i) ? ' chosen' : '') + (own ? '' : ' unowned') + '" data-act="pick" data-i="' + o.i + '">' + cardFace(o.d, {}) + (own ? '' : '<span class="nown">non possédée</span>') + '</div>';
+      return '<div class="poolcard' + (chosen.has(o.i) ? ' chosen' : '') + (own ? '' : ' unowned') + '" data-act="pick" data-i="' + o.i + '">' + cardFace(o.d, {}) + (own ? '' : '<span class="nown">non possédée</span>') +
+        '<button class="infob" data-act="sheet" data-i="' + o.i + '" title="Voir la fiche" aria-label="Voir la fiche de ' + esc(o.d.name) + '">i</button></div>';
     }).join('');
     var nOwned = om ? ownedCount(om) : 0;
     return head('Deck', 'Compose tes decks de combat. Ils sont enregistrés automatiquement sur cet appareil.') +
@@ -1118,7 +1194,7 @@
         '</div>' +
       '<div class="chips"><button class="chip' + (UI.rarity === 'all' ? ' active' : '') + '" data-act="rarity" data-r="all">Toutes raretés</button>' +
         RARITY_ORDER.map(function (r) { return '<button class="chip' + (UI.rarity === r ? ' active' : '') + '" data-act="rarity" data-r="' + r + '">' + RARITY_FR[r] + '</button>'; }).join('') + '</div>' +
-      '<div class="sub" style="margin-bottom:11px">' + list.length + ' carte(s) — touche une carte pour l’ajouter ou la retirer.</div>' +
+      '<div class="sub" style="margin-bottom:11px">' + list.length + ' carte(s) — touche une carte pour l’ajouter ou la retirer ; touche ⓘ (ou appuie longuement) pour lire sa capacité.</div>' +
       '<div class="poolgrid">' + grid + '</div>' +
       (list.length > UI.limit ? '<button class="ghostbtn morebtn" data-act="more">Afficher ' + Math.min(120, list.length - UI.limit) + ' cartes de plus</button>' : '') +
       '</section></div>';
@@ -1213,6 +1289,7 @@
     }
     return '<h2>Capacités</h2><p class="sub">Chaque Épique, Légendaire, Mythique et Spéciale porte une vraie technique de son personnage (Getsuga Tenshō, The World, Gear Fifth…), reliée à l’un des effets ci-dessous. ' +
       'Une seule capacité par carte, deux pour les Spéciales. Quand une valeur change avec la rareté, elle est donnée dans l’ordre Épique / Légendaire / Mythique / Spéciale ; touche une carte en jeu pour voir sa valeur exacte.</p>' +
+      '<p class="sub"><b style="color:#fff">Lire la capacité d’une carte</b> : bouton ⓘ dans Deck, bouton « Fiche » en partie, ou appui long (clic droit à la souris) sur n’importe quelle carte.</p>' +
       '<h2>Effets passifs</h2><p class="sub">Aucun coup : ils s’appliquent tant que la carte est visible.</p>' + rows(pas) +
       '<h2>Effets actifs</h2><p class="sub">Un coup par utilisation (sauf mention contraire).</p>' + rows(act) +
       '<p class="sub" style="margin-top:12px">Quelques personnages ont des capacités uniques aux règles propres (Goku, Sukuna, Megumi, Makima, Reze, Angel Devil, Yoru, Gogeta, Itachi, Sasuke, Hohenheim, Denji, Pochita) : elles sont décrites sur leur carte. Rare et Uncommon n’ont pas de capacité.</p>';
@@ -1533,6 +1610,9 @@
     if (!el) return;
     var act = el.dataset.act;
     if (act === 'closemodal') { removeModal('rulesmodal'); return; }
+    if (act === 'closesheet') { removeModal('sheetmodal'); return; }
+    if (act === 'sheet') { if (el.dataset.uid) sheetForUid(parseInt(el.dataset.uid, 10)); else sheetForPool(parseInt(el.dataset.i, 10)); return; }
+    if (act === 'deckrow') return;
     if (e.target.closest('#endmodal') && ['again', 'go', 'rematch', 'netleave'].indexOf(act) < 0) return;
 
     if (act === 'go') { go(el.dataset.s); return; }
@@ -1687,6 +1767,7 @@
     if (e.target.id === 'deckname') { UI.decks.decks[UI.editing].name = (e.target.value.trim() || ('Deck ' + (UI.editing + 1))).slice(0, 24); saveDecks(); render(); }
   });
   document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && document.getElementById('sheetmodal')) { removeModal('sheetmodal'); return; }
     if (e.key === 'Escape' && !UI.anim) { removeModal('rulesmodal'); resetSelection(); if (UI.screen === 'game') render(); }
     if (e.key === 'Enter' && e.target && e.target.id === 'joincode') { netJoin(e.target.value); }
   });

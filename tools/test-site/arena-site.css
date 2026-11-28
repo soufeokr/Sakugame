@@ -3,3 +3,30 @@
 .arena-frame{display:block;width:100%;height:calc(100vh - 72px);border:0;background:#0c1226}
 .saku-test-pill{position:fixed;left:10px;bottom:calc(10px + var(--saku-nav-inset,0px));z-index:9000;pointer-events:none;font:800 10px/1 Outfit,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#ffcf85;background:#2a1a08e6;border:1px solid #f2a93b88;border-radius:99px;padding:6px 10px}
 @media (max-width:900px){.saku-test-pill{left:8px;font-size:8.5px;padding:4px 8px;opacity:.8}}
+
+/* Fiche d'une carte : onglets Infos / Arena */
+.arena-tabs{display:flex;gap:4px;padding:4px;margin:0 0 14px;border:1px solid #98b7cb33;border-radius:12px;background:#08172a;width:max-content;max-width:100%}
+.arena-tabs button{font:800 .74rem/1 inherit;font-family:inherit;color:#9bb5c9;background:none;border:0;border-radius:9px;padding:9px 14px;cursor:pointer;letter-spacing:.02em}
+.arena-tabs button[aria-selected="true"]{background:linear-gradient(180deg,#1d3d63,#14304f);color:#fff;box-shadow:inset 0 0 0 1px #9fd8ff40}
+.arena-tabs button:focus-visible{outline:2px solid #a5ddff;outline-offset:2px}
+.card-detail-info.arena-on>:not(.arena-tabs):not(.arena-pane){display:none!important}
+.card-detail-info:not(.arena-on)>.arena-pane{display:none}
+.arena-pane h2{margin-top:10px}
+.arena-tagline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 12px;font-size:.74rem;color:#a8c2d8}
+.arena-rar{--rc:#9fd8ff;color:var(--rc);border:1px solid color-mix(in srgb,var(--rc) 55%,transparent);background:color-mix(in srgb,var(--rc) 14%,transparent);border-radius:99px;padding:5px 10px;font-weight:800;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase}
+.arena-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.arena-stats>div{border:1px solid #98b7cb2e;border-radius:12px;padding:10px 12px;background:#0a1a2c}
+.arena-stats span{display:block;font-size:.62rem;font-weight:800;letter-spacing:.1em;color:#9bb5c9}
+.arena-stats b{font-size:1.35rem;color:#fff}
+.arena-stats .pv b{color:#7ee2a8}.arena-stats .atk b{color:#ff8a8a}
+.arena-sec{margin:16px 0 7px;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#9bb5c9}
+.arena-abil{border:1px solid #98b7cb2e;border-left:3px solid #b47cff;border-radius:12px;padding:10px 12px;background:#0b1b2e;margin-bottom:8px}
+.arena-abil.act{border-left-color:#58a8ff}
+.arena-abil-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.arena-abil-t b{color:#fff;font-size:.86rem}
+.arena-abil-t em{font-style:normal;font-size:.64rem;color:#9fd8ff;font-weight:700}
+.arena-abil p{margin:5px 0 0;font-size:.74rem;line-height:1.5;color:#c3d7e6}
+.arena-note{font-size:.7rem;line-height:1.5;color:#8fa9bd;margin:12px 0 0}
+.arena-open{display:flex;justify-content:space-between;width:100%;margin-top:14px;color:#c3ebff;background:none;border:1px solid #98c6e64d;border-radius:10px;padding:11px 13px;font:800 .76rem/1 inherit;font-family:inherit;cursor:pointer}
+.arena-open:hover{background:#9fd8ff12}
+@media (max-width:650px){.arena-tabs{margin-bottom:10px}.arena-tabs button{padding:8px 11px;font-size:.68rem}.arena-stats b{font-size:1.1rem}.arena-abil-t b{font-size:.78rem}.arena-abil p{font-size:.68rem}}

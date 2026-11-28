@@ -1,7 +1,8 @@
 /* Sakugame (version test) — Arena dans le site.
    • Ajoute l'écran Arena (iframe arena/index.html) et l'entrée « Arena » du menu et de l'accueil Cartes.
    • Pont window.sakuArenaBridge lu par Arena : compte, collection, catalogue, base Firebase, invitations.
-   • Lien direct : ?arena=CODE ouvre Arena et rejoint le salon Amical. */
+   • Lien direct : ?arena=CODE ouvre Arena et rejoint le salon Amical.
+   • Onglet « Arena » dans la fiche des cartes (Collection, Encyclopédie) : stats et capacités de combat. */
 (function () {
   'use strict';
   const SRC = 'arena/index.html?v=__ARENA_V__';
@@ -91,12 +92,171 @@
     };
   }
 
+
+  /* ---------- Onglet Arena dans la fiche des cartes (Collection et Encyclopédie) ---------- */
+  const ARENA_V = '__ARENA_V__';
+  let engineP = null, arenaIdx = null, arenaTabOn = false;
+  const RAR_FR = { uncommon: 'Uncommon', rare: 'Rare', epic: 'Épique', legendary: 'Légendaire', mythic: 'Mythique', special: 'Spéciale' };
+  const RAR_COL = { uncommon: '#6fd08c', rare: '#58a8ff', epic: '#b47cff', legendary: '#ffbf3c', mythic: '#ff5a8a', special: '#7ff3ff' };
+  const PROFIL_FR = { equilibre: 'équilibré', frappeur: 'frappeur', colosse: 'colosse', rapide: 'rapide', soutien: 'soutien', resistant: 'résistant', offensif: 'offensif', pilote: 'pilote', polyvalent: 'polyvalent', mage: 'mage', technique: 'technique', explosif: 'explosif', regeneration: 'régénération' };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  function loadScript(src) {
+    return new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = rej; document.head.appendChild(el); });
+  }
+  // Moteur Arena chargé à la demande (premier clic sur l'onglet) : cartes, signatures, règles.
+  function arenaEngine() {
+    if (window.Arena && window.Arena.passivesFor && window.ARENA_CARDS) return Promise.resolve(window.Arena);
+    if (!engineP) {
+      engineP = loadScript('arena/cards.js?v=' + ARENA_V)
+        .then(() => loadScript('arena/signatures.js?v=' + ARENA_V))
+        .then(() => loadScript('arena/engine.js?v=' + ARENA_V))
+        .then(() => { if (!window.Arena || !window.ARENA_CARDS) throw new Error('arena'); return window.Arena; })
+        .catch(e => { engineP = null; throw e; });
+    }
+    return engineP;
+  }
+  /* Même personnage, noms écrits autrement selon la source : ordre des mots (Nico Robin / Robin Nico),
+     romanisation (Souryuu / Soryu), titre de série japonais ou anglais (Hagane no Renkinjutsushi / Fullmetal Alchemist).
+     Prudence : un homonyme d'une autre œuvre (Kojiro Sasaki de Vagabond) ne doit pas recevoir la fiche d'un autre. */
+  const rom = s => norm(s).replace(/ou/g, 'o').replace(/uu/g, 'u').replace(/oo/g, 'o');
+  const toks = s => rom(s).split(' ').filter(Boolean).sort();
+  const SERIES_STOP = { the: 1, no: 1, of: 1, and: 1, tv: 1, season: 1, movie: 1, film: 1, shin: 1, seiki: 1, part: 1, arc: 1 };
+  const seriesToks = s => rom(s).split(' ').filter(t => t.length > 2 && !SERIES_STOP[t] && !/^\d+$/.test(t));
+  let seriesAlias = null;
+  // Titres équivalents appris du catalogue : au moins deux personnages différents, au nom identique et unique dans Arena, les relient.
+  function learnSeriesAlias() {
+    seriesAlias = {};
+    let pool = null;
+    try { if (typeof cardBuildPool === 'function') cardBuildPool(); pool = typeof cardPoolById !== 'undefined' && cardPoolById ? Object.values(cardPoolById) : null; } catch (e) { pool = null; }
+    if (!pool) return;
+    const byTok = {};
+    arenaIdx.list.forEach(x => { const k = x.t.join(' '); (byTok[k] = byTok[k] || []).push(x.d); });
+    const seen = {};
+    pool.forEach(e => {
+      const t = toks(e.name); if (!t.length || (t.length === 1 && t[0].length < 4)) return;
+      const m = byTok[t.join(' ')]; if (!m || m.length !== 1) return;
+      const pair = rom(e.series) + '|' + rom(m[0].series), who = t.join(' ');
+      (seen[pair] = seen[pair] || {})[who] = 1;
+    });
+    // Œuvres peuplées de figures historiques ou mythologiques (Jack l'Éventreur, Nikola Tesla…) : homonymes, pas mêmes personnages.
+    const HIST = /\b(fate|ragnarok|valkyrie|drifters)\b/;
+    Object.keys(seen).forEach(k => { if (Object.keys(seen[k]).length >= 2 && !HIST.test(k)) seriesAlias[k] = 1; });
+  }
+  function seriesNear(arenaSeries, siteSeries) {
+    const x = seriesToks(arenaSeries), y = seriesToks(siteSeries);
+    if (x.some(t => y.indexOf(t) >= 0)) return true;
+    if (!seriesAlias) learnSeriesAlias();
+    return !!seriesAlias[rom(siteSeries) + '|' + rom(arenaSeries)];
+  }
+  function arenaDefFor(name, series) {
+    if (!arenaIdx) {
+      arenaIdx = { ns: {}, list: [] };
+      window.ARENA_CARDS.forEach(a => {
+        const d = { name: a[0], series: a[1], rarity: a[2], profil: a[3], pv: a[4], atk: a[5], characterRank: a[6] };
+        const k = norm(a[0]) + '|' + norm(a[1]);
+        if (!arenaIdx.ns[k]) arenaIdx.ns[k] = d;
+        arenaIdx.list.push({ d: d, t: toks(a[0]) });
+      });
+    }
+    const exact = arenaIdx.ns[norm(name) + '|' + norm(series)];
+    if (exact) return exact;
+    const t = toks(name);
+    if (!t.length) return null;
+    // Mêmes mots (ordre et romanisation libres), dans une série proche.
+    const eq = arenaIdx.list.filter(x => x.t.length === t.length && x.t.every((k, i) => k === t[i]) && seriesNear(x.d.series, series));
+    if (eq.length === 1) return eq[0].d;
+    if (eq.length > 1 || t.length < 2) return null;
+    // Particule en plus ou en moins (Monkey D. Luffy, Trafalgar D. Water Law), dans une série proche.
+    const extraOk = (small, big) => small.length >= 2 && small.every(k => big.indexOf(k) >= 0) &&
+      big.filter(k => small.indexOf(k) < 0).every(k => k.length === 1 || k === 'water');
+    const inc = arenaIdx.list.filter(x => (extraOk(t, x.t) || extraOk(x.t, t)) && seriesNear(x.d.series, series));
+    return inc.length === 1 ? inc[0].d : null;
+  }
+  // Lecture seule (outils de test) : fiche Arena correspondant à un nom et une série du site.
+  window.sakuArenaBridge.arenaCardFor = (name, series) => (window.ARENA_CARDS ? arenaDefFor(name, series) : null);
+  function siteCard(id, info) {
+    try {
+      if (typeof cardBuildPool === 'function') cardBuildPool();
+      const e = typeof cardPoolById !== 'undefined' && cardPoolById ? cardPoolById[String(id)] : null;
+      if (e) return { name: e.name, series: e.series, rarity: e.rarity };
+    } catch (err) {}
+    const h = info.querySelector('h2'), sr = info.querySelector('.card-detail-series');
+    return { name: h ? h.textContent : '', series: sr ? sr.textContent : '' };
+  }
+  function abilHtml(x, active) {
+    const meta = active ? (x.eff ? esc(x.eff) + ' · ' : '') + x.uses + ' utilisation' + (x.uses > 1 ? 's' : '') + ' par partie' : (x.eff ? esc(x.eff) + ' · ' : '') + 'passive';
+    return '<div class="arena-abil' + (active ? ' act' : '') + '"><div class="arena-abil-t"><b>' + esc(x.nom) + '</b><em>' + meta + '</em></div><p>' + esc(x.desc) + '</p></div>';
+  }
+  function paneHtml(A, d) {
+    const pass = A.passivesFor(d), acts = A.abilitiesFor(d);
+    let col = RAR_COL[d.rarity] || '#9fd8ff';
+    try { if (typeof cardRarityMeta === 'function') col = cardRarityMeta(d.rarity).color || col; } catch (e) {}
+    let abil = '';
+    if (pass.length) abil += '<h3 class="arena-sec">' + (pass.length > 1 ? 'Passives' : 'Passive') + '</h3>' + pass.map(x => abilHtml(x, false)).join('');
+    if (acts.length) abil += '<h3 class="arena-sec">' + (acts.length > 1 ? 'Actives' : 'Active') + '</h3>' + acts.map(x => abilHtml(x, true)).join('');
+    if (!abil) abil = '<p class="arena-note">Aucune capacité : les cartes Rare et Uncommon n’en ont pas dans Arena.</p>';
+    return '<span class="card-detail-eyebrow">ARENA / COMBAT</span><h2>' + esc(d.name) + '</h2><p class="card-detail-series">' + esc(d.series) + '</p>' +
+      '<div class="arena-tagline"><span class="arena-rar" style="--rc:' + col + '">' + esc(RAR_FR[d.rarity] || d.rarity) + '</span><span>profil ' + esc(PROFIL_FR[d.profil] || d.profil || '—') + '</span></div>' +
+      '<div class="arena-stats"><div class="pv"><span>PV</span><b>' + d.pv + '</b></div><div class="atk"><span>ATK</span><b>' + d.atk + '</b></div></div>' +
+      abil +
+      '<p class="arena-note">Stats de base en combat. La force d’une capacité dépend de la rareté Arena de la carte.</p>' +
+      '<button type="button" class="arena-open">Ouvrir Arena <span aria-hidden="true">→</span></button>';
+  }
+  function fillPane(pane, id, info) {
+    if (pane.dataset.card === String(id)) return;
+    pane.innerHTML = '<p class="arena-note">Chargement d’Arena…</p>';
+    arenaEngine().then(A => {
+      const sc = siteCard(id, info), d = arenaDefFor(sc.name, sc.series);
+      pane.dataset.card = String(id);
+      pane.innerHTML = d ? paneHtml(A, d) : '<span class="card-detail-eyebrow">ARENA / COMBAT</span><h2>' + esc(sc.name) + '</h2>' +
+        '<p class="arena-note">' + (sc.rarity === 'common' ? 'Les cartes Common ne sont pas jouables dans Arena.' : 'Ce personnage n’est pas encore jouable dans Arena.') + '</p>';
+    }).catch(() => { pane.innerHTML = '<p class="arena-note">Impossible de charger Arena pour le moment. Réessaie dans un instant.</p>'; });
+  }
+  function closeDetails() {
+    try { if (typeof cardsCloseDetail === 'function') cardsCloseDetail(); } catch (e) {}
+    try { if (typeof encCloseDetail === 'function') encCloseDetail(); } catch (e) {}
+  }
+  function arenaTab(box, id) {
+    const info = box && box.querySelector('.card-detail-info');
+    if (!info || info.querySelector(':scope > .arena-tabs')) return;
+    const tabs = document.createElement('div');
+    tabs.className = 'arena-tabs'; tabs.setAttribute('role', 'tablist'); tabs.setAttribute('data-noi18n', '');
+    tabs.innerHTML = '<button type="button" role="tab" data-t="info">Infos</button><button type="button" role="tab" data-t="arena">⚔ Arena</button>';
+    const pane = document.createElement('div');
+    pane.className = 'arena-pane'; pane.setAttribute('role', 'tabpanel'); pane.setAttribute('data-noi18n', '');
+    info.insertBefore(tabs, info.firstChild);
+    info.appendChild(pane);
+    function show(on) {
+      arenaTabOn = on;
+      info.classList.toggle('arena-on', on);
+      tabs.querySelectorAll('button').forEach(b => b.setAttribute('aria-selected', String((b.dataset.t === 'arena') === on)));
+      if (on) fillPane(pane, id, info);
+    }
+    tabs.addEventListener('click', e => { const b = e.target.closest('button[data-t]'); if (b) show(b.dataset.t === 'arena'); });
+    pane.addEventListener('click', e => { if (e.target.closest('.arena-open')) { closeDetails(); open(); } });
+    show(arenaTabOn);   // garde l'onglet choisi d'une carte à l'autre
+  }
+  function hookDetails() {
+    const orig = window.sakuDetailControls;
+    if (typeof orig !== 'function' || orig.__arena) return !!(orig && orig.__arena);
+    const wrapped = function (box, id) {
+      const r = orig.apply(this, arguments);
+      try { arenaTab(box, id); } catch (e) {}
+      return r;
+    };
+    wrapped.__arena = true;
+    window.sakuDetailControls = wrapped;
+    return true;
+  }
+
   function mount() {
     if (!$('sakuTestPill')) {
       const pill = document.createElement('div'); pill.id = 'sakuTestPill'; pill.className = 'saku-test-pill'; pill.setAttribute('data-noi18n', '');
       pill.textContent = 'Version test'; document.body.appendChild(pill);
     }
     fit();
+    if (!hookDetails()) { let n = 0; const t = setInterval(() => { if (hookDetails() || ++n > 40) clearInterval(t); }, 250); }
     const m = /[?&]arena=([A-Za-z0-9]{4})\b/.exec(location.search);
     if (m) setTimeout(() => open(m[1].toUpperCase()), 300);
   }

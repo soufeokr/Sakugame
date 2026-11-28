@@ -355,3 +355,15 @@ body{min-height:100vh}
 /* Effets des capacités (règles) */
 .rules .row>b[style]::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--famc);margin-right:7px;vertical-align:1px}
 .rules p.abex{margin-top:4px;font-size:12px;opacity:.8}
+
+/* Fiche d'une carte (bouton ⓘ, bouton Fiche, appui long) */
+.poolcard .infob{position:absolute;top:5px;left:5px;z-index:10;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:italic 900 13px/1 Georgia,serif;color:#e8f6ff;background:#0b1c33e6;border:1px solid #9fd8ff80;box-shadow:0 2px 8px #0008;cursor:pointer;padding:0}
+.poolcard .infob:hover,.poolcard .infob:focus-visible{background:#1d4c7a;border-color:#cfeaff;outline:none}
+.deckrow .infob{font:italic 900 12px/1 Georgia,serif;color:#9fd8ff;border:1px solid #9fd8ff55;border-radius:50%;width:22px;height:22px;padding:0;display:grid;place-items:center}
+.deckrow .infob:hover{background:#1d4c7a;color:#fff}
+.card,.poolcard,.deckrow{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.modal .box.sheetbox{max-width:470px;padding:18px}
+.sheetbox .inspector.sheet{background:none;border:0;padding:0}
+.sheetbox .inspector.sheet .preview{width:170px;float:none;margin:0 auto 14px}
+.sheetbtns{margin-top:14px;text-align:right}
+@media (max-width:760px){.poolcard .infob{width:22px;height:22px;font-size:12px;top:4px;left:4px}.modal .box.sheetbox{padding:16px}.sheetbox .inspector.sheet .preview{width:140px}}
