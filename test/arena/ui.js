@@ -46,7 +46,7 @@
   var FAM_KEYS = Object.keys(FAM);
 
   /* ---------- utilitaires ---------- */
-  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
   function toast(msg, isErr) {
     var old = document.querySelector('.toast'); if (old) old.remove();
     var t = document.createElement('div'); t.className = 'toast' + (isErr ? ' err' : ''); t.textContent = msg;
@@ -1285,7 +1285,15 @@
     st.pool = p; st.rng = r; st.fx = f; st.log = l;
     return j;
   }
-  function deser(j) { var st = JSON.parse(j); st.pool = POOL; st.rng = Math.random; st.fx = []; st.log = st.log || []; return st; }
+  // 🛡️ L'état reçu en ligne est écrit par l'adversaire : aucune chaîne ne doit pouvoir fermer un attribut ou ouvrir une balise.
+  function scrub(v, d) {
+    if (d > 12) return null;
+    if (typeof v === 'string') return v.replace(/[<>"`]/g, '').slice(0, 400);
+    if (Array.isArray(v)) return v.slice(0, 2000).map(function (x) { return scrub(x, d + 1); });
+    if (v && typeof v === 'object') { var o = {}; Object.keys(v).slice(0, 2000).forEach(function (k) { if (k === '__proto__' || k === 'constructor' || k === 'prototype' || /[<>"`]/.test(k)) return; o[k] = scrub(v[k], d + 1); }); return o; }
+    return typeof v === 'number' && !isFinite(v) ? 0 : v;
+  }
+  function deser(j) { var st = scrub(JSON.parse(j), 0); st.pool = POOL; st.rng = Math.random; st.fx = []; st.log = Array.isArray(st.log) ? st.log : []; return st; }
   function db() { try { return HOST && HOST.db(); } catch (e) { return null; } }
   function seatPlayer(m) { return { id: m.pid, name: String(m.name || 'Joueur').slice(0, 32), avatar: m.avatar || '', uid: m.uid || null, ready: true, isHost: false, arena: true, online: true, rank: rankLoad().pts }; }
 
@@ -1422,7 +1430,7 @@
   function applyRemote(snap) {
     if (!UI.st) return Promise.resolve();
     var ghosts = snapshotGhosts(), turnBefore = UI.st.turnOwner, evs = [];
-    try { evs = JSON.parse(snap.fx || '[]'); } catch (e) { evs = []; }
+    try { evs = scrub(JSON.parse(snap.fx || '[]'), 0); if (!Array.isArray(evs)) evs = []; } catch (e) { evs = []; }
     UI.st = deser(snap.st);
     if (UI.st.turnOwner !== ME || UI.st.over) resetSelection();
     if (UI.inspect && !UI.st.cards[UI.inspect]) UI.inspect = null;

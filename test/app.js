@@ -15,7 +15,7 @@
     // If a stale index.html pairs with a fresh app.js (browser/Pages cache
     // mix after an update), the new code would crash on missing elements —
     // so we shout a loud "hard refresh!" warning instead of failing quietly.
-    const SAKU_BUILD = '329';
+    const SAKU_BUILD = '330';
     document.addEventListener('DOMContentLoaded', () => {
       const m = document.querySelector('meta[name="saku-build"]');
       const htmlBuild = m ? m.getAttribute('content') : null;
@@ -1593,8 +1593,9 @@
       for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
       return arr;
     }
+    // 🛡️ Échappe aussi " et ' : ce helper sert dans des attributs (src="…", alt="…") remplis par les données d'une salle.
     function escapeHtml(text) {
-      const div = document.createElement('div'); div.textContent = text; return div.innerHTML;
+      return String(text == null ? '' : text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
     // 🛡️ Données venant d'une salle (modifiables par n'importe quel joueur) : jamais insérées brutes dans la page.
     function sakuSafeImg(u) { u = String(u || ''); return /^https:\/\/[^\s"'<>]+$/i.test(u) ? escapeHtml(u) : ''; }
@@ -5762,7 +5763,7 @@
         d.className = 'cn-card';
         if (rv) {
           d.classList.add('cn-rev', 'cn-rev-' + rv);
-          d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy"><div class="cn-stamp cn-stamp-' + rv + '">' + (rv === 'black' ? '💀' : '✓') + '</div><div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';
+          d.innerHTML = '<img src="' + sakuSafeImg(c && c.image) + '" alt="" loading="lazy"><div class="cn-stamp cn-stamp-' + rv + '">' + (rv === 'black' ? '💀' : '✓') + '</div><div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';
         } else {
           if (spyView && col) d.classList.add('cn-key-' + col);
           const suggesters = Object.keys((cn.sug || {})[String(i)] || {}).filter(spid => (currentRoom.players || {})[spid]);
@@ -5781,7 +5782,7 @@
               syncCnClueNum();
             });
           }
-          d.innerHTML = '<img src="' + (c && c.image || '') + '" alt="" loading="lazy">' +
+          d.innerHTML = '<img src="' + sakuSafeImg(c && c.image) + '" alt="" loading="lazy">' +
             '<div class="cn-side"><div class="cn-name">' + escapeHtml(String((c && c.name) || '?')) + '</div></div>';
           // 👤 suggestion dots — public! no suggestions = no circles at all
           if (suggesters.length) {
@@ -7540,7 +7541,7 @@
       } else if (phase === 'roundEnd') {
         const rr = (hc.rounds || {})['r' + round] || {};
         const bits = [];
-        if (rr.secretImg) bits.push('<img class="hc-reveal-img" src="' + String(rr.secretImg) + '" alt="secret" loading="eager">');
+        if (rr.secretImg) bits.push('<img class="hc-reveal-img" src="' + sakuSafeImg(rr.secretImg) + '" alt="secret" loading="eager">');
         if (rr.secretName) bits.push(tPO('hc_reveal', { s: escapeHtml(String(rr.secretName)) }));
         const fMap = rr.found || {};
         Object.keys(fMap).sort((a, b) => (fMap[a] || 0) - (fMap[b] || 0)).forEach(pid => {
@@ -7725,7 +7726,7 @@
           const num = parseInt(rk.slice(1), 10) || 0;
           const names = (pids) => (pids || []).map(pid => escapeHtml(hcNameOf(players, pid))).join(', ');
           let line = '<div><b>R' + num + '</b> — ';
-          if (rr.secretImg) line += '<img class="hc-recap-img" src="' + String(rr.secretImg) + '" alt=""> ';
+          if (rr.secretImg) line += '<img class="hc-recap-img" src="' + sakuSafeImg(rr.secretImg) + '" alt=""> ';
           line += rr.secretName ? '<b>' + escapeHtml(rr.secretName) + '</b> ' : '';
           line += rr.hider ? '(' + tPO('hc_hidden_by', { n: escapeHtml(hcNameOf(players, rr.hider)) }) + ')' : '';
           const founds = Object.keys(rr.found || {}).sort((a, b) => ((rr.found[a] || 0) - (rr.found[b] || 0)));
